@@ -1,23 +1,41 @@
-# Compiled class file
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
 *.class
 
-# Log file
-*.log
+# generated files
+bin/
+gen/
+out/
+build/
 
-# BlueJ files
-*.ctxt
+# Local configuration file (sdk path, etc)
+local.properties
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Eclipse project files
+.classpath
+.project
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+# Windows thumbnail db
+.DS_Store
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# IDEA/Android Studio project files, because
+# the project can be imported from settings.gradle.kts
+*.iml
+.idea/*
+!.idea/copyright
+!.idea/codeStyles/codeStyleConfig.xml
+
+# Gradle cache
+.gradle
+
+# Sandbox stuff
+_sandbox
+
+# Android Studio captures folder
+captures/
