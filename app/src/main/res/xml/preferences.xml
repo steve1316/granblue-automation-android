@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:key="category_1"
+        android:title="Category 1">
+
+        <Preference
+            app:key="nav_1"
+            app:summary="This is Nav 1"
+            app:title="Nav 1" />
+
+        <Preference
+            app:key="nav_2"
+            app:summary="This is Nav 2"
+            app:title="Nav 2" />
+
+        <Preference
+            app:key="nav_3"
+            app:summary="This is Nav 3"
+            app:title="Nav 3" />
+    </PreferenceCategory>
+</PreferenceScreen>
