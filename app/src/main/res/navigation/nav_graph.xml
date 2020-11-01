@@ -8,12 +8,24 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.steve1316.granblueautomation.HomeFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/content_main" />
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_homeFragment_to_raidPlannerFragment"
+            app:destination="@id/raidPlannerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/firstFragment"
-        android:name="com.steve1316.granblueautomation.SecondFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_second" />
+        android:id="@+id/raidPlannerFragment"
+        android:name="com.steve1316.granblueautomation.RaidPlannerFragment"
+        android:label="Raid Planner"
+        tools:layout="@layout/fragment_raid_planner" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.steve1316.granblueautomation.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

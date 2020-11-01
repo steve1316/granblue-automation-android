@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:key="category_1"
-        android:title="Category 1">
+        android:title="Select option to begin">
 
         <Preference
-            app:key="nav_1"
-            app:summary="This is Nav 1"
-            app:title="Nav 1" />
+            app:key="nav_start"
+            app:summary="Start the Bot (make sure to accept permissions)"
+            app:title="Start" />
 
         <Preference
-            app:key="nav_2"
-            app:summary="This is Nav 2"
-            app:title="Nav 2" />
+            app:key="nav_raid_planner"
+            app:summary="Manage Raid configs"
+            app:title="Raid Planner" />
 
         <Preference
-            app:key="nav_3"
-            app:summary="This is Nav 3"
-            app:title="Nav 3" />
+            app:key="nav_settings"
+            app:summary="Manage Bot Settings"
+            app:title="Settings" />
     </PreferenceCategory>
 </PreferenceScreen>
