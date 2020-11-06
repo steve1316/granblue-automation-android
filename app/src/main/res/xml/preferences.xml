@@ -19,5 +19,10 @@
             app:key="nav_settings"
             app:summary="Manage Bot Settings"
             app:title="Settings" />
+
+        <Preference
+            app:key="nav_debug"
+            app:summary="Debug the screenshotting for debugging purposes"
+            app:title="Debug Screenshot" />
     </PreferenceCategory>
 </PreferenceScreen>
