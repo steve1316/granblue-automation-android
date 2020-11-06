@@ -9,6 +9,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 
+/**
+ * MainActivity - Main entry point to the application.
+ */
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfig: AppBarConfiguration
 
