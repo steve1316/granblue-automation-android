@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.steve1316.granblueautomation_android">
+
+    <!--Grants permission for MediaProjection to display a Notification that tells users that it is currently running.-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!--Grants permission to display a floating START/STOP button that persists across any View.-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.GranblueAutomation_Android"
+        tools:ignore="AllowBackup" >
+
+        <!--Users will first be directed to MainActivity and then to HomeFragment.-->
+        <activity
+            android:name="com.steve1316.granblueautomation_android.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.GranblueAutomation_Android.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--The Accessibility Service that controls gestures on the screen.-->
+        <service
+            android:name="com.steve1316.granblueautomation_android.MyAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:label="@string/accessibility_service_label"
+            android:foregroundServiceType="mediaProjection">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!--The MediaProjection service that controls taking screenshots of the screen.-->
+        <service
+            android:name="com.steve1316.granblueautomation_android.utils.MediaProjectionService"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!--Bot Service that will automate the specified workflow.-->
+        <service
+            android:name=".BotService" />
+
+        <!--Receiver that will send the "STOP" Intent to MediaProjection Service when the action button on the Notification is tapped.-->
+        <receiver
+            android:name=".utils.StopServiceReceiver"
+            android:enabled="true"
+            android:process=":remote" />
+    </application>
+
+</manifest>
