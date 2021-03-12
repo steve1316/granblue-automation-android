@@ -68,6 +68,9 @@ class HomeFragment : Fragment() {
                 startButton.text = getString(R.string.bot_start)
             }
         }
+    
+        // Setting this false here will ensure that stopping the MediaProjection Service outside of this application will update this button's text.
+        firstBoot = false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
