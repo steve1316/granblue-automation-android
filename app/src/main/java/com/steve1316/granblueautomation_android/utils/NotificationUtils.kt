@@ -86,5 +86,38 @@ class NotificationUtils {
 				setShowWhen(true)
 			}.build()
 		}
+		
+		/**
+		 * Updates the Notification content text.
+		 *
+		 * @param context The application context.
+		 * @param isRunning Boolean for whether or not the bot process is currently running.
+		 */
+		fun updateNotification(context: Context, isRunning: Boolean) {
+			var contentText = "Bot process is NOT RUNNING"
+			if(isRunning) {
+				contentText = "Bot process is RUNNING"
+			}
+			
+			// Create a STOP Intent for the MediaProjection service.
+			val stopIntent = Intent(context, StopServiceReceiver::class.java)
+			
+			// Create a PendingIntent in order to add a action button to stop the MediaProjection service in the notification.
+			val stopPendingIntent: PendingIntent = PendingIntent.getBroadcast(context, System.currentTimeMillis().toInt(), stopIntent, PendingIntent
+				.FLAG_CANCEL_CURRENT)
+			
+			val newNotification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
+				setSmallIcon(R.drawable.ic_baseline_control_camera_24)
+				setContentTitle("Granblue Automation Android")
+				setContentText(contentText)
+				addAction(R.drawable.ic_baseline_stop_circle_24, context.getString(R.string.accessibility_service_action), stopPendingIntent)
+				priority = NotificationManager.IMPORTANCE_HIGH
+				setCategory(Notification.CATEGORY_SERVICE)
+				setOngoing(true)
+				setShowWhen(true)
+			}.build()
+			
+			notificationManager.notify(NOTIFICATION_ID, newNotification)
+		}
 	}
 }

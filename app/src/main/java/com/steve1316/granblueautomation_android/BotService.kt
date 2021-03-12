@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
+import com.steve1316.granblueautomation_android.utils.NotificationUtils
 import kotlin.math.roundToInt
 
 /**
@@ -18,6 +19,7 @@ import kotlin.math.roundToInt
 class BotService: Service() {
 	private lateinit var myContext: Context
 	private lateinit var overlayView: View
+	private lateinit var overlayButton: ImageButton
 	
 	companion object {
 		private const val TAG: String = "GAA_BotService"
@@ -30,10 +32,14 @@ class BotService: Service() {
 			height = WindowManager.LayoutParams.WRAP_CONTENT
 			windowAnimations = android.R.style.Animation_Toast
 		}
+		
+		var isRunning = false
 	}
 	
 	@SuppressLint("ClickableViewAccessibility", "InflateParams")
-	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+	override fun onCreate() {
+		super.onCreate()
+		
 		myContext = this
 		
 		overlayView = LayoutInflater.from(this).inflate(R.layout.bot_actions, null)
@@ -41,43 +47,56 @@ class BotService: Service() {
 		windowManager.addView(overlayView, overlayLayoutParams)
 		
 		// This button is able to be moved around the screen and clicking it will start/stop the game automation.
-		val overlayButton = overlayView.findViewById<ImageButton>(R.id.bot_actions_start_button)
+		overlayButton = overlayView.findViewById(R.id.bot_actions_overlay_button)
 		overlayButton.setOnTouchListener(object: View.OnTouchListener {
 			private var initialX: Int = 0
 			private var initialY: Int = 0
 			private var initialTouchX: Float = 0F
 			private var initialTouchY: Float = 0F
-
+			
 			override fun onTouch(v: View?, event: MotionEvent?): Boolean {
 				val action = event?.action
-
+				
 				if(action == MotionEvent.ACTION_DOWN) {
 					// Get the initial position.
 					initialX = overlayLayoutParams.x
 					initialY = overlayLayoutParams.y
-
+					
 					// Now get the new position.
 					initialTouchX = event.rawX
 					initialTouchY = event.rawY
-
+					
 					return false
 				} else if(action == MotionEvent.ACTION_UP) {
 					val elapsedTime: Long = event.eventTime - event.downTime
 					if(elapsedTime < 100L) {
-						// Take a screenshot now and save it.
-						MediaProjectionService.takeScreenshotNow = true
-						
+						// Update both the Notification and the overlay button to reflect the current bot status.
+						if(!isRunning) {
+							Log.d(TAG, "Bot Service for GAA is now running.")
+							isRunning = true
+							NotificationUtils.updateNotification(myContext, isRunning)
+							overlayButton.setImageResource(R.drawable.ic_baseline_stop_circle_24)
+							
+							// Take a screenshot now and save it.
+							MediaProjectionService.takeScreenshotNow = true
+						} else {
+							Log.d(TAG, "Bot Service for GAA is now stopped.")
+							isRunning = false
+							NotificationUtils.updateNotification(myContext, isRunning)
+							overlayButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
+						}
+
 						// Returning true here freezes the animation of the click on the button.
 						return false
 					}
 				} else if(action == MotionEvent.ACTION_MOVE) {
 					val xDiff = (event.rawX - initialTouchX).roundToInt()
 					val yDiff = (event.rawY - initialTouchY).roundToInt()
-
+					
 					// Calculate the X and Y coordinates of the view.
 					overlayLayoutParams.x = initialX + xDiff
 					overlayLayoutParams.y = initialY + yDiff
-
+					
 					// Now update the layout.
 					windowManager.updateViewLayout(overlayView, overlayLayoutParams)
 					return false
@@ -86,8 +105,9 @@ class BotService: Service() {
 				return false
 			}
 		})
-		
-		Log.d(TAG, "Bot Service for GAA is now running.")
+	}
+
+	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		return super.onStartCommand(intent, flags, startId)
 	}
 	
@@ -97,7 +117,8 @@ class BotService: Service() {
 
 	override fun onDestroy() {
 		super.onDestroy()
-
+		
+		// Remove the overlay View that holds the overlay button.
 		windowManager.removeView(overlayView)
 	}
 }

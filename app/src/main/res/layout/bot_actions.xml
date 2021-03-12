@@ -5,7 +5,7 @@
     android:layout_height="wrap_content" >
 
     <ImageButton
-        android:id="@+id/bot_actions_start_button"
+        android:id="@+id/bot_actions_overlay_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginHorizontal="2dp"
