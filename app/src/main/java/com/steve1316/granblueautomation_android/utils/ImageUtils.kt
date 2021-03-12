@@ -145,7 +145,7 @@ class ImageUtils(context: Context) {
      * @param templateName File name of the template image.
      * @return Point object containing the location of the match or null if not found.
      */
-    fun find_button(templateName: String): Point? {
+    fun findButton(templateName: String): Point? {
         val folderName = "buttons"
         val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
         
@@ -170,7 +170,7 @@ class ImageUtils(context: Context) {
      * @param templateName File name of the template image.
      * @return True if the current location is at the specified location. False otherwise.
      */
-    fun confirm_location(templateName: String): Boolean {
+    fun confirmLocation(templateName: String): Boolean {
         val folderName = "headers"
         val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
     
@@ -186,5 +186,57 @@ class ImageUtils(context: Context) {
         } else {
             return false
         }
+    }
+    
+    /**
+     * Finds the location of the specified Summon.
+     *
+     * @param summonList List of selected Summons sorted from greatest to least priority.
+     * @param summonElementList List of Summon Elements that correspond to the summonList.
+     * @return Point object containing the location of the match or null if not found.
+     */
+    fun findSummon(summonList: ArrayList<String>, summonElementList: ArrayList<String>): Point? {
+        TODO("Not yet implemented")
+    }
+    
+    /**
+     * Finds any dialog popups from Lyria/Vyrn during Combat Mode.
+     *
+     * @param templateName File name of the template image.
+     * @return True if dialog popups were detected. False otherwise.
+     */
+    fun findDialog(templateName: String): Boolean {
+        TODO("Not yet implemented")
+    }
+    
+    /**
+     * Finds all occurrences of the specified image.
+     *
+     * @param templateName File name of the template image.
+     * @return An ArrayList of Point objects containing all the occurrences of the specified image or null if not found.
+     */
+    fun findAll(templateName: String): ArrayList<Point?> {
+        TODO("Not yet implemented")
+    }
+    
+    /**
+     * Finds all occurrences of the specified item image and sums all of the number amounts together.
+     *
+     * @param templateName File name of the template image.
+     * @return Sum of all the item's amounts.
+     */
+    fun findFarmedItems(templateName: String): Int {
+        TODO("Not yet implemented")
+    }
+    
+    /**
+     * Waits for the specified image to vanish from the screen.
+     *
+     * @param templateName File name of the template image.
+     * @param timeout Amount of time to wait before timing out. Default is 5 seconds.
+     * @return True if the specified image vanished from the screen. False otherwise.
+     */
+    fun waitVanish(templateName: String, timeout: Int = 5): Boolean {
+        TODO("Not yet implemented")
     }
 }

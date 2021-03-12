@@ -25,4 +25,6 @@ class SettingsFragment : Fragment() {
 
         return root
     }
+    
+    // TODO: Implement options for the user to choose item to farm, amount of it, mission, Summons, combat script, etc.
 }

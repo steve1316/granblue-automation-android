@@ -306,7 +306,7 @@ class MediaProjectionService : Service() {
 						ImageUtils.updateMatchFilePath(matchFilePath)
 						val imageUtils = ImageUtils(myContext)
 
-						val location = imageUtils.find_button("home")
+						val location = imageUtils.findButton("home")
 						val instance = MyAccessibilityService.getInstance()
 						if (location != null) {
 							instance.tap(location.x, location. y)
