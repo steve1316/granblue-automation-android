@@ -1,17 +1,31 @@
 package com.steve1316.granblueautomation_android.bot
 
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
+
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  *
  * TODO: Make sure that in the constructor that you read in all of the preferences that the user set in the settings for Farming Mode.
  */
 class Game {
+	companion object {
+		val startTime: Long = System.currentTimeMillis()
+	}
+	
 	/**
 	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
+	 *
+	 * Source is from https://stackoverflow.com/questions/9027317/how-to-convert-milliseconds-to-hhmmss-format/9027379
+	 *
 	 * @return String of HH:MM:SS format of the elapsed time.
 	 */
 	fun printTime(): String {
-		TODO("not yet implemented")
+		val elapsedMillis: Long = System.currentTimeMillis() - startTime
+		
+		return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(elapsedMillis), TimeUnit.MILLISECONDS.toMinutes(elapsedMillis)
+				- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)), TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit
+			.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis)))
 	}
 	
 	/**
