@@ -4,17 +4,19 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.steve1316.granblueautomation_android.bot.Game
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
-import java.io.FileInputStream
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Utility functions for image processing via OCR like OpenCV.
  */
-class ImageUtils(context: Context) {
+class ImageUtils(context: Context, private val game: Game) {
     private val TAG: String = "GAA_ImageUtils"
     private var myContext = context
     
@@ -29,9 +31,15 @@ class ImageUtils(context: Context) {
          *
          * @param filePath File path to where to store the image containing the location of where the match was found.
          */
-        fun updateMatchFilePath(filePath: String) {
+        private fun updateMatchFilePath(filePath: String) {
             matchFilePath = filePath
         }
+    }
+    
+    init {
+        // Set the file path to the /files/temp/ folder.
+        val matchFilePath: String = myContext.getExternalFilesDir(null)?.absolutePath + "/temp"
+        updateMatchFilePath(matchFilePath)
     }
     
     /**
@@ -117,13 +125,9 @@ class ImageUtils(context: Context) {
      * @return A Pair of source and template Bitmaps.
      */
     private fun getBitmaps(templateName: String, templateFolderName: String): Pair<Bitmap?, Bitmap?> {
-        var sourceBitmap: Bitmap?
+        val sourceBitmap = MediaProjectionService.takeScreenshotNow()
+        
         var templateBitmap: Bitmap?
-    
-        // Get the Bitmap from the source image file. It is named source.jpg for now.
-        FileInputStream(myContext.getExternalFilesDir(null)?.absolutePath + "/temp/source.jpg").use { inputStream ->
-            sourceBitmap = BitmapFactory.decodeStream(inputStream)
-        }
     
         // Get the Bitmap from the template image file inside the specified folder.
         myContext.assets?.open("$templateFolderName/$templateName.png").use { inputStream ->
@@ -131,7 +135,7 @@ class ImageUtils(context: Context) {
             templateBitmap = BitmapFactory.decodeStream(inputStream)
         }
         
-        if(sourceBitmap != null && templateBitmap != null) {
+        if(templateBitmap != null) {
             return Pair(sourceBitmap, templateBitmap)
         } else {
             Log.e(TAG, "One or both of the Bitmaps are null.")
@@ -143,49 +147,81 @@ class ImageUtils(context: Context) {
      * Finds the location of the specified button.
      *
      * @param templateName File name of the template image.
+     * @param tries Number of tries before failing. Defaults to 3.
+     * @param suppressError Whether or not to suppress saving error messages to the log.
      * @return Point object containing the location of the match or null if not found.
      */
-    fun findButton(templateName: String): Point? {
+    fun findButton(templateName: String, tries: Int = 3, suppressError: Boolean = false): Point? {
         val folderName = "buttons"
-        val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
+        var numberOfTries = tries
         
-        if(sourceBitmap != null && templateBitmap != null) {
-            val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
-            if(!resultFlag) {
-                Log.d(TAG, "Button, $templateName, was not found.")
-                return null
-            }
+        while(numberOfTries > 0) {
+            val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
     
-            Log.d(TAG, "Button, $templateName, was found.")
+            if(sourceBitmap != null && templateBitmap != null) {
+                val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
+                if (!resultFlag) {
+                    numberOfTries -= 1
+                    if (numberOfTries <= 0) {
+                        if (suppressError) {
+                            game.printToLog("[WARNING] Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button.",
+                                MESSAGE_TAG = TAG)
+                        }
             
-            return matchLocation
-        } else {
-            return null
+                        return null
+                    }
+        
+                    Log.d(TAG, "Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button. Trying again...")
+                } else {
+                    game.printToLog("[SUCCESS] Found the ${templateName.toUpperCase(Locale.ROOT)} at $matchLocation.", MESSAGE_TAG = TAG)
+                    return matchLocation
+                }
+            }
         }
+        
+        return null
     }
     
     /**
      * Confirms whether or not the bot is at the specified location.
      *
      * @param templateName File name of the template image.
+     * @param tries Number of tries before failing. Defaults to 3.
+     * @param suppressError Whether or not to suppress saving error messages to the log.
      * @return True if the current location is at the specified location. False otherwise.
      */
-    fun confirmLocation(templateName: String): Boolean {
+    fun confirmLocation(templateName: String, tries: Int = 3, suppressError: Boolean = false): Boolean {
         val folderName = "headers"
-        val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
+        var numberOfTries = tries
+        while(numberOfTries > 0) {
+            val (sourceBitmap, templateBitmap) = getBitmaps(templateName + "_header", folderName)
     
-        if(sourceBitmap != null && templateBitmap != null) {
-            val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
-            if(!resultFlag) {
-                Log.d(TAG, "Current location is not at $templateName.")
-                return false
+            if(sourceBitmap != null && templateBitmap != null) {
+                val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
+                if(!resultFlag) {
+                    Log.d(TAG, "Current location is not at $templateName.")
+                    numberOfTries -= 1
+                    if(numberOfTries <= 0) {
+                        break
+                    }
+                    
+                    game.wait(1.0)
+                } else {
+                    game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.toUpperCase(Locale.ROOT)}.",
+                        MESSAGE_TAG = TAG)
+                    return true
+                }
+            } else {
+                break
             }
-        
-            Log.d(TAG, "Current location is at $templateName.")
-            return true
-        } else {
-            return false
         }
+    
+        if(suppressError) {
+            game.printToLog("[WARNING] Failed to confirm the bot's location at ${templateName.toUpperCase(Locale.ROOT)}.",
+                MESSAGE_TAG = TAG)
+        }
+        
+        return false
     }
     
     /**
