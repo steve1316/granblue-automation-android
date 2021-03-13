@@ -9,7 +9,8 @@ import android.os.IBinder
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
-import com.steve1316.granblueautomation_android.utils.MediaProjectionService
+import com.steve1316.granblueautomation_android.bot.Game
+import com.steve1316.granblueautomation_android.bot.MapSelection
 import com.steve1316.granblueautomation_android.utils.NotificationUtils
 import kotlin.math.roundToInt
 
@@ -77,8 +78,11 @@ class BotService: Service() {
 							NotificationUtils.updateNotification(myContext, isRunning)
 							overlayButton.setImageResource(R.drawable.ic_baseline_stop_circle_24)
 							
-							// Take a screenshot now and save it.
-							MediaProjectionService.takeScreenshotNow = true
+							val game = Game(myContext)
+							val mapSelection = MapSelection(game)
+							
+							mapSelection.selectMap("special", "", "", "", "")
+							
 						} else {
 							Log.d(TAG, "Bot Service for GAA is now stopped.")
 							isRunning = false
