@@ -24,7 +24,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.steve1316.granblueautomation_android.BotService
-import com.steve1316.granblueautomation_android.MyAccessibilityService
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -57,8 +57,50 @@ class MediaProjectionService : Service() {
 		private var oldRotation: Int = 0
 		private lateinit var imageReader: ImageReader
 		private var SCREENSHOT_NUM: Int = 0
-		var takeScreenshotNow: Boolean = false
 		var isRunning: Boolean = false
+		
+		/**
+		 * Tell the ImageReader to grab the latest acquired screenshot and process it into a Bitmap.
+		 *
+		 * @return Bitmap of the latest acquired screenshot.
+		 */
+		fun takeScreenshotNow(): Bitmap? {
+			var image: Image? = null
+			var sourceBitmap: Bitmap? = null
+			
+			// Loop until the ImageReader grabs a valid Image.
+			while(image == null) {
+				image = imageReader.acquireLatestImage()
+				
+				if(image != null) {
+					val planes: Array<Plane> = image.planes
+					val buffer = planes[0].buffer
+					val pixelStride = planes[0].pixelStride
+					val rowStride = planes[0].rowStride
+					val rowPadding: Int = rowStride - pixelStride * displayWidth
+					
+					// Create the Bitmap.
+					sourceBitmap = Bitmap.createBitmap(displayWidth + rowPadding / pixelStride, displayHeight, Bitmap.Config.ARGB_8888)
+					sourceBitmap.copyPixelsFromBuffer(buffer)
+					
+					// Now write the Bitmap to the specified file inside the /files/temp/ folder.
+					SCREENSHOT_NUM++
+					val fos = FileOutputStream("$tempDirectory/source.jpg")
+					sourceBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+					
+					// Perform cleanup by closing streams and freeing up memory.
+					try {
+						fos.close()
+					} catch (ioe: IOException) {
+						ioe.printStackTrace()
+					}
+					
+					image.close()
+				}
+			}
+			
+			return sourceBitmap
+		}
 		
 		/**
 		 * Create a new Intent to start this service.
@@ -256,77 +298,6 @@ class MediaProjectionService : Service() {
 	}
 	
 	/**
-	 * Custom listener for ImageReader when it is necessary to process a newly received Image.
-	 */
-	private inner class ImageAvailableListener: ImageReader.OnImageAvailableListener {
-		private val TAG_ImageAvailableListener: String = "GAA_ImageAvailableListener"
-		
-		override fun onImageAvailable(reader: ImageReader?) {
-			var fos: FileOutputStream? = null
-			var image: Image? = null
-			var sourceBitmap: Bitmap? = null
-			
-			try {
-				image = imageReader.acquireLatestImage()
-				
-				if (takeScreenshotNow && image != null) {
-					val planes: Array<Plane> = image.planes
-					val buffer = planes[0].buffer
-					val pixelStride = planes[0].pixelStride
-					val rowStride = planes[0].rowStride
-					val rowPadding: Int = rowStride - pixelStride * displayWidth
-
-					// Create the Bitmap.
-					sourceBitmap = Bitmap.createBitmap(displayWidth + rowPadding / pixelStride, displayHeight, Bitmap.Config.ARGB_8888)
-					sourceBitmap.copyPixelsFromBuffer(buffer)
-					
-					// Now write the Bitmap to the specified file inside the /files/temp/ folder.
-					SCREENSHOT_NUM++
-					fos = FileOutputStream("$tempDirectory/source.jpg")
-					sourceBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-					Log.d(TAG_ImageAvailableListener, "Screenshot successfully created.")
-				} else {
-					return
-				}
-				
-			} catch (e: Exception) {
-				if(takeScreenshotNow) {
-					Log.e(TAG_ImageAvailableListener, "Failed to create a screenshot.")
-					Toast.makeText(myContext, "Failed to create a screenshot.", Toast.LENGTH_SHORT).show()
-					e.printStackTrace()
-				}
-			} finally {
-				// Perform cleanup by closing streams and freeing up memory.
-				if (takeScreenshotNow && fos != null) {
-					try {
-						fos.close()
-						
-						// Get the file path to the /files/temp/ folder.
-						val matchFilePath: String = myContext.getExternalFilesDir(null)?.absolutePath + "/temp"
-						ImageUtils.updateMatchFilePath(matchFilePath)
-						val imageUtils = ImageUtils(myContext)
-
-						val location = imageUtils.findButton("home")
-						val instance = MyAccessibilityService.getInstance()
-						if (location != null) {
-							instance.tap(location.x, location. y)
-						}
-						
-					} catch (ioe: IOException) {
-						if(takeScreenshotNow) {
-							ioe.printStackTrace()
-						}
-					}
-				}
-				
-				sourceBitmap?.recycle()
-				image?.close()
-				takeScreenshotNow = false
-			}
-		}
-	}
-	
-	/**
 	 * Creates and starts the MediaProjection.
 	 *
 	 * @param resultCode The output of this service.
@@ -390,8 +361,5 @@ class MediaProjectionService : Service() {
 		// Now create the VirtualDisplay.
 		virtualDisplay = mediaProjection?.createVirtualDisplay("Granblue Automation Android's Virtual Display", displayWidth, displayHeight,
 			displayDPI, getVirtualDisplayFlags(), imageReader.surface, null, threadHandler)!!
-		
-		// Finally, attach the ImageAvailableListener to the new ImageReader.
-		imageReader.setOnImageAvailableListener(ImageAvailableListener(), threadHandler)
 	}
 }
