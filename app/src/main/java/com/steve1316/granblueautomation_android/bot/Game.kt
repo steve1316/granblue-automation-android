@@ -1,5 +1,14 @@
 package com.steve1316.granblueautomation_android.bot
 
+import android.content.Context
+import android.util.Log
+import com.steve1316.granblueautomation_android.MyAccessibilityService
+import com.steve1316.granblueautomation_android.utils.ImageUtils
+import com.steve1316.granblueautomation_android.utils.MediaProjectionService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import org.opencv.core.Point
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
@@ -8,9 +17,14 @@ import kotlin.collections.ArrayList
  *
  * TODO: Make sure that in the constructor that you read in all of the preferences that the user set in the settings for Farming Mode.
  */
-class Game {
+class Game(myContext: Context) {
+	private val TAG: String = "GAA_Game"
+	var imageUtils = ImageUtils(myContext, this)
+	val gestureUtils = MyAccessibilityService.getInstance()
+	
 	companion object {
 		val startTime: Long = System.currentTimeMillis()
+		var messageLog: ArrayList<String> = arrayListOf()
 	}
 	
 	/**
@@ -29,12 +43,14 @@ class Game {
 	}
 	
 	/**
-	 * Saves the specified message to the log.
+	 * Print the specified message to debug console and then saves the message to the log.
 	 *
 	 * @param message Message to be saved.
+	 * @param MESSAGE_TAG TAG to distinguish between messages for where they came from. Defaults to Game's TAG.
 	 */
-	fun printToLog(message: String) {
-		TODO("not yet implemented")
+	fun printToLog(message: String, MESSAGE_TAG: String = TAG) {
+		Log.d(MESSAGE_TAG, message)
+		messageLog.add(printTime() + " " + message)
 	}
 	
 	/**
@@ -44,7 +60,21 @@ class Game {
 	 * @param displayInfoCheck Whether or not it should print display info into the log.
 	 */
 	fun goBackHome(confirmLocationCheck: Boolean = false, displayInfoCheck: Boolean = false) {
-		TODO("not yet implemented")
+		if(!imageUtils.confirmLocation("home")) {
+			printToLog("[INFO] Moving back to the Home screen...")
+			findAndClickButton("home")
+		} else {
+			printToLog("[INFO] Bot is already at the Home screen.")
+		}
+		
+		if(displayInfoCheck) {
+			printToLog("Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, " +
+					"Screen DPI: ${MediaProjectionService.displayDPI}")
+		}
+		
+		if(confirmLocationCheck) {
+			imageUtils.confirmLocation("home")
+		}
 	}
 	
 	/**
@@ -52,8 +82,10 @@ class Game {
 	 *
 	 * @param seconds Number of seconds to pause execution.
 	 */
-	fun wait(seconds: Int) {
-		TODO("not yet implemented")
+	fun wait(seconds: Double) {
+		runBlocking {
+			delay(seconds.toLong() * 1000)
+		}
 	}
 	
 	/**
@@ -65,7 +97,18 @@ class Game {
 	 * @return True if the button was found and clicked. False otherwise.
 	 */
 	fun findAndClickButton(buttonName: String, tries: Int = 2, suppressError: Boolean = false): Boolean {
-		TODO("not yet implemented")
+		Log.d(TAG, "[DEBUG] Now attempting to find and click the ${buttonName.toUpperCase(Locale.ROOT)} button.")
+		val tempLocation: Point
+		
+		if(buttonName.toLowerCase(Locale.ROOT) == "quest") {
+			tempLocation = imageUtils.findButton("quest_blue", tries=tries, suppressError=suppressError)!!
+		} else {
+			tempLocation = imageUtils.findButton(buttonName, tries=tries, suppressError=suppressError)!!
+		}
+		
+		val gestureConfirmation: Boolean = gestureUtils.tap(tempLocation.x, tempLocation.y)
+		wait(1.0)
+		return gestureConfirmation
 	}
 	
 	/**
