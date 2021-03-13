@@ -1,9 +1,14 @@
 package com.steve1316.granblueautomation_android.bot
 
+import android.util.Log
+import java.util.*
+
 /**
  * Provides the utility functions needed for perform navigation for Farming Mode throughout Granblue Fantasy.
  */
-class MapSelection {
+class MapSelection(private val game: Game) {
+	private val TAG: String = "GAA_MapSelection"
+	
 	/**
 	 * Navigates the bot to the specified map and preps the bot for Summon/Party selection.
 	 *
@@ -15,7 +20,38 @@ class MapSelection {
 	 * @return True if the bot reached the Summon Selection screen. False otherwise.
 	 */
 	fun selectMap(farmingMode: String, mapName: String, itemName: String, missionName: String, difficulty: String): Boolean {
-		TODO("not yet implemented")
+		try {
+			var currentLocation = ""
+			val formattedMapName = mapName.replace(" ", "_").replace("-", "_")
+			
+			// Go to the Home screen.
+			game.goBackHome(confirmLocationCheck = true)
+			
+			if(farmingMode.toLowerCase(Locale.ROOT) == "quest") {
+				val checkLocation = false
+				
+				if(game.imageUtils.confirmLocation("map_$formattedMapName", tries=2)) {
+					return true
+				}
+				
+			} else if(farmingMode.toLowerCase(Locale.ROOT) == "special") {
+				// Go to the Quests screen and then to the Special Quest screen.
+				game.findAndClickButton("quest")
+				
+				if(game.imageUtils.confirmLocation("quest")) {
+					game.findAndClickButton("special")
+					
+					if(game.imageUtils.confirmLocation("special")) {
+						Log.d(TAG, "YES I AM HERE")
+					}
+				}
+			}
+		} catch(e: Exception) {
+			Log.e(TAG, "Encountered an exception in selectMap(): ")
+			e.printStackTrace()
+		}
+		
+		return false
 	}
 	
 	/**
