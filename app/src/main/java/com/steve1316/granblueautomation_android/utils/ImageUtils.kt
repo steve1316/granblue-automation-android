@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
 import com.steve1316.granblueautomation_android.bot.Game
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
@@ -230,10 +231,55 @@ class ImageUtils(context: Context, private val game: Game) {
      *
      * @param summonList List of selected Summons sorted from greatest to least priority.
      * @param summonElementList List of Summon Elements that correspond to the summonList.
+     * @param suppressError Whether or not to suppress saving error messages to the log.
      * @return Point object containing the location of the match or null if not found.
      */
-    fun findSummon(summonList: ArrayList<String>, summonElementList: ArrayList<String>): Point? {
-        TODO("Not yet implemented")
+    fun findSummon(summonList: ArrayList<String>, summonElementList: ArrayList<String>, suppressError: Boolean = false): Point? {
+        val folderName = "summons"
+        
+        game.printToLog("[DEBUG] Received the following list of Summons to search for: $summonList", MESSAGE_TAG = TAG)
+        game.printToLog("[DEBUG] Received the following list of Summon Elements: $summonElementList", MESSAGE_TAG = TAG)
+    
+        var summonIndex = 0
+        var summonLocation: Point? = null
+        
+        while(summonLocation == null && summonIndex <= summonList.size) {
+            // Select the Summon Element.
+            game.printToLog("[INFO] Now attempting to find ${summonList[summonIndex]}", MESSAGE_TAG = TAG)
+            val currentSummonElement = summonElementList[summonIndex]
+            game.findAndClickButton("summon_$currentSummonElement")
+            
+            while(summonLocation == null && summonIndex <= summonList.size) {
+                // Go through each Summon detected on the Summon Selection screen and see if they match with the selected Summon.
+                val summonName = summonList[summonIndex]
+                val (sourceBitmap, templateBitmap) = getBitmaps(summonName, folderName)
+                
+                if(sourceBitmap != null && templateBitmap != null && match(sourceBitmap, templateBitmap)) {
+                    summonLocation = matchLocation
+                    break
+                } else {
+                    game.printToLog("[WARNING] Could not locate ${summonName.toUpperCase(Locale.ROOT)} Summon. Trying again...")
+                    
+                    // If it reached the bottom of the Summon Selection page, scroll all the way back up.
+                    if(findButton("bottom_of_summon_selection", tries = 1) != null) {
+                        game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD)
+                        summonIndex += 1
+                        break
+                    }
+                }
+            }
+            
+            if(summonLocation == null && (summonIndex + 1) > summonList.size) {
+                if(!suppressError) {
+                    game.printToLog("[WARNING] Failed to find any of the specified Summons.", MESSAGE_TAG = TAG)
+                }
+                
+                return null
+            }
+        }
+        
+        game.printToLog("[SUCCESS] Found ${summonList[summonIndex].toUpperCase(Locale.ROOT)} Summon at $matchLocation.")
+        return matchLocation
     }
     
     /**
