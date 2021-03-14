@@ -163,7 +163,7 @@ class ImageUtils(context: Context, private val game: Game) {
                 if (!resultFlag) {
                     numberOfTries -= 1
                     if (numberOfTries <= 0) {
-                        if (suppressError) {
+                        if (!suppressError) {
                             game.printToLog("[WARNING] Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button.",
                                 MESSAGE_TAG = TAG)
                         }
@@ -172,6 +172,7 @@ class ImageUtils(context: Context, private val game: Game) {
                     }
         
                     Log.d(TAG, "Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button. Trying again...")
+                    game.wait(1.0)
                 } else {
                     game.printToLog("[SUCCESS] Found the ${templateName.toUpperCase(Locale.ROOT)} at $matchLocation.", MESSAGE_TAG = TAG)
                     return matchLocation
@@ -216,7 +217,7 @@ class ImageUtils(context: Context, private val game: Game) {
             }
         }
     
-        if(suppressError) {
+        if(!suppressError) {
             game.printToLog("[WARNING] Failed to confirm the bot's location at ${templateName.toUpperCase(Locale.ROOT)}.",
                 MESSAGE_TAG = TAG)
         }
