@@ -52,7 +52,6 @@ class ImageUtils(context: Context, private val game: Game) {
      */
     private fun match(sourceBitmap: Bitmap, templateBitmap: Bitmap, useCannyAlgorithm: Boolean = false): Boolean {
         // Create the Mats of both source and template images.
-        OpenCVLoader.initDebug()
         val sourceMat = Mat()
         val templateMat = Mat()
         Utils.bitmapToMat(sourceBitmap, sourceMat)
