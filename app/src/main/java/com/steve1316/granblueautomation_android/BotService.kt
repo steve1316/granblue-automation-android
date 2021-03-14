@@ -9,21 +9,24 @@ import android.os.IBinder
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
+import android.widget.Toast
 import com.steve1316.granblueautomation_android.bot.Game
 import com.steve1316.granblueautomation_android.bot.MapSelection
 import com.steve1316.granblueautomation_android.utils.NotificationUtils
+import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
 /**
  * This Service will begin workflow automation based on the chosen preference settings.
  */
 class BotService: Service() {
+	private val TAG: String = "GAA_BotService"
 	private lateinit var myContext: Context
 	private lateinit var overlayView: View
 	private lateinit var overlayButton: ImageButton
 	
 	companion object {
-		private const val TAG: String = "GAA_BotService"
+		private var thread: Thread = Thread()
 		private lateinit var windowManager: WindowManager
 		private val overlayLayoutParams = WindowManager.LayoutParams().apply {
 			type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -74,6 +77,7 @@ class BotService: Service() {
 						// Update both the Notification and the overlay button to reflect the current bot status.
 						if(!isRunning) {
 							Log.d(TAG, "Bot Service for GAA is now running.")
+							Toast.makeText(myContext, "Bot Service for GAA is now running.", Toast.LENGTH_SHORT).show()
 							isRunning = true
 							NotificationUtils.updateNotification(myContext, isRunning)
 							overlayButton.setImageResource(R.drawable.ic_baseline_stop_circle_24)
@@ -81,10 +85,15 @@ class BotService: Service() {
 							val game = Game(myContext)
 							val mapSelection = MapSelection(game)
 							
-							mapSelection.selectMap("special", "", "", "", "")
-							
+							thread = thread {
+								mapSelection.selectMap("special", "", "", "", "")
+								//MediaProjectionService.takeScreenshotNow()
+							}
 						} else {
+							thread.interrupt()
+							
 							Log.d(TAG, "Bot Service for GAA is now stopped.")
+							Toast.makeText(myContext, "Bot Service for GAA is now stopped.", Toast.LENGTH_SHORT).show()
 							isRunning = false
 							NotificationUtils.updateNotification(myContext, isRunning)
 							overlayButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
