@@ -3,7 +3,7 @@
 
 > Python version here: https://github.com/steve1316/granblue-automation-pyautogui
 
-This Android application written in Kotlin is designed for education research purposes on studying the Android architecture and using system services such as MediaProjection and AccessibilityService in conjunction with OpenCV to automate certain workflows via image template matching.
+This Android application written in Kotlin is designed for educational research purposes on studying the Android architecture and using system services such as MediaProjection and AccessibilityService in conjunction with OpenCV to automate certain workflows via image template matching.
 
 Screenshots are taken via the MediaProjection and OpenCV performs image processing. Gestures are performed by AccessibilityService in order to perform various actions such as tapping, swiping or scrolling the screen.
 
