@@ -98,17 +98,32 @@ class Game(myContext: Context) {
 	 */
 	fun findAndClickButton(buttonName: String, tries: Int = 2, suppressError: Boolean = false): Boolean {
 		Log.d(TAG, "[DEBUG] Now attempting to find and click the ${buttonName.toUpperCase(Locale.ROOT)} button.")
-		val tempLocation: Point
+		var tempLocation: Point?
 		
 		if(buttonName.toLowerCase(Locale.ROOT) == "quest") {
-			tempLocation = imageUtils.findButton("quest_blue", tries=tries, suppressError=suppressError)!!
+			tempLocation = imageUtils.findButton("quest_blue", tries=tries, suppressError=suppressError)
+			if(tempLocation == null) {
+				tempLocation = imageUtils.findButton("quest_red", tries=tries, suppressError=suppressError)
+			}
+			if(tempLocation == null) {
+				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries=tries, suppressError=suppressError)
+			}
+			if(tempLocation == null) {
+				tempLocation = imageUtils.findButton("quest_red_strike_time", tries=tries, suppressError=suppressError)
+			}
 		} else {
-			tempLocation = imageUtils.findButton(buttonName, tries=tries, suppressError=suppressError)!!
+			tempLocation = imageUtils.findButton(buttonName, tries=tries, suppressError=suppressError)
 		}
 		
-		val gestureConfirmation: Boolean = gestureUtils.tap(tempLocation.x, tempLocation.y)
-		wait(1.0)
-		return gestureConfirmation
+		var gestureConfirmation = false
+		
+		if(tempLocation != null) {
+			gestureConfirmation = gestureUtils.tap(tempLocation.x, tempLocation.y)
+			wait(1.0)
+			return gestureConfirmation
+		} else {
+			return false
+		}
 	}
 	
 	/**
