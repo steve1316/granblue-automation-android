@@ -286,10 +286,40 @@ class ImageUtils(context: Context, private val game: Game) {
      * Finds any dialog popups from Lyria/Vyrn during Combat Mode.
      *
      * @param templateName File name of the template image.
-     * @return True if dialog popups were detected. False otherwise.
+     * @param tries Number of tries before failing. Defaults to 3.
+     * @param suppressError Whether or not to suppress saving error messages to the log.
+     * @return Point object containing the location of the match or null if not found.
      */
-    fun findDialog(templateName: String): Boolean {
-        TODO("Not yet implemented")
+    fun findDialog(templateName: String, tries: Int = 3, suppressError: Boolean = false): Point? {
+        val folderName = "dialogs"
+        var numberOfTries = tries
+    
+        while(numberOfTries > 0) {
+            val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
+        
+            if(sourceBitmap != null && templateBitmap != null) {
+                val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
+                if (!resultFlag) {
+                    numberOfTries -= 1
+                    if (numberOfTries <= 0) {
+                        game.printToLog("[SUCCESS] There are no dialog popups detected from Lyria/Vyrn.", MESSAGE_TAG = TAG)
+                    
+                        return null
+                    }
+                
+                    if(!suppressError) {
+                        Log.d(TAG, "Failed to find the ${templateName.toUpperCase(Locale.ROOT)} dialog. Trying again...")
+                    }
+                    
+                    game.wait(1.0)
+                } else {
+                    game.printToLog("[SUCCESS] Found the ${templateName.toUpperCase(Locale.ROOT)} at $matchLocation.", MESSAGE_TAG = TAG)
+                    return matchLocation
+                }
+            }
+        }
+    
+        return null
     }
     
     /**
