@@ -26,6 +26,7 @@ class ImageUtils(context: Context, private val game: Game) {
     companion object {
         private var matchFilePath: String = ""
         lateinit var matchLocation: Point
+        var matchLocations: ArrayList<Point> = arrayListOf()
     
         /**
          * Saves the file path to the saved match image file for debugging purposes.
@@ -115,6 +116,64 @@ class ImageUtils(context: Context, private val game: Game) {
         } else {
             return false
         }
+    }
+    
+    private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap): ArrayList<Point> {
+        // Create the Mats of both source and template images.
+        val sourceMat = Mat()
+        val templateMat = Mat()
+        Utils.bitmapToMat(sourceBitmap, sourceMat)
+        Utils.bitmapToMat(templateBitmap, templateMat)
+    
+        // Make the Mats grayscale for the source and the template.
+        Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
+        Imgproc.cvtColor(templateMat, templateMat, Imgproc.COLOR_BGR2GRAY)
+    
+        // Create the result matrix.
+        val resultColumns: Int = sourceMat.cols() - templateMat.cols() + 1
+        val resultRows: Int = sourceMat.rows() - templateMat.rows() + 1
+        val resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
+        
+        // Loop until all matches are found.
+        while(true) {
+            // Now perform the matching and localize the result.
+            Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
+            val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
+            
+            if((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
+                Log.d(TAG, "MATCH FOUND <= 0.2")
+                val tempMatchLocation: Point = mmr.minLoc
+                Log.d(TAG, "Point $tempMatchLocation minVal: ${mmr.minVal}")
+                
+                // Draw a rectangle around the match and then save it to the specified file.
+                Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
+                        templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
+                Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
+    
+                // Center the location coordinates and then save it to the arrayList.
+                tempMatchLocation.x += (templateMat.cols() / 2)
+                tempMatchLocation.y += (templateMat.rows() / 2)
+                matchLocations.add(tempMatchLocation)
+            } else if((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
+                Log.d(TAG, "MATCH FOUND >= 0.8")
+                val tempMatchLocation: Point = mmr.maxLoc
+                Log.d(TAG, "Point $tempMatchLocation maxVal: ${mmr.maxVal}")
+    
+                // Draw a rectangle around the match and then save it to the specified file.
+                Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
+                        templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
+                Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
+    
+                // Center the location coordinates and then save it to the arrayList.
+                tempMatchLocation.x += (templateMat.cols() / 2)
+                tempMatchLocation.y += (templateMat.rows() / 2)
+                matchLocations.add(tempMatchLocation)
+            } else {
+                break
+            }
+        }
+    
+        return matchLocations
     }
     
     /**
@@ -327,8 +386,19 @@ class ImageUtils(context: Context, private val game: Game) {
      * @param templateName File name of the template image.
      * @return An ArrayList of Point objects containing all the occurrences of the specified image or null if not found.
      */
-    fun findAll(templateName: String): ArrayList<Point?> {
-        TODO("Not yet implemented")
+    fun findAll(templateName: String): ArrayList<Point> {
+        val folderName = "buttons"
+    
+        val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
+    
+        // Clear the ArrayList first before attempting to find all matches.
+        matchLocations.clear()
+    
+        if(sourceBitmap != null && templateBitmap != null) {
+            matchAll(sourceBitmap, templateBitmap)
+        }
+        
+        return matchLocations
     }
     
     /**
