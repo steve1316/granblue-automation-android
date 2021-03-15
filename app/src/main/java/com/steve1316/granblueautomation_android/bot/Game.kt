@@ -101,24 +101,42 @@ class Game(myContext: Context) {
 		var tempLocation: Point?
 		
 		if(buttonName.toLowerCase(Locale.ROOT) == "quest") {
-			tempLocation = imageUtils.findButton("quest_blue", tries=tries, suppressError=suppressError)
+			tempLocation = imageUtils.findButton("quest_blue", tries = tries, suppressError = suppressError)
 			if(tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_red", tries=tries, suppressError=suppressError)
+				tempLocation = imageUtils.findButton("quest_red", tries = tries, suppressError = suppressError)
 			}
 			if(tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries=tries, suppressError=suppressError)
+				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries = tries, suppressError = suppressError)
 			}
 			if(tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_red_strike_time", tries=tries, suppressError=suppressError)
+				tempLocation = imageUtils.findButton("quest_red_strike_time", tries = tries, suppressError = suppressError)
+			}
+		} else if(buttonName.toLowerCase(Locale.ROOT) == "raid") {
+			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
+			if(tempLocation == null) {
+				tempLocation = imageUtils.findButton("raid_bouncing", tries = tries, suppressError = suppressError)
+			}
+		} else if(buttonName.toLowerCase(Locale.ROOT) == "coop") {
+			tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError)
+			if(tempLocation == null) {
+				tempLocation = imageUtils.findButton("coop_start_faded", tries = tries, suppressError = suppressError)
+			}
+		} else if(buttonName.toLowerCase(Locale.ROOT) == "event_special_quest") {
+			tempLocation = imageUtils.findButton("event_special_quest_flat", tries = tries, suppressError = suppressError)
+			if(tempLocation == null) {
+				tempLocation = imageUtils.findButton("event_special_quest_bouncing", tries = tries, suppressError = suppressError)
+			}
+		} else if(buttonName.toLowerCase(Locale.ROOT) == "world") {
+			tempLocation = imageUtils.findButton("world", tries = tries, suppressError = suppressError)
+			if(tempLocation == null) {
+				tempLocation = imageUtils.findButton("world2", tries = tries, suppressError = suppressError)
 			}
 		} else {
-			tempLocation = imageUtils.findButton(buttonName, tries=tries, suppressError=suppressError)
+			tempLocation = imageUtils.findButton(buttonName, tries = tries, suppressError = suppressError)
 		}
 		
-		var gestureConfirmation = false
-		
 		if(tempLocation != null) {
-			gestureConfirmation = gestureUtils.tap(tempLocation.x, tempLocation.y)
+			val gestureConfirmation = gestureUtils.tap(tempLocation.x, tempLocation.y)
 			wait(1.0)
 			return gestureConfirmation
 		} else {
