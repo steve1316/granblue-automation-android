@@ -13,6 +13,76 @@ class MapSelection(private val game: Game) {
 	private val TAG: String = "GAA_MapSelection"
 	
 	/**
+	 * Helper function to assist selectMap() in navigating to the correct island for Quest Farming Mode.
+	 *
+	 * @param islandName Name of the island.
+	 * @param formattedIslandName Formatted version of the islandName string.
+	 * @param currentLocation The name of the island that the bot is currently at.
+	 * @return True if the bot arrived at the correct island. False otherwise.
+	 */
+	private fun checkMapLocation(islandName: String, formattedIslandName: String, currentLocation: String): Boolean {
+		// Phantagrande Skydom Page 1
+		if(islandName == "Port Breeze Archipelago" || islandName == "Valtz Duchy" || islandName == "Auguste Isles" || islandName == "Lumacie Archipelago" ||
+			islandName == "Albion Citadel") {
+			if(currentLocation == "Mist-Shrouded Isle" || currentLocation == "Golonzo Island" || currentLocation == "Amalthea Island"
+				|| currentLocation == "Former Capital Mephorash" || currentLocation == "Agastia") {
+				game.findAndClickButton("world_left_arrow")
+			}
+			
+			// Use a manual way to tap on the correct island if image matching for the island name failed.
+			if(!game.findAndClickButton(formattedIslandName, tries = 1)) {
+				val arrowLocation = game.imageUtils.findButton("world_right_arrow")
+					?: throw Exception("Unable to find the location of the right arrow for the World.")
+				
+				if(islandName == "Port Breeze Archipelago") {
+					game.gestureUtils.tap(arrowLocation.x - 320, arrowLocation.y - 159)
+				} else if(islandName == "Valtz Duchy") {
+					game.gestureUtils.tap(arrowLocation.x - 150, arrowLocation.y - 85)
+				} else if(islandName == "Auguste Isles") {
+					game.gestureUtils.tap(arrowLocation.x - 374, arrowLocation.y - 5)
+				} else if(islandName == "Lumacie Archipelago") {
+					game.gestureUtils.tap(arrowLocation.x - 84, arrowLocation.y + 39)
+				} else if(islandName == "Albion Citadel") {
+					game.gestureUtils.tap(arrowLocation.x - 267, arrowLocation.y + 121)
+				}
+			}
+			
+			return true
+		}
+		
+		// Phantagrande Skydom Page 2
+		else if(islandName == "Mist-Shrouded Isle" || islandName == "Golonzo Island" || islandName == "Amalthea Island" || islandName == "Former Capital " +
+			"Mephorash" || islandName == "Agastia") {
+			if(currentLocation == "Port Breeze Archipelago" || currentLocation == "Valtz Duchy" || currentLocation == "Auguste Isles" ||
+				currentLocation == "Lumacie Archipelago" || currentLocation == "Albion Citadel") {
+				game.findAndClickButton("world_right_arrow")
+			}
+			
+			// Use a manual way to tap on the correct island if image matching for the island name failed.
+			if(!game.findAndClickButton(formattedIslandName, tries = 1)) {
+				val arrowLocation = game.imageUtils.findButton("world_left_arrow")
+					?: throw Exception("Unable to find the location of the left arrow for the World.")
+				
+				if(islandName == "Mist-Shrouded Isle") {
+					game.gestureUtils.tap(arrowLocation.x + 162, arrowLocation.y + 114)
+				} else if(islandName == "Golonzo Island") {
+					game.gestureUtils.tap(arrowLocation.x + 362, arrowLocation.y + 85)
+				} else if(islandName == "Amalthea Island") {
+					game.gestureUtils.tap(arrowLocation.x + 127, arrowLocation.y - 14)
+				} else if(islandName == "Former Capital Mephorash") {
+					game.gestureUtils.tap(arrowLocation.x + 352, arrowLocation.y - 51)
+				} else if(islandName == "Agastia") {
+					game.gestureUtils.tap(arrowLocation.x + 190, arrowLocation.y - 148)
+				}
+			}
+			
+			return true
+		}
+		
+		return false
+	}
+	
+	/**
 	 * Navigates the bot to the specified map and preps the bot for Summon/Party selection.
 	 *
 	 * @param farmingMode Mode to look for the specified item and map in.
