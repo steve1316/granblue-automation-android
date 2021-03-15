@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.steve1316.granblueautomation_android.bot.Game
-import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -184,6 +183,10 @@ class ImageUtils(context: Context, private val game: Game) {
      * @return A Pair of source and template Bitmaps.
      */
     private fun getBitmaps(templateName: String, templateFolderName: String): Pair<Bitmap?, Bitmap?> {
+        // Scroll the screen back and forth a bit to let MediaProjection's ImageReader acquire new images.
+        game.gestureUtils.swipe(500f, 500f, 500f, 510f, 100L)
+        game.gestureUtils.swipe(500f, 500f, 510f, 500f, 100L)
+        
         val sourceBitmap = MediaProjectionService.takeScreenshotNow()
         
         var templateBitmap: Bitmap?
