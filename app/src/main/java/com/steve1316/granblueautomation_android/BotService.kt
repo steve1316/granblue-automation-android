@@ -86,7 +86,7 @@ class BotService: Service() {
 							val mapSelection = MapSelection(game)
 							
 							thread = thread {
-								mapSelection.selectMap("special", "", "", "", "")
+								mapSelection.selectMap("special", "Angel Halo", "VH Angel Halo", "Very Hard")
 								//MediaProjectionService.takeScreenshotNow()
 							}
 						} else {
