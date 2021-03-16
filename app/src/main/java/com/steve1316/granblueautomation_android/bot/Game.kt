@@ -101,15 +101,15 @@ class Game(myContext: Context) {
 		var tempLocation: Point?
 		
 		if(buttonName.toLowerCase(Locale.ROOT) == "quest") {
-			tempLocation = imageUtils.findButton("quest_blue", tries = tries, suppressError = suppressError)
+			tempLocation = imageUtils.findButton("quest_blue", tries = 1, suppressError = suppressError)
 			if(tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_red", tries = tries, suppressError = suppressError)
+				tempLocation = imageUtils.findButton("quest_red", tries = 1, suppressError = suppressError)
 			}
 			if(tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries = tries, suppressError = suppressError)
+				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries = 1, suppressError = suppressError)
 			}
 			if(tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_red_strike_time", tries = tries, suppressError = suppressError)
+				tempLocation = imageUtils.findButton("quest_red_strike_time", tries = 1, suppressError = suppressError)
 			}
 		} else if(buttonName.toLowerCase(Locale.ROOT) == "raid") {
 			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
