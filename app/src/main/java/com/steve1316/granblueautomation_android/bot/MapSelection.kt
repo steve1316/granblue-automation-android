@@ -787,8 +787,77 @@ class MapSelection(private val game: Game) {
 	 * @return True if the bot reached the Summon Selection screen after joining a Raid. False otherwise.
 	 */
 	fun joinRaid(missionName: String): Boolean {
-		TODO("not yet implemented")
+		try {
+			// Go to the Home screen and then to the Quests screen.
+			game.goBackHome(confirmLocationCheck = true)
+			game.findAndClickButton("quest")
+			
+			// Check for the "You retreated from the raid battle" popup.
+			game.wait(1.0)
+			if(game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+				game.findAndClickButton("ok")
+			}
+			
+			if(game.imageUtils.confirmLocation("quest")) {
+				checkPendingBattles("raid")
+				
+				// Now go to the Backup Requests screen.
+				game.findAndClickButton("raid")
+				
+				// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
+				var firstRun = true
+				var tries = 10
+				while(tries > 0) {
+					// Check for any joined Raids.
+					checkJoinedRaids()
+					
+					// TODO: Perform check if the user has 3 Raids joined already.
+					
+					// Move to the "Enter ID" section of the Backup Requests screen.
+					game.printToLog("[INFO] Moving to the \"Enter ID\" section of the Backup Requests screen...", MESSAGE_TAG = TAG)
+					game.findAndClickButton("enter_id")
+					
+					// Save the locations of the "Join Room" button and the "Room Code" textbox.
+					val joinRoomButtonLocation: Point?
+					val roomCodeTextBoxLocation: Point?
+					if(firstRun) {
+						joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")
+						roomCodeTextBoxLocation = game.imageUtils.findButton("room_code_text_box")
+					}
+					
+					// TODO: Implement TwitterRoomFinder first.
+					
+					// TODO: In the case of unable to join using the current room code, simply hit the "Reload" button to clear the text box.
+					
+					if(!checkPendingBattles("raid") && !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
+						&& !game.imageUtils.confirmLocation("already_taking_part", tries = 1)
+						&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)) {
+						// Check for EP.
+						// game.checkEP()
+						
+						// TODO: Increment number of Raids joined.
+						// game.printToLog("[SUCCESS] Joining {room_code} was successful.", MESSAGE_TAG = TAG)
+						
+						return game.imageUtils.confirmLocation("select_summon")
+					} else {
+						// Clear the textbox by reloading the page.
+						// game.printToLog("[WARNING] {room_code} already ended or invalid.", MESSAGE_TAG = TAG)
+						game.findAndClickButton("reload")
+						firstRun = false
+					}
+					
+//					tries -= 1
+//					game.printToLog("[WARNING] Could not find any valid room codes. \\nWaiting 60 seconds and then trying again with $tries " +
+//							"tries left before exiting.", MESSAGE_TAG = TAG)
+//					game.wait(60.0)
+				}
+			}
+		} catch(e: Exception) {
+			// TODO: Display an onscreen Alert.
+			Log.e(TAG, "Encountered an exception in checkPendingBattles(): ")
+			e.printStackTrace()
+		}
 		
-		// TODO: In the case of unable to join using the current room code, simply hit the "Reload" button to clear the text box.
+		return false
 	}
 }
