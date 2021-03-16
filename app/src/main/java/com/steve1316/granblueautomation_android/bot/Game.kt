@@ -136,9 +136,7 @@ class Game(myContext: Context) {
 		}
 		
 		if(tempLocation != null) {
-			val gestureConfirmation = gestureUtils.tap(tempLocation.x, tempLocation.y)
-			wait(1.0)
-			return gestureConfirmation
+			return gestureUtils.tap(tempLocation.x, tempLocation.y)
 		} else {
 			return false
 		}
