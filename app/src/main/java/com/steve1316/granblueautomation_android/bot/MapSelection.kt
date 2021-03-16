@@ -227,6 +227,113 @@ class MapSelection(private val game: Game) {
 					game.findAndClickButton("ok")
 				}
 				
+			} else if(farmingMode.toLowerCase(Locale.ROOT) == "coop") {
+				// Tap the "Menu" button at the top right corner of the Home screen and go to Coop.
+				game.findAndClickButton("home_menu")
+				game.findAndClickButton("coop")
+				
+				if(game.imageUtils.confirmLocation("coop")) {
+					// Scroll the screen down a little bit.
+					game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+					
+					// Find all occurrences of the "Host Quest" button.
+					val hostButtonLocations = game.imageUtils.findAll("coop_host_quest")
+					
+					if(missionName == "In a Dusk Dream") {
+						// Check if the difficulty is already selected. If not, select it.
+						if(!game.findAndClickButton("coop_hard_selected", tries = 1)) {
+							game.findAndClickButton("coop_hard", tries = 1)
+						}
+						
+						game.printToLog("[INFO] Hard difficulty for Coop is now selected.", MESSAGE_TAG = TAG)
+						
+						// Select the category, "Save the Oceans", which should be the 3rd category.
+						game.printToLog("[INFO] Now navigating to \"In a Dusk Dream\" for Hard difficulty...", MESSAGE_TAG = TAG)
+						game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y)
+						if(game.imageUtils.confirmLocation("coop_save_the_oceans")) {
+							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
+							game.gestureUtils.tap(hostRoundButtonLocations[0].x, hostRoundButtonLocations[0].y)
+						}
+					} else {
+						// Check if the difficulty is already selected. If not, select it.
+						if(!game.findAndClickButton("coop_extra_selected", tries = 1)) {
+							game.findAndClickButton("coop_extra", tries = 1)
+						}
+						
+						game.printToLog("[INFO] Extra difficulty for Coop is now selected.", MESSAGE_TAG = TAG)
+						
+						val listForCoopEX1 = arrayListOf("Corridor of Puzzles", "empty", "Lost in the Dark")
+						val listForCoopEX2 = arrayListOf("Time of Judgement", "Time of Revelation", "Time of Eminence")
+						val listForCoopEX3 = arrayListOf("Rule of the Tundra", "Rule of the Plains", "Rule of the Twilight")
+						val listForCoopEX4 = arrayListOf("Amidst the Waves", "Amidst the Petals", "Amidst Severe Cliffs", "Amidst the Flames")
+						
+						// Select the category for the specified EX mission. For EX2 to EX4, skip past the first missions of each.
+						if(listForCoopEX1.contains(missionName)) {
+							game.printToLog("[INFO] Now navigating to \"$missionName\" for EX1...", MESSAGE_TAG = TAG)
+							
+							game.gestureUtils.tap(hostButtonLocations[0].x, hostButtonLocations[0].y)
+							if(game.imageUtils.confirmLocation("coop_ex1")) {
+								game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
+								
+								val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
+								game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].x,
+									hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].y)
+							}
+						} else if(listForCoopEX2.contains(missionName)) {
+							game.printToLog("[INFO] Now navigating to \"$missionName\" for EX2...", MESSAGE_TAG = TAG)
+							
+							game.gestureUtils.tap(hostButtonLocations[1].x, hostButtonLocations[1].y)
+							if(game.imageUtils.confirmLocation("coop_ex2")) {
+								game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
+								
+								val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
+								game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].x,
+									hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].y)
+							}
+						} else if(listForCoopEX3.contains(missionName)) {
+							game.printToLog("[INFO] Now navigating to \"$missionName\" for EX3...", MESSAGE_TAG = TAG)
+							
+							game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y)
+							if(game.imageUtils.confirmLocation("coop_ex3")) {
+								game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
+								
+								val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
+								game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].x,
+									hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].y)
+							}
+						} else if(listForCoopEX4.contains(missionName)) {
+							game.printToLog("[INFO] Now navigating to \"$missionName\" for EX4...", MESSAGE_TAG = TAG)
+							
+							game.gestureUtils.tap(hostButtonLocations[3].x, hostButtonLocations[3].y)
+							if(game.imageUtils.confirmLocation("coop_ex4")) {
+								game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
+								
+								val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
+								game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].x,
+									hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].y)
+							}
+						}
+					}
+					
+					// After selecting the mission, create a new Coop Room.
+					game.printToLog("[INFO] Now opening up a new Coop room...", MESSAGE_TAG = TAG)
+					game.findAndClickButton("coop_post_to_crew_chat")
+					
+					// Scroll the screen down to see the "OK" button in case of small screens.
+					game.gestureUtils.scroll()
+					game.findAndClickButton("ok")
+					
+					// Just in case, check for the "You retreated from the raid battle" popup.
+					game.wait(1.0)
+					if(game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+						game.findAndClickButton("ok")
+					}
+					
+					// Scroll the screen down to see the "Select Party" button in case of small screens and then tap the button.
+					game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+					game.findAndClickButton("coop_select_party")
+				}
+				
 			} else if(farmingMode.toLowerCase(Locale.ROOT) == "special") {
 				// Go to the Quests screen and then to the Special Quest screen.
 				game.findAndClickButton("quest", suppressError = true)
