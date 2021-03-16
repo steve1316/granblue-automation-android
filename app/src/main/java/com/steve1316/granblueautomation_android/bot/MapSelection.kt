@@ -35,15 +35,15 @@ class MapSelection(private val game: Game) {
 					?: throw Exception("Unable to find the location of the right arrow for the World.")
 				
 				if(islandName == "Port Breeze Archipelago") {
-					game.gestureUtils.tap(arrowLocation.x - 320, arrowLocation.y - 159)
+					game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289)
 				} else if(islandName == "Valtz Duchy") {
-					game.gestureUtils.tap(arrowLocation.x - 150, arrowLocation.y - 85)
+					game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118)
 				} else if(islandName == "Auguste Isles") {
-					game.gestureUtils.tap(arrowLocation.x - 374, arrowLocation.y - 5)
+					game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54)
 				} else if(islandName == "Lumacie Archipelago") {
-					game.gestureUtils.tap(arrowLocation.x - 84, arrowLocation.y + 39)
+					game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159)
 				} else if(islandName == "Albion Citadel") {
-					game.gestureUtils.tap(arrowLocation.x - 267, arrowLocation.y + 121)
+					game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344)
 				}
 			}
 			
@@ -64,15 +64,15 @@ class MapSelection(private val game: Game) {
 					?: throw Exception("Unable to find the location of the left arrow for the World.")
 				
 				if(islandName == "Mist-Shrouded Isle") {
-					game.gestureUtils.tap(arrowLocation.x + 162, arrowLocation.y + 114)
+					game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342)
 				} else if(islandName == "Golonzo Island") {
-					game.gestureUtils.tap(arrowLocation.x + 362, arrowLocation.y + 85)
+					game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255)
 				} else if(islandName == "Amalthea Island") {
-					game.gestureUtils.tap(arrowLocation.x + 127, arrowLocation.y - 14)
+					game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34)
 				} else if(islandName == "Former Capital Mephorash") {
-					game.gestureUtils.tap(arrowLocation.x + 352, arrowLocation.y - 51)
+					game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43)
 				} else if(islandName == "Agastia") {
-					game.gestureUtils.tap(arrowLocation.x + 190, arrowLocation.y - 148)
+					game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267)
 				}
 			}
 			
@@ -175,43 +175,43 @@ class MapSelection(private val game: Game) {
 				// "World" button.
 				if(missionName == "Scattered Cargo") {
 					game.printToLog("[INFO] Moving to Chapter 1 (115) node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 97, worldButtonLocation.y + 97)
+					game.gestureUtils.tap(worldButtonLocation.x + 227, worldButtonLocation.y + 213)
 				} else if(missionName == "Lucky Charm Hunt") {
 					game.printToLog("[INFO] Moving to Chapter 6 (122) node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 332, worldButtonLocation.y + 16)
+					game.gestureUtils.tap(worldButtonLocation.x + 757, worldButtonLocation.y + 43)
 				} else if(missionName == "Special Op's Request") {
 					game.printToLog("[INFO] Moving to Chapter 8 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 258, worldButtonLocation.y + 151)
+					game.gestureUtils.tap(worldButtonLocation.x + 577, worldButtonLocation.y + 343)
 				} else if(missionName == "Threat to the Fisheries") {
 					game.printToLog("[INFO] Moving to Chapter 9 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 216, worldButtonLocation.y + 113)
+					game.gestureUtils.tap(worldButtonLocation.x + 497, worldButtonLocation.y + 258)
 				} else if(missionName == "The Fruit of Lumacie" || missionName == "Whiff of Danger") {
 					game.printToLog("[INFO] Moving to Chapter 13 (39/52) node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 78, worldButtonLocation.y + 92)
+					game.gestureUtils.tap(worldButtonLocation.x + 197, worldButtonLocation.y + 208)
 				} else if(missionName == "I Challenge You!") {
 					game.printToLog("[INFO] Moving to Chapter 17 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 119, worldButtonLocation.y + 121)
+					game.gestureUtils.tap(worldButtonLocation.x + 262, worldButtonLocation.y + 268)
 				} else if(missionName == "For Whom the Bell Tolls") {
 					game.printToLog("[INFO] Moving to Chapter 22 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 178, worldButtonLocation.y + 33)
+					game.gestureUtils.tap(worldButtonLocation.x + 417, worldButtonLocation.y + 78)
 				} else if(missionName == "For Whom the Bell Tolls") {
 					game.printToLog("[INFO] Moving to Chapter 22 node...", MESSAGE_TAG = TAG)
 					game.gestureUtils.tap(worldButtonLocation.x + 178, worldButtonLocation.y + 33)
 				} else if(missionName == "Golonzo's Battles of Old") {
 					game.printToLog("[INFO] Moving to Chapter 25 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 196, worldButtonLocation.y + 5)
+					game.gestureUtils.tap(worldButtonLocation.x + 457, worldButtonLocation.y + 18)
 				} else if(missionName == "The Dungeon Diet") {
 					game.printToLog("[INFO] Moving to Chapter 30 (44/65) node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 242, worldButtonLocation.y + 24)
+					game.gestureUtils.tap(worldButtonLocation.x + 557, worldButtonLocation.y + 48)
 				} else if(missionName == "Trust Busting Dustup") {
 					game.printToLog("[INFO] Moving to Chapter 36 (123) node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 319, worldButtonLocation.y + 13)
+					game.gestureUtils.tap(worldButtonLocation.x + 527, worldButtonLocation.y + 28)
 				} else if(missionName == "Erste Kingdom Episode 4") {
 					game.printToLog("[INFO] Moving to Chapter 70 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 253, worldButtonLocation.y + 136)
+					game.gestureUtils.tap(worldButtonLocation.x + 587, worldButtonLocation.y + 318)
 				} else if(missionName == "Imperial Wanderer's Soul") {
 					game.printToLog("[INFO] Moving to Chapter 55 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 162, worldButtonLocation.y + 143)
+					game.gestureUtils.tap(worldButtonLocation.x + 472, worldButtonLocation.y + 328)
 				}
 				
 				// Now that the correct chapter node has been selected, scroll down the screen as far as possible and then click on the specified
