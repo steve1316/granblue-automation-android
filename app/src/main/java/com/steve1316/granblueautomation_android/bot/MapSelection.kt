@@ -469,6 +469,122 @@ class MapSelection(private val game: Game) {
 						}
 					}
 				}
+				
+			} else if(farmingMode.toLowerCase(Locale.ROOT) == "event" || farmingMode.toLowerCase(Locale.ROOT) == "event (token drawboxes)") {
+				// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
+				game.findAndClickButton("home_menu")
+				var bannerLocations = game.imageUtils.findAll("event_banner")
+				if(bannerLocations.size == 0) {
+					bannerLocations = game.imageUtils.findAll("event_banner_blue")
+				}
+				game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y)
+				
+				// Check if there is a "Daily Missions" popup and close it.
+				game.wait(1.0)
+				if(game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
+					game.printToLog("[INFO] Detected \"Daily Missions\" popup. Closing it...", MESSAGE_TAG = TAG)
+					game.findAndClickButton("cancel")
+				}
+				
+				// Remove the difficulty prefix from the mission name.
+				val formattedMissionName : String
+				if(difficulty == "Normal" || difficulty == "Hard") {
+					formattedMissionName = missionName.substring(1)
+				} else if(difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Impossible") {
+					formattedMissionName = missionName.substring(3)
+				} else {
+					formattedMissionName = missionName
+				}
+				
+				if(farmingMode.toLowerCase(Locale.ROOT) == "event") {
+					game.findAndClickButton("event_special_quest")
+					
+					if(game.imageUtils.confirmLocation("special")) {
+						// Check if there is a Nightmare already available.
+							val nightmareIsAvailable: Int
+						if(game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
+							nightmareIsAvailable = 1
+						} else {
+							nightmareIsAvailable = 0
+						}
+						
+						// Find the locations of all the "Select" buttons.
+						val selectButtonLocations = game.imageUtils.findAll("select")
+						
+						// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
+						if(formattedMissionName == "event quest") {
+							game.printToLog("[INFO] Now hosting Event Quest...", MESSAGE_TAG = TAG)
+							game.gestureUtils.tap(selectButtonLocations[0 + nightmareIsAvailable].x, selectButtonLocations[0 +
+									nightmareIsAvailable].y)
+						} else if(farmingMode.toLowerCase(Locale.ROOT) == "event raid") {
+							game.printToLog("[INFO] Now hosting Event Raid...", MESSAGE_TAG = TAG)
+							game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 +
+									nightmareIsAvailable].y)
+						}
+						
+						game.wait(1.0)
+						
+						// Find the locations of all round "Play" buttons.
+						val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
+						
+						// Now select the chosen difficulty.
+						if(difficulty == "Very Hard") {
+							game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y)
+						} else if(difficulty == "Extreme") {
+							game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y)
+						}
+					}
+				} else {
+					// Scroll down the screen a little bit for this UI layout that has Token Drawboxes.
+					game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+					
+					if(formattedMissionName.toLowerCase(Locale.ROOT) == "event raid") {
+						// Bring up the "Raid Battle" popup. Scroll the screen down a bit in case of small screen size.
+						game.printToLog("[INFO] Now hosting Event Raid...", MESSAGE_TAG = TAG)
+						game.findAndClickButton("event_raid_battle")
+						game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+						
+						// Now select the chosen difficulty.
+						if(difficulty == "Very Hard") {
+							game.findAndClickButton("event_raid_very_hard")
+						} else if(difficulty == "Extreme") {
+							game.findAndClickButton("event_raid_extreme")
+						} else if(difficulty == "Impossible") {
+							game.findAndClickButton("event_raid_impossible")
+						}
+						
+						// If the user does not have enough Treasures to host a Extreme or Impossible Raid, host a Very Hard Raid instead.
+						if(difficulty == "Extreme" && !game.imageUtils.waitVanish("event_raid_extreme", timeout = 3)) {
+							game.printToLog("[INFO] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...",
+								MESSAGE_TAG = TAG)
+							game.findAndClickButton("event_very_hard_raid")
+						} else if(difficulty == "Impossible" && !game.imageUtils.waitVanish("event_raid_impossible", timeout = 3)) {
+							game.printToLog("[INFO] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...",
+								MESSAGE_TAG = TAG)
+							game.findAndClickButton("event_very_hard_raid")
+						}
+					} else if(formattedMissionName.toLowerCase(Locale.ROOT) == "event quest") {
+						game.printToLog("[INFO] Now hosting Event Quest...", MESSAGE_TAG = TAG)
+						game.findAndClickButton("event_quests")
+						
+						game.wait(1.0)
+						
+						// Find the locations of all round "Play" buttons.
+						val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
+						
+						// Now select the chosen difficulty.
+						if(difficulty == "Normal") {
+							game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y)
+						} else if(difficulty == "Hard") {
+							game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y)
+						} else if(difficulty == "Very Hard") {
+							game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y)
+						} else if(difficulty == "Extreme") {
+							game.gestureUtils.tap(playRoundButtonLocations[3].x, playRoundButtonLocations[3].y)
+						}
+					}
+				}
+				
 			}
 			
 			// At this point, the bot has already selected the mission and thus it should now check if it needs any AP.
