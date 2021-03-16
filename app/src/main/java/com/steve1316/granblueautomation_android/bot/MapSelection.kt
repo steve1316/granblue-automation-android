@@ -585,10 +585,71 @@ class MapSelection(private val game: Game) {
 					}
 				}
 				
+			} else if(farmingMode.toLowerCase(Locale.ROOT) == "dread barrage") {
+				// Scroll the screen down a little bit and then click on the Dread Barrage banner.
+				game.printToLog("[INFO] Now navigating to Dread Barrage...", MESSAGE_TAG = TAG)
+				game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+				game.findAndClickButton("dread_barrage")
+				
+				game.wait(2.0)
+				
+				if(game.imageUtils.confirmLocation("dread_barrage")) {
+					// Check if there is already a hosted Dread Barrage mission.
+					if(game.imageUtils.confirmLocation("resume_quests", tries = 1)) {
+						game.printToLog("[WARNING] Detected that there is already a hosted Dread Barrage mission.", MESSAGE_TAG = TAG)
+						var expiryTimeInSeconds = 0
+						
+						while(game.imageUtils.confirmLocation("resume_quests", tries = 1)) {
+							// The bot will wait for a total of 1 hour and 30 miuntes for either the Raid's timer to expire or for anyone else in
+							// the room to clear it.
+							game.printToLog("[WARNING] The bot will now either wait for the expiry time of 1 hour and 30 minutes or for " +
+									"someone else in the room to clear it.", MESSAGE_TAG = TAG)
+							game.printToLog("[WARNING] The bot will now refresh the page every 30 seconds to check if it is still there " +
+									"before proceeding.", MESSAGE_TAG = TAG)
+							game.printToLog("User can either wait it out, revive and fight it to completion, or retreat from the mission " +
+									"manually.", MESSAGE_TAG = TAG)
+							
+							game.wait(30.0)
+							
+							game.findAndClickButton("reload")
+							game.wait(2.0)
+							
+							expiryTimeInSeconds += 30
+							if(expiryTimeInSeconds >= 5400) {
+								break
+							}
+						}
+						
+						game.printToLog("[SUCCESS] Hosted Dread Barrage mission is now gone either because of timeout or someone else in " +
+								"the room killed it. Moving on...", MESSAGE_TAG = TAG)
+					}
+					
+					// Find the locations of all the "Play" buttons at the top of the window.
+					val dreadBarragePlayButtonLocations = game.imageUtils.findAll("dread_barrage_play")
+					
+					// Now select the chosen difficulty.
+					if(difficulty == "1 Star") {
+						game.printToLog("[INFO] Now starting 1 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[0].x, dreadBarragePlayButtonLocations[0].y)
+					} else if(difficulty == "2 Star") {
+						game.printToLog("[INFO] Now starting 2 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[1].x, dreadBarragePlayButtonLocations[1].y)
+					} else if(difficulty == "3 Star") {
+						game.printToLog("[INFO] Now starting 3 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[2].x, dreadBarragePlayButtonLocations[2].y)
+					} else if(difficulty == "4 Star") {
+						game.printToLog("[INFO] Now starting 4 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[3].x, dreadBarragePlayButtonLocations[3].y)
+					} else if(difficulty == "5 Star") {
+						game.printToLog("[INFO] Now starting 5 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[4].x, dreadBarragePlayButtonLocations[4].y)
+					}
+					
+					game.wait(2.0)
+				}
 			}
 			
 			// At this point, the bot has already selected the mission and thus it should now check if it needs any AP.
-			// TODO: Make sure to complete checkAP().
 			// game.checkAP()
 			
 			// Finally, double-check to see if the bot is at the Summon Selection screen.
