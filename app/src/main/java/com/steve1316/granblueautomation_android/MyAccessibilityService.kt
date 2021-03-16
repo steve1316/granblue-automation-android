@@ -10,6 +10,8 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 /**
  * Contains the Accessibility service that will allow the bot to programmatically perform gestures on the screen.
@@ -50,13 +52,25 @@ class MyAccessibilityService : AccessibilityService() {
     }
     
     /**
+     * Wait the specified seconds to account for ping or loading.
+     *
+     * @param seconds Number of seconds to pause execution.
+     */
+    private fun wait(seconds: Double) {
+        runBlocking {
+            delay((seconds * 1000).toLong())
+        }
+    }
+    
+    /**
      * Creates a tap gesture on the specified point on the screen.
      *
      * @param x The x coordinate of the point.
      * @param y The y coordinate of the point.
+     * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
      * @return True if the tap gesture was executed successfully. False otherwise.
      */
-    fun tap(x: Double, y: Double): Boolean {
+    fun tap(x: Double, y: Double, ignoreWait: Boolean = false): Boolean {
         val tapPath = Path().apply {
             moveTo(x.toFloat(), y.toFloat())
         }
@@ -65,7 +79,12 @@ class MyAccessibilityService : AccessibilityService() {
             addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1))
         }.build()
         
-        return dispatchGesture(gesture, null, null)
+        val dispatchResult = dispatchGesture(gesture, null, null)
+        if(!ignoreWait) {
+            wait(0.5)
+        }
+        
+        return dispatchResult
     }
     
     /**
@@ -73,10 +92,11 @@ class MyAccessibilityService : AccessibilityService() {
      *
      * @param action The scrolling action, either ACTION_SCROLL_UP or ACTION_SCROLL_DOWN. Defaults to ACTION_SCROLL_DOWN.
      * @param duration How long the scroll should take. Defaults to 100L.
+     * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
      * @return True if the scroll gesture was executed successfully. False otherwise.
      */
     fun scroll(action: AccessibilityNodeInfo.AccessibilityAction = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN, duration: Long
-    = 100L): Boolean {
+    = 500L, ignoreWait: Boolean = false): Boolean {
         val scrollPath = Path()
         
         // Get certain portions of the screen's dimensions.
@@ -105,7 +125,12 @@ class MyAccessibilityService : AccessibilityService() {
             addStroke(GestureDescription.StrokeDescription(scrollPath, 0, duration))
         }.build()
         
-        return dispatchGesture(gesture, null, null)
+        val dispatchResult = dispatchGesture(gesture, null, null)
+        if(!ignoreWait) {
+            wait(0.5)
+        }
+        
+        return dispatchResult
     }
     
     /**
@@ -116,9 +141,10 @@ class MyAccessibilityService : AccessibilityService() {
      * @param newX The x coordinate of the new position.
      * @param newY The y coordinate of the new position.
      * @param duration How long the swipe should take. Defaults to 500L.
+     * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
      * @return True if the swipe gesture was executed successfully. False otherwise.
      */
-    fun swipe(oldX: Float, oldY: Float, newX: Float, newY: Float, duration: Long = 500L): Boolean {
+    fun swipe(oldX: Float, oldY: Float, newX: Float, newY: Float, duration: Long = 500L, ignoreWait: Boolean = false): Boolean {
         // Set up the Path by swiping from the old position coordinates to the new position coordinates.
         val swipePath = Path().apply {
             moveTo(oldX, oldY)
@@ -129,6 +155,11 @@ class MyAccessibilityService : AccessibilityService() {
             addStroke(GestureDescription.StrokeDescription(swipePath, 0, duration))
         }.build()
         
-        return dispatchGesture(gesture, null, null)
+        val dispatchResult = dispatchGesture(gesture, null, null)
+        if(!ignoreWait) {
+            wait(0.5)
+        }
+        
+        return dispatchResult
     }
 }
