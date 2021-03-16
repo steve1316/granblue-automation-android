@@ -1,7 +1,6 @@
 package com.steve1316.granblueautomation_android.bot
 
 import android.util.Log
-import android.view.accessibility.AccessibilityNodeInfo
 import org.opencv.core.Point
 import java.util.*
 import kotlin.collections.ArrayList
@@ -158,7 +157,6 @@ class MapSelection(private val game: Game) {
 					
 					// Tap the "Go" button on the popup after tapping the map node.
 					game.findAndClickButton("go")
-					game.wait(1.0)
 				}
 				
 				// Find the "World" button.
@@ -194,9 +192,6 @@ class MapSelection(private val game: Game) {
 				} else if(missionName == "For Whom the Bell Tolls") {
 					game.printToLog("[INFO] Moving to Chapter 22 node...", MESSAGE_TAG = TAG)
 					game.gestureUtils.tap(worldButtonLocation.x + 417, worldButtonLocation.y + 78)
-				} else if(missionName == "For Whom the Bell Tolls") {
-					game.printToLog("[INFO] Moving to Chapter 22 node...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(worldButtonLocation.x + 178, worldButtonLocation.y + 33)
 				} else if(missionName == "Golonzo's Battles of Old") {
 					game.printToLog("[INFO] Moving to Chapter 25 node...", MESSAGE_TAG = TAG)
 					game.gestureUtils.tap(worldButtonLocation.x + 457, worldButtonLocation.y + 18)
@@ -214,11 +209,10 @@ class MapSelection(private val game: Game) {
 					game.gestureUtils.tap(worldButtonLocation.x + 472, worldButtonLocation.y + 328)
 				}
 				
-				// Now that the correct chapter node has been selected, scroll down the screen as far as possible and then click on the specified
-				// mission to start.
+				// Now that the correct chapter node has been selected, scroll down the screen.
 				game.printToLog("[INFO] Now bringing up the Summon Selection screen for \"$missionName\"...", MESSAGE_TAG = TAG)
-				game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN)
-				game.wait(1.0)
+				game.gestureUtils.scroll()
+				
 				val formattedMissionName = missionName.toLowerCase(Locale.ROOT).replace(" ", "_")
 				game.findAndClickButton(formattedMissionName)
 				
@@ -249,8 +243,7 @@ class MapSelection(private val game: Game) {
 						if(mapName != "Campaign-Exclusive Quest" && mapName != "Basic Treasure Quests" && mapName != "Shiny Slime Search!" &&
 							mapName != "Six Dragon Trial") {
 							// Scroll the screen down if the selected mission is located on the bottom half of the page.
-							game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN)
-							game.wait(1.0)
+							game.gestureUtils.scroll()
 						}
 						
 						// Find the specified mission popup.
@@ -263,7 +256,6 @@ class MapSelection(private val game: Game) {
 						missionLocation.x += 405
 						missionLocation.y += 175
 						game.gestureUtils.tap(missionLocation.x, missionLocation.y)
-						game.wait(1.0)
 						
 						if(mapName == "Basic Treasure Quests") {
 							// Open up "Basic Treasure Quests" sub-missions popup.
@@ -279,8 +271,6 @@ class MapSelection(private val game: Game) {
 								game.printToLog("[INFO] Opening up Violet Trial mission popup...", MESSAGE_TAG = TAG)
 								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
 							}
-							
-							game.wait(1.0)
 							
 							// Now that the mission's sub-missions popup is open, select the specified difficulty.
 							game.printToLog("[INFO] Now selecting $difficulty difficulty...")
@@ -342,8 +332,6 @@ class MapSelection(private val game: Game) {
 							} else if(formattedMissionName == "Diablo Showdown") {
 								game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y)
 							}
-							
-							game.wait(1.0)
 							
 							// Now select the difficulty.
 							game.printToLog("[INFO] Now selecting $difficulty difficulty...", MESSAGE_TAG = TAG)
