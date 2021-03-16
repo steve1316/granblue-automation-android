@@ -104,7 +104,7 @@ class MapSelection(private val game: Game) {
 				
 				// Check if the bot is already at the island where the mission takes place in. If not, navigate to it.
 				if(game.imageUtils.confirmLocation("map_$formattedMapName", tries = 1)) {
-					game.printToLog("[INFO] Bot is currently on the correct island for the mission.")
+					game.printToLog("[INFO] Bot is currently on the correct island for the mission.", MESSAGE_TAG = TAG)
 					checkLocation = true
 				} else {
 					game.printToLog("[INFO] Bot is not on the correct island for the mission. Navigating to the correct island...")
@@ -112,34 +112,38 @@ class MapSelection(private val game: Game) {
 					
 					// Determine what island the bot is currently at.
 					if(game.imageUtils.confirmLocation("map_port_breeze_archipelago", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Port Breeze Archipelago. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Port Breeze Archipelago. Now moving to $mapName...",
+							MESSAGE_TAG = TAG)
 						currentLocation = "Port Breeze Archipelago"
 					} else if(game.imageUtils.confirmLocation("map_valtz_duchy", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Valtz Duchy. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Valtz Duchy. Now moving to $mapName...", MESSAGE_TAG = TAG)
 						currentLocation = "Valtz Duchy"
 					} else if(game.imageUtils.confirmLocation("map_auguste_isles", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Auguste Isles. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Auguste Isles. Now moving to $mapName...", MESSAGE_TAG = TAG)
 						currentLocation = "Auguste Isles"
 					} else if(game.imageUtils.confirmLocation("map_lumacie_archipelago", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Lumacie Archipelago. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Lumacie Archipelago. Now moving to $mapName...",
+							MESSAGE_TAG = TAG)
 						currentLocation = "Lumacie Archipelago"
 					} else if(game.imageUtils.confirmLocation("map_albion_citadel", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Albion Citadel. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Albion Citadel. Now moving to $mapName...", MESSAGE_TAG = TAG)
 						currentLocation = "Albion Citadel"
 					} else if(game.imageUtils.confirmLocation("map_mist_shrouded_isle", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Mist-Shrouded Isle. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Mist-Shrouded Isle. Now moving to $mapName...",
+							MESSAGE_TAG = TAG)
 						currentLocation = "Mist-Shrouded Isle"
 					} else if(game.imageUtils.confirmLocation("map_golonzo_island", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Golonzo Island. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Golonzo Island. Now moving to $mapName...", MESSAGE_TAG = TAG)
 						currentLocation = "Golonzo Island"
 					} else if(game.imageUtils.confirmLocation("map_amalthea_island", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Amalthea Island. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Amalthea Island. Now moving to $mapName...", MESSAGE_TAG = TAG)
 						currentLocation = "Amalthea Island"
 					} else if(game.imageUtils.confirmLocation("map_former_capital_mephorash", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Former Capital Mephorash. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Former Capital Mephorash. Now moving to $mapName...",
+							MESSAGE_TAG = TAG)
 						currentLocation = "Former Capital Mephorash"
 					} else if(game.imageUtils.confirmLocation("map_agastia", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Agastia. Now moving to $mapName...")
+						game.printToLog("[INFO] Bot's current location is at Agastia. Now moving to $mapName...", MESSAGE_TAG = TAG)
 						currentLocation = "Agastia"
 					}
 				}
