@@ -714,7 +714,58 @@ class MapSelection(private val game: Game) {
 	 * @return True if Pending Battles were detected. False otherwise.
 	 */
 	fun checkPendingBattles(farmingMode: String): Boolean {
-		TODO("not yet implemented")
+		try {
+			game.wait(1.0)
+			
+			// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
+			// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
+			if((farmingMode.toLowerCase(Locale.ROOT) == "raid" && game.imageUtils.confirmLocation("check_your_pending_battles", tries = 1,
+					suppressError = true)) ||
+				(farmingMode.toLowerCase(Locale.ROOT) != "raid" && game.imageUtils.confirmLocation("quest_results_pending_battles", tries = 1,
+					suppressError = true))) {
+				game.printToLog("[INFO] Found Pending Battles that need collecting from.", MESSAGE_TAG = TAG)
+				
+				if(farmingMode.toLowerCase(Locale.ROOT) == "raid") {
+					game.findAndClickButton("ok")
+				} else {
+					game.findAndClickButton("quest_results_pending_battles")
+				}
+				
+				game.wait(1.0)
+				
+				if(game.imageUtils.confirmLocation("pending_battles", tries = 1)) {
+					while(game.imageUtils.findButton("tap_here_to_see_rewards", tries = 1) != null) {
+						clearPendingBattle()
+						
+						// While on the Loot Collected screen, if there are more Pending Battles then head back to the Pending Battles screen.
+						if(game.findAndClickButton("quest_results_pending_battles", tries = 1)) {
+							game.wait(1.0)
+							
+							// TODO: Close the Skyscope mission popup.
+							
+							game.checkFriendRequest()
+							game.wait(1.0)
+						} else {
+							// When there are no more Pending Battles, go back to the Quests screen.
+							game.findAndClickButton("quests")
+							
+							// TODO: Close the Skyscope mission popup.
+							
+							break
+						}
+					}
+				}
+				
+				game.printToLog("[INFO] No Pending Battles needed to be cleared.", MESSAGE_TAG = TAG)
+				return true
+			}
+		} catch(e: Exception) {
+			// TODO: Display an onscreen Alert.
+			Log.e(TAG, "Encountered an exception in checkPendingBattles(): ")
+			e.printStackTrace()
+		}
+		
+		return false
 	}
 	
 	/**
