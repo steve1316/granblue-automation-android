@@ -689,7 +689,22 @@ class MapSelection(private val game: Game) {
 	 * Process a Pending Battle.
 	 */
 	private fun clearPendingBattle() {
-		TODO("not yet implemented")
+		game.findAndClickButton("tap_here_to_see_rewards")
+		game.wait(1.0)
+		
+		if(game.imageUtils.confirmLocation("no_loot", tries = 1)) {
+			game.printToLog("[INFO] No loot can be collected. Backing out...")
+			
+			// Navigate back to the Quests screen.
+			game.findAndClickButton("quests")
+			// TODO: Adjust number of Raids joined here.
+		} else {
+			// Start loot detection if there it is available.
+			// TODO: Implement collectLoot()
+			// game.collectLoot(isPendingBattle = true)
+			
+			// TODO: Adjust number of Raids joined here.
+		}
 	}
 	
 	/**
