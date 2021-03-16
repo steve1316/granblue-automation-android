@@ -84,7 +84,7 @@ class Game(myContext: Context) {
 	 */
 	fun wait(seconds: Double) {
 		runBlocking {
-			delay(seconds.toLong() * 1000)
+			delay((seconds * 1000).toLong())
 		}
 	}
 	
