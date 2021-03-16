@@ -99,11 +99,11 @@ class MapSelection(private val game: Game) {
 			game.goBackHome(confirmLocationCheck = true)
 			
 			if(farmingMode.toLowerCase(Locale.ROOT) == "quest") {
-				var checkLocation = false
+				val checkLocation: Boolean
 				var currentLocation = ""
 				
 				// Check if the bot is already at the island where the mission takes place in. If not, navigate to it.
-				if(game.imageUtils.confirmLocation("map_$formattedMapName", tries = 2)) {
+				if(game.imageUtils.confirmLocation("map_$formattedMapName", tries = 1)) {
 					game.printToLog("[INFO] Bot is currently on the correct island for the mission.")
 					checkLocation = true
 				} else {
@@ -389,6 +389,7 @@ class MapSelection(private val game: Game) {
 			}
 			
 		} catch(e: Exception) {
+			// TODO: Display an onscreen Alert.
 			Log.e(TAG, "Encountered an exception in selectMap(): ")
 			e.printStackTrace()
 		}
