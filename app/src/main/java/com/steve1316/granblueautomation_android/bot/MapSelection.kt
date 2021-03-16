@@ -772,7 +772,12 @@ class MapSelection(private val game: Game) {
 	 * Check and updates the number of Raids currently joined.
 	 */
 	private fun checkJoinedRaids() {
-		TODO("not yet implemented")
+		game.wait(1.0)
+		
+		val joinedLocations = game.imageUtils.findAll("joined")
+		if(joinedLocations.size != 0) {
+			// TODO: Update number of Raids joined.
+		}
 	}
 	
 	/**
