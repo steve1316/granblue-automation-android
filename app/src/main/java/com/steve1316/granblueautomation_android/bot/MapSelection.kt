@@ -213,8 +213,13 @@ class MapSelection(private val game: Game) {
 				game.printToLog("[INFO] Now bringing up the Summon Selection screen for \"$missionName\"...", MESSAGE_TAG = TAG)
 				game.gestureUtils.scroll()
 				
+				// Now tap on the mission node to start.
 				val formattedMissionName = missionName.toLowerCase(Locale.ROOT).replace(" ", "_")
-				game.findAndClickButton(formattedMissionName)
+				if(!game.findAndClickButton(formattedMissionName)) {
+					// If the bot failed to find and click on the mission node the first time, scroll down the screen again.
+					game.gestureUtils.scroll()
+					game.findAndClickButton(formattedMissionName)
+				}
 				
 				// If the mission name is "Erste Kingdom Episode 4", select the "Ch. 70 - Erste Kingdom" option.
 				if(missionName == "Erste Kingdom Episode 4") {
