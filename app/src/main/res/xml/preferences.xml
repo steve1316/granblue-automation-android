@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="Combat Script: Selected none" app:key="combatScriptTitle">
+        <Preference
+            app:key="filePicker"
+            app:title="Select Combat Script"
+            app:summary="Select the combat script in .txt format that will be used for Combat Mode. \n\nIf none is selected, it will default to Full/Semi Auto."/>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Farming Mode">
+        <ListPreference
+            app:entries="@array/farming_mode_entries"
+            app:entryValues="@array/farming_mode_values"
+            app:key="farmingMode"
+            app:title="Select Farming Mode"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>
