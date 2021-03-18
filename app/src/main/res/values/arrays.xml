@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="farming_mode_entries">
+        <item>Quest</item>
+        <item>Special</item>
+        <item>Coop</item>
+        <item>Raid</item>
+        <item>Event</item>
+        <item>Event (Token Drawboxes)</item>
+        <item>Dread Barrage</item>
+    </string-array>
+
+    <string-array name="farming_mode_values">
+        <item>Quest</item>
+        <item>Special</item>
+        <item>Coop</item>
+        <item>Raid</item>
+        <item>Event</item>
+        <item>Event (Token Drawboxes)</item>
+        <item>Dread Barrage</item>
+    </string-array>
+
+    <!-- Quest Items -->
+    <string-array name="item_quest_entries">
+        <item>Satin Feather</item>
+        <item>Zephyr Feather</item>
+        <item>Flying Sprout</item>
+
+        <item>Fine Sand Bottle</item>
+        <item>Untamed Flame</item>
+        <item>Blistering Ore</item>
+
+        <item>Fresh Water Jug</item>
+        <item>Soothing Splash</item>
+        <item>Glowing Coral</item>
+
+        <item>Rough Stone</item>
+        <item>Swirling Amber</item>
+        <item>Coarse Alluvium</item>
+
+        <item>Falcon Feather</item>
+        <item>Spring Water Jug</item>
+        <item>Vermilion Stone</item>
+
+        <item>Slimy Shroom</item>
+        <item>Hollow Soul</item>
+        <item>Lacrimosa</item>
+
+        <item>Wheat Stalk</item>
+        <item>Iron Cluster</item>
+        <item>Olea Plant</item>
+
+        <item>Indigo Fruit</item>
+        <item>Foreboding Clover</item>
+        <item>Blood Amber</item>
+
+        <item>Sand Brick</item>
+        <item>Native Reed</item>
+        <item>Antique Cloth</item>
+
+        <item>Prosperity Flame</item>
+        <item>Explosive Material</item>
+        <item>Steel Liquid</item>
+    </string-array>
+
+    <string-array name="item_quest_values">
+        <item>Satin Feather</item>
+        <item>Zephyr Feather</item>
+        <item>Flying Sprout</item>
+
+        <item>Fine Sand Bottle</item>
+        <item>Untamed Flame</item>
+        <item>Blistering Ore</item>
+
+        <item>Fresh Water Jug</item>
+        <item>Soothing Splash</item>
+        <item>Glowing Coral</item>
+
+        <item>Rough Stone</item>
+        <item>Swirling Amber</item>
+        <item>Coarse Alluvium</item>
+
+        <item>Falcon Feather</item>
+        <item>Spring Water Jug</item>
+        <item>Vermilion Stone</item>
+
+        <item>Slimy Shroom</item>
+        <item>Hollow Soul</item>
+        <item>Lacrimosa</item>
+
+        <item>Wheat Stalk</item>
+        <item>Iron Cluster</item>
+        <item>Olea Plant</item>
+
+        <item>Indigo Fruit</item>
+        <item>Foreboding Clover</item>
+        <item>Blood Amber</item>
+
+        <item>Sand Brick</item>
+        <item>Native Reed</item>
+        <item>Antique Cloth</item>
+
+        <item>Prosperity Flame</item>
+        <item>Explosive Material</item>
+        <item>Steel Liquid</item>
+    </string-array>
+    <!-- End of Quest Items -->
+
+    <!-- Special Items -->
+    <string-array name="item_special_entries">
+        <item>Fire Orb</item>
+        <item>Water Orb</item>
+        <item>Earth Orb</item>
+        <item>Wind Orb</item>
+        <item>Light Orb</item>
+        <item>Dark Orb</item>
+
+        <item>Inferno Orb</item>
+        <item>Frost Orb</item>
+        <item>Rumbling Orb</item>
+        <item>Cyclone Orb</item>
+        <item>Shining Orb</item>
+        <item>Abysm Orb</item>
+    </string-array>
+
+    <string-array name="item_special_values">
+        <item>Fire Orb</item>
+        <item>Water Orb</item>
+        <item>Earth Orb</item>
+        <item>Wind Orb</item>
+        <item>Light Orb</item>
+        <item>Dark Orb</item>
+
+        <item>Inferno Orb</item>
+        <item>Frost Orb</item>
+        <item>Rumbling Orb</item>
+        <item>Cyclone Orb</item>
+        <item>Shining Orb</item>
+        <item>Abysm Orb</item>
+    </string-array>
+    <!-- End of Special Items -->
+
+    <!-- Coop Items -->
+    <string-array name="item_coop_entries">
+        <item>EXP</item>
+
+        <item>Warrior Creed</item>
+        <item>Mage Creed</item>
+    </string-array>
+
+    <string-array name="item_coop_values">
+        <item>EXP</item>
+
+        <item>Warrior Creed</item>
+        <item>Mage Creed</item>
+    </string-array>
+    <!-- End of Coop Items -->
+</resources>
