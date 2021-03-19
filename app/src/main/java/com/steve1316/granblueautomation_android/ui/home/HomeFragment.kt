@@ -12,7 +12,6 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
@@ -23,19 +22,13 @@ class HomeFragment : Fragment() {
     private var firstBoot = false
     
     private lateinit var myContext: Context
-    private lateinit var homeViewModel: HomeViewModel
     private lateinit var homeFragmentView: View
     private lateinit var startButton: Button
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         myContext = requireContext()
-        
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+
         homeFragmentView = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = homeFragmentView.findViewById(R.id.text_home)
-        homeViewModel.text.observe(viewLifecycleOwner, {
-            textView.text = it
-        })
         
         // Start or stop the MediaProjection service via this button.
         startButton = homeFragmentView.findViewById(R.id.start_button)
