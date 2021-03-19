@@ -11,8 +11,24 @@
         <ListPreference
             app:entries="@array/farming_mode_entries"
             app:entryValues="@array/farming_mode_values"
-            app:key="farmingMode"
+            app:key="farmingModePicker"
             app:title="Select Farming Mode"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:entries="@array/list_entries"
+            app:entryValues="@array/list_values"
+            app:key="missionPicker"
+            app:isPreferenceVisible="false"
+            app:title="Select Mission to farm from"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:entries="@array/list_entries"
+            app:entryValues="@array/list_values"
+            app:key="itemPicker"
+            app:isPreferenceVisible="false"
+            app:title="Select Item to farm"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 </PreferenceScreen>
