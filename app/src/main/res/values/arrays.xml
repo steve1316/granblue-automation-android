@@ -25,4 +25,31 @@
         <item>Event (Token Drawboxes)</item>
         <item>Dread Barrage</item>
     </string-array>
+
+    <string-array name="summon_list">
+        <item>Colossus Omega</item>
+        <item>Shiva</item>
+        <item>Agni</item>
+        <item>Leviathan Omega</item>
+        <item>Europa</item>
+        <item>Varuna</item>
+        <item>Bonito</item>
+        <item>Yggdrasil Omega</item>
+        <item>Godsworn Alexiel</item>
+        <item>Titan</item>
+        <item>Tiamat Omega</item>
+        <item>Grimnir</item>
+        <item>Zephyrus</item>
+        <item>Luminiera Omega</item>
+        <item>Lucifer</item>
+        <item>Zeus</item>
+        <item>Celeste Omega</item>
+        <item>Bahamut</item>
+        <item>Hades</item>
+        <item>Huanglong</item>
+        <item>Qilin</item>
+        <item>Kaguya</item>
+        <item>White Rabbit</item>
+        <item>Black Rabbit</item>
+    </string-array>
 </resources>
