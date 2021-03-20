@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory app:title="Combat Script: Selected none" app:key="combatScriptTitle">
         <Preference
             app:key="filePicker"
@@ -30,5 +31,20 @@
             app:isPreferenceVisible="false"
             app:title="Select Item to farm"
             app:useSimpleSummaryProvider="true" />
+
+        <SeekBarPreference
+            app:min="1"
+            android:max="100"
+            app:key="itemAmountPicker"
+            app:isPreferenceVisible="false"
+            app:title="Item Amount to farm"
+            app:showSeekBarValue="true"
+            app:defaultValue="1" />
+
+        <Preference
+            app:key="summonPicker"
+            app:isPreferenceVisible="false"
+            app:title="Select Summon(s)"
+            app:summary="Select the Summon(s) in order from highest to lowest priority for Combat Mode." />
     </PreferenceCategory>
 </PreferenceScreen>
