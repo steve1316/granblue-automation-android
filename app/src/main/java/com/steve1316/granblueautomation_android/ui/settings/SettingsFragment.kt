@@ -2,6 +2,8 @@ package com.steve1316.granblueautomation_android.ui.settings
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -19,6 +21,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     
     private lateinit var preferenceCategoryCombatScript: PreferenceCategory
+    
+    private lateinit var builder: AlertDialog.Builder
+    private lateinit var summonListItems: Array<String>
+    private lateinit var summonListCheckedItems: BooleanArray
+    private var userSelectedSummonList: ArrayList<Int> = arrayListOf()
     
     private val itemsForQuest = mapOf(
         "Scattered Cargo" to arrayListOf("Satin Feather", "Zephyr Feather", "Flying Sprout"),
@@ -180,7 +187,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     
     // This listener is triggered when the user changes a Preference setting in the Settings Page.
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        if(key != null && (key == "farmingModePicker" || key == "missionPicker" || key == "itemPicker")) {
+        if(key != null && (key == "farmingModePicker" || key == "missionPicker" || key == "itemPicker" || key == "itemAmountPicker")) {
             // Key is associated with one of the ListPreference pickers.
     
             val newEntries = mutableListOf<CharSequence>()
@@ -285,8 +292,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 picker.entries = newEntries.toTypedArray()
                 picker.entryValues = newEntryValues.toTypedArray()
                 
-                // Reveal the Item picker.
+                // Reveal the Item picker and also the Item Amount Selection picker.
                 picker.isVisible = true
+                val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+                itemAmountPicker.isVisible = true
             } else if(key == "itemPicker") {
                 val itemPicker: ListPreference = findPreference("itemPicker")!!
                 
@@ -295,17 +304,158 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     putString("item", itemPicker.value)
                     commit()
                 }
+                
+                // Now reveal the Summon Selection picker and build its AlertDialog.
+                val summonPicker: Preference = findPreference("summonPicker")!!
+                createSummonDialog()
+                summonPicker.isVisible = true
+            } else if(key == "itemAmountPicker") {
+                val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+
+                // Now save the value into SharedPreferences.
+                sharedPreferences.edit {
+                    putInt("itemAmount", itemAmountPicker.value)
+                    commit()
+                }
             }
         }
     }
     
+    /**
+     * Builds and displays the AlertDialog for selecting summons for Combat Mode.
+     */
+    private fun createSummonDialog() {
+        val summonPicker: Preference = findPreference("summonPicker")!!
+        val summonPreferences = sharedPreferences.getString("summon", "")!!.split("|")
+    
+        // Now update the Preference's summary to reflect the order of summons selected.
+        if(summonPreferences.toList().isEmpty() || summonPreferences.toList()[0] == "") {
+            summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+        } else {
+            summonPicker.summary = "${summonPreferences.toList()}"
+        }
+        
+        summonPicker.setOnPreferenceClickListener {
+            // Create the AlertDialog that pops up after clicking on this Preference.
+            builder = AlertDialog.Builder(context)
+            builder.setTitle("Select Summon(s)")
+        
+            // Grab the array of supported summons.
+            summonListItems = resources.getStringArray(R.array.summon_list)
+        
+            // Initialize the item list variable if it has not already.
+            if(summonPreferences.isEmpty()) {
+                summonListCheckedItems = BooleanArray(summonListItems.size)
+                var index = 0
+                summonListItems.forEach { _ ->
+                    summonListCheckedItems[index] = false
+                    index++
+                }
+            } else {
+                summonListCheckedItems = BooleanArray(summonListItems.size)
+                var index = 0
+                summonListItems.forEach {
+                    // Populate the checked items BooleanArray with true or false depending on what the user selected before.
+                    summonListCheckedItems[index] = summonPreferences.contains(it)
+                    index++
+                }
+            }
+        
+            // Set the selectable items for this AlertDialog.
+            builder.setMultiChoiceItems(summonListItems, summonListCheckedItems, object : DialogInterface.OnMultiChoiceClickListener {
+                override fun onClick(dialog: DialogInterface?, position: Int, isChecked: Boolean) {
+                    // Add or remove the selected item depending on whether it was selected before.
+                    if (isChecked) {
+                        userSelectedSummonList.add(position)
+                    } else {
+                        userSelectedSummonList.remove(position)
+                    }
+                }
+            })
+        
+            // Set the AlertDialog's PositiveButton.
+            builder.setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    // Grab the summons using the acquired indexes. This will put them in order from the user's highest to lowest priority.
+                    val values: ArrayList<String> = arrayListOf()
+                    userSelectedSummonList.forEach {
+                        values.add(summonListItems[it])
+                    }
+                    
+                    // Join the elements together into a String with the "|" delimiter in order to keep its order when storing into SharedPreferences.
+                    val newValues = values.joinToString("|")
+                
+                    // Note: putStringSet does not support ordering or duplicate values. If you need ordering/duplicate values, either
+                    // concatenate the values together as a String separated by a delimiter or think of another way.
+                    
+                    // Now save the value into SharedPreferences.
+                    sharedPreferences.edit {
+                        putString("summon", newValues)
+                        apply()
+                    }
+    
+                    // Recreate the AlertDialog again to update it with the newly selected items.
+                    createSummonDialog()
+                    
+                    // Now update the Preference's summary to reflect the order of summons selected.
+                    if(values.toList().isEmpty()) {
+                        summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+                    } else {
+                        summonPicker.summary = "${values.toList()}"
+                    }
+                }
+            })
+        
+            // Set the AlertDialog's NegativeButton.
+            builder.setNegativeButton("Dismiss", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    dialog?.dismiss()
+                }
+            })
+        
+            // Set the AlertDialog's NeutralButton.
+            builder.setNeutralButton("Clear all", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    // Go through every checked item and set them to false.
+                    for(i in summonListCheckedItems.indices) {
+                        summonListCheckedItems[i] = false
+                    }
+                
+                    // After that, clear the list of user-selected summons.
+                    userSelectedSummonList.clear()
+                
+                    // Finally, clear the ones in SharedPreferences.
+                    sharedPreferences.edit {
+                        remove("summon")
+                        apply()
+                    }
+    
+                    // Recreate the AlertDialog again to update it with the newly selected items.
+                    createSummonDialog()
+    
+                    // Now update the Preference's summary.
+                    summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+                }
+            })
+        
+            // Finally, show the AlertDialog to the user.
+            builder.create().show()
+        
+            true
+        }
+    }
+    
+    /**
+     * Populate the entries in the Mission Selection ListPreference based on the selected Farming Mode.
+     */
     private fun populateMissionListPreference() {
         val newEntries = mutableListOf<CharSequence>()
         val newEntryValues = mutableListOf<CharSequence>()
     
         val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
         val missionPicker: ListPreference = findPreference("missionPicker")!!
-        
+    
+        // Get the item entries based on the selected Farming Mode.
         if(farmingModePicker.value == "Quest") {
             itemsForQuest.forEach { (key, _) ->
                 newEntries.add(key)
@@ -332,6 +482,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         missionPicker.entryValues = newEntryValues.toTypedArray()
     }
     
+    /**
+     * Populate the entries in the Item Selection ListPreference based on the selected Mission.
+     */
     private fun populateItemListPreference() {
         val newEntries = mutableListOf<CharSequence>()
         val newEntryValues = mutableListOf<CharSequence>()
@@ -340,6 +493,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val missionPicker: ListPreference = findPreference("missionPicker")!!
         val itemPicker: ListPreference = findPreference("itemPicker")!!
     
+        // Get the item entries based on the selected Mission.
         if(farmingModePicker.value == "Quest") {
             itemsForQuest.forEach { (key, value) ->
                 if(key == missionPicker.value) {
@@ -420,58 +574,67 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Log.d(TAG, "Preferences created")
     
         // Grab the preferences from the previous time the user used the app.
-        val combatScript = sharedPreferences.getString("combatScript", "")
-        val farmingMode = sharedPreferences.getString("farmingMode", "")
-        val mission = sharedPreferences.getString("mission", "")
-        val item = sharedPreferences.getString("item", "")
+        val combatScriptPreferences = sharedPreferences.getString("combatScript", "")
+        val farmingModePreferences = sharedPreferences.getString("farmingMode", "")
+        val missionPreferences = sharedPreferences.getString("mission", "")
+        val itemPreferences = sharedPreferences.getString("item", "")
+        val itemAmountPreferences = sharedPreferences.getInt("itemAmount", 1)
+        val summonPreferences = sharedPreferences.getString("summon", "")!!.split("|")
 
         // Get references to the Preferences.
         val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
         val missionPicker: ListPreference = findPreference("missionPicker")!!
         val itemPicker: ListPreference = findPreference("itemPicker")!!
+        val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
         
-        Log.d(TAG, "combat script: $combatScript")
-        Log.d(TAG, "farming mode: $farmingMode")
-        Log.d(TAG, "mission: $mission")
-        Log.d(TAG, "item: $item")
+        Log.d(TAG, "combat script: $combatScriptPreferences")
+        Log.d(TAG, "farming mode: $farmingModePreferences")
+        Log.d(TAG, "mission: $missionPreferences")
+        Log.d(TAG, "item: $itemPreferences")
+        Log.d(TAG, "item amount: $itemAmountPreferences")
+        Log.d(TAG, "summon: $summonPreferences")
         
-
-        // Now set the values of the preferences from the shared preferences.
-        if(combatScript != null && combatScript.isNotEmpty()) {
+        // Now set the following values from the shared preferences.
+        if(combatScriptPreferences != null && combatScriptPreferences.isNotEmpty()) {
             val preferenceCategory = findPreference<PreferenceCategory>("combatScriptTitle")
-            preferenceCategory?.title = "Combat Script: Selected $combatScript"
+            preferenceCategory?.title = "Combat Script: Selected $combatScriptPreferences"
         }
 
-        if(farmingMode != null && farmingMode.isNotEmpty()) {
-            Log.d(TAG, "Farming Mode: $farmingMode")
-            farmingModePicker.value = farmingMode
+        if(farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
+            farmingModePicker.value = farmingModePreferences
 
             // Reveal the Mission picker.
             missionPicker.isVisible = true
         }
 
-        if(mission != null && mission.isNotEmpty()) {
-            Log.d(TAG, "Mission: $mission")
-            
+        if(missionPreferences != null && missionPreferences.isNotEmpty()) {
             // Populate the Mission picker.
             populateMissionListPreference()
             
-            missionPicker.value = mission
+            missionPicker.value = missionPreferences
             missionPicker.isVisible = true
 
             // Reveal the Item picker.
             itemPicker.isVisible = true
         }
 
-        if(item != null && item.isNotEmpty()) {
-            Log.d(TAG, "Item: $item")
-            
+        if(itemPreferences != null && itemPreferences.isNotEmpty()) {
             // Populate the Item picker.
             populateItemListPreference()
             
-            itemPicker.value = item
+            // Reveal the Item picker and the Item Amount picker.
+            itemPicker.value = itemPreferences
             itemPicker.isVisible = true
+            
+            itemAmountPicker.value = itemAmountPreferences
+            itemAmountPicker.isVisible = true
         }
+        
+        // Create the AlertDialog popup for selecting summons for Combat Mode.
+        if(itemPreferences != null && itemPreferences.isNotEmpty()) {
+            createSummonDialog()
+        }
+        
     }
     
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
