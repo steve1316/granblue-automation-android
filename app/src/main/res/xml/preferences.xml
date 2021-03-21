@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory app:title="Combat Script: Selected none" app:key="combatScriptTitle">
-        <Preference
-            app:key="filePicker"
-            app:title="Select Combat Script"
-            app:summary="Select the combat script in .txt format that will be used for Combat Mode. \n\nIf none is selected, it will default to Full/Semi Auto."/>
-    </PreferenceCategory>
-
     <PreferenceCategory app:title="Farming Mode">
         <ListPreference
             app:entries="@array/farming_mode_entries"
@@ -40,10 +33,18 @@
             app:title="Item Amount to farm"
             app:showSeekBarValue="true"
             app:defaultValue="1" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Combat Mode" app:key="combatModeTitle" app:isPreferenceVisible="false">
+        <Preference
+            app:key="filePicker"
+            app:title="Select Combat Script"
+            app:summary="Select the combat script in .txt format that will be used for Combat Mode.
+            \n\nIf none is selected, it will default to Full/Semi Auto.
+            \n\nCombat Script Selected: none" />
 
         <Preference
             app:key="summonPicker"
-            app:isPreferenceVisible="false"
             app:title="Select Summon(s)"
             app:summary="Select the Summon(s) in order from highest to lowest priority for Combat Mode." />
 
