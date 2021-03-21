@@ -1,9 +1,7 @@
 package com.steve1316.granblueautomation_android.ui.settings
 
-import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -12,187 +10,52 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.*
 import com.steve1316.granblueautomation_android.R
+import com.steve1316.granblueautomation_android.utils.ItemData
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val TAG: String = "GAA_SettingsFragment"
     private val OPEN_FILE_PERMISSION = 1001
-    
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    
-    private lateinit var preferenceCategoryCombatScript: PreferenceCategory
     
     private lateinit var builder: AlertDialog.Builder
     private lateinit var summonListItems: Array<String>
     private lateinit var summonListCheckedItems: BooleanArray
     private var userSelectedSummonList: ArrayList<Int> = arrayListOf()
     
-    private val itemsForQuest = mapOf(
-        "Scattered Cargo" to arrayListOf("Satin Feather", "Zephyr Feather", "Flying Sprout"),
-        "Lucky Charm Hunt" to arrayListOf("Fine Sand Bottle", "Untamed Flame", "Blistering Ore"),
-        "Special Op's Request" to arrayListOf("Fine Sand Bottle", "Untamed Flame", "Blistering Ore"),
-        "Threat to the Fisheries" to arrayListOf("Fresh Water Jug", "Soothing Splash", "Glowing Coral"),
-        "The Fruit of Lumacie" to arrayListOf("Rough Stone", "Swirling Amber", "Coarse Alluvium"),
-        "I Challenge You!" to arrayListOf("Falcon Feather", "Spring Water Jug", "Vermilion Stone"),
-        "For Whom the Bell Tolls" to arrayListOf("Slimy Shroom", "Hollow Soul", "Lacrimosa"),
-        "Golonzo's Battles of Old" to arrayListOf("Wheat Stalk", "Iron Cluster", "Olea Plant"),
-        "The Dungeon Diet" to arrayListOf("Indigo Fruit", "Foreboding Clover", "Blood Amber"),
-        "Trust Busting Dustup" to arrayListOf("Sand Brick", "Native Reed", "Antique Cloth"),
-        "Imperial Wanderer's Soul" to arrayListOf("Prosperity Flame", "Explosive Material", "Steel Liquid")
-    )
+    private val itemsForQuest: Map<String, ArrayList<String>> = ItemData.itemsForQuest
+    private val itemsForSpecial: Map<String, ArrayList<String>> = ItemData.itemsForSpecial
+    private val itemsForCoop: Map<String, ArrayList<String>> = ItemData.itemsForCoop
+    private val itemsForRaid: Map<String, ArrayList<String>> = ItemData.itemsForRaid
     
-    private val itemsForSpecial = mapOf(
-        "Scarlet Trial" to arrayListOf(
-            "Fire Orb", "Water Orb", "Earth Orb", "Wind Orb", "Light Orb", "Dark Orb", "Inferno Orb", "Frost Orb",
-            "Rumbling Orb", "Cyclone Orb", "Shining Orb", "Abysm Orb"
-        ),
-        "Cerulean Trial" to arrayListOf(
-            "Red Tome", "Blue Tome", "Brown Tome", "Green Tome", "White Tome", "Black Tome", "Hellfire Scroll",
-            "Flood Scroll", "Thunder Scroll", "Gale Scroll", "Skylight Scroll", "Chasm Scroll", "Infernal Whorl", "Tidal Whorl", "Seismic Whorl",
-            "Tempest Whorl", "Radiant Whorl", "Umbral Whorl"
-        ),
-        "Violet Trial" to arrayListOf("Prism Chip", "Flawed Prism", "Flawless Prism", "Rainbow Prism"),
-        "Shiny Slime Search!" to arrayListOf("EXP"),
-        "Six Dragon Trials" to arrayListOf(
-            "Red Dragon Scale", "Blue Dragon Scale", "Brown Dragon Scale", "Green Dragon Scale", "White Dragon Scale",
-            "Black Dragon Scale"
-        ),
-        "Ifrit Showdown" to arrayListOf("Jasper Scale", "Scorching Peak", "Infernal Garnet", "Ifrit Anima", "Ifrit Omega Anima"),
-        "Cocytus Showdown" to arrayListOf("Mourning Stone", "Crystal Spirit", "Frozen Hell Prism", "Cocytus Anima", "Cocytus Omega Anima"),
-        "Vohu Manah Showdown" to arrayListOf(
-            "Scrutiny Stone", "Luminous Judgment", "Evil Judge Crystal", "Vohu Manah Anima",
-            "Vohu Manah Omega Anima"
-        ),
-        "Sagittarius Showdown" to arrayListOf(
-            "Sagittarius Arrowhead", "Sagittarius Rune", "Horseman's Plate", "Sagittarius Anima",
-            "Sagittarius Omega Anima"
-        ),
-        "Corow Showdown" to arrayListOf("Solar Ring", "Sunlight Quartz", "Halo Light Quartz", "Corow Anima", "Corow Omega Anima"),
-        "Diablo Showdown" to arrayListOf("Twilight Cloth Strip", "Shadow Silver", "Phantom Demon Jewel", "Diablo Anima", "Diablo Omega Anima"),
-        "Extreme Trials" to arrayListOf("Hellfire Fragment", "Deluge Fragment", "Wasteland Fragment", "Typhoon Fragment"),
-        "Angel Halo" to arrayListOf("Angel Halo Weapons")
-    )
+    companion object {
+        private lateinit var sharedPreferences: SharedPreferences
     
-    private val itemsForCoop = mapOf(
-        "H3-1 In a Dusk Dream" to arrayListOf("EXP"),
-        "EX1-1 Corridor of Puzzles" to arrayListOf("Warrior Creed", "Mage Creed"),
-        "EX1-3 Lost in the Dark" to arrayListOf("Warrior Creed", "Mage Creed"),
-        "EX2-2 Time of Judgement" to arrayListOf(
-            "Evil Judge Crystal", "Pilgrim Distinction", "Mage Distinction", "Alchemist Distinction",
-            "Monk's Distinction", "Keraunos Replica", "Faust Replica"
-        ),
-        "EX2-3 Time of Revelation" to arrayListOf(
-            "Infernal Garnet", "Gladiator Distinction", "Fencer Distinction", "Dual Wielder Distinction",
-            "Forester's Distinction", "Avenger Replica", "Hellion Gauntlet Replica"
-        ),
-        "EX2-4 Time of Eminence" to arrayListOf(
-            "Halo Light Quartz", "Bandit Distinction", "Troubadour Distinction", "Mystic Distinction",
-            "Shredder Distinction", "Nirvana Replica", "Romulus Spear Replica", "Murakumo Replica"
-        ),
-        "EX3-2 Rule of the Tundra" to arrayListOf(
-            "Frozen Hell Prism", "Guardian Distinction", "Combatant Distinction", "Sword Master Distinction",
-            "Dragoon's Distinction", "Skofnung Replica", "Langeleik Replica", "Kapilavastu Replica"
-        ),
-        "EX3-3 Rule of the Plains" to arrayListOf(
-            "Horseman's Plate", "Sharpshooter Distinction", "Cavalryman Distinction", "Gunslinger Distinction",
-            "Oliver Replica", "Rosenbogen Replica", "Misericorde Replica"
-        ),
-        "EX3-4 Rule of the Twilight" to arrayListOf(
-            "Phantom Demon Jewel", "Samurai Distinction", "Ninja Distinction", "Assassin Distinction",
-            "Ipetam Replica", "Proximo Replica", "Nebuchad Replica", "Muramasa Replica"
-        ),
-        "EX4-2 Amidst the Waves" to arrayListOf(
-            "Pilgrim Distinction", "Mage Distinction", "Alchemist Distinction", "Mystic Distinction",
-            "Monk's Distinction", "Oliver Replica", "Langeleik Replica", "Romulus Spear Replica", "Proximo Replica", "Kapilavastu Replica"
-        ),
-        "EX4-3 Amidst the Petals" to arrayListOf(
-            "Sharpshooter Distinction", "Samurai Distinction", "Ninja Distinction", "Gunslinger Distinction",
-            "Assassin Distinction", "Longstrider's Distinction", "Langeleik Replica", "Misericorde Replica", "Faust Replica"
-        ),
-        "EX4-4 Amidst Severe Cliffs" to arrayListOf(
-            "Gladiator Distinction", "Fencer Distinction", "Combatant Distinction", "Sword Master Distinction",
-            "Aschallon Replica", "Hellion Gauntlet Replica", "Muramasa Replica", "Practice Drum"
-        ),
-        "EX4-5 Amidst the Flames" to arrayListOf(
-            "Guardian Distinction", "Bandit Distinction", "Troubadour Distinction", "Cavalryman Distinction",
-            "Dragoon's Distinction", "Ipetam Replica", "Murakumo Replica", "Nebuchad Replica"
-        )
-    )
+        /**
+         * Get a String value from the SharedPreferences using the provided key.
+         *
+         * @param key The name of the preference to retrieve.
+         * @return The value that is associated with the key.
+         */
+        fun getStringSharedPreference(key: String): String? {
+            return sharedPreferences.getString(key, "")
+        }
     
-    private val itemsForRaid = mapOf(
-        "Tiamat Omega" to arrayListOf(
-            "Tiamat Omega", "Tiamat Anima", "Tiamat Omega Anima", "Tiamat Amood Omega", "Tiamat Bolt Omega",
-            "Tiamat Gauntlet Omega", "Tiamat Glaive Omega"
-        ),
-        "Colossus Omega" to arrayListOf(
-            "Colossus Omega", "Colossus Anima", "Colossus Omega Anima", "Colossus Blade Omega", "Colossus Cane Omega",
-            "Colossus Carbine Omega", "Colossus Fist Omega"
-        ),
-        "Leviathan Omega" to arrayListOf(
-            "Leviathan Omega", "Leviathan Anima", "Leviathan Omega Anima", "Leviathan Bow Omega", "Leviathan Gaze Omega",
-            "Leviathan Scepter Omega", "Leviathan Spear Omega"
-        ),
-        "Yggdrasil Omega" to arrayListOf(
-            "Yggdrasil Omega", "Yggdrasil Anima", "Yggdrasil Omega Anima", "Yggdrasil Bow Omega",
-            "Yggdrasil Crystal Blade Omega", "Yggdrasil Dagger Omega", "Yggdrasil Dewbranch Omega"
-        ),
-        "Luminiera Omega" to arrayListOf(
-            "Luminiera Omega", "Luminiera Anima", "Luminiera Omega Anima", "Luminiera Bhuj Omega", "Luminiera Bolt Omega",
-            "Luminiera Harp Omega", "Luminiera Sword Omega"
-        ),
-        "Celeste Omega" to arrayListOf(
-            "Celeste Omega", "Celeste Anima", "Celeste Omega Anima", "Celeste Harp Omega", "Celeste Claw Omega",
-            "Celeste Horn Omega", "Celeste Zaghnal Omega"
-        ),
-        "Shiva" to arrayListOf("Shiva Anima", "Shiva Omega Anima", "Hand of Brahman", "Scimitar of Brahman", "Trident of Brahman", "Nilakantha"),
-        "Europa" to arrayListOf("Europa Anima", "Europa Omega Anima", "Tyros Bow", "Tyros Scepter", "Tyros Zither", "Spirit of Mana"),
-        "Godsworn Alexiel" to arrayListOf(
-            "Alexiel Anima", "Alexiel Omega Anima", "Nibelung Horn", "Nibelung Klinge", "Nibelung Messer",
-            "Godsworn Edge"
-        ),
-        "Grimnir" to arrayListOf(
-            "Grimnir Anima", "Grimnir Omega Anima", "Last Storm Blade", "Last Storm Harp", "Last Storm Lance",
-            "Coruscant Crozier"
-        ),
-        "Metatron" to arrayListOf(
-            "Metatron Anima", "Metatron Omega Anima", "Mittron's Treasured Blade", "Mittron's Gauntlet", "Mittron's Bow",
-            "Pillar of Flame"
-        ),
-        "Avatar" to arrayListOf("Avatar Anima", "Avatar Omega Anima", "Abyss Striker", "Abyss Spine", "Abyss Gaze", "Zechariah"),
-        "Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),
-        "Macula Marius" to arrayListOf("Macula Marius Anima", "Macula Marius Omega Anima", "Ancient Auberon", "Auberon"),
-        "Medusa" to arrayListOf("Medusa Anima", "Medusa Omega Anima", "Ancient Perseus", "Perseus"),
-        "Nezha" to arrayListOf("Nezha Anima", "Nezha Omega Anima", "Ancient Nalakuvara", "Nalakuvara"),
-        "Apollo" to arrayListOf("Apollo Anima", "Apollo Omega Anima", "Ancient Bow of Artemis", "Bow of Artemis"),
-        "Dark Angel Olivia" to arrayListOf("Dark Angel Olivia Anima", "Dark Angel Olivia Omega Anima", "Ancient Cortana", "Cortana"),
-        "Athena" to arrayListOf("Athena Anima", "Athena Omega Anima", "Erichthonius", "Sword of Pallas"),
-        "Grani" to arrayListOf("Grani Anima", "Grani Omega Anima", "Bow of Sigurd", "Wilhelm"),
-        "Baal" to arrayListOf("Baal Anima", "Baal Omega Anima", "Solomon's Axe", "Spymur's Vision"),
-        "Garuda" to arrayListOf("Garuda Anima", "Garuda Omega Anima", "Plume of Suparna", "Indra's Edge"),
-        "Odin" to arrayListOf("Odin Anima", "Odin Omega Anima", "Gungnir", "Sleipnir Shoe"),
-        "Lich" to arrayListOf("Lich Anima", "Lich Omega Anima", "Obscuritas", "Phantasmas"),
-        "Prometheus" to arrayListOf("Prometheus Anima", "Fire of Prometheus", "Chains of Caucasus"),
-        "Ca Ong" to arrayListOf("Ca Ong Anima", "Keeper of Hallowed Ground", "Savior of Hallowed Ground"),
-        "Gilgamesh" to arrayListOf("Gilgamesh Anima", "All-Might Spear", "All-Might Battle-Axe"),
-        "Morrigna" to arrayListOf("Morrigna Anima", "Le Fay", "Unius"),
-        "Hector" to arrayListOf("Hector Anima", "Bow of Iliad", "Adamantine Gauntlet"),
-        "Anubis" to arrayListOf("Anubis Anima", "Hermanubis", "Scales of Dominion"),
-        "Tiamat Malice" to arrayListOf("Tiamat Malice Anima", "Hatsoiiłhał", "Majestas"),
-        "Leviathan Malice" to arrayListOf("Leviathan Malice Anima", "Kaladanda", "Kris of Hypnos"),
-        "Phronesis" to arrayListOf("Phronesis Anima", "Dark Thrasher", "Master Bamboo Sword"),
-        "Grand Order" to arrayListOf("Azure Feather", "Heavenly Horn"),
-        "Proto Bahamut" to arrayListOf("Horn of Bahamut", "Champion Merit", "Primeval Horn"),
-        "Rose Queen" to arrayListOf("Rose Petal")
-    )
+        /**
+         * Get a Int value from the SharedPreferences using the provided key.
+         *
+         * @param key The name of the preference to retrieve.
+         * @return The value that is associated with the key.
+         */
+        fun getIntSharedPreference(key: String): Int {
+            return sharedPreferences.getInt(key, 1)
+        }
+    }
     
-    // This listener is triggered when the user changes a Preference setting in the Settings Page.
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        if(key != null && (key == "farmingModePicker" || key == "missionPicker" || key == "itemPicker" || key == "itemAmountPicker")) {
-            // Key is associated with one of the ListPreference pickers.
-    
+    // This listener is triggered whenever the user changes a Preference setting in the Settings Page.
+    private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if(key != null) {
             val newEntries = mutableListOf<CharSequence>()
             val newEntryValues = mutableListOf<CharSequence>()
-
+            
             if(key == "farmingModePicker") {
                 // Fill out the new entries and values for Missions based on the newly chosen Farming Mode.
                 val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
@@ -218,31 +81,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
                 
-                // Now save the value into SharedPreferences.
                 sharedPreferences.edit {
                     putString("farmingMode", farmingModePicker.value)
                     commit()
                 }
-    
-                // Populate the Mission picker with the missions associated with the newly chosen Farming Mode.
-                val picker: ListPreference = findPreference("missionPicker")!!
-                picker.entries = newEntries.toTypedArray()
-                picker.entryValues = newEntryValues.toTypedArray()
-    
-                // Now reveal the Mission picker and reset its value.
-                picker.isVisible = true
-                picker.value = null
                 
-                // Finally, hide and reset every other Preference setting as the Farming Mode that has now been changed will dictate the contents
-                // of every other Preference setting after it.
-                val itemPicker: ListPreference = findPreference("itemPicker")!!
-                itemPicker.value = null
-                itemPicker.isVisible = false
+                // Populate the Mission picker with the missions associated with the newly chosen Farming Mode.
+                val missionPicker: ListPreference = findPreference("missionPicker")!!
+                missionPicker.entries = newEntries.toTypedArray()
+                missionPicker.entryValues = newEntryValues.toTypedArray()
+                
+                // Now reset the values of the Mission and Item pickers to indicate that a new Farming Mode means a new Mission which in turn will
+                // affect what the user wants to choose next.
+                resetMissionSharedPreference()
+                resetItemSharedPreference()
+                
+                // Finally, reveal the Mission picker.
+                missionPicker.isVisible = true
             } else if(key == "missionPicker") {
-                // Fill out the new entries and values for Items based on the newly chosen Mission.
                 val missionPicker: ListPreference = findPreference("missionPicker")!!
                 val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
                 
+                // Fill out the new entries and values for Items based on the newly chosen Mission.
                 if(farmingModePicker.value == "Quest") {
                     itemsForQuest.forEach { (key, value) ->
                         if(key == missionPicker.value) {
@@ -280,169 +140,192 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         }
                     }
                 }
-    
-                // Now save the value into SharedPreferences.
+                
                 sharedPreferences.edit {
                     putString("mission", missionPicker.value)
                     commit()
                 }
-    
-                // Populate the Item picker with the items associated with the newly chosen Mission.
-                val picker: ListPreference = findPreference("itemPicker")!!
-                picker.entries = newEntries.toTypedArray()
-                picker.entryValues = newEntryValues.toTypedArray()
                 
-                // Reveal the Item picker and also the Item Amount Selection picker.
-                picker.isVisible = true
+                // Populate the Item picker with the items associated with the newly chosen Mission.
+                val itemPicker: ListPreference = findPreference("itemPicker")!!
+                itemPicker.entries = newEntries.toTypedArray()
+                itemPicker.entryValues = newEntryValues.toTypedArray()
+                
+                // Now reset the value of the Item picker.
+                resetItemSharedPreference()
+                
+                // Finally, reveal the Item picker and also the Item Amount Selection picker.
+                itemPicker.isVisible = true
                 val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
                 itemAmountPicker.isVisible = true
             } else if(key == "itemPicker") {
                 val itemPicker: ListPreference = findPreference("itemPicker")!!
-                
-                // Now save the value into SharedPreferences.
                 sharedPreferences.edit {
                     putString("item", itemPicker.value)
                     commit()
                 }
                 
-                // Now reveal the Summon Selection picker and build its AlertDialog.
-                val summonPicker: Preference = findPreference("summonPicker")!!
+                // Build the Summon Selection AlertDialog.
                 createSummonDialog()
-                summonPicker.isVisible = true
+                
+                // Finally, reveal the Combat Mode PreferenceCategory.
+                val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
+                combatModePreferenceCategory.isVisible = true
             } else if(key == "itemAmountPicker") {
                 val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
-
-                // Now save the value into SharedPreferences.
                 sharedPreferences.edit {
                     putInt("itemAmount", itemAmountPicker.value)
+                    commit()
+                }
+            } else if(key == "groupPicker") {
+                val groupPicker: ListPreference = findPreference("groupPicker")!!
+                sharedPreferences.edit {
+                    putString("groupNumber", groupPicker.value)
+                    commit()
+                }
+            } else if(key == "partyPicker") {
+                val partyPicker: ListPreference = findPreference("partyPicker")!!
+                sharedPreferences.edit {
+                    putString("partyNumber", partyPicker.value)
                     commit()
                 }
             }
         }
     }
     
-    /**
-     * Builds and displays the AlertDialog for selecting summons for Combat Mode.
-     */
-    private fun createSummonDialog() {
-        val summonPicker: Preference = findPreference("summonPicker")!!
-        val summonPreferences = sharedPreferences.getString("summon", "")!!.split("|")
+    override fun onResume() {
+        super.onResume()
+        
+        // Makes sure that OnSharedPreferenceChangeListener works properly and avoids the situation where the app suddenly stops triggering the
+        // listener.
+        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
+    }
     
-        // Now update the Preference's summary to reflect the order of summons selected.
-        if(summonPreferences.toList().isEmpty() || summonPreferences.toList()[0] == "") {
-            summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
-        } else {
-            summonPicker.summary = "${summonPreferences.toList()}"
-        }
+    override fun onPause() {
+        super.onPause()
+        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
+    }
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         
-        summonPicker.setOnPreferenceClickListener {
-            // Create the AlertDialog that pops up after clicking on this Preference.
-            builder = AlertDialog.Builder(context)
-            builder.setTitle("Select Summon(s)")
-        
-            // Grab the array of supported summons.
-            summonListItems = resources.getStringArray(R.array.summon_list)
-        
-            // Initialize the item list variable if it has not already.
-            if(summonPreferences.isEmpty()) {
-                summonListCheckedItems = BooleanArray(summonListItems.size)
-                var index = 0
-                summonListItems.forEach { _ ->
-                    summonListCheckedItems[index] = false
-                    index++
-                }
-            } else {
-                summonListCheckedItems = BooleanArray(summonListItems.size)
-                var index = 0
-                summonListItems.forEach {
-                    // Populate the checked items BooleanArray with true or false depending on what the user selected before.
-                    summonListCheckedItems[index] = summonPreferences.contains(it)
-                    index++
+        if(requestCode == OPEN_FILE_PERMISSION && resultCode == RESULT_OK) {
+            // The data contains the URI to the combat script file that the user selected.
+            if(data != null) {
+                val uri: Uri? = data.data
+                
+                if(uri != null) {
+                    // Open up a InputStream to the combat script.
+                    val inputStream = context?.contentResolver?.openInputStream(uri)
+                    
+                    // Start reading line by line and adding it to the ArrayList. It also makes sure to trim whitespaces and indents.
+                    val list: ArrayList<String> = arrayListOf()
+                    inputStream?.bufferedReader()?.forEachLine {
+                        if(it.isNotEmpty() && it[0] != '/' && it[0] != '#') {
+                            list.add(it.trim(' ').trimIndent())
+                        }
+                    }
+                    
+                    // Grab the file name from the URI and then update combat script category title.
+                    val path = data.data?.path
+                    val indexOfName = path?.lastIndexOf('/')
+                    if(indexOfName != null && indexOfName != -1) {
+                        val name = path.substring(indexOfName + 1)
+                        val filePicker: Preference = findPreference("filePicker")!!
+                        filePicker.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
+                                "\nIf none is selected, it will default to Full/Semi Auto.\n" +
+                                "\nnCombat Script Selected: $name"
+                        
+                        // Now save the file name in the shared preferences.
+                        sharedPreferences.edit {
+                            putString("combatScriptName", name)
+                            apply()
+                        }
+                        
+                        Log.d(TAG, "Combat Script loaded: $uri")
+                    }
                 }
             }
-        
-            // Set the selectable items for this AlertDialog.
-            builder.setMultiChoiceItems(summonListItems, summonListCheckedItems, object : DialogInterface.OnMultiChoiceClickListener {
-                override fun onClick(dialog: DialogInterface?, position: Int, isChecked: Boolean) {
-                    // Add or remove the selected item depending on whether it was selected before.
-                    if (isChecked) {
-                        userSelectedSummonList.add(position)
-                    } else {
-                        userSelectedSummonList.remove(position)
-                    }
-                }
-            })
-        
-            // Set the AlertDialog's PositiveButton.
-            builder.setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    // Grab the summons using the acquired indexes. This will put them in order from the user's highest to lowest priority.
-                    val values: ArrayList<String> = arrayListOf()
-                    userSelectedSummonList.forEach {
-                        values.add(summonListItems[it])
-                    }
-                    
-                    // Join the elements together into a String with the "|" delimiter in order to keep its order when storing into SharedPreferences.
-                    val newValues = values.joinToString("|")
-                
-                    // Note: putStringSet does not support ordering or duplicate values. If you need ordering/duplicate values, either
-                    // concatenate the values together as a String separated by a delimiter or think of another way.
-                    
-                    // Now save the value into SharedPreferences.
-                    sharedPreferences.edit {
-                        putString("summon", newValues)
-                        apply()
-                    }
+        }
+    }
     
-                    // Recreate the AlertDialog again to update it with the newly selected items.
-                    createSummonDialog()
-                    
-                    // Now update the Preference's summary to reflect the order of summons selected.
-                    if(values.toList().isEmpty()) {
-                        summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
-                    } else {
-                        summonPicker.summary = "${values.toList()}"
-                    }
-                }
-            })
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        // Display the layout using the preferences xml.
+        setPreferencesFromResource(R.xml.preferences, rootKey)
         
-            // Set the AlertDialog's NegativeButton.
-            builder.setNegativeButton("Dismiss", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    dialog?.dismiss()
-                }
-            })
-        
-            // Set the AlertDialog's NeutralButton.
-            builder.setNeutralButton("Clear all", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    // Go through every checked item and set them to false.
-                    for(i in summonListCheckedItems.indices) {
-                        summonListCheckedItems[i] = false
-                    }
-                
-                    // After that, clear the list of user-selected summons.
-                    userSelectedSummonList.clear()
-                
-                    // Finally, clear the ones in SharedPreferences.
-                    sharedPreferences.edit {
-                        remove("summon")
-                        apply()
-                    }
-    
-                    // Recreate the AlertDialog again to update it with the newly selected items.
-                    createSummonDialog()
-    
-                    // Now update the Preference's summary.
-                    summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
-                }
-            })
-        
-            // Finally, show the AlertDialog to the user.
-            builder.create().show()
-        
+        // Open the File Manager so the user can select their combat script.
+        val filePicker: Preference? = findPreference("filePicker")
+        filePicker?.setOnPreferenceClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.type = "text/plain"
+            startActivityForResult(intent, OPEN_FILE_PERMISSION)
+            
             true
         }
+        
+        // Get the SharedPreferences.
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        
+        // Grab the preferences from the previous time the user used the app.
+        val combatScriptNamePreferences = sharedPreferences.getString("combatScriptName", "")
+        val farmingModePreferences = sharedPreferences.getString("farmingMode", "")
+        val missionPreferences = sharedPreferences.getString("mission", "")
+        val itemPreferences = sharedPreferences.getString("item", "")
+        val itemAmountPreferences = sharedPreferences.getInt("itemAmount", 1)
+        val summonPreferences = sharedPreferences.getString("summon", "")?.split("|")
+        val groupPreferences = sharedPreferences.getString("groupNumber", "")
+        val partyPreferences = sharedPreferences.getString("partyNumber", "")
+        
+        // Get references to the Preferences.
+        val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
+        val missionPicker: ListPreference = findPreference("missionPicker")!!
+        val itemPicker: ListPreference = findPreference("itemPicker")!!
+        val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+        val groupPicker: ListPreference = findPreference("groupPicker")!!
+        val partyPicker: ListPreference = findPreference("partyPicker")!!
+        
+        // Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones visible to
+        // direct user's attention as they go through the settings down the page.
+        if(farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
+            farmingModePicker.value = farmingModePreferences
+            missionPicker.isVisible = true
+        }
+        
+        if(missionPreferences != null && missionPreferences.isNotEmpty()) {
+            // Populate the Mission picker.
+            populateMissionListPreference()
+            missionPicker.value = missionPreferences
+            missionPicker.isVisible = true
+            
+            // Reveal the Item picker as the next step for the user.
+            itemPicker.isVisible = true
+        }
+        
+        if(itemPreferences != null && itemPreferences.isNotEmpty()) {
+            // Populate the Item picker.
+            populateItemListPreference()
+            itemPicker.value = itemPreferences
+            itemPicker.isVisible = true
+            
+            // Set the value for the Item Amount picker and reveal it.
+            itemAmountPicker.value = itemAmountPreferences
+            itemAmountPicker.isVisible = true
+            
+            // Now reveal the Combat Mode PreferenceCategory that houses the Combat Script, Summons, and Group/Party Preference pickers.
+            val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
+            combatModePreferenceCategory.isVisible = true
+            createSummonDialog()
+        }
+        
+        if(summonPreferences != null && summonPreferences.isNotEmpty() && summonPreferences[0] != "") {
+            groupPicker.value = groupPreferences
+            partyPicker.value = partyPreferences
+            groupPicker.isVisible = true
+            partyPicker.isVisible = true
+        }
+        
+        Log.d(TAG, "Preferences created")
     }
     
     /**
@@ -536,142 +419,151 @@ class SettingsFragment : PreferenceFragmentCompat() {
         itemPicker.entryValues = newEntryValues.toTypedArray()
     }
     
-    override fun onResume() {
-        super.onResume()
+    /**
+     * Builds and displays the AlertDialog for selecting summons for Combat Mode.
+     */
+    private fun createSummonDialog() {
+        val summonPicker: Preference = findPreference("summonPicker")!!
+        val summonPreferences = sharedPreferences.getString("summon", "")!!.split("|")
         
-        // Makes sure that OnSharedPreferenceChangeListener works properly and avoids the situation where the app suddenly stops triggering the
-        // listener.
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-    }
-    
-    override fun onPause() {
-        super.onPause()
-        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-    }
-    
-    @SuppressLint("CommitPrefEdits")
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
-    
-        val filePicker: Preference? = findPreference("filePicker")
-    
-        // Open the File Manager so the user can select their combat script.
-        filePicker?.setOnPreferenceClickListener {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "text/plain"
-            startActivityForResult(intent, OPEN_FILE_PERMISSION)
+        // Update the Preference's summary to reflect the order of summons selected if the user did it before.
+        if(summonPreferences.toList().isEmpty() || summonPreferences.toList()[0] == "") {
+            summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+        } else {
+            summonPicker.summary = "${summonPreferences.toList()}"
+        }
+        
+        summonPicker.setOnPreferenceClickListener {
+            // Create the AlertDialog that pops up after clicking on this Preference.
+            builder = AlertDialog.Builder(context)
+            builder.setTitle("Select Summon(s)")
+            
+            // Grab the array of supported summons.
+            summonListItems = resources.getStringArray(R.array.summon_list)
+            
+            // Populate the list for supported summons if this is the first time.
+            if(summonPreferences.isEmpty()) {
+                summonListCheckedItems = BooleanArray(summonListItems.size)
+                var index = 0
+                summonListItems.forEach { _ ->
+                    summonListCheckedItems[index] = false
+                    index++
+                }
+            } else {
+                summonListCheckedItems = BooleanArray(summonListItems.size)
+                var index = 0
+                summonListItems.forEach {
+                    // Populate the checked items BooleanArray with true or false depending on what the user selected before.
+                    summonListCheckedItems[index] = summonPreferences.contains(it)
+                    index++
+                }
+            }
+            
+            // Set the selectable items for this AlertDialog.
+            builder.setMultiChoiceItems(summonListItems, summonListCheckedItems) { _, position, isChecked ->
+                if (isChecked) {
+                    userSelectedSummonList.add(position)
+                } else {
+                    userSelectedSummonList.remove(position)
+                }
+            }
+            
+            // Set the AlertDialog's PositiveButton.
+            builder.setPositiveButton("OK") { _, _ ->
+                // Grab the summons using the acquired indexes. This will put them in order from the user's highest to lowest priority.
+                val values: ArrayList<String> = arrayListOf()
+                userSelectedSummonList.forEach {
+                    values.add(summonListItems[it])
+                }
+                
+                // Join the elements together into a String with the "|" delimiter in order to keep its order when storing into SharedPreferences.
+                val newValues = values.joinToString("|")
+                
+                // Note: putStringSet does not support ordering or duplicate values. If you need ordering/duplicate values, either
+                // concatenate the values together as a String separated by a delimiter or think of another way.
+                sharedPreferences.edit {
+                    putString("summon", newValues)
+                    apply()
+                }
+                
+                // Recreate the AlertDialog again to update it with the newly selected items.
+                createSummonDialog()
+                
+                val groupPicker: ListPreference = findPreference("groupPicker")!!
+                val partyPicker: ListPreference = findPreference("partyPicker")!!
+                if (values.toList().isEmpty()) {
+                    summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+                    
+                    groupPicker.isVisible = false
+                    partyPicker.isVisible = false
+                } else {
+                    // Display the list of ordered summons and display the Group/Party Preference pickers as well.
+                    summonPicker.summary = "${values.toList()}"
+                    
+                    groupPicker.value = "Group 1"
+                    partyPicker.value = "Party 1"
+                    
+                    sharedPreferences.edit {
+                        putString("groupNumber", groupPicker.value)
+                        putString("partyNumber", partyPicker.value)
+                        apply()
+                    }
+                    
+                    groupPicker.isVisible = true
+                    partyPicker.isVisible = true
+                }
+            }
+            
+            // Set the AlertDialog's NegativeButton.
+            builder.setNegativeButton("Dismiss") { dialog, _ -> dialog?.dismiss() }
+            
+            // Set the AlertDialog's NeutralButton.
+            builder.setNeutralButton("Clear all") { _, _ ->
+                // Go through every checked item and set them to false.
+                for (i in summonListCheckedItems.indices) {
+                    summonListCheckedItems[i] = false
+                }
+                
+                // After that, clear the list of user-selected summons and the one in SharedPreferences.
+                userSelectedSummonList.clear()
+                sharedPreferences.edit {
+                    remove("summon")
+                    apply()
+                }
+                
+                // Recreate the AlertDialog again to update it with the newly selected items and reset its summary.
+                createSummonDialog()
+                summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+            }
+            
+            // Finally, show the AlertDialog to the user.
+            builder.create().show()
             
             true
         }
-    
-        // Get the SharedPreferences and its Editor object.
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        sharedPreferencesEditor = sharedPreferences.edit()
-    
-        preferenceCategoryCombatScript = findPreference("combatScriptTitle")!!
-        
-        Log.d(TAG, "Preferences created")
-    
-        // Grab the preferences from the previous time the user used the app.
-        val combatScriptPreferences = sharedPreferences.getString("combatScript", "")
-        val farmingModePreferences = sharedPreferences.getString("farmingMode", "")
-        val missionPreferences = sharedPreferences.getString("mission", "")
-        val itemPreferences = sharedPreferences.getString("item", "")
-        val itemAmountPreferences = sharedPreferences.getInt("itemAmount", 1)
-        val summonPreferences = sharedPreferences.getString("summon", "")!!.split("|")
-
-        // Get references to the Preferences.
-        val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
-        val missionPicker: ListPreference = findPreference("missionPicker")!!
-        val itemPicker: ListPreference = findPreference("itemPicker")!!
-        val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
-        
-        Log.d(TAG, "combat script: $combatScriptPreferences")
-        Log.d(TAG, "farming mode: $farmingModePreferences")
-        Log.d(TAG, "mission: $missionPreferences")
-        Log.d(TAG, "item: $itemPreferences")
-        Log.d(TAG, "item amount: $itemAmountPreferences")
-        Log.d(TAG, "summon: $summonPreferences")
-        
-        // Now set the following values from the shared preferences.
-        if(combatScriptPreferences != null && combatScriptPreferences.isNotEmpty()) {
-            val preferenceCategory = findPreference<PreferenceCategory>("combatScriptTitle")
-            preferenceCategory?.title = "Combat Script: Selected $combatScriptPreferences"
-        }
-
-        if(farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
-            farmingModePicker.value = farmingModePreferences
-
-            // Reveal the Mission picker.
-            missionPicker.isVisible = true
-        }
-
-        if(missionPreferences != null && missionPreferences.isNotEmpty()) {
-            // Populate the Mission picker.
-            populateMissionListPreference()
-            
-            missionPicker.value = missionPreferences
-            missionPicker.isVisible = true
-
-            // Reveal the Item picker.
-            itemPicker.isVisible = true
-        }
-
-        if(itemPreferences != null && itemPreferences.isNotEmpty()) {
-            // Populate the Item picker.
-            populateItemListPreference()
-            
-            // Reveal the Item picker and the Item Amount picker.
-            itemPicker.value = itemPreferences
-            itemPicker.isVisible = true
-            
-            itemAmountPicker.value = itemAmountPreferences
-            itemAmountPicker.isVisible = true
-        }
-        
-        // Create the AlertDialog popup for selecting summons for Combat Mode.
-        if(itemPreferences != null && itemPreferences.isNotEmpty()) {
-            createSummonDialog()
-        }
-        
     }
     
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        
-        if(requestCode == OPEN_FILE_PERMISSION && resultCode == RESULT_OK) {
-            // The data contains the URI to the combat script file that the user selected.
-            if(data != null) {
-                val uri: Uri? = data.data
-                
-                if(uri != null) {
-                    // Open up a InputStream to the combat script.
-                    val inputStream = context?.contentResolver?.openInputStream(uri)
-                    
-                    // Start reading line by line and adding it to the ArrayList. It also makes sure to trim whitespaces and indents.
-                    val list: ArrayList<String> = arrayListOf()
-                    inputStream?.bufferedReader()?.forEachLine {
-                        if(it.isNotEmpty() && it[0] != '/' && it[0] != '#') {
-                            list.add(it.trim(' ').trimIndent())
-                        }
-                    }
-                    
-                    // Grab the file name from the URI and then update combat script category title.
-                    val path = data.data?.path
-                    val indexOfName = path?.lastIndexOf('/')
-                    if(indexOfName != null && indexOfName != -1) {
-                        val name = path.substring(indexOfName + 1)
-                        preferenceCategoryCombatScript.title = "Combat Script: Selected $name"
+    /**
+     * Reset the mission stored in the SharedPreferences.
+     */
+    private fun resetMissionSharedPreference() {
+        val missionPicker: ListPreference = findPreference("missionPicker")!!
+        missionPicker.value = null
+        sharedPreferences.edit {
+            remove("mission")
+            commit()
+        }
+    }
     
-                        // Now save the file name in the shared preferences.
-                        sharedPreferencesEditor.putString("combatScript", name)
-                        sharedPreferencesEditor.apply()
-                        
-                        Log.d(TAG, "Combat Script loaded: $uri")
-                    }
-                }
-            }
+    /**
+     * Reset the item stored in the SharedPreferences.
+     */
+    private fun resetItemSharedPreference() {
+        val itemPicker: ListPreference = findPreference("itemPicker")!!
+        itemPicker.value = null
+        sharedPreferences.edit {
+            remove("item")
+            commit()
         }
     }
     
