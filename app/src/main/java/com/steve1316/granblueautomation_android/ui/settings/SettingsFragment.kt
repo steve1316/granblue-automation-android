@@ -96,8 +96,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 resetMissionSharedPreference()
                 resetItemSharedPreference()
                 
-                // Finally, reveal the Mission picker.
-                missionPicker.isVisible = true
+                // Disable the following Preferences.
+                val itemPicker: ListPreference = findPreference("itemPicker")!!
+                val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+                val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
+                itemPicker.isEnabled = false
+                itemAmountPicker.isEnabled = false
+                combatModePreferenceCategory.isEnabled = false
+                
+                // Finally, enable the Mission picker.
+                missionPicker.isEnabled = true
             } else if(key == "missionPicker") {
                 val missionPicker: ListPreference = findPreference("missionPicker")!!
                 val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
@@ -153,11 +161,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 
                 // Now reset the value of the Item picker.
                 resetItemSharedPreference()
+    
+                // Disable the following Preferences.
+                val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
+                combatModePreferenceCategory.isEnabled = false
                 
-                // Finally, reveal the Item picker and also the Item Amount Selection picker.
-                itemPicker.isVisible = true
+                // Finally, enable both the Item picker and the Item Amount picker.
+                itemPicker.isEnabled = true
                 val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
-                itemAmountPicker.isVisible = true
+                itemAmountPicker.isEnabled = true
             } else if(key == "itemPicker") {
                 val itemPicker: ListPreference = findPreference("itemPicker")!!
                 sharedPreferences.edit {
@@ -168,9 +180,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 // Build the Summon Selection AlertDialog.
                 createSummonDialog()
                 
-                // Finally, reveal the Combat Mode PreferenceCategory.
+                // Finally, enable the Combat Mode PreferenceCategory.
                 val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
-                combatModePreferenceCategory.isVisible = true
+                combatModePreferenceCategory.isEnabled = true
             } else if(key == "itemAmountPicker") {
                 val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
                 sharedPreferences.edit {
@@ -285,44 +297,42 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val groupPicker: ListPreference = findPreference("groupPicker")!!
         val partyPicker: ListPreference = findPreference("partyPicker")!!
         
-        // Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones visible to
+        // Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones enabled to
         // direct user's attention as they go through the settings down the page.
         if(farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
             farmingModePicker.value = farmingModePreferences
-            missionPicker.isVisible = true
+            missionPicker.isEnabled = true
         }
         
         if(missionPreferences != null && missionPreferences.isNotEmpty()) {
             // Populate the Mission picker.
             populateMissionListPreference()
             missionPicker.value = missionPreferences
-            missionPicker.isVisible = true
+            missionPicker.isEnabled = true
             
-            // Reveal the Item picker as the next step for the user.
-            itemPicker.isVisible = true
+            // Enable the Item picker as the next step for the user.
+            itemPicker.isEnabled = true
         }
         
         if(itemPreferences != null && itemPreferences.isNotEmpty()) {
             // Populate the Item picker.
             populateItemListPreference()
             itemPicker.value = itemPreferences
-            itemPicker.isVisible = true
+            itemPicker.isEnabled = true
             
-            // Set the value for the Item Amount picker and reveal it.
+            // Set the value for the Item Amount picker and enable it.
             itemAmountPicker.value = itemAmountPreferences
-            itemAmountPicker.isVisible = true
+            itemAmountPicker.isEnabled = true
             
             // Now reveal the Combat Mode PreferenceCategory that houses the Combat Script, Summons, and Group/Party Preference pickers.
             val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
-            combatModePreferenceCategory.isVisible = true
+            combatModePreferenceCategory.isEnabled = true
             createSummonDialog()
         }
         
         if(summonPreferences != null && summonPreferences.isNotEmpty() && summonPreferences[0] != "") {
             groupPicker.value = groupPreferences
             partyPicker.value = partyPreferences
-            groupPicker.isVisible = true
-            partyPicker.isVisible = true
         }
         
         Log.d(TAG, "Preferences created")
@@ -493,9 +503,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val partyPicker: ListPreference = findPreference("partyPicker")!!
                 if (values.toList().isEmpty()) {
                     summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
-                    
-                    groupPicker.isVisible = false
-                    partyPicker.isVisible = false
                 } else {
                     // Display the list of ordered summons and display the Group/Party Preference pickers as well.
                     summonPicker.summary = "${values.toList()}"
@@ -508,9 +515,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         putString("partyNumber", partyPicker.value)
                         apply()
                     }
-                    
-                    groupPicker.isVisible = true
-                    partyPicker.isVisible = true
                 }
             }
             
