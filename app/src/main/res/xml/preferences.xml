@@ -46,5 +46,23 @@
             app:isPreferenceVisible="false"
             app:title="Select Summon(s)"
             app:summary="Select the Summon(s) in order from highest to lowest priority for Combat Mode." />
+
+        <ListPreference
+            app:entries="@array/group_entries"
+            app:entryValues="@array/group_values"
+            app:defaultValue="Group 1"
+            app:isPreferenceVisible="false"
+            app:key="groupPicker"
+            app:title="Select Group"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:entries="@array/party_entries"
+            app:entryValues="@array/party_values"
+            app:defaultValue="Party 1"
+            app:isPreferenceVisible="false"
+            app:key="partyPicker"
+            app:title="Select Party"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -52,4 +52,42 @@
         <item>White Rabbit</item>
         <item>Black Rabbit</item>
     </string-array>
+
+    <string-array name="group_entries">
+        <item>Group 1</item>
+        <item>Group 2</item>
+        <item>Group 3</item>
+        <item>Group 4</item>
+        <item>Group 5</item>
+        <item>Group 6</item>
+        <item>Group 7</item>
+    </string-array>
+
+    <string-array name="group_values">
+        <item>Group 1</item>
+        <item>Group 2</item>
+        <item>Group 3</item>
+        <item>Group 4</item>
+        <item>Group 5</item>
+        <item>Group 6</item>
+        <item>Group 7</item>
+    </string-array>
+
+    <string-array name="party_entries">
+        <item>Party 1</item>
+        <item>Party 2</item>
+        <item>Party 3</item>
+        <item>Party 4</item>
+        <item>Party 5</item>
+        <item>Party 6</item>
+    </string-array>
+
+    <string-array name="party_values">
+        <item>Party 1</item>
+        <item>Party 2</item>
+        <item>Party 3</item>
+        <item>Party 4</item>
+        <item>Party 5</item>
+        <item>Party 6</item>
+    </string-array>
 </resources>
