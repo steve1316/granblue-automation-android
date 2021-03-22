@@ -2,6 +2,7 @@ package com.steve1316.granblueautomation_android.ui.settings
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -16,6 +17,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val TAG: String = "GAA_SettingsFragment"
     private val OPEN_FILE_PERMISSION = 1001
     
+    private lateinit var sharedPreferences: SharedPreferences
+    
     private lateinit var builder: AlertDialog.Builder
     private lateinit var summonListItems: Array<String>
     private lateinit var summonListCheckedItems: BooleanArray
@@ -27,25 +30,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val itemsForRaid: Map<String, ArrayList<String>> = ItemData.itemsForRaid
     
     companion object {
-        private lateinit var sharedPreferences: SharedPreferences
-    
         /**
          * Get a String value from the SharedPreferences using the provided key.
          *
+         * @param context The context for the application.
          * @param key The name of the preference to retrieve.
          * @return The value that is associated with the key.
          */
-        fun getStringSharedPreference(key: String): String? {
-            return sharedPreferences.getString(key, "")
+        fun getStringSharedPreference(context: Context, key: String): String {
+            val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return sharedPreferences.getString(key, "")!!
         }
     
         /**
          * Get a Int value from the SharedPreferences using the provided key.
          *
+         * @param context The context for the application.
          * @param key The name of the preference to retrieve.
          * @return The value that is associated with the key.
          */
-        fun getIntSharedPreference(key: String): Int {
+        fun getIntSharedPreference(context: Context, key: String): Int {
+            val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             return sharedPreferences.getInt(key, 1)
         }
     }
