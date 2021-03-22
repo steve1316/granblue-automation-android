@@ -1,5 +1,6 @@
 package com.steve1316.granblueautomation_android.ui.home
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -14,6 +15,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.R
+import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
 
 class HomeFragment : Fragment() {
@@ -25,6 +27,7 @@ class HomeFragment : Fragment() {
     private lateinit var homeFragmentView: View
     private lateinit var startButton: Button
     
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         myContext = requireContext()
 
@@ -46,6 +49,52 @@ class HomeFragment : Fragment() {
                 startButton.text = getString(R.string.bot_start)
             }
         }
+        
+        // Update the TextView here based on the information of the SharedPreferences. Required preferences to check for are Farming Mode, Mission,
+        // Item, and Summons. The rest are already given default values if the user never set them. Except Combat Script as if it is not set by the
+        // user, set it for them to be Full/Semi Auto by default.
+        val settingsStatusTextView: TextView = homeFragmentView.findViewById(R.id.settings_status)
+        
+        var combatScriptName = SettingsFragment.getStringSharedPreference(myContext, "combatScriptName")
+        val combatScript = SettingsFragment.getStringSharedPreference(myContext, "combatScript").split("|")
+        var farmingMode = SettingsFragment.getStringSharedPreference(myContext, "farmingMode")
+        var mission = SettingsFragment.getStringSharedPreference(myContext, "mission")
+        var item = SettingsFragment.getStringSharedPreference(myContext, "item")
+        val itemAmount = SettingsFragment.getIntSharedPreference(myContext, "itemAmount")
+        var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
+        val group = SettingsFragment.getStringSharedPreference(myContext, "groupNumber")
+        val party = SettingsFragment.getStringSharedPreference(myContext, "partyNumber")
+    
+        startButton.isEnabled = (farmingMode != "" && mission != "" && item != "" && summon.isNotEmpty())
+        
+        if(combatScriptName == "") {
+            combatScriptName = ""
+        }
+        
+        if(farmingMode == "") {
+            farmingMode = "Missing"
+        }
+        
+        if(mission == "") {
+            mission = "Missing"
+        }
+        
+        if(item == "") {
+            item = "Missing"
+        }
+        
+        if(summon[0] == "") {
+            summon = listOf("Requires at least 1 Summon")
+        }
+        
+        settingsStatusTextView.text = "Farming Mode: $farmingMode\n" +
+                "\nMission: $mission\n" +
+                "\nItem: $item\n" +
+                "\nItem Amount: $itemAmount\n" +
+                "\nCombat Script: $combatScriptName\n" +
+                "\nSummon: $summon\n" +
+                "\nGroup: $group\n" +
+                "\nParty: $party"
 
         return homeFragmentView
     }
