@@ -230,12 +230,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     // Open up a InputStream to the combat script.
                     val inputStream = context?.contentResolver?.openInputStream(uri)
                     
-                    // Start reading line by line and adding it to the ArrayList. It also makes sure to trim whitespaces and indents.
-                    val list: ArrayList<String> = arrayListOf()
+                    // Start reading line by line and adding it to the ArrayList. It also makes sure to trim whitespaces and indents and ignores
+                    // lines that are comments.
+                    val commandList: ArrayList<String> = arrayListOf()
                     inputStream?.bufferedReader()?.forEachLine {
                         if(it.isNotEmpty() && it[0] != '/' && it[0] != '#') {
-                            list.add(it.trim(' ').trimIndent())
+                            commandList.add(it.trim(' ').trimIndent())
                         }
+                    }
+                    
+                    // Now concatenate the commands together separated by a delimiter in order to keep the order when putting them into
+                    // SharedPreferences.
+                    val newCommandList = commandList.joinToString("|")
+                    
+                    // Now save the ArrayList of combat script commands into SharedPreferences.
+                    sharedPreferences.edit {
+                        putString("combatScript", newCommandList)
+                        commit()
                     }
                     
                     // Grab the file name from the URI and then update combat script category title.
