@@ -220,7 +220,27 @@ class Game(myContext: Context) {
 	 * @param useFullElixir Will use Full Elixir instead of Half Elixir. Defaults to false.
 	 */
 	fun checkAP(useFullElixir: Boolean = false) {
-		TODO("not yet implemented")
+		while((farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) ||
+			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
+			if(imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+				if(!useFullElixir) {
+					printToLog("[INFO] AP ran out! Using Half Elixir...", MESSAGE_TAG = TAG)
+					val location = imageUtils.findButton("refill_half_ap")!!
+					gestureUtils.tap(location.x, location.y + 370)
+				} else {
+					printToLog("[INFO] AP ran out! Using Full Elixir...", MESSAGE_TAG = TAG)
+					val location = imageUtils.findButton("refill_full_ap")!!
+					gestureUtils.tap(location.x, location.y + 370)
+				}
+				
+				wait(1.0)
+				
+				// Press the "OK" button to confirm the item usage.
+				findAndClickButton("ok")
+			}
+		}
+		
+		printToLog("[INFO] AP is available.", MESSAGE_TAG = TAG)
 	}
 	
 	/**
