@@ -249,7 +249,24 @@ class Game(myContext: Context) {
 	 * @param useSoulBalm Will use Soul Balm instead of Soul Berry. Defaults to false.
 	 */
 	fun checkEP(useSoulBalm: Boolean = false) {
-		TODO("not yet implemented")
+		if(farmingMode == "Raid" && imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
+			if(!useSoulBalm) {
+				printToLog("[INFO] EP ran out! Using Soul Berry...", MESSAGE_TAG = TAG)
+				val location = imageUtils.findButton("refill_half_ep")!!
+				gestureUtils.tap(location.x, location.y + 370)
+			} else {
+				printToLog("[INFO] EP ran out! Using Soul Balm...", MESSAGE_TAG = TAG)
+				val location = imageUtils.findButton("refill_full_ep")!!
+				gestureUtils.tap(location.x, location.y + 370)
+			}
+			
+			wait(1.0)
+			
+			// Press the "OK" button to confirm the item usage.
+			findAndClickButton("ok")
+		}
+		
+		printToLog("[INFO] EP is available.", MESSAGE_TAG = TAG)
 	}
 	
 	/**
