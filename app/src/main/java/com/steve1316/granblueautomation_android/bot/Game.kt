@@ -3,6 +3,7 @@ package com.steve1316.granblueautomation_android.bot
 import android.content.Context
 import android.util.Log
 import com.steve1316.granblueautomation_android.MyAccessibilityService
+import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.ImageUtils
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
 import kotlinx.coroutines.delay
@@ -25,6 +26,16 @@ class Game(myContext: Context) {
 	companion object {
 		val startTime: Long = System.currentTimeMillis()
 		var messageLog: ArrayList<String> = arrayListOf()
+		
+		var farmingMode: String = ""
+		var missionName: String = ""
+		var itemName: String = ""
+		var itemAmount: String = ""
+		var combatScriptName: String = ""
+		var combatScript: List<String> = arrayListOf()
+		var summonList: List<String> = arrayListOf()
+		var groupNumber: Int = 0
+		var partyNumber: Int = 0
 	}
 	
 	/**
@@ -319,18 +330,18 @@ class Game(myContext: Context) {
 	/**
 	 * Start Farming Mode with the provided parameters from the user's choices in the settings.
 	 *
-	 * @param itemName
-	 * @param itemAmount
-	 * @param farmingMode
-	 * @param locationName
-	 * @param missionName
-	 * @param summonList
-	 * @param summonElementList
-	 * @param groupNumber
-	 * @param partyNumber
+	 * @param context: The context for the application.
 	 */
-	fun startFarmingMode(itemName: String, itemAmount: Int, farmingMode: String, locationName: String, missionName: String, summonList:
-	ArrayList<String>, summonElementList: ArrayList<String>, groupNumber: Int, partyNumber: Int) {
-		TODO("not yet implemented")
+	fun startFarmingMode(context: Context) {
+		// Grab all necessary information from SharedPreferences.
+		farmingMode = SettingsFragment.getStringSharedPreference(context, "farmingMode")
+		missionName = SettingsFragment.getStringSharedPreference(context, "missionName")
+		itemName = SettingsFragment.getStringSharedPreference(context, "itemName")
+		itemAmount = SettingsFragment.getStringSharedPreference(context, "itemAmount")
+		combatScriptName = SettingsFragment.getStringSharedPreference(context, "combatScriptName")
+		combatScript = SettingsFragment.getStringSharedPreference(context, "combatScript").split("|")
+		summonList = SettingsFragment.getStringSharedPreference(context, "summonList").split("|")
+		groupNumber = SettingsFragment.getIntSharedPreference(context, "groupNumber")
+		partyNumber = SettingsFragment.getIntSharedPreference(context, "partyNumber")
 	}
 }
