@@ -365,11 +365,11 @@ class Game(myContext: Context) {
 			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
 			if(imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 				if(!useFullElixir) {
-					printToLog("[INFO] AP ran out! Using Half Elixir...", MESSAGE_TAG = TAG)
+					printToLog("[INFO] AP ran out! Using Half Elixir...")
 					val location = imageUtils.findButton("refill_half_ap")!!
 					gestureUtils.tap(location.x, location.y + 370)
 				} else {
-					printToLog("[INFO] AP ran out! Using Full Elixir...", MESSAGE_TAG = TAG)
+					printToLog("[INFO] AP ran out! Using Full Elixir...")
 					val location = imageUtils.findButton("refill_full_ap")!!
 					gestureUtils.tap(location.x, location.y + 370)
 				}
@@ -381,7 +381,7 @@ class Game(myContext: Context) {
 			}
 		}
 		
-		printToLog("[INFO] AP is available.", MESSAGE_TAG = TAG)
+		printToLog("[INFO] AP is available.")
 	}
 	
 	/**
@@ -392,11 +392,11 @@ class Game(myContext: Context) {
 	fun checkEP(useSoulBalm: Boolean = false) {
 		if(farmingMode == "Raid" && imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
 			if(!useSoulBalm) {
-				printToLog("[INFO] EP ran out! Using Soul Berry...", MESSAGE_TAG = TAG)
+				printToLog("[INFO] EP ran out! Using Soul Berry...")
 				val location = imageUtils.findButton("refill_half_ep")!!
 				gestureUtils.tap(location.x, location.y + 370)
 			} else {
-				printToLog("[INFO] EP ran out! Using Soul Balm...", MESSAGE_TAG = TAG)
+				printToLog("[INFO] EP ran out! Using Soul Balm...")
 				val location = imageUtils.findButton("refill_full_ep")!!
 				gestureUtils.tap(location.x, location.y + 370)
 			}
@@ -407,7 +407,7 @@ class Game(myContext: Context) {
 			findAndClickButton("ok")
 		}
 		
-		printToLog("[INFO] EP is available.", MESSAGE_TAG = TAG)
+		printToLog("[INFO] EP is available.")
 	}
 	
 	/**
