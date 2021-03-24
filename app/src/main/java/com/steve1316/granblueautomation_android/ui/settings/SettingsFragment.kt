@@ -197,13 +197,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else if(key == "groupPicker") {
                 val groupPicker: ListPreference = findPreference("groupPicker")!!
                 sharedPreferences.edit {
-                    putString("groupNumber", groupPicker.value)
+                    putInt("groupNumber", groupPicker.value.toInt())
                     commit()
                 }
             } else if(key == "partyPicker") {
                 val partyPicker: ListPreference = findPreference("partyPicker")!!
                 sharedPreferences.edit {
-                    putString("partyNumber", partyPicker.value)
+                    putInt("partyNumber", partyPicker.value.toInt())
                     commit()
                 }
             }
@@ -302,8 +302,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val itemPreferences = sharedPreferences.getString("item", "")
         val itemAmountPreferences = sharedPreferences.getInt("itemAmount", 1)
         val summonPreferences = sharedPreferences.getString("summon", "")?.split("|")
-        val groupPreferences = sharedPreferences.getString("groupNumber", "")
-        val partyPreferences = sharedPreferences.getString("partyNumber", "")
+        val groupPreferences = sharedPreferences.getInt("groupNumber", 1)
+        val partyPreferences = sharedPreferences.getInt("partyNumber", 1)
         
         // Get references to the Preferences.
         val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
@@ -347,8 +347,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         
         if(summonPreferences != null && summonPreferences.isNotEmpty() && summonPreferences[0] != "") {
-            groupPicker.value = groupPreferences
-            partyPicker.value = partyPreferences
+            groupPicker.value = "Group $groupPreferences"
+            partyPicker.value = "Party $partyPreferences"
         }
         
         Log.d(TAG, "Preferences created")
@@ -515,20 +515,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 // Recreate the AlertDialog again to update it with the newly selected items.
                 createSummonDialog()
                 
-                val groupPicker: ListPreference = findPreference("groupPicker")!!
-                val partyPicker: ListPreference = findPreference("partyPicker")!!
                 if (values.toList().isEmpty()) {
                     summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
                 } else {
                     // Display the list of ordered summons and display the Group/Party Preference pickers as well.
                     summonPicker.summary = "${values.toList()}"
                     
-                    groupPicker.value = "Group 1"
-                    partyPicker.value = "Party 1"
-                    
                     sharedPreferences.edit {
-                        putString("groupNumber", groupPicker.value)
-                        putString("partyNumber", partyPicker.value)
+                        putInt("groupNumber", 1)
+                        putInt("partyNumber", 1)
                         apply()
                     }
                 }

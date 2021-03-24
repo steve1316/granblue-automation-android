@@ -62,8 +62,8 @@ class HomeFragment : Fragment() {
         var item = SettingsFragment.getStringSharedPreference(myContext, "item")
         val itemAmount = SettingsFragment.getIntSharedPreference(myContext, "itemAmount")
         var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
-        val group = SettingsFragment.getStringSharedPreference(myContext, "groupNumber")
-        val party = SettingsFragment.getStringSharedPreference(myContext, "partyNumber")
+        val group = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
+        val party = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
     
         startButton.isEnabled = (farmingMode != "" && mission != "" && item != "" && summon.isNotEmpty())
         
