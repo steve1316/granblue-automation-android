@@ -1,6 +1,7 @@
 package com.steve1316.granblueautomation_android.bot
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.Log
 import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
@@ -232,7 +233,7 @@ class Game(myContext: Context) {
 		
 		try {
 			val listOfSteps: ArrayList<String> = arrayListOf("gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
-				"choose_a_summon", "party_selection_ok", "close", "menu", "retreat", "retreat_confirmation", "next")
+				"choose_a_summon", "ok", "close", "menu", "retreat", "retreat_confirmation", "next")
 			
 			listOfSteps.forEach {
 				if(it == "trial_battles_old_lignoid") {
@@ -272,13 +273,86 @@ class Game(myContext: Context) {
 	/**
 	 * Selects the specified Group and Party. It will then start the mission.
 	 *
-	 * @param groupNumber The Group that the specified Party in in.
-	 * @param partyNumber The specified Party to start the mission with.
 	 * @param tries Number of tries to select a Set before failing. Defaults to 3.
 	 * @return True if the mission was successfully started. False otherwise.
 	 */
-	private fun selectPartyAndStartMission(groupNumber: Int, partyNumber: Int, tries: Int = 3): Boolean {
-		TODO("not yet implemented")
+	private fun selectPartyAndStartMission(tries: Int = 3): Boolean {
+		var setLocation: Point? = null
+		var numberOfTries = tries
+		
+		// Search for the location of the "Set" button based on the Group number.
+		try {
+			while(setLocation == null) {
+				if(groupNumber < 8) {
+					setLocation = imageUtils.findButton("party_set_a", tries = 1)
+				} else {
+					setLocation = imageUtils.findButton("party_set_b", tries = 1)
+				}
+				
+				if(setLocation == null) {
+					numberOfTries -= 1
+					
+					if(numberOfTries <= 0) {
+						if(groupNumber < 8) {
+							throw(Resources.NotFoundException("Could not find Set A."))
+						} else {
+							throw(Resources.NotFoundException("Could not find Set B."))
+						}
+					}
+					
+					// Switch over and search for the other Set.
+					if(groupNumber < 8) {
+						setLocation = imageUtils.findButton("party_set_b", tries = 1)
+					} else {
+						setLocation = imageUtils.findButton("party_set_a", tries = 1)
+					}
+				}
+			}
+		} catch(e: Exception) {
+			printToLog("[ERROR] Bot encountered exception while selecting A or B Set: ${e.printStackTrace()}")
+		}
+		
+		if(setLocation != null) {
+			// Select the Group.
+			var equation: Double
+			if(groupNumber == 1) {
+				equation = 787.0
+			} else {
+				equation = 787.0 - (140 * (groupNumber - 1))
+			}
+			
+			gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0)
+			wait(1.0)
+			
+			// Select the Party.
+			if(partyNumber == 1) {
+				equation = 690.0
+			} else {
+				equation = 690.0 - (130 * (partyNumber - 1))
+			}
+			
+			gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0)
+			wait(1.0)
+		
+			printToLog("[SUCCESS] Selected Group and Party successfully.")
+			
+			// Start the mission by clicking "OK".
+			findAndClickButton("ok")
+			wait(2.0)
+			
+			// Detect if a "This raid battle has already ended" popup appeared.
+			if(imageUtils.confirmLocation("raid_just_ended_home_redirect", tries = 1)) {
+				printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
+				
+				// TODO: Determine whether or not the bot should head back home.
+				
+				return false
+			}
+			
+			return true
+		}
+		
+		return false
 	}
 	
 	/**
@@ -389,5 +463,6 @@ class Game(myContext: Context) {
 		partyNumber = SettingsFragment.getIntSharedPreference(context, "partyNumber")
 
 		selectSummon()
+		selectPartyAndStartMission()
 	}
 }
