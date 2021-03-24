@@ -6,6 +6,7 @@ import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.ImageUtils
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
+import com.steve1316.granblueautomation_android.utils.SummonData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
@@ -164,19 +165,108 @@ class Game(myContext: Context) {
 	 * Find and select the specified Summon based on the current index on the Summon Selection screen. It will then check for CAPTCHA right
 	 * afterwards.
 	 *
-	 * @param summonList List of selected Summons sorted from greatest to least priority.
-	 * @param summonElementList List of Summon Elements that correspond to the summonList.
 	 * @return True if the Summon was found and selected. False otherwise.
 	 */
-	private fun selectSummon(summonList: ArrayList<String>, summonElementList: ArrayList<String>): Boolean {
-		TODO("not yet implemented")
+	private fun selectSummon(): Boolean {
+		// Format the Summon strings.
+		val newSummonList = mutableListOf<String>()
+		summonList.forEach {
+			val newSummonName = it.toLowerCase(Locale.ROOT).replace(" ", "_")
+			Log.d(TAG, newSummonName)
+			newSummonList.add(newSummonName)
+		}
+		
+		// Set up the list of Summon elements.
+		val summonElementList = arrayListOf<String>()
+		summonList.forEach {
+			if(SummonData.fireSummons.contains(it)) {
+				summonElementList.add("fire")
+			} else if(SummonData.waterSummons.contains(it)) {
+				summonElementList.add("water")
+			} else if(SummonData.earthSummons.contains(it)) {
+				summonElementList.add("earth")
+			} else if(SummonData.windSummons.contains(it)) {
+				summonElementList.add("wind")
+			} else if(SummonData.lightSummons.contains(it)) {
+				summonElementList.add("light")
+			} else if(SummonData.darkSummons.contains(it)) {
+				summonElementList.add("dark")
+			} else if(SummonData.miscSummons.contains(it)) {
+				summonElementList.add("misc")
+			}
+		}
+		
+		printToLog("Summon list: $newSummonList")
+		printToLog("Summon Element list: $summonElementList")
+		
+		// Find the location of one of the Summons.
+		val summonLocation = imageUtils.findSummon(newSummonList, summonElementList)
+		
+		if(summonLocation != null) {
+			// Select the Summon.
+			gestureUtils.tap(summonLocation.x, summonLocation.y)
+			
+			// Check for CAPTCHA.
+			//checkForCAPTCHA()
+			
+			return true
+		} else {
+			// Reset Summons if not found.
+			resetSummons()
+			
+			return false
+		}
 	}
 	
 	/**
 	 * Reset the available Summons by starting and then retreating from an Old Lignoid Trial Battle.
 	 */
 	private fun resetSummons() {
-		TODO("not yet implemented")
+		printToLog("[INFO] Resetting Summons...")
+		
+		// Go back Home.
+		goBackHome(confirmLocationCheck = true)
+		
+		// Scroll the screen down to attempt to see the "Gameplay Extras" button.
+		gestureUtils.swipe(500f, 1000f, 500f, 400f)
+		
+		try {
+			val listOfSteps: ArrayList<String> = arrayListOf("gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
+				"choose_a_summon", "party_selection_ok", "close", "menu", "retreat", "retreat_confirmation", "next")
+			
+			listOfSteps.forEach {
+				if(it == "trial_battles_old_lignoid") {
+					// Make sure to confirm that the bot arrived at the Trial Battles screen.
+					wait(2.0)
+					imageUtils.confirmLocation("trial_battles")
+				}
+				
+				if(it == "close") {
+					// Wait a few seconds and then confirm its location.
+					wait(5.0)
+					imageUtils.confirmLocation("trial_battles_description")
+				}
+				
+				var imageLocation: Point? = imageUtils.findButton(it)
+				
+				while((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
+					// Keep swiping the screen down until the bot finds the specified button.
+					gestureUtils.swipe(500f, 1500f, 500f, 500f)
+					wait(1.0)
+					imageLocation = imageUtils.findButton(it, tries = 1)
+				}
+				
+				if(it == "choose_a_summon" && imageLocation != null) {
+					gestureUtils.tap(imageLocation.x, imageLocation.y + 400)
+				} else if(it != "choose_a_summon" && imageLocation != null) {
+					gestureUtils.tap(imageLocation.x, imageLocation.y)
+				}
+				
+				wait(1.0)
+			}
+		} catch(e: Exception) {
+			printToLog("[ERROR] Bot encountered exception while resetting Summons: ${e.printStackTrace()}")
+		}
 	}
 	
 	/**
@@ -294,8 +384,10 @@ class Game(myContext: Context) {
 		itemAmount = SettingsFragment.getStringSharedPreference(context, "itemAmount")
 		combatScriptName = SettingsFragment.getStringSharedPreference(context, "combatScriptName")
 		combatScript = SettingsFragment.getStringSharedPreference(context, "combatScript").split("|")
-		summonList = SettingsFragment.getStringSharedPreference(context, "summonList").split("|")
+		summonList = SettingsFragment.getStringSharedPreference(context, "summon").split("|")
 		groupNumber = SettingsFragment.getIntSharedPreference(context, "groupNumber")
 		partyNumber = SettingsFragment.getIntSharedPreference(context, "partyNumber")
+
+		selectSummon()
 	}
 }
