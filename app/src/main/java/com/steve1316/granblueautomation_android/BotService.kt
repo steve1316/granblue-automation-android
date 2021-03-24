@@ -83,12 +83,9 @@ class BotService: Service() {
 							overlayButton.setImageResource(R.drawable.ic_baseline_stop_circle_24)
 							
 							val game = Game(myContext)
-							val mapSelection = MapSelection(game)
 							
 							thread = thread {
-								mapSelection.selectMap("quest", "Port Breeze Archipelago", "Scattered Cargo", "")
-								//mapSelection.selectMap("special", "Angel Halo", "VH Angel Halo", "Very Hard")
-								//MediaProjectionService.takeScreenshotNow()
+								game.startFarmingMode(myContext)
 							}
 						} else {
 							thread.interrupt()
