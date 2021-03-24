@@ -197,13 +197,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else if(key == "groupPicker") {
                 val groupPicker: ListPreference = findPreference("groupPicker")!!
                 sharedPreferences.edit {
-                    putInt("groupNumber", groupPicker.value.toInt())
+                    putInt("groupNumber", groupPicker.value.last().toString().toInt())
                     commit()
                 }
             } else if(key == "partyPicker") {
                 val partyPicker: ListPreference = findPreference("partyPicker")!!
                 sharedPreferences.edit {
-                    putInt("partyNumber", partyPicker.value.toInt())
+                    putInt("partyNumber", partyPicker.value.last().toString().toInt())
                     commit()
                 }
             }
