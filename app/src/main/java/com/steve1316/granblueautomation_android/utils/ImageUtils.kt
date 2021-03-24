@@ -295,7 +295,7 @@ class ImageUtils(context: Context, private val game: Game) {
      * @param suppressError Whether or not to suppress saving error messages to the log.
      * @return Point object containing the location of the match or null if not found.
      */
-    fun findSummon(summonList: ArrayList<String>, summonElementList: ArrayList<String>, suppressError: Boolean = false): Point? {
+    fun findSummon(summonList: List<String>, summonElementList: List<String>, suppressError: Boolean = false): Point? {
         val folderName = "summons"
         
         game.printToLog("[DEBUG] Received the following list of Summons to search for: $summonList", MESSAGE_TAG = TAG)
@@ -323,10 +323,16 @@ class ImageUtils(context: Context, private val game: Game) {
                     
                     // If it reached the bottom of the Summon Selection page, scroll all the way back up.
                     if(findButton("bottom_of_summon_selection", tries = 1) != null) {
-                        game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD)
+                        game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
+                        game.wait(0.5)
+                        game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
+                        game.wait(0.5)
+                        game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
                         summonIndex += 1
                         break
                     }
+    
+                    game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
                 }
             }
             
