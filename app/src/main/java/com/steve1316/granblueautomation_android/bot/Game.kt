@@ -424,7 +424,10 @@ class Game(myContext: Context) {
 	 * Detects any "Friend Request" popups and close them.
 	 */
 	fun checkFriendRequest() {
-		TODO("not yet implemented")
+		if(imageUtils.confirmLocation("friend_request", tries = 1)) {
+			printToLog("[INFO] Detected \"Friend Request\" popup. Closing it now...")
+			findAndClickButton("cancel")
+		}
 	}
 	
 	/**
