@@ -56,16 +56,15 @@ class HomeFragment : Fragment() {
         val settingsStatusTextView: TextView = homeFragmentView.findViewById(R.id.settings_status)
         
         var combatScriptName = SettingsFragment.getStringSharedPreference(myContext, "combatScriptName")
-        val combatScript = SettingsFragment.getStringSharedPreference(myContext, "combatScript").split("|")
         var farmingMode = SettingsFragment.getStringSharedPreference(myContext, "farmingMode")
-        var mission = SettingsFragment.getStringSharedPreference(myContext, "mission")
-        var item = SettingsFragment.getStringSharedPreference(myContext, "item")
+        var mission = SettingsFragment.getStringSharedPreference(myContext, "missionName")
+        var item = SettingsFragment.getStringSharedPreference(myContext, "itemName")
         val itemAmount = SettingsFragment.getIntSharedPreference(myContext, "itemAmount")
         var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
         val group = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
         val party = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
     
-        startButton.isEnabled = (farmingMode != "" && mission != "" && item != "" && summon.isNotEmpty())
+        startButton.isEnabled = (farmingMode != "" && mission != "" && item != "" && summon.isNotEmpty() && summon[0] != "")
         
         if(combatScriptName == "") {
             combatScriptName = ""
