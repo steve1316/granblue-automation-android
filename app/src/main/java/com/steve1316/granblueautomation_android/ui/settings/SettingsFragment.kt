@@ -155,7 +155,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 
                 sharedPreferences.edit {
-                    putString("mission", missionPicker.value)
+                    putString("missionName", missionPicker.value)
                     commit()
                 }
                 
@@ -177,8 +177,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 itemAmountPicker.isEnabled = true
             } else if(key == "itemPicker") {
                 val itemPicker: ListPreference = findPreference("itemPicker")!!
+                
+                // Get the Map for the selected Mission and Item if it is applicable.
+                var mapName = ""
+                itemsForQuest.keys.forEach {
+                    if(itemsForQuest[it]?.contains(itemPicker.value) == true) {
+                        mapName = it
+                    }
+                }
+                
                 sharedPreferences.edit {
-                    putString("item", itemPicker.value)
+                    putString("mapName", mapName)
+                    putString("itemName", itemPicker.value)
                     commit()
                 }
                 
@@ -296,10 +306,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         
         // Grab the preferences from the previous time the user used the app.
-        val combatScriptNamePreferences = sharedPreferences.getString("combatScriptName", "")
         val farmingModePreferences = sharedPreferences.getString("farmingMode", "")
-        val missionPreferences = sharedPreferences.getString("mission", "")
-        val itemPreferences = sharedPreferences.getString("item", "")
+        val missionPreferences = sharedPreferences.getString("missionName", "")
+        val itemPreferences = sharedPreferences.getString("itemName", "")
         val itemAmountPreferences = sharedPreferences.getInt("itemAmount", 1)
         val summonPreferences = sharedPreferences.getString("summon", "")?.split("|")
         val groupPreferences = sharedPreferences.getInt("groupNumber", 1)
