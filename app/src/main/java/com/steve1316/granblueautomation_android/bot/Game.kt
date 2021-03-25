@@ -22,7 +22,7 @@ import kotlin.collections.ArrayList
  */
 class Game(myContext: Context) {
 	private val TAG: String = "GAA_Game"
-	var imageUtils = ImageUtils(myContext, this)
+	val imageUtils = ImageUtils(myContext, this)
 	val gestureUtils = MyAccessibilityService.getInstance()
 	
 	companion object {
@@ -32,7 +32,7 @@ class Game(myContext: Context) {
 		var farmingMode: String = ""
 		var missionName: String = ""
 		var itemName: String = ""
-		var itemAmount: String = ""
+		var itemAmount: Int = 0
 		var combatScriptName: String = ""
 		var combatScript: List<String> = arrayListOf()
 		var summonList: List<String> = arrayListOf()
@@ -456,9 +456,10 @@ class Game(myContext: Context) {
 	fun startFarmingMode(context: Context) {
 		// Grab all necessary information from SharedPreferences.
 		farmingMode = SettingsFragment.getStringSharedPreference(context, "farmingMode")
+		mapName = SettingsFragment.getStringSharedPreference(context, "mapName")
 		missionName = SettingsFragment.getStringSharedPreference(context, "missionName")
 		itemName = SettingsFragment.getStringSharedPreference(context, "itemName")
-		itemAmount = SettingsFragment.getStringSharedPreference(context, "itemAmount")
+		itemAmount = SettingsFragment.getIntSharedPreference(context, "itemAmount")
 		combatScriptName = SettingsFragment.getStringSharedPreference(context, "combatScriptName")
 		combatScript = SettingsFragment.getStringSharedPreference(context, "combatScript").split("|")
 		summonList = SettingsFragment.getStringSharedPreference(context, "summon").split("|")
