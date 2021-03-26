@@ -71,7 +71,19 @@ class CombatMode(private val game: Game) {
 	 * Checks if there are any dialog popups during Combat Mode from either Lyria or Vyrn and close them.
 	 */
 	private fun findCombatDialog() {
-		TODO("not yet implemented")
+		// Check for Lyria dialog popup first.
+		var combatDialogLocation = game.imageUtils.findDialog("dialog_lyria", tries = 1)
+		if(combatDialogLocation != null) {
+			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y)
+			return
+		}
+		
+		// Then check for Vyrn dialog popup next.
+		combatDialogLocation = game.imageUtils.findDialog("dialog_vyrn", tries = 1)
+		if(combatDialogLocation != null) {
+			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y)
+			return
+		}
 	}
 	
 	/**
