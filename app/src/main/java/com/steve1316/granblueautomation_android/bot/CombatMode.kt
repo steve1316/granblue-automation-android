@@ -10,7 +10,7 @@ class CombatMode(private val game: Game) {
 	private val TAG: String = "GAA_CombatMode"
 	
 	private var retreatCheckFlag = false
-	private lateinit var attackButtonLocation: Point
+	private var attackButtonLocation: Point? = null
 	
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
@@ -231,20 +231,24 @@ class CombatMode(private val game: Game) {
 	private fun selectCharacter(characterNumber: Int) {
 		val x = when (characterNumber) {
 			1 -> {
-				attackButtonLocation.x - 715.0
+				attackButtonLocation!!.x - 715.0
 			}
 			2 -> {
-				attackButtonLocation.x - 545.0
+				attackButtonLocation!!.x - 545.0
 			}
 			3 -> {
-				attackButtonLocation.x - 375.0
+				attackButtonLocation!!.x - 375.0
+			}
+			4 -> {
+				attackButtonLocation!!.x - 205.0
 			}
 			else -> {
-				attackButtonLocation.x - 205.0
+				game.printToLog("[WARNING] Invalid command received for selectCharacter()", MESSAGE_TAG = TAG)
+				return
 			}
 		}
 		
-		val y = attackButtonLocation.y + 290.0
+		val y = attackButtonLocation!!.y + 290.0
 		
 		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
 		game.gestureUtils.tap(x, y, ignoreWait = true)
@@ -261,19 +265,19 @@ class CombatMode(private val game: Game) {
 		val x = when (characterNumber) {
 			1 -> {
 				game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", MESSAGE_TAG = TAG)
-				attackButtonLocation.x - 485.0
+					attackButtonLocation!!.x - 485.0
 			}
 			2 -> {
 				game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", MESSAGE_TAG = TAG)
-				attackButtonLocation.x - 295.0
+					attackButtonLocation!!.x - 295.0
 			}
 			3 -> {
 				game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", MESSAGE_TAG = TAG)
-				attackButtonLocation.x - 105.0
+					attackButtonLocation!!.x - 105.0
 			}
 			else -> {
 				game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", MESSAGE_TAG = TAG)
-				attackButtonLocation.x + 85.0
+					attackButtonLocation!!.x + 85.0
 			}
 		}
 		
