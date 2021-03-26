@@ -375,6 +375,61 @@ class CombatMode(private val game: Game) {
 		// Once all commands for the selected Character have been processed, tap the "Back" button to return.
 		game.findAndClickButton("back")
 	}
+	
+	/**
+	 * Activate the specified Summon.
+	 *
+	 * @param summonCommand The command to be executed.
+	 */
+	private fun useSummon(summonCommand: String) {
+		for(j in 1..6) {
+			if(summonCommand == "summon($j)") {
+				// Bring up the available Summons.
+				game.printToLog("[COMBAT] Invoking Summon $j.", MESSAGE_TAG = TAG)
+				game.findAndClickButton("summon")
+				
+				// Now tap on the specified Summon.
+				when (j) {
+					1 -> {
+						game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0)
+					}
+					2 -> {
+						game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0)
+					}
+					3 -> {
+						game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0)
+					}
+					4 -> {
+						game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0)
+					}
+					5 -> {
+						game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0)
+					}
+					6 -> {
+						game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0)
+					}
+				}
+				
+				if(game.imageUtils.confirmLocation("summon_details")) {
+					val okButtonLocation = game.imageUtils.findButton("ok")
+					
+					if(okButtonLocation != null) {
+						game.gestureUtils.tap(okButtonLocation.x, okButtonLocation.y)
+						
+						// Now wait for the Summon animation to complete.
+						game.wait(7.0)
+					} else {
+						game.printToLog("[COMBAT] Summon $j cannot be invoked due to current restrictions.", MESSAGE_TAG = TAG)
+						game.findAndClickButton("cancel")
+						
+						// Tap the "Back" button to return.
+						game.findAndClickButton("back")
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Wait for a maximum of 20 seconds until the bot sees either the "Attack" or the "Next" button before starting a new turn.
 	 */
