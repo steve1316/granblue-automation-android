@@ -229,7 +229,26 @@ class CombatMode(private val game: Game) {
 	 * @param characterNumber The character that needs to be selected.
 	 */
 	private fun selectCharacter(characterNumber: Int) {
-		TODO("not yet implemented")
+		val x = when (characterNumber) {
+			1 -> {
+				attackButtonLocation.x - 715.0
+			}
+			2 -> {
+				attackButtonLocation.x - 545.0
+			}
+			3 -> {
+				attackButtonLocation.x - 375.0
+			}
+			else -> {
+				attackButtonLocation.x - 205.0
+			}
+		}
+		
+		val y = attackButtonLocation.y + 290.0
+		
+		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
+		game.gestureUtils.tap(x, y, ignoreWait = true)
+		game.gestureUtils.tap(x, y)
 	}
 	
 	/**
