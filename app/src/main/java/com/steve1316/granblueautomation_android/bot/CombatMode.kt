@@ -285,38 +285,96 @@ class CombatMode(private val game: Game) {
 	}
 	
 	/**
-	 * Activate the specified skill for the already selected character.
+	 * Activate the specified Skill for the already selected Character.
 	 *
-	 * @param characterNumber The character whose skill needs to be used.
-	 * @param skillNumber The skill that needs to be used.
+	 * @param characterNumber The Character whose Skill needs to be used.
+	 * @param skillCommandList The commands to be executed.
 	 */
-	private fun useCharacterSkill(characterNumber: Int, skillNumber: Int) {
-		val x = when (characterNumber) {
-			1 -> {
-				game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", MESSAGE_TAG = TAG)
+	private fun useCharacterSkill(characterNumber: Int, skillCommandList: List<String>) {
+		while(skillCommandList.isNotEmpty()) {
+			val x = when (skillCommandList[0]) {
+				"useskill(1)" -> {
+					game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", MESSAGE_TAG = TAG)
 					attackButtonLocation!!.x - 485.0
-			}
-			2 -> {
-				game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", MESSAGE_TAG = TAG)
+				}
+				"useskill(2)" -> {
+					game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", MESSAGE_TAG = TAG)
 					attackButtonLocation!!.x - 295.0
-			}
-			3 -> {
-				game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", MESSAGE_TAG = TAG)
+				}
+				"useskill(3)" -> {
+					game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", MESSAGE_TAG = TAG)
 					attackButtonLocation!!.x - 105.0
-			}
-			else -> {
-				game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", MESSAGE_TAG = TAG)
+				}
+				"useskill(4)" -> {
+					game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", MESSAGE_TAG = TAG)
 					attackButtonLocation!!.x + 85.0
+				}
+				else -> {
+					game.printToLog("[WARNING] Invalid command received for using the Character's Skill.", MESSAGE_TAG = TAG)
+					return
+				}
+			}
+			
+			skillCommandList.drop(1)
+			
+			val y = attackButtonLocation!!.y + 395.0
+			
+			// Double tap the Skill to avoid any popups caused by other Raid participants.
+			game.gestureUtils.tap(x, y, ignoreWait = true)
+			game.gestureUtils.tap(x, y)
+			
+			// Check if the Skill requires a target.
+			if(game.imageUtils.confirmLocation("use_skill", tries = 1, suppressError = true)) {
+				val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
+				
+				if(selectCharacterLocation != null) {
+					game.printToLog("[COMBAT] Skill is awaiting a target.", MESSAGE_TAG = TAG)
+					
+					if(skillCommandList.isNotEmpty()) {
+						// Select the targeted Character.
+						when (skillCommandList[0]) {
+							"target(1)" -> {
+								game.printToLog("[COMBAT] Targeting Character 1 for Skill.", MESSAGE_TAG = TAG)
+								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0)
+							}
+							"target(2)" -> {
+								game.printToLog("[COMBAT] Targeting Character 2 for Skill.", MESSAGE_TAG = TAG)
+								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0)
+							}
+							"target(3)" -> {
+								game.printToLog("[COMBAT] Targeting Character 3 for Skill.", MESSAGE_TAG = TAG)
+								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0)
+							}
+							"target(4)" -> {
+								game.printToLog("[COMBAT] Targeting Character 4 for Skill.", MESSAGE_TAG = TAG)
+								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0)
+							}
+							"target(5)" -> {
+								game.printToLog("[COMBAT] Targeting Character 5 for Skill.", MESSAGE_TAG = TAG)
+								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0)
+							}
+							"target(6)" -> {
+								game.printToLog("[COMBAT] Targeting Character 6 for Skill.", MESSAGE_TAG = TAG)
+								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0)
+							}
+							else -> {
+								game.printToLog("[WARNING] Invalid command received for Skill targeting.", MESSAGE_TAG = TAG)
+								game.findAndClickButton("cancel")
+							}
+						}
+						
+						skillCommandList.drop(1)
+					}
+				} else if(game.imageUtils.confirmLocation("skill_unusable", tries = 1)) {
+					game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", MESSAGE_TAG = TAG)
+					game.findAndClickButton("cancel")
+				}
 			}
 		}
 		
-		val y = attackButtonLocation.y + 395.0
-		
-		// Double tap the Skill to avoid any popups caused by other Raid participants.
-		game.gestureUtils.tap(x, y, ignoreWait = true)
-		game.gestureUtils.tap(x, y)
+		// Once all commands for the selected Character have been processed, tap the "Back" button to return.
+		game.findAndClickButton("back")
 	}
-	
 	/**
 	 * Wait for a maximum of 20 seconds until the bot sees either the "Attack" or the "Next" button before starting a new turn.
 	 */
