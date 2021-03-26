@@ -258,7 +258,30 @@ class CombatMode(private val game: Game) {
 	 * @param skillNumber The skill that needs to be used.
 	 */
 	private fun useCharacterSkill(characterNumber: Int, skillNumber: Int) {
-		TODO("not yet implemented")
+		val x = when (characterNumber) {
+			1 -> {
+				game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", MESSAGE_TAG = TAG)
+				attackButtonLocation.x - 485.0
+			}
+			2 -> {
+				game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", MESSAGE_TAG = TAG)
+				attackButtonLocation.x - 295.0
+			}
+			3 -> {
+				game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", MESSAGE_TAG = TAG)
+				attackButtonLocation.x - 105.0
+			}
+			else -> {
+				game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", MESSAGE_TAG = TAG)
+				attackButtonLocation.x + 85.0
+			}
+		}
+		
+		val y = attackButtonLocation.y + 395.0
+		
+		// Double tap the Skill to avoid any popups caused by other Raid participants.
+		game.gestureUtils.tap(x, y, ignoreWait = true)
+		game.gestureUtils.tap(x, y)
 	}
 	
 	/**
