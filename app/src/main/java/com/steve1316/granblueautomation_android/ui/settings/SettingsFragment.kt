@@ -338,6 +338,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // direct user's attention as they go through the settings down the page.
         if(farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
             farmingModePicker.value = farmingModePreferences
+            
+            // Populate and enable the Mission picker as the next step for the user.
+            populateMissionListPreference()
             missionPicker.isEnabled = true
         }
         
@@ -347,7 +350,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             missionPicker.value = missionPreferences
             missionPicker.isEnabled = true
             
-            // Enable the Item picker as the next step for the user.
+            // Populate and enable the Item picker as the next step for the user.
+            populateItemListPreference()
             itemPicker.isEnabled = true
         }
         
