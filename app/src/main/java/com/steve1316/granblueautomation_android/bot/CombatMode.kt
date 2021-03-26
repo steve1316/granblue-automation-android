@@ -161,7 +161,34 @@ class CombatMode(private val game: Game) {
 	 * Request backup during Combat mode for this Raid.
 	 */
 	private fun requestBackup() {
-		TODO("not yet implemented")
+		game.printToLog("[COMBAT] Now requesting Backup for this Raid.", MESSAGE_TAG = TAG)
+		
+		// Scroll the screen down a little bit to have the "Request Backup" button visible on all screen sizes. Then tap the button.
+		game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
+		game.findAndClickButton("request_backup")
+		
+		game.wait(1.0)
+		
+		// Find the location of the "Cancel" button and tap the "Request Backup" button to the right of it. This is to ensure that the bot always
+		// taps the button no matter the appearance of the "Request Backup" button, which changes frequently.
+		val cancelButtonLocation = game.imageUtils.findButton("cancel")
+		if(cancelButtonLocation != null) {
+			game.gestureUtils.tap(cancelButtonLocation.x + 500, cancelButtonLocation.y)
+		}
+		
+		game.wait(1.0)
+		
+		// If requesting backup was successful, close the popup.
+		if(game.imageUtils.confirmLocation("request_backup_success", tries = 1)) {
+			game.printToLog("[COMBAT] Successfully requested Backup.", MESSAGE_TAG = TAG)
+			game.findAndClickButton("ok")
+		} else {
+			game.printToLog("[COMBAT] Unable to request Backup. Possibly because it is still on cooldown.", MESSAGE_TAG = TAG)
+			game.findAndClickButton("cancel")
+		}
+		
+		// Now scroll back up to reset the view.
+		game.gestureUtils.swipe(500f, 400f, 500f, 1000f)
 	}
 	
 	/**
