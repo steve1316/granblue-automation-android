@@ -64,7 +64,7 @@ class CombatMode(private val game: Game) {
 	 * @return Total number of image matches found for charge attacks.
 	 */
 	private fun findChargeAttacks(): Int {
-		TODO("not yet implemented")
+		return game.imageUtils.findAll("full_charge").size
 	}
 	
 	/**
