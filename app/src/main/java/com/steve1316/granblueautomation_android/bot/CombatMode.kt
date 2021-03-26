@@ -16,7 +16,46 @@ class CombatMode(private val game: Game) {
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
 	 */
 	private fun partyWipeCheck() {
-		TODO("not yet implemented")
+		game.printToLog("[INFO] Checking to see if Party wiped.", MESSAGE_TAG = TAG)
+		
+		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 1, suppressError = true)
+		if(partyWipeIndicatorLocation != null) {
+			// Tap on the blue indicator to get rid of the overlay.
+			game.wait(2.0)
+			game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y)
+			
+			if(game.farmingMode != "Raid" && game.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
+				// Close the popup that asks if you want to use a Full Elixir. Then tap the red "Retreat" button.
+				game.printToLog("[WARNING] Party has wiped during Combat Mode. Retreating now...", MESSAGE_TAG = TAG)
+				
+				game.findAndClickButton("cancel")
+				game.wait(1.0)
+				game.findAndClickButton("retreat_confirmation")
+				
+				retreatCheckFlag = true
+			} else if((game.farmingMode == "Raid" || game.farmingMode == "Dread Barrage") && game.imageUtils.confirmLocation("salute_participants")) {
+				// Head back to the Home screen.
+				game.goBackHome(confirmLocationCheck = true)
+				
+				retreatCheckFlag = true
+			} else if(game.farmingMode == "Coop" && game.imageUtils.confirmLocation("salute_participants")) {
+				// Salute the participants.
+				game.printToLog("[WARNING] Party has wiped during Coop Combat Mode. Leaving the Coop Room...", MESSAGE_TAG = TAG)
+				
+				game.findAndClickButton("salute")
+				game.wait(1.0)
+				game.findAndClickButton("ok")
+				
+				// Then cancel the popup that asks if you want to use a Full Elixir and then tap the "Leave" button.
+				game.findAndClickButton("cancel")
+				game.wait(1.0)
+				game.findAndClickButton("leave")
+				
+				retreatCheckFlag = true
+			}
+		} else {
+			game.printToLog("[INFO] Party has not wiped.", MESSAGE_TAG = TAG)
+		}
 	}
 	
 	/**
