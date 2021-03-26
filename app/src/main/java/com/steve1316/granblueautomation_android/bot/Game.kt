@@ -435,6 +435,15 @@ class Game(myContext: Context) {
 	}
 	
 	/**
+	 * Checks for Extreme Plus during Rise of the Beasts and if it appeared and the user enabled it in settings, start it.
+	 *
+	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
+	 */
+	private fun checkROTBExtremePlus(): Boolean {
+		TODO("not yet implemented")
+	}
+	
+	/**
 	 * Checks for Event Nightmare and if it appeared and the user enabled it in settings, start it.
 	 *
 	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
