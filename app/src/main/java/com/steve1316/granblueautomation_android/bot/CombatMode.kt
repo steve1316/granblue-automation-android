@@ -83,7 +83,7 @@ class CombatMode {
 	 * @param combatScript ArrayList of all the lines in the text file.
 	 * @return True if Combat Mode ended successfully. False otherwise if the Party wiped or backed out without retreating.
 	 */
-	private fun startCombatMode(combatScript: ArrayList<String>): Boolean {
+	fun startCombatMode(combatScript: List<String>): Boolean {
 		TODO("not yet implemented")
 	}
 }
