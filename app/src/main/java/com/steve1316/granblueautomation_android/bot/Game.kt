@@ -165,7 +165,19 @@ class Game(myContext: Context) {
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
 	fun checkForCAPTCHA() {
-		TODO("not yet implemented")
+		try {
+			wait(2.0)
+			
+			if(imageUtils.confirmLocation("captcha", tries = 1)) {
+				throw(Exception("[CAPTCHA] CAPTCHA has been detected! Throwing exception now."))
+			} else {
+				printToLog("[CAPTCHA] CAPTCHA not detected.")
+			}
+		} catch(e: Exception) {
+			printToLog("[ERROR] Bot encountered exception while checking for CAPTCHA: ${e.printStackTrace()}")
+			
+			// TODO: Generate Alert here.
+		}
 	}
 	
 	/**
