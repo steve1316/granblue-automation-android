@@ -1,5 +1,8 @@
-package com.steve1316.granblueautomation_android.utils
+package com.steve1316.granblueautomation_android.data
 
+/**
+ * This class simply holds the selectable Summons that are supported by this application.
+ */
 class SummonData {
 	companion object {
 		val fireSummons: ArrayList<String> = arrayListOf("Colossus Omega", "Shiva", "Agni")
