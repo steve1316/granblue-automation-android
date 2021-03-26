@@ -24,6 +24,8 @@ class Game(myContext: Context) {
 	private val TAG: String = "GAA_Game"
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
+	private val mapSelection: MapSelection = MapSelection(this)
+	private val combatMode: CombatMode = CombatMode()
 	
 	companion object {
 		private val startTime: Long = System.currentTimeMillis()
@@ -478,8 +480,207 @@ class Game(myContext: Context) {
 		summonList = SettingsFragment.getStringSharedPreference(context, "summon").split("|")
 		groupNumber = SettingsFragment.getIntSharedPreference(context, "groupNumber")
 		partyNumber = SettingsFragment.getIntSharedPreference(context, "partyNumber")
-
-		selectSummon()
-		selectPartyAndStartMission()
+		
+		if(itemName != "EXP") {
+			printToLog("################################################################################")
+			printToLog("################################################################################")
+			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
+			printToLog("[FARM] Farming ${itemAmount}x $itemName at $missionName.")
+			printToLog("################################################################################")
+			printToLog("################################################################################")
+		} else {
+			printToLog("################################################################################")
+			printToLog("################################################################################")
+			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
+			printToLog("[FARM] Doing ${itemAmount}x runs for $itemName at $missionName.")
+			printToLog("################################################################################")
+			printToLog("################################################################################")
+		}
+		
+		// Parse the difficulty for the chosen Mission.
+		var difficulty = ""
+		if(farmingMode == "Special" || farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)" || farmingMode == "Rise of the Beasts") {
+			if(missionName.indexOf("N ") == 0) {
+				difficulty = "Normal"
+			} else if(missionName.indexOf("H ") == 0) {
+				difficulty = "Hard"
+			} else if(missionName.indexOf("VH ") == 0) {
+				difficulty = "Very Hard"
+			} else if(missionName.indexOf("EX ") == 0) {
+				difficulty = "Extreme"
+			} else if(missionName.indexOf("IM ") == 0) {
+				difficulty = "Impossible"
+			}
+		} else if(farmingMode == "Dread Barrage") {
+			if(missionName.indexOf("1 Star") == 0) {
+				difficulty = "1 Star"
+			} else if(missionName.indexOf("2 Star") == 0) {
+				difficulty = "2 Star"
+			} else if(missionName.indexOf("3 Star") == 0) {
+				difficulty = "3 Star"
+			} else if(missionName.indexOf("4 Star") == 0) {
+				difficulty = "4 Star"
+			} else if(missionName.indexOf("5 Star") == 0) {
+				difficulty = "5 Star"
+			}
+		}
+		
+		// TODO: Perform advanced settings setup for Dimensional Halo, Event Nightmare, ROTB Extreme+, and Dread Barrage Unparalleled Foes.
+		
+		var startCheckFlag = false
+		var summonCheckFlag = false
+		
+		// Primary workflow loop for Farming Mode.
+		while(itemAmountFarmed < itemAmount) {
+			printToLog("[INFO] Now selecting the Mission...")
+			
+			mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+			
+			// Loop and attempt to select a Summon. Reset Summons if necessary.
+			while(!summonCheckFlag && farmingMode != "Coop") {
+				summonCheckFlag = selectSummon()
+				
+				// If the return came back as false, that means the Summons were reset.
+				if(!summonCheckFlag) {
+					if(farmingMode != "Raid") {
+						printToLog("[INFO] Selecting Mission again after resetting Summons.")
+						mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+					} else {
+						printToLog("[INFO] Joining Raids again after resetting Summons.")
+						mapSelection.joinRaid(missionName)
+					}
+				}
+			}
+			
+			// Perform Party Selection and then start the Mission. Do not perform Party Selection for Coop after the initial setup as starting the
+			// Coop Mission again reuses the same Party.
+			if(farmingMode != "Coop") {
+				startCheckFlag = selectPartyAndStartMission()
+			} else {
+				if(coopFirstRun) {
+					startCheckFlag = selectPartyAndStartMission()
+					coopFirstRun = false
+					
+					// Click the "Start" button to start the Coop Mission.
+					findAndClickButton("ccop_start")
+				}
+				
+				printToLog("[INFO] Starting Coop Mission.")
+			}
+			
+			if(startCheckFlag && farmingMode != "Raid") {
+				wait(3.0)
+				
+				// Check for "Items Picked Up" popup that appears after starting a Quest Mission.
+				if(farmingMode == "Quest" && imageUtils.confirmLocation("items_picked_up", tries = 1)) {
+					printToLog("[INFO] Detected \"Items Picked Up\" popup. Closing it now...")
+					findAndClickButton("ok")
+				}
+				
+				// Finally, start Combat Mode. If it ended successfully, detect loot and do it again if necessary.
+				if(combatMode.startCombatMode(combatScript)) {
+					// TODO: Flesh out the collectLoot().
+					//collectLoot()
+					
+					if(itemAmountFarmed < itemAmount) {
+						if(farmingMode != "Coop") {
+							if(!findAndClickButton("play_again")) {
+								// Clear away any Pending Battles.
+								mapSelection.checkPendingBattles(farmingMode)
+								
+								// Now that Pending Battles have been cleared away, select the Mission again.
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							}
+						} else {
+							// Head back to the Coop Room.
+							findAndClickButton("coop_room")
+							
+							wait(1.0)
+							
+							// Check for "Daily Missions" popup for Coop.
+							if(imageUtils.confirmLocation("coop_daily_missions", tries = 1)) {
+								findAndClickButton("close")
+							}
+							
+							// Now start the Coop Mission again.
+							findAndClickButton("coop_start")
+						}
+						
+						// For every Farming Mode other than Coop, continuously close all popups until the bot reaches the Summon Selection screen.
+						while(!imageUtils.confirmLocation("select_summon", tries = 1)) {
+							if(farmingMode == "Dread Barrage" && imageUtils.confirmLocation("dread_barrage_unparalleled_foe", tries = 1)) {
+								// Find all the locations of the "AP 0" texts underneath each Unparalleled Foe.
+								// val ap0Locations = imageUtils.findAll("ap_0")
+								
+								// Start the Unparalleled Foe that the user specified for in the Settings.
+								// TODO: Flesh out this section.
+							} else if(farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("proud_solo_quest", tries = 1)) {
+								// Scroll the screen down a little bit to see the "Close" button for the "Proud Solo Quest" popup for ROTB.
+								gestureUtils.swipe(500f, 1000f, 500f, 400f)
+							} else if(farmingMode == "Rise of the Beasts" && checkROTBExtremePlus()) {
+								// Make sure that the bot goes back to the Home screen when completing an Extreme+.
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							} else if((farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare()) {
+								// Make sure that the bot goes back to the Home screen when completing an Event Nightmare.
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							} else if(farmingMode == "Event (Token Drawboxes)" && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
+								// Host a Very Hard Raid if the bot lacked the Treasures to host an Extreme/Impossible Raid.
+								printToLog("[INFO] Bot ran out of Treasures to host this Mission! Falling back to Very Hard Raid.")
+								findAndClickButton("ok")
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							} else if(farmingMode == "Special" && checkDimensionalHalo()) {
+								// Make sure that the bot goes back to the Home screen when completing an Dimensional Halo.
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							}
+							
+							else {
+								findAndClickButton("cancel", tries = 1, suppressError = true)
+								wait(1.0)
+								findAndClickButton("close", tries = 1, suppressError = true)
+							}
+							
+							wait(1.0)
+							
+							// Check for available AP.
+							checkAP()
+							
+							wait(1.0)
+						}
+					}
+				} else {
+					// Restart the Mission if the Party wiped or exited prematurely during Combat Mode.
+					printToLog("[INFO] Restarting the Mission due to retreating...")
+					mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+				}
+			} else if(startCheckFlag && farmingMode == "Raid") {
+				// Cover the occasional case where joining the Raid after selecting the Summon and Party led to the Quest Results screen with no
+				// loot to collect.
+				if(imageUtils.confirmLocation("no_loot", tries = 1)) {
+					printToLog("[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
+					goBackHome(confirmLocationCheck = true)
+					summonCheckFlag = false
+				} else {
+					// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
+					if(combatMode.startCombatMode(combatScript)) {
+						// TODO: Flesh out the collectLoot().
+						//collectLoot()
+						
+						if(itemAmountFarmed < itemAmount) {
+							// Clear away any Pending Battles.
+							mapSelection.checkPendingBattles(farmingMode)
+							
+							// Now join a new Raid.
+							mapSelection.joinRaid(missionName)
+						}
+					}
+				}
+			} else if(!startCheckFlag && farmingMode == "Raid") {
+				// If the bot reaches here, that means that the Raid ended before the bot could start the Mission after selecting the Summon and
+				// Party.
+				printToLog("[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
+				mapSelection.joinRaid(missionName)
+				summonCheckFlag = false
+			}
+		}
 	}
 }
