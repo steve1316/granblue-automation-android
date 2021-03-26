@@ -195,7 +195,32 @@ class CombatMode(private val game: Game) {
 	 * Request backup during Combat mode for this Raid by using the Twitter feature.
 	 */
 	private fun tweetBackup() {
-		TODO("not yet implemented")
+		game.printToLog("[COMBAT] Now requesting Backup for this Raid via Twitter.", MESSAGE_TAG = TAG)
+		
+		// Scroll the screen down a little bit to have the "Request Backup" button visible on all screen sizes. Then tap the button.
+		game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
+		game.findAndClickButton("request_backup")
+		
+		game.wait(1.0)
+		
+		// Now tap the "Tweet" button.
+		game.findAndClickButton("request_backup_tweet")
+		game.wait(1.0)
+		game.findAndClickButton("ok")
+		
+		game.wait(1.0)
+		
+		// If requesting backup was successful, close the popup.
+		if(game.imageUtils.confirmLocation("request_backup_tweet_success", tries = 1)) {
+			game.printToLog("[COMBAT] Successfully requested Backup via Twitter.", MESSAGE_TAG = TAG)
+			game.findAndClickButton("ok")
+		} else {
+			game.printToLog("[COMBAT] Unable to request Backup via Twitter. Possibly because it is still on cooldown.", MESSAGE_TAG = TAG)
+			game.findAndClickButton("cancel")
+		}
+		
+		// Now scroll back up to reset the view.
+		game.gestureUtils.swipe(500f, 400f, 500f, 1000f)
 	}
 	
 	/**
