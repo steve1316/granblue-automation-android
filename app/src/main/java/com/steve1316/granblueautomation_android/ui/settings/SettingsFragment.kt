@@ -190,26 +190,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
                 combatModePreferenceCategory.isEnabled = false
                 
-                // Finally, enable both the Item picker and the Item Amount picker.
+                // Finally, enable the Item picker.
                 itemPicker.isEnabled = true
-                val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
-                itemAmountPicker.isEnabled = true
             } else if(key == "itemPicker") {
                 val itemPicker: ListPreference = findPreference("itemPicker")!!
                 
-                // Get the Map for the selected Mission and Item if it is applicable.
-                var mapName = ""
-                itemsForQuest.keys.forEach {
-                    if(itemsForQuest[it]?.contains(itemPicker.value) == true) {
-                        mapName = it
-                    }
-                }
-                
                 sharedPreferences.edit {
-                    putString("mapName", mapName)
                     putString("itemName", itemPicker.value)
                     commit()
                 }
+                
+                // Enable the Item Amount picker.
+                val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+                itemAmountPicker.isEnabled = true
                 
                 // Build the Summon Selection AlertDialog.
                 createSummonDialog()
