@@ -93,7 +93,68 @@ class CombatMode(private val game: Game) {
 	 * @param target The character target for the item. This depends on what item it is. Defaults to 0.
 	 */
 	private fun useCombatHealingItem(command: String, target: Int = 0) {
-		TODO("not yet implemented")
+		// Open up the "Use Item" popup.
+		game.findAndClickButton("heal")
+		
+		// Format the item name.
+		val formattedCommand = command.toLowerCase(Locale.ROOT).replace(" ", "_")
+		
+		// Tap the specified item.
+		if(formattedCommand == "usebluepotion" || formattedCommand == "usesupportpotion") {
+			// Blue and Support Potions share the same image but they are at different positions on the screen.
+			val potionLocations = game.imageUtils.findAll(formattedCommand)
+			if(formattedCommand == "usebluepotion") {
+				game.gestureUtils.tap(potionLocations[0].x, potionLocations[0].y)
+			} else {
+				game.gestureUtils.tap(potionLocations[1].x, potionLocations[1].y)
+			}
+		} else {
+			game.findAndClickButton(formattedCommand)
+		}
+		
+		// After the initial popup vanishes to reveal a new popup, either select a Character target or tap the confirmation button.
+		// TODO: Flesh out ImageUtils' waitVanish().
+		if(game.imageUtils.waitVanish("tap_the_item_to_use", timeout = 5)) {
+			when (formattedCommand) {
+				"usegreenpotion" -> {
+					game.printToLog("[COMBAT] Using Green Potion on Character $target.", MESSAGE_TAG = TAG)
+					selectCharacter(target)
+				}
+				"usebluepotion" -> {
+					game.printToLog("[COMBAT] Using Blue Potion on the whole Party.", MESSAGE_TAG = TAG)
+					game.findAndClickButton("use")
+				}
+				"usefullelixir" -> {
+					game.printToLog("[COMBAT] Using Full Elixir to revive and gain Full Charge.", MESSAGE_TAG = TAG)
+					game.findAndClickButton("ok")
+				}
+				"usesupportpotion" -> {
+					game.printToLog("[COMBAT] Using Support Potion on the whole Party.", MESSAGE_TAG = TAG)
+					game.findAndClickButton("ok")
+				}
+				"useclaritypotion" -> {
+					game.printToLog("[COMBAT] Using Clarity Herb on Character $target.", MESSAGE_TAG = TAG)
+					selectCharacter(target)
+				}
+				"userevivalpotion" -> {
+					game.printToLog("[COMBAT] Using Revival Potion to revive the whole Party.", MESSAGE_TAG = TAG)
+					game.findAndClickButton("ok")
+				}
+			}
+			
+			// Wait for the healing animation to finish.
+			game.wait(1.0)
+			
+			if(!game.imageUtils.confirmLocation("use_item", tries = 1)) {
+				game.printToLog("[SUCCESS] Successfully used healing item.", MESSAGE_TAG = TAG)
+			} else {
+				game.printToLog("[WARNING] Was not able to use the healing item. Canceling it now.", MESSAGE_TAG = TAG)
+			}
+		} else {
+			game.printToLog("[WARNING] Failed to tap on the item. Either it does not exist for this particular Mission or you ran out.",
+				MESSAGE_TAG = TAG)
+			game.findAndClickButton("cancel")
+		}
 	}
 	
 	/**
