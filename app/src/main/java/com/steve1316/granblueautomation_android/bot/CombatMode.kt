@@ -94,9 +94,34 @@ class CombatMode(private val game: Game) {
 	 * Uses the specified healing item during Combat Mode with an optional target if the item requires one.
 	 *
 	 * @param command The command for the healing item to use.
-	 * @param target The character target for the item. This depends on what item it is. Defaults to 0.
 	 */
-	private fun useCombatHealingItem(command: String, target: Int = 0) {
+	private fun useCombatHealingItem(command: String) {
+		var target = 0
+		
+		// Grab the healing command
+		val healingItemCommandList = command.split(".")
+		val healingItemCommand = healingItemCommandList[0]
+		healingItemCommandList.drop(1)
+		
+		// Parse the target if the user is using a Green Potion or a Clarity Herb.
+		if((healingItemCommand == "usegreenpotion" || healingItemCommand == "useclarityherb") && healingItemCommandList[0]
+				.contains("target")) {
+			when (healingItemCommandList[0]) {
+				"target(1)" -> {
+					target = 1
+				}
+				"target(2)" -> {
+					target = 2
+				}
+				"target(3)" -> {
+					target = 3
+				}
+				"target(4)" -> {
+					target = 4
+				}
+			}
+		}
+		
 		// Open up the "Use Item" popup.
 		game.findAndClickButton("heal")
 		
