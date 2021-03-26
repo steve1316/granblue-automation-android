@@ -7,7 +7,7 @@ import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.ImageUtils
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
-import com.steve1316.granblueautomation_android.utils.SummonData
+import com.steve1316.granblueautomation_android.data.SummonData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
@@ -22,22 +22,26 @@ import kotlin.collections.ArrayList
  */
 class Game(myContext: Context) {
 	private val TAG: String = "GAA_Game"
-	val imageUtils = ImageUtils(myContext, this)
-	val gestureUtils = MyAccessibilityService.getInstance()
+	val imageUtils: ImageUtils = ImageUtils(myContext, this)
+	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	
 	companion object {
-		val startTime: Long = System.currentTimeMillis()
-		var messageLog: ArrayList<String> = arrayListOf()
+		private val startTime: Long = System.currentTimeMillis()
+		private var messageLog: ArrayList<String> = arrayListOf()
 		
-		var farmingMode: String = ""
-		var missionName: String = ""
-		var itemName: String = ""
-		var itemAmount: Int = 0
-		var combatScriptName: String = ""
-		var combatScript: List<String> = arrayListOf()
-		var summonList: List<String> = arrayListOf()
-		var groupNumber: Int = 0
-		var partyNumber: Int = 0
+		private var farmingMode: String = ""
+		private var mapName: String = ""
+		private var missionName: String = ""
+		private var itemName: String = ""
+		private var itemAmount: Int = 0
+		private var itemAmountFarmed: Int = 0
+		private var combatScriptName: String = ""
+		private var combatScript: List<String> = arrayListOf()
+		private var summonList: List<String> = arrayListOf()
+		private var groupNumber: Int = 0
+		private var partyNumber: Int = 0
+		
+		private var coopFirstRun: Boolean = true
 	}
 	
 	/**
