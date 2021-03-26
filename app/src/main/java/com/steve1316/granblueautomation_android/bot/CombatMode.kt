@@ -3,7 +3,7 @@ package com.steve1316.granblueautomation_android.bot
 /**
  * This class handles the Combat Mode and offers helper functions to assist it.
  */
-class CombatMode {
+class CombatMode(private val game: Game) {
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
 	 */

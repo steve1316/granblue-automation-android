@@ -25,26 +25,24 @@ class Game(myContext: Context) {
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	private val mapSelection: MapSelection = MapSelection(this)
-	private val combatMode: CombatMode = CombatMode()
+	private val combatMode: CombatMode = CombatMode(this)
 	
-	companion object {
-		private val startTime: Long = System.currentTimeMillis()
-		private var messageLog: ArrayList<String> = arrayListOf()
-		
-		private var farmingMode: String = ""
-		private var mapName: String = ""
-		private var missionName: String = ""
-		private var itemName: String = ""
-		private var itemAmount: Int = 0
-		private var itemAmountFarmed: Int = 0
-		private var combatScriptName: String = ""
-		private var combatScript: List<String> = arrayListOf()
-		private var summonList: List<String> = arrayListOf()
-		private var groupNumber: Int = 0
-		private var partyNumber: Int = 0
-		
-		private var coopFirstRun: Boolean = true
-	}
+	private val startTime: Long = System.currentTimeMillis()
+	private var messageLog: ArrayList<String> = arrayListOf()
+	
+	var farmingMode: String = ""
+	private var mapName: String = ""
+	private var missionName: String = ""
+	private var itemName: String = ""
+	private var itemAmount: Int = 0
+	private var itemAmountFarmed: Int = 0
+	private var combatScriptName: String = ""
+	private var combatScript: List<String> = arrayListOf()
+	private var summonList: List<String> = arrayListOf()
+	private var groupNumber: Int = 0
+	private var partyNumber: Int = 0
+	
+	private var coopFirstRun: Boolean = true
 	
 	/**
 	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
