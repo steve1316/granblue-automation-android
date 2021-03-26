@@ -12,6 +12,10 @@ class CombatMode(private val game: Game) {
 	private var retreatCheckFlag = false
 	private var attackButtonLocation: Point? = null
 	
+	private var healingItemCommands = listOf("usegreenpotion.target(1)", "usegreenpotion.target(2)", "usegreenpotion.target(3)",
+		"usegreenpotion.target(4)", "usebluepotion", "usefullelixir", "usesupportpotion", "useclarityherb.target(1)", "useclarityherb.target(2)",
+		"useclarityherb.target(3)", "useclarityherb.target(4)", "userevivalpotion")
+	
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
 	 */
