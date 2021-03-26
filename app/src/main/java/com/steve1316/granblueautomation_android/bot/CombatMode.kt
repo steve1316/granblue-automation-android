@@ -288,7 +288,28 @@ class CombatMode(private val game: Game) {
 	 * Wait for a maximum of 20 seconds until the bot sees either the "Attack" or the "Next" button before starting a new turn.
 	 */
 	private fun waitForAttack() {
-		TODO("not yet implemented")
+		var tries = 10
+		
+		while((!retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null) ||
+			(!retreatCheckFlag && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null)) {
+			// Stagger the checks for dialog popups during Combat Mode.
+			if(tries % 2 == 0) {
+				findCombatDialog()
+			}
+			
+			game.wait(1.0)
+			
+			tries -= 1
+			if(tries <= 0 || game.imageUtils.findButton("attack", tries = 1, suppressError = true) != null || game.imageUtils.findButton("next",
+					tries = 1, suppressError = true) != null) {
+				break
+			}
+			
+			// Check if the Party wiped after attacking.
+			partyWipeCheck()
+			
+			game.wait(1.0)
+		}
 	}
 	
 	/**
