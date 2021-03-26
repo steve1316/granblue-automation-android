@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
     private lateinit var startButton: Button
     
     @SuppressLint("SetTextI18n")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         myContext = requireContext()
 
         homeFragmentView = inflater.inflate(R.layout.fragment_home, container, false)

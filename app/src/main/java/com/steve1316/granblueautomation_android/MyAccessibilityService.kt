@@ -104,21 +104,25 @@ class MyAccessibilityService : AccessibilityService() {
         val top: Float = (displayMetrics.heightPixels * 0.75).toFloat()
         val middle: Float = (displayMetrics.widthPixels / 2).toFloat()
         val bottom: Float = (displayMetrics.heightPixels * 0.25).toFloat()
-        
-        if (action == AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP) {
-            // Create a Path to scroll the screen up starting from the bottom and swiping to the top.
-            scrollPath.apply {
-                moveTo(middle, bottom)
-                lineTo(middle, top)
+    
+        when (action) {
+            AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP -> {
+                // Create a Path to scroll the screen up starting from the bottom and swiping to the top.
+                scrollPath.apply {
+                    moveTo(middle, bottom)
+                    lineTo(middle, top)
+                }
             }
-        } else if (action == AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN) {
-            // Create a Path to scroll the screen down starting from the top and swiping to the bottom.
-            scrollPath.apply {
-                moveTo(middle, top)
-                lineTo(middle, bottom)
+            AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN -> {
+                // Create a Path to scroll the screen down starting from the top and swiping to the bottom.
+                scrollPath.apply {
+                    moveTo(middle, top)
+                    lineTo(middle, bottom)
+                }
             }
-        } else {
-            Log.e(TAG, "Invalid action received.")
+            else -> {
+                Log.e(TAG, "Invalid action received.")
+            }
         }
         
         val gesture = GestureDescription.Builder().apply {

@@ -11,7 +11,6 @@ import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
 import com.steve1316.granblueautomation_android.bot.Game
-import com.steve1316.granblueautomation_android.bot.MapSelection
 import com.steve1316.granblueautomation_android.utils.NotificationUtils
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt

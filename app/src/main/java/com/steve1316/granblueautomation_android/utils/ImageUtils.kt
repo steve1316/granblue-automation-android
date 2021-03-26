@@ -196,12 +196,12 @@ class ImageUtils(context: Context, private val game: Game) {
             // Get the Bitmap from the template image file and then start matching.
             templateBitmap = BitmapFactory.decodeStream(inputStream)
         }
-        
-        if(templateBitmap != null) {
-            return Pair(sourceBitmap, templateBitmap)
+    
+        return if(templateBitmap != null) {
+            Pair(sourceBitmap, templateBitmap)
         } else {
             Log.e(TAG, "One or both of the Bitmaps are null.")
-            return Pair(sourceBitmap, templateBitmap)
+            Pair(sourceBitmap, templateBitmap)
         }
     }
     

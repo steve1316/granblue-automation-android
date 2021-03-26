@@ -53,7 +53,7 @@ class Game(myContext: Context) {
 	 *
 	 * @return String of HH:MM:SS format of the elapsed time.
 	 */
-	fun printTime(): String {
+	private fun printTime(): String {
 		val elapsedMillis: Long = System.currentTimeMillis() - startTime
 		
 		return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(elapsedMillis), TimeUnit.MILLISECONDS.toMinutes(elapsedMillis)
@@ -154,10 +154,10 @@ class Game(myContext: Context) {
 			tempLocation = imageUtils.findButton(buttonName, tries = tries, suppressError = suppressError)
 		}
 		
-		if(tempLocation != null) {
-			return gestureUtils.tap(tempLocation.x, tempLocation.y)
+		return if(tempLocation != null) {
+			gestureUtils.tap(tempLocation.x, tempLocation.y)
 		} else {
-			return false
+			false
 		}
 	}
 	
@@ -186,20 +186,28 @@ class Game(myContext: Context) {
 		// Set up the list of Summon elements.
 		val summonElementList = arrayListOf<String>()
 		summonList.forEach {
-			if(SummonData.fireSummons.contains(it)) {
-				summonElementList.add("fire")
-			} else if(SummonData.waterSummons.contains(it)) {
-				summonElementList.add("water")
-			} else if(SummonData.earthSummons.contains(it)) {
-				summonElementList.add("earth")
-			} else if(SummonData.windSummons.contains(it)) {
-				summonElementList.add("wind")
-			} else if(SummonData.lightSummons.contains(it)) {
-				summonElementList.add("light")
-			} else if(SummonData.darkSummons.contains(it)) {
-				summonElementList.add("dark")
-			} else if(SummonData.miscSummons.contains(it)) {
-				summonElementList.add("misc")
+			when {
+				SummonData.fireSummons.contains(it) -> {
+					summonElementList.add("fire")
+				}
+				SummonData.waterSummons.contains(it) -> {
+					summonElementList.add("water")
+				}
+				SummonData.earthSummons.contains(it) -> {
+					summonElementList.add("earth")
+				}
+				SummonData.windSummons.contains(it) -> {
+					summonElementList.add("wind")
+				}
+				SummonData.lightSummons.contains(it) -> {
+					summonElementList.add("light")
+				}
+				SummonData.darkSummons.contains(it) -> {
+					summonElementList.add("dark")
+				}
+				SummonData.miscSummons.contains(it) -> {
+					summonElementList.add("misc")
+				}
 			}
 		}
 		
@@ -209,19 +217,19 @@ class Game(myContext: Context) {
 		// Find the location of one of the Summons.
 		val summonLocation = imageUtils.findSummon(newSummonList, summonElementList)
 		
-		if(summonLocation != null) {
+		return if(summonLocation != null) {
 			// Select the Summon.
 			gestureUtils.tap(summonLocation.x, summonLocation.y)
 			
 			// Check for CAPTCHA.
 			//checkForCAPTCHA()
 			
-			return true
+			true
 		} else {
 			// Reset Summons if not found.
 			resetSummons()
 			
-			return false
+			false
 		}
 	}
 	
@@ -289,10 +297,10 @@ class Game(myContext: Context) {
 		// Search for the location of the "Set" button based on the Group number.
 		try {
 			while(setLocation == null) {
-				if(groupNumber < 8) {
-					setLocation = imageUtils.findButton("party_set_a", tries = 1)
+				setLocation = if(groupNumber < 8) {
+					imageUtils.findButton("party_set_a", tries = 1)
 				} else {
-					setLocation = imageUtils.findButton("party_set_b", tries = 1)
+					imageUtils.findButton("party_set_b", tries = 1)
 				}
 				
 				if(setLocation == null) {
@@ -307,10 +315,10 @@ class Game(myContext: Context) {
 					}
 					
 					// Switch over and search for the other Set.
-					if(groupNumber < 8) {
-						setLocation = imageUtils.findButton("party_set_b", tries = 1)
+					setLocation = if(groupNumber < 8) {
+						imageUtils.findButton("party_set_b", tries = 1)
 					} else {
-						setLocation = imageUtils.findButton("party_set_a", tries = 1)
+						imageUtils.findButton("party_set_a", tries = 1)
 					}
 				}
 			}
@@ -320,21 +328,20 @@ class Game(myContext: Context) {
 		
 		if(setLocation != null) {
 			// Select the Group.
-			var equation: Double
-			if(groupNumber == 1) {
-				equation = 787.0
+			var equation: Double = if(groupNumber == 1) {
+				787.0
 			} else {
-				equation = 787.0 - (140 * (groupNumber - 1))
+				787.0 - (140 * (groupNumber - 1))
 			}
 			
 			gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0)
 			wait(1.0)
 			
 			// Select the Party.
-			if(partyNumber == 1) {
-				equation = 690.0
+			equation = if(partyNumber == 1) {
+				690.0
 			} else {
-				equation = 690.0 - (130 * (partyNumber - 1))
+				690.0 - (130 * (partyNumber - 1))
 			}
 			
 			gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0)
@@ -500,28 +507,40 @@ class Game(myContext: Context) {
 		// Parse the difficulty for the chosen Mission.
 		var difficulty = ""
 		if(farmingMode == "Special" || farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)" || farmingMode == "Rise of the Beasts") {
-			if(missionName.indexOf("N ") == 0) {
-				difficulty = "Normal"
-			} else if(missionName.indexOf("H ") == 0) {
-				difficulty = "Hard"
-			} else if(missionName.indexOf("VH ") == 0) {
-				difficulty = "Very Hard"
-			} else if(missionName.indexOf("EX ") == 0) {
-				difficulty = "Extreme"
-			} else if(missionName.indexOf("IM ") == 0) {
-				difficulty = "Impossible"
+			when {
+				missionName.indexOf("N ") == 0 -> {
+					difficulty = "Normal"
+				}
+				missionName.indexOf("H ") == 0 -> {
+					difficulty = "Hard"
+				}
+				missionName.indexOf("VH ") == 0 -> {
+					difficulty = "Very Hard"
+				}
+				missionName.indexOf("EX ") == 0 -> {
+					difficulty = "Extreme"
+				}
+				missionName.indexOf("IM ") == 0 -> {
+					difficulty = "Impossible"
+				}
 			}
 		} else if(farmingMode == "Dread Barrage") {
-			if(missionName.indexOf("1 Star") == 0) {
-				difficulty = "1 Star"
-			} else if(missionName.indexOf("2 Star") == 0) {
-				difficulty = "2 Star"
-			} else if(missionName.indexOf("3 Star") == 0) {
-				difficulty = "3 Star"
-			} else if(missionName.indexOf("4 Star") == 0) {
-				difficulty = "4 Star"
-			} else if(missionName.indexOf("5 Star") == 0) {
-				difficulty = "5 Star"
+			when {
+				missionName.indexOf("1 Star") == 0 -> {
+					difficulty = "1 Star"
+				}
+				missionName.indexOf("2 Star") == 0 -> {
+					difficulty = "2 Star"
+				}
+				missionName.indexOf("3 Star") == 0 -> {
+					difficulty = "3 Star"
+				}
+				missionName.indexOf("4 Star") == 0 -> {
+					difficulty = "4 Star"
+				}
+				missionName.indexOf("5 Star") == 0 -> {
+					difficulty = "5 Star"
+				}
 			}
 		}
 		

@@ -33,16 +33,22 @@ class MapSelection(private val game: Game) {
 				val arrowLocation = game.imageUtils.findButton("world_right_arrow")
 					?: throw Exception("Unable to find the location of the right arrow for the World.")
 				
-				if(islandName == "Port Breeze Archipelago") {
-					game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289)
-				} else if(islandName == "Valtz Duchy") {
-					game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118)
-				} else if(islandName == "Auguste Isles") {
-					game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54)
-				} else if(islandName == "Lumacie Archipelago") {
-					game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159)
-				} else if(islandName == "Albion Citadel") {
-					game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344)
+				when (islandName) {
+					"Port Breeze Archipelago" -> {
+						game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289)
+					}
+					"Valtz Duchy" -> {
+						game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118)
+					}
+					"Auguste Isles" -> {
+						game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54)
+					}
+					"Lumacie Archipelago" -> {
+						game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159)
+					}
+					"Albion Citadel" -> {
+						game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344)
+					}
 				}
 			}
 			
@@ -62,16 +68,22 @@ class MapSelection(private val game: Game) {
 				val arrowLocation = game.imageUtils.findButton("world_left_arrow")
 					?: throw Exception("Unable to find the location of the left arrow for the World.")
 				
-				if(islandName == "Mist-Shrouded Isle") {
-					game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342)
-				} else if(islandName == "Golonzo Island") {
-					game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255)
-				} else if(islandName == "Amalthea Island") {
-					game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34)
-				} else if(islandName == "Former Capital Mephorash") {
-					game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43)
-				} else if(islandName == "Agastia") {
-					game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267)
+				when (islandName) {
+					"Mist-Shrouded Isle" -> {
+						game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342)
+					}
+					"Golonzo Island" -> {
+						game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255)
+					}
+					"Amalthea Island" -> {
+						game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34)
+					}
+					"Former Capital Mephorash" -> {
+						game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43)
+					}
+					"Agastia" -> {
+						game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267)
+					}
 				}
 			}
 			
@@ -111,40 +123,51 @@ class MapSelection(private val game: Game) {
 					checkLocation = false
 					
 					// Determine what island the bot is currently at.
-					if(game.imageUtils.confirmLocation("map_port_breeze_archipelago", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Port Breeze Archipelago. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
-						currentLocation = "Port Breeze Archipelago"
-					} else if(game.imageUtils.confirmLocation("map_valtz_duchy", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Valtz Duchy. Now moving to $mapName...", MESSAGE_TAG = TAG)
-						currentLocation = "Valtz Duchy"
-					} else if(game.imageUtils.confirmLocation("map_auguste_isles", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Auguste Isles. Now moving to $mapName...", MESSAGE_TAG = TAG)
-						currentLocation = "Auguste Isles"
-					} else if(game.imageUtils.confirmLocation("map_lumacie_archipelago", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Lumacie Archipelago. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
-						currentLocation = "Lumacie Archipelago"
-					} else if(game.imageUtils.confirmLocation("map_albion_citadel", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Albion Citadel. Now moving to $mapName...", MESSAGE_TAG = TAG)
-						currentLocation = "Albion Citadel"
-					} else if(game.imageUtils.confirmLocation("map_mist_shrouded_isle", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Mist-Shrouded Isle. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
-						currentLocation = "Mist-Shrouded Isle"
-					} else if(game.imageUtils.confirmLocation("map_golonzo_island", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Golonzo Island. Now moving to $mapName...", MESSAGE_TAG = TAG)
-						currentLocation = "Golonzo Island"
-					} else if(game.imageUtils.confirmLocation("map_amalthea_island", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Amalthea Island. Now moving to $mapName...", MESSAGE_TAG = TAG)
-						currentLocation = "Amalthea Island"
-					} else if(game.imageUtils.confirmLocation("map_former_capital_mephorash", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Former Capital Mephorash. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
-						currentLocation = "Former Capital Mephorash"
-					} else if(game.imageUtils.confirmLocation("map_agastia", tries = 1)) {
-						game.printToLog("[INFO] Bot's current location is at Agastia. Now moving to $mapName...", MESSAGE_TAG = TAG)
-						currentLocation = "Agastia"
+					when {
+						game.imageUtils.confirmLocation("map_port_breeze_archipelago", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Port Breeze Archipelago. Now moving to $mapName...",
+								MESSAGE_TAG = TAG)
+							currentLocation = "Port Breeze Archipelago"
+						}
+						game.imageUtils.confirmLocation("map_valtz_duchy", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Valtz Duchy. Now moving to $mapName...", MESSAGE_TAG = TAG)
+							currentLocation = "Valtz Duchy"
+						}
+						game.imageUtils.confirmLocation("map_auguste_isles", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Auguste Isles. Now moving to $mapName...", MESSAGE_TAG = TAG)
+							currentLocation = "Auguste Isles"
+						}
+						game.imageUtils.confirmLocation("map_lumacie_archipelago", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Lumacie Archipelago. Now moving to $mapName...",
+								MESSAGE_TAG = TAG)
+							currentLocation = "Lumacie Archipelago"
+						}
+						game.imageUtils.confirmLocation("map_albion_citadel", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Albion Citadel. Now moving to $mapName...", MESSAGE_TAG = TAG)
+							currentLocation = "Albion Citadel"
+						}
+						game.imageUtils.confirmLocation("map_mist_shrouded_isle", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Mist-Shrouded Isle. Now moving to $mapName...",
+								MESSAGE_TAG = TAG)
+							currentLocation = "Mist-Shrouded Isle"
+						}
+						game.imageUtils.confirmLocation("map_golonzo_island", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Golonzo Island. Now moving to $mapName...", MESSAGE_TAG = TAG)
+							currentLocation = "Golonzo Island"
+						}
+						game.imageUtils.confirmLocation("map_amalthea_island", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Amalthea Island. Now moving to $mapName...", MESSAGE_TAG = TAG)
+							currentLocation = "Amalthea Island"
+						}
+						game.imageUtils.confirmLocation("map_former_capital_mephorash", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Former Capital Mephorash. Now moving to $mapName...",
+								MESSAGE_TAG = TAG)
+							currentLocation = "Former Capital Mephorash"
+						}
+						game.imageUtils.confirmLocation("map_agastia", tries = 1) -> {
+							game.printToLog("[INFO] Bot's current location is at Agastia. Now moving to $mapName...", MESSAGE_TAG = TAG)
+							currentLocation = "Agastia"
+						}
 					}
 				}
 				
@@ -346,13 +369,12 @@ class MapSelection(private val game: Game) {
 					game.findAndClickButton("special")
 					
 					// Format the mission name based on the difficulty.
-					val formattedMissionName: String
-					if(difficulty == "Normal" || difficulty == "Hard") {
-						formattedMissionName = missionName.substring(1)
+					val formattedMissionName: String = if(difficulty == "Normal" || difficulty == "Hard") {
+						missionName.substring(1)
 					} else if(difficulty == "Very Hard" || difficulty == "Extreme") {
-						formattedMissionName = missionName.substring(3)
+						missionName.substring(3)
 					} else {
-						formattedMissionName = missionName
+						missionName
 					}
 					
 					if(game.imageUtils.confirmLocation("special")) {
@@ -377,27 +399,35 @@ class MapSelection(private val game: Game) {
 							// Open up "Basic Treasure Quests" sub-missions popup.
 							var roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 							
-							if(formattedMissionName == "Scarlet Trial")  {
-								game.printToLog("[INFO] Opening up Scarlet Trial mission popup...", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
-							} else if(formattedMissionName == "Cerulean Trial")  {
-								game.printToLog("[INFO] Opening up Cerulean Trial mission popup...", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
-							} else if(formattedMissionName == "Violet Trial")  {
-								game.printToLog("[INFO] Opening up Violet Trial mission popup...", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+							when (formattedMissionName) {
+								"Scarlet Trial" -> {
+									game.printToLog("[INFO] Opening up Scarlet Trial mission popup...", MESSAGE_TAG = TAG)
+									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								}
+								"Cerulean Trial" -> {
+									game.printToLog("[INFO] Opening up Cerulean Trial mission popup...", MESSAGE_TAG = TAG)
+									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								}
+								"Violet Trial" -> {
+									game.printToLog("[INFO] Opening up Violet Trial mission popup...", MESSAGE_TAG = TAG)
+									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								}
 							}
 							
 							// Now that the mission's sub-missions popup is open, select the specified difficulty.
 							game.printToLog("[INFO] Now selecting $difficulty difficulty...")
 							roundPlayButtonLocations = game.imageUtils.findAll("play_round_button")
 							
-							if(difficulty == "Normal") {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
-							} else if(difficulty == "Hard") {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
-							} else if(difficulty == "Very Hard") {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+							when (difficulty) {
+								"Normal" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								}
+								"Hard" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								}
+								"Very Hard" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								}
 							}
 							
 						} else if(mapName == "Shiny Slime Search!" || mapName == "Six Dragon Trial" || mapName == "Angel Halo") {
@@ -405,60 +435,82 @@ class MapSelection(private val game: Game) {
 							game.printToLog("[INFO] Now selecting $difficulty $mapName...", MESSAGE_TAG = TAG)
 							val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 							
-							if(difficulty == "Normal") {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
-							} else if(difficulty == "Hard") {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
-							} else if(difficulty == "Very Hard"){
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+							when (difficulty) {
+								"Normal" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								}
+								"Hard" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								}
+								"Very Hard" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								}
 							}
 							
 						} else if(mapName == "Elemental Treasure Quests") {
 							game.printToLog("[INFO] Now selecting $missionName...", MESSAGE_TAG = TAG)
 							val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 							
-							if(formattedMissionName == "The Hellfire Trial") {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
-							} else if(formattedMissionName == "The Deluge Trial") {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
-							} else if(formattedMissionName == "The Wasteland Trial") {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
-							} else if(formattedMissionName == "The Typhoon Trial") {
-								game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y)
-							} else if(formattedMissionName == "The Aurora Trial") {
-								game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y)
-							} else if(formattedMissionName == "The Oblivion Trial") {
-								game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y)
+							when (formattedMissionName) {
+								"The Hellfire Trial" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								}
+								"The Deluge Trial" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								}
+								"The Wasteland Trial" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								}
+								"The Typhoon Trial" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y)
+								}
+								"The Aurora Trial" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y)
+								}
+								"The Oblivion Trial" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y)
+								}
 							}
 							
 						} else if(mapName == "Showdowns") {
 							game.printToLog("[INFO] Opening up $formattedMissionName mission popup...", MESSAGE_TAG = TAG)
 							var roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 							
-							if(formattedMissionName == "Ifrit Showdown") {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
-							} else if(formattedMissionName == "Cocytus Showdown") {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
-							} else if(formattedMissionName == "Vohu Manah Showdown") {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
-							} else if(formattedMissionName == "Sagittarius Showdown") {
-								game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y)
-							} else if(formattedMissionName == "Corow Showdown") {
-								game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y)
-							} else if(formattedMissionName == "Diablo Showdown") {
-								game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y)
+							when (formattedMissionName) {
+								"Ifrit Showdown" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								}
+								"Cocytus Showdown" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								}
+								"Vohu Manah Showdown" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								}
+								"Sagittarius Showdown" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y)
+								}
+								"Corow Showdown" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y)
+								}
+								"Diablo Showdown" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y)
+								}
 							}
 							
 							// Now select the difficulty.
 							game.printToLog("[INFO] Now selecting $difficulty difficulty...", MESSAGE_TAG = TAG)
 							roundPlayButtonLocations = game.imageUtils.findAll("play_round_button")
 							
-							if(difficulty == "Hard") {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
-							} else if(difficulty == "Very Hard") {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
-							} else if(difficulty == "Extreme") {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+							when (difficulty) {
+								"Hard" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								}
+								"Very Hard" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								}
+								"Extreme" -> {
+									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								}
 							}
 							
 						} else if(mapName == "Campaign-Exclusive Quest") {
@@ -487,13 +539,12 @@ class MapSelection(private val game: Game) {
 				}
 				
 				// Remove the difficulty prefix from the mission name.
-				val formattedMissionName : String
-				if(difficulty == "Normal" || difficulty == "Hard") {
-					formattedMissionName = missionName.substring(1)
+				val formattedMissionName : String = if(difficulty == "Normal" || difficulty == "Hard") {
+					missionName.substring(1)
 				} else if(difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Impossible") {
-					formattedMissionName = missionName.substring(3)
+					missionName.substring(3)
 				} else {
-					formattedMissionName = missionName
+					missionName
 				}
 				
 				if(farmingMode.toLowerCase(Locale.ROOT) == "event") {
@@ -501,11 +552,10 @@ class MapSelection(private val game: Game) {
 					
 					if(game.imageUtils.confirmLocation("special")) {
 						// Check if there is a Nightmare already available.
-							val nightmareIsAvailable: Int
-						if(game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
-							nightmareIsAvailable = 1
+						val nightmareIsAvailable: Int = if(game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
+							1
 						} else {
-							nightmareIsAvailable = 0
+							0
 						}
 						
 						// Find the locations of all the "Select" buttons.
@@ -545,12 +595,16 @@ class MapSelection(private val game: Game) {
 						game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 						
 						// Now select the chosen difficulty.
-						if(difficulty == "Very Hard") {
-							game.findAndClickButton("event_raid_very_hard")
-						} else if(difficulty == "Extreme") {
-							game.findAndClickButton("event_raid_extreme")
-						} else if(difficulty == "Impossible") {
-							game.findAndClickButton("event_raid_impossible")
+						when (difficulty) {
+							"Very Hard" -> {
+								game.findAndClickButton("event_raid_very_hard")
+							}
+							"Extreme" -> {
+								game.findAndClickButton("event_raid_extreme")
+							}
+							"Impossible" -> {
+								game.findAndClickButton("event_raid_impossible")
+							}
 						}
 						
 						// If the user does not have enough Treasures to host a Extreme or Impossible Raid, host a Very Hard Raid instead.
@@ -573,14 +627,19 @@ class MapSelection(private val game: Game) {
 						val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
 						
 						// Now select the chosen difficulty.
-						if(difficulty == "Normal") {
-							game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y)
-						} else if(difficulty == "Hard") {
-							game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y)
-						} else if(difficulty == "Very Hard") {
-							game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y)
-						} else if(difficulty == "Extreme") {
-							game.gestureUtils.tap(playRoundButtonLocations[3].x, playRoundButtonLocations[3].y)
+						when (difficulty) {
+							"Normal" -> {
+								game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y)
+							}
+							"Hard" -> {
+								game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y)
+							}
+							"Very Hard" -> {
+								game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y)
+							}
+							"Extreme" -> {
+								game.gestureUtils.tap(playRoundButtonLocations[3].x, playRoundButtonLocations[3].y)
+							}
 						}
 					}
 				}
@@ -628,21 +687,27 @@ class MapSelection(private val game: Game) {
 					val dreadBarragePlayButtonLocations = game.imageUtils.findAll("dread_barrage_play")
 					
 					// Now select the chosen difficulty.
-					if(difficulty == "1 Star") {
-						game.printToLog("[INFO] Now starting 1 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[0].x, dreadBarragePlayButtonLocations[0].y)
-					} else if(difficulty == "2 Star") {
-						game.printToLog("[INFO] Now starting 2 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[1].x, dreadBarragePlayButtonLocations[1].y)
-					} else if(difficulty == "3 Star") {
-						game.printToLog("[INFO] Now starting 3 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[2].x, dreadBarragePlayButtonLocations[2].y)
-					} else if(difficulty == "4 Star") {
-						game.printToLog("[INFO] Now starting 4 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[3].x, dreadBarragePlayButtonLocations[3].y)
-					} else if(difficulty == "5 Star") {
-						game.printToLog("[INFO] Now starting 5 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[4].x, dreadBarragePlayButtonLocations[4].y)
+					when (difficulty) {
+						"1 Star" -> {
+							game.printToLog("[INFO] Now starting 1 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+							game.gestureUtils.tap(dreadBarragePlayButtonLocations[0].x, dreadBarragePlayButtonLocations[0].y)
+						}
+						"2 Star" -> {
+							game.printToLog("[INFO] Now starting 2 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+							game.gestureUtils.tap(dreadBarragePlayButtonLocations[1].x, dreadBarragePlayButtonLocations[1].y)
+						}
+						"3 Star" -> {
+							game.printToLog("[INFO] Now starting 3 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+							game.gestureUtils.tap(dreadBarragePlayButtonLocations[2].x, dreadBarragePlayButtonLocations[2].y)
+						}
+						"4 Star" -> {
+							game.printToLog("[INFO] Now starting 4 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+							game.gestureUtils.tap(dreadBarragePlayButtonLocations[3].x, dreadBarragePlayButtonLocations[3].y)
+						}
+						"5 Star" -> {
+							game.printToLog("[INFO] Now starting 5 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
+							game.gestureUtils.tap(dreadBarragePlayButtonLocations[4].x, dreadBarragePlayButtonLocations[4].y)
+						}
 					}
 					
 					game.wait(2.0)
@@ -655,24 +720,24 @@ class MapSelection(private val game: Game) {
 			// Finally, double-check to see if the bot is at the Summon Selection screen.
 			if(farmingMode.toLowerCase(Locale.ROOT) != "coop") {
 				game.printToLog("[INFO] Now checking if the bot is currently at the Summon Selection screen...", MESSAGE_TAG = TAG)
-				if(game.imageUtils.confirmLocation("select_summon")) {
+				return if(game.imageUtils.confirmLocation("select_summon")) {
 					game.printToLog("[SUCCESS] Bot arrived at the Summon Selection screen after selecting the mission.", MESSAGE_TAG = TAG)
-					return true
+					true
 				} else {
 					game.printToLog("[WARNING] Bot did not arrive at the Summon Selection screen after selecting the mission.",
 						MESSAGE_TAG = TAG)
-					return false
+					false
 				}
 			} else {
 				game.printToLog("[INFO] Now checking if the bot is currently at the Coop Party Selection screen...", MESSAGE_TAG = TAG)
-				if(game.imageUtils.confirmLocation("coop_without_support_summon")) {
+				return if(game.imageUtils.confirmLocation("coop_without_support_summon")) {
 					game.printToLog("[SUCCESS] Bot arrived at the Party Selection screen after selecting the Coop mission.",
 						MESSAGE_TAG = TAG)
-					return true
+					true
 				} else {
 					game.printToLog("[WARNING] Bot did not arrive at the Party Selection screen after selecting the Coop mission.",
 						MESSAGE_TAG = TAG)
-					return false
+					false
 				}
 			}
 			
