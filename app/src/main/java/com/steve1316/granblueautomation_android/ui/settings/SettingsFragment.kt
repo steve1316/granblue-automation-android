@@ -11,7 +11,8 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.*
 import com.steve1316.granblueautomation_android.R
-import com.steve1316.granblueautomation_android.utils.ItemData
+import com.steve1316.granblueautomation_android.data.ItemData
+import com.steve1316.granblueautomation_android.data.MissionData
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val TAG: String = "GAA_SettingsFragment"
@@ -23,6 +24,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var summonListItems: Array<String>
     private lateinit var summonListCheckedItems: BooleanArray
     private var userSelectedSummonList: ArrayList<Int> = arrayListOf()
+    
+    private val missionsForQuest: Map<String, ArrayList<String>> = MissionData.mapsForQuest
+    private val missionsForSpecial: Map<String, ArrayList<String>> = MissionData.mapsForSpecial
+    private val missionsForEvent: Map<String, ArrayList<String>> = MissionData.mapsForEvent
+    private val missionsForEventTokenDrawboxes: Map<String, ArrayList<String>> = MissionData.mapsForEventTokenDrawboxes
     
     private val itemsForQuest: Map<String, ArrayList<String>> = ItemData.itemsForQuest
     private val itemsForSpecial: Map<String, ArrayList<String>> = ItemData.itemsForSpecial
@@ -114,8 +120,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else if(key == "missionPicker") {
                 val missionPicker: ListPreference = findPreference("missionPicker")!!
                 val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
+                var mapName = ""
                 
-                // Fill out the new entries and values for Items based on the newly chosen Mission.
+                // Fill out the new entries and values for Items based on the newly chosen Mission. Also determine the Map if applicable.
                 if(farmingModePicker.value == "Quest") {
                     itemsForQuest.forEach { (key, value) ->
                         if(key == missionPicker.value) {
@@ -125,6 +132,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             }
                         }
                     }
+                    
+                    missionsForQuest.forEach { (key, value) ->
+                        if(value.contains(missionPicker.value)) {
+                            mapName = key
+                        }
+                    }
                 } else if(farmingModePicker.value == "Special") {
                     itemsForSpecial.forEach { (key, value) ->
                         if(key == missionPicker.value) {
@@ -132,6 +145,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                                 newEntries.add(it)
                                 newEntryValues.add(it)
                             }
+                        }
+                    }
+    
+                    missionsForSpecial.forEach { (key, value) ->
+                        if(value.contains(missionPicker.value)) {
+                            mapName = key
                         }
                     }
                 } else if(farmingModePicker.value == "Coop") {
