@@ -238,11 +238,16 @@ class MapSelection(private val game: Game) {
 			game.printToLog("[INFO] Now bringing up the Summon Selection screen for \"$missionName\"...", MESSAGE_TAG = TAG)
 			game.gestureUtils.scroll()
 			
+			game.wait(2.0)
+			
 			// Now tap on the mission node to start.
 			val formattedMissionName = missionName.toLowerCase(Locale.ROOT).replace(" ", "_")
 			if(!game.findAndClickButton(formattedMissionName)) {
 				// If the bot failed to find and click on the mission node the first time, scroll down the screen again.
 				game.gestureUtils.scroll()
+				
+				game.wait(2.0)
+				
 				game.findAndClickButton(formattedMissionName)
 			}
 			
@@ -713,7 +718,7 @@ class MapSelection(private val game: Game) {
 		}
 		
 		// At this point, the bot has already selected the mission and thus it should now check if it needs any AP.
-		// game.checkAP()
+		game.checkAP()
 		
 		// Finally, double-check to see if the bot is at the Summon Selection screen.
 		if(farmingMode.toLowerCase(Locale.ROOT) != "coop") {
