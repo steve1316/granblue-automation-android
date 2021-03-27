@@ -186,6 +186,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
     
                     sharedPreferences.edit {
+                        putString("mapName", mapName)
                         putString("missionName", missionPicker.value)
                         commit()
                     }
