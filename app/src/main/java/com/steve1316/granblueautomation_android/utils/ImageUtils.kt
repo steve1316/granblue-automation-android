@@ -389,13 +389,18 @@ class ImageUtils(context: Context, private val game: Game) {
     }
     
     /**
-     * Finds all occurrences of the specified image.
+     * Finds all occurrences of the specified image in the buttons folder. Has an optional paramter to specify looking in the items folder instead.
      *
      * @param templateName File name of the template image.
+     * @param isItem Whether or not the user wants to search for items instead of buttons.
      * @return An ArrayList of Point objects containing all the occurrences of the specified image or null if not found.
      */
-    fun findAll(templateName: String): ArrayList<Point> {
-        val folderName = "buttons"
+    fun findAll(templateName: String, isItem: Boolean = false): ArrayList<Point> {
+        val folderName = if(!isItem) {
+            "buttons"
+        } else {
+            "items"
+        }
     
         val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
     
