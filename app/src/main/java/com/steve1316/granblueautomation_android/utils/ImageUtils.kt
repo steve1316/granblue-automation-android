@@ -427,6 +427,19 @@ class ImageUtils(context: Context, private val game: Game) {
      * @return True if the specified image vanished from the screen. False otherwise.
      */
     fun waitVanish(templateName: String, timeout: Int = 5): Boolean {
-        TODO("Not yet implemented")
+        var remaining = timeout
+        if(findButton(templateName, tries = 1) == null) {
+            return true
+        } else {
+            while(findButton(templateName, tries = 1) == null) {
+                game.wait(1.0)
+                remaining -= 1
+                if(remaining <= 0) {
+                    return false
+                }
+            }
+            
+            return true
+        }
     }
 }
