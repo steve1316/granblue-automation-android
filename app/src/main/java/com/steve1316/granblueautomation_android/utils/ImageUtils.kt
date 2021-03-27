@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
 import com.steve1316.granblueautomation_android.bot.Game
 import org.opencv.android.Utils
 import org.opencv.core.*
@@ -19,6 +21,10 @@ import kotlin.collections.ArrayList
 class ImageUtils(context: Context, private val game: Game) {
     private val TAG: String = "GAA_ImageUtils"
     private var myContext = context
+    
+    // Initialize Google's ML OCR.
+    private val textRecognizer = TextRecognition.getClient()
+    var totalItemAmount = 0
     
     private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
     
@@ -420,8 +426,47 @@ class ImageUtils(context: Context, private val game: Game) {
      * @param templateName File name of the template image.
      * @return Sum of all the item's amounts.
      */
-    fun findFarmedItems(templateName: String): Int {
-        TODO("Not yet implemented")
+    fun findFarmedItems(templateName: String) {
+        game.printToLog("[INFO] Now detecting item rewards.", MESSAGE_TAG = TAG)
+    
+        // Reset the total item amount.
+        totalItemAmount = 0
+        
+        // Get the locations of all of the specified item.
+        val itemLocations: ArrayList<Point> = findAll(templateName, isItem = true)
+        
+        // Grab a reference to the source bitmap.
+        val (sourceBitmap, _) = getBitmaps(templateName, "items")
+        
+        if(sourceBitmap != null) {
+            for(itemLocation in itemLocations) {
+                // Crop the source bitmap to hold only the item amount.
+                val croppedItemAmountBitmap = Bitmap.createBitmap(sourceBitmap, (itemLocation.x + 50).toInt(), (itemLocation.y).toInt() - 10,
+                    35, 50)
+                
+                // Create a InputImage object for Google's ML OCR.
+                val inputImage = InputImage.fromBitmap(croppedItemAmountBitmap, 0)
+    
+                // Start the asynchronous operation of text detection. Increment the total item amount whenever it detects a numerical amount.
+                textRecognizer.process(inputImage).addOnSuccessListener {
+                    if(it.textBlocks.size == 0) {
+                        Log.d(TAG, "[DEBUG] No text detected.")
+                    } else {
+                        for(block in it.textBlocks) {
+                            try {
+                                val detectedAmount: Int = block.text.toInt()
+                                totalItemAmount += detectedAmount
+                            } catch(e: NumberFormatException) {}
+                        }
+                    }
+                }.addOnFailureListener {
+                    game.printToLog("[ERROR] Failed to do text detection on bitmap.", MESSAGE_TAG = TAG, isError = true)
+                }
+            }
+        }
+    
+        // Wait a few seconds for the asynchronous operations of Google's OCR to finish.
+        game.wait(3.0)
     }
     
     /**
