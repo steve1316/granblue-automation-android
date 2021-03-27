@@ -564,7 +564,7 @@ class CombatMode(private val game: Game) {
 					
 					// Proceed to process each command inside this Turn block until the "end" command is reached.
 					while(!command.contains("end") && !command.contains("exit") && commandList.isNotEmpty()) {
-						command = commandList.removeAt(0)
+						command = commandList.removeAt(0).toLowerCase(Locale.ROOT)
 						
 						game.printToLog("[COMBAT] Reading command: $command", MESSAGE_TAG = TAG)
 						
