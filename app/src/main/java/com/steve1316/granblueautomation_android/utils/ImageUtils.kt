@@ -140,9 +140,9 @@ class ImageUtils(context: Context, private val game: Game) {
             val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
             
             if((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
-                Log.d(TAG, "MATCH FOUND <= 0.2")
+                //Log.d(TAG, "MATCH FOUND <= 0.2")
                 val tempMatchLocation: Point = mmr.minLoc
-                Log.d(TAG, "Point $tempMatchLocation minVal: ${mmr.minVal}")
+                //Log.d(TAG, "Point $tempMatchLocation minVal: ${mmr.minVal}")
                 
                 // Draw a rectangle around the match and then save it to the specified file.
                 Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
@@ -154,9 +154,9 @@ class ImageUtils(context: Context, private val game: Game) {
                 tempMatchLocation.y += (templateMat.rows() / 2)
                 matchLocations.add(tempMatchLocation)
             } else if((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
-                Log.d(TAG, "MATCH FOUND >= 0.8")
+                //Log.d(TAG, "MATCH FOUND >= 0.8")
                 val tempMatchLocation: Point = mmr.maxLoc
-                Log.d(TAG, "Point $tempMatchLocation maxVal: ${mmr.maxVal}")
+                //Log.d(TAG, "Point $tempMatchLocation maxVal: ${mmr.maxVal}")
     
                 // Draw a rectangle around the match and then save it to the specified file.
                 Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
@@ -262,7 +262,6 @@ class ImageUtils(context: Context, private val game: Game) {
             if(sourceBitmap != null && templateBitmap != null) {
                 val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
                 if(!resultFlag) {
-                    Log.d(TAG, "Current location is not at $templateName.")
                     numberOfTries -= 1
                     if(numberOfTries <= 0) {
                         break
