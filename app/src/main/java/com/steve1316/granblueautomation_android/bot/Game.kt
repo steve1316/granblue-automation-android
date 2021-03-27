@@ -64,9 +64,15 @@ class Game(myContext: Context) {
 	 *
 	 * @param message Message to be saved.
 	 * @param MESSAGE_TAG TAG to distinguish between messages for where they came from. Defaults to Game's TAG.
+	 * @param isError Flag to determine whether to display log message in console as debug or error.
 	 */
-	fun printToLog(message: String, MESSAGE_TAG: String = TAG) {
-		Log.d(MESSAGE_TAG, message)
+	fun printToLog(message: String, MESSAGE_TAG: String = TAG, isError: Boolean = false) {
+		if(!isError) {
+			Log.d(MESSAGE_TAG, message)
+		} else {
+			Log.e(MESSAGE_TAG, message)
+		}
+		
 		messageLog.add(printTime() + " " + message)
 	}
 	
