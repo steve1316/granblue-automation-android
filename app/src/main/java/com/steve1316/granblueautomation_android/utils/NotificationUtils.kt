@@ -117,6 +117,10 @@ class NotificationUtils {
 				setShowWhen(true)
 			}.build()
 			
+			if(!this::notificationManager.isInitialized) {
+				notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+			}
+			
 			notificationManager.notify(NOTIFICATION_ID, newNotification)
 		}
 	}
