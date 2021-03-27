@@ -84,17 +84,17 @@ class ImageUtils(context: Context, private val game: Game) {
         matchLocation = Point()
         var matchCheck = false
         if((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
-            Log.d(TAG, "MATCH FOUND <= 0.2")
+            //Log.d(TAG, "MATCH FOUND <= 0.2")
             matchLocation = mmr.minLoc
-            Log.d(TAG, "Point $matchLocation minVal: ${mmr.minVal}")
+            //Log.d(TAG, "Point $matchLocation minVal: ${mmr.minVal}")
             matchCheck = true
         } else if((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
-            Log.d(TAG, "MATCH FOUND >= 0.8")
+            //Log.d(TAG, "MATCH FOUND >= 0.8")
             matchLocation = mmr.maxLoc
-            Log.d(TAG, "Point $matchLocation maxVal: ${mmr.maxVal}")
+            //Log.d(TAG, "Point $matchLocation maxVal: ${mmr.maxVal}")
             matchCheck = true
         } else {
-            Log.d(TAG, "MATCH NOT FOUND")
+            //Log.d(TAG, "MATCH NOT FOUND")
         }
         
         if(matchCheck) {
