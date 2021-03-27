@@ -9,6 +9,9 @@
     <!--Grants permission to display a floating START/STOP button that persists across any View.-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
+    <!--Grants permission to download and update the application's Firebase Machine Learning OCR.-->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,6 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GranblueAutomation_Android"
         tools:ignore="AllowBackup" >
+
+        <!--Application will automatically download the Machine Learning model to the device after the app is installed.-->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr" />
 
         <!--Users will first be directed to MainActivity and then to HomeFragment.-->
         <activity

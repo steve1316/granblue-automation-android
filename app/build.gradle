@@ -48,4 +48,6 @@ dependencies {
     // OpenCV Android 4.5.1
     implementation project(path: ':opencv')
 
+    // Google's Firebase Machine Learning OCR for Text Detection.
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:16.1.3'
 }
