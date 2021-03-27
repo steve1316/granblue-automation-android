@@ -58,13 +58,14 @@ class HomeFragment : Fragment() {
         var combatScriptName = SettingsFragment.getStringSharedPreference(myContext, "combatScriptName")
         var farmingMode = SettingsFragment.getStringSharedPreference(myContext, "farmingMode")
         var mission = SettingsFragment.getStringSharedPreference(myContext, "missionName")
-        var item = SettingsFragment.getStringSharedPreference(myContext, "itemName")
+        var missionName = SettingsFragment.getStringSharedPreference(myContext, "missionName")
+        var itemName = SettingsFragment.getStringSharedPreference(myContext, "itemName")
         val itemAmount = SettingsFragment.getIntSharedPreference(myContext, "itemAmount")
         var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
-        val group = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
-        val party = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
+        val groupNumber = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
+        val partyNumber = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
     
-        startButton.isEnabled = (farmingMode != "" && mission != "" && item != "" && summon.isNotEmpty() && summon[0] != "")
+        startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && summon.isNotEmpty() && summon[0] != "")
         
         if(combatScriptName == "") {
             combatScriptName = ""
@@ -74,12 +75,12 @@ class HomeFragment : Fragment() {
             farmingMode = "Missing"
         }
         
-        if(mission == "") {
-            mission = "Missing"
+        if(missionName == "") {
+            missionName = "Missing"
         }
         
-        if(item == "") {
-            item = "Missing"
+        if(itemName == "") {
+            itemName = "Missing"
         }
         
         if(summon[0] == "") {
@@ -88,12 +89,13 @@ class HomeFragment : Fragment() {
         
         settingsStatusTextView.text = "Farming Mode: $farmingMode\n" +
                 "\nMission: $mission\n" +
-                "\nItem: $item\n" +
+                "\nMission: $missionName\n" +
+                "\nItem: $itemName\n" +
                 "\nItem Amount: $itemAmount\n" +
                 "\nCombat Script: $combatScriptName\n" +
                 "\nSummon: $summon\n" +
-                "\nGroup: $group\n" +
-                "\nParty: $party"
+                "\nGroup: $groupNumber\n" +
+                "\nParty: $partyNumber"
 
         return homeFragmentView
     }
