@@ -84,7 +84,11 @@ class BotService: Service() {
 							val game = Game(myContext)
 							
 							thread = thread {
-								game.startFarmingMode(myContext)
+								try {
+									game.startFarmingMode(myContext)
+								} catch(e: Exception) {
+									game.printToLog("Application encountered Exception: ${e.printStackTrace()}", MESSAGE_TAG = TAG, isError = true)
+								}
 							}
 						} else {
 							thread.interrupt()

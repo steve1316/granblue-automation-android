@@ -169,18 +169,12 @@ class Game(myContext: Context) {
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
 	fun checkForCAPTCHA() {
-		try {
-			wait(2.0)
-			
-			if(imageUtils.confirmLocation("captcha", tries = 1)) {
-				throw(Exception("[CAPTCHA] CAPTCHA has been detected! Throwing exception now."))
-			} else {
-				printToLog("[CAPTCHA] CAPTCHA not detected.")
-			}
-		} catch(e: Exception) {
-			printToLog("[ERROR] Bot encountered exception while checking for CAPTCHA: ${e.printStackTrace()}")
-			
-			// TODO: Generate Alert here.
+		wait(2.0)
+		
+		if(imageUtils.confirmLocation("captcha", tries = 1)) {
+			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Throwing exception now."))
+		} else {
+			printToLog("[CAPTCHA] CAPTCHA not detected.")
 		}
 	}
 	
@@ -261,42 +255,38 @@ class Game(myContext: Context) {
 		// Scroll the screen down to attempt to see the "Gameplay Extras" button.
 		gestureUtils.swipe(500f, 1000f, 500f, 400f)
 		
-		try {
-			val listOfSteps: ArrayList<String> = arrayListOf("gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
-				"choose_a_summon", "ok", "close", "menu", "retreat", "retreat_confirmation", "next")
-			
-			listOfSteps.forEach {
-				if(it == "trial_battles_old_lignoid") {
-					// Make sure to confirm that the bot arrived at the Trial Battles screen.
-					wait(2.0)
-					imageUtils.confirmLocation("trial_battles")
-				}
-				
-				if(it == "close") {
-					// Wait a few seconds and then confirm its location.
-					wait(5.0)
-					imageUtils.confirmLocation("trial_battles_description")
-				}
-				
-				var imageLocation: Point? = imageUtils.findButton(it)
-				
-				while((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
-					// Keep swiping the screen down until the bot finds the specified button.
-					gestureUtils.swipe(500f, 1500f, 500f, 500f)
-					wait(1.0)
-					imageLocation = imageUtils.findButton(it, tries = 1)
-				}
-				
-				if(it == "choose_a_summon" && imageLocation != null) {
-					gestureUtils.tap(imageLocation.x, imageLocation.y + 400)
-				} else if(it != "choose_a_summon" && imageLocation != null) {
-					gestureUtils.tap(imageLocation.x, imageLocation.y)
-				}
-				
-				wait(1.0)
+		val listOfSteps: ArrayList<String> = arrayListOf("gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
+			"choose_a_summon", "ok", "close", "menu", "retreat", "retreat_confirmation", "next")
+		
+		listOfSteps.forEach {
+			if(it == "trial_battles_old_lignoid") {
+				// Make sure to confirm that the bot arrived at the Trial Battles screen.
+				wait(2.0)
+				imageUtils.confirmLocation("trial_battles")
 			}
-		} catch(e: Exception) {
-			printToLog("[ERROR] Bot encountered exception while resetting Summons: ${e.printStackTrace()}")
+			
+			if(it == "close") {
+				// Wait a few seconds and then confirm its location.
+				wait(5.0)
+				imageUtils.confirmLocation("trial_battles_description")
+			}
+			
+			var imageLocation: Point? = imageUtils.findButton(it)
+			
+			while((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
+				// Keep swiping the screen down until the bot finds the specified button.
+				gestureUtils.swipe(500f, 1500f, 500f, 500f)
+				wait(1.0)
+				imageLocation = imageUtils.findButton(it, tries = 1)
+			}
+			
+			if(it == "choose_a_summon" && imageLocation != null) {
+				gestureUtils.tap(imageLocation.x, imageLocation.y + 400)
+			} else if(it != "choose_a_summon" && imageLocation != null) {
+				gestureUtils.tap(imageLocation.x, imageLocation.y)
+			}
+			
+			wait(1.0)
 		}
 	}
 	
@@ -311,77 +301,69 @@ class Game(myContext: Context) {
 		var numberOfTries = tries
 		
 		// Search for the location of the "Set" button based on the Group number.
-		try {
-			while(setLocation == null) {
-				setLocation = if(groupNumber < 8) {
-					imageUtils.findButton("party_set_a", tries = 1)
-				} else {
-					imageUtils.findButton("party_set_b", tries = 1)
-				}
+		while(setLocation == null) {
+			setLocation = if(groupNumber < 8) {
+				imageUtils.findButton("party_set_a", tries = 1)
+			} else {
+				imageUtils.findButton("party_set_b", tries = 1)
+			}
+			
+			if(setLocation == null) {
+				numberOfTries -= 1
 				
-				if(setLocation == null) {
-					numberOfTries -= 1
-					
-					if(numberOfTries <= 0) {
-						if(groupNumber < 8) {
-							throw(Resources.NotFoundException("Could not find Set A."))
-						} else {
-							throw(Resources.NotFoundException("Could not find Set B."))
-						}
-					}
-					
-					// Switch over and search for the other Set.
-					setLocation = if(groupNumber < 8) {
-						imageUtils.findButton("party_set_b", tries = 1)
+				if(numberOfTries <= 0) {
+					if(groupNumber < 8) {
+						throw(Resources.NotFoundException("Could not find Set A."))
 					} else {
-						imageUtils.findButton("party_set_a", tries = 1)
+						throw(Resources.NotFoundException("Could not find Set B."))
 					}
 				}
+				
+				// Switch over and search for the other Set.
+				setLocation = if(groupNumber < 8) {
+					imageUtils.findButton("party_set_b", tries = 1)
+				} else {
+					imageUtils.findButton("party_set_a", tries = 1)
+				}
 			}
-		} catch(e: Exception) {
-			printToLog("[ERROR] Bot encountered exception while selecting A or B Set: ${e.printStackTrace()}")
 		}
 		
-		if(setLocation != null) {
-			// Select the Group.
-			var equation: Double = if(groupNumber == 1) {
-				787.0
-			} else {
-				787.0 - (140 * (groupNumber - 1))
-			}
-			
-			gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0)
-			wait(1.0)
-			
-			// Select the Party.
-			equation = if(partyNumber == 1) {
-				690.0
-			} else {
-				690.0 - (130 * (partyNumber - 1))
-			}
-			
-			gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0)
-			wait(1.0)
-		
-			printToLog("[SUCCESS] Selected Group and Party successfully.")
-			
-			// Start the mission by clicking "OK".
-			findAndClickButton("ok")
-			wait(2.0)
-			
-			// Detect if a "This raid battle has already ended" popup appeared.
-			if(imageUtils.confirmLocation("raid_just_ended_home_redirect", tries = 1)) {
-				printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
-				
-				// TODO: Determine whether or not the bot should head back home.
-				
-				return false
-			}
-			
-			return true
+		// Select the Group.
+		var equation: Double = if(groupNumber == 1) {
+			787.0
+		} else {
+			787.0 - (140 * (groupNumber - 1))
 		}
 		
-		return false
+		gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0)
+		wait(1.0)
+		
+		// Select the Party.
+		equation = if(partyNumber == 1) {
+			690.0
+		} else {
+			690.0 - (130 * (partyNumber - 1))
+		}
+		
+		gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0)
+		wait(1.0)
+	
+		printToLog("[SUCCESS] Selected Group and Party successfully.")
+		
+		// Start the mission by clicking "OK".
+		findAndClickButton("ok")
+		wait(2.0)
+		
+		// Detect if a "This raid battle has already ended" popup appeared.
+		if(imageUtils.confirmLocation("raid_just_ended_home_redirect", tries = 1)) {
+			printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
+			
+			// TODO: Determine whether or not the bot should head back home.
+			
+			return false
+		}
+		
+		return true
 	}
 	
 	/**
@@ -561,6 +543,17 @@ class Game(myContext: Context) {
 		}
 		
 		// TODO: Perform advanced settings setup for Dimensional Halo, Event Nightmare, ROTB Extreme+, and Dread Barrage Unparalleled Foes.
+		
+		// If the user did not select a combat script, use the default Full Auto combat script.
+		if(combatScript.isEmpty() || combatScript[0] == "") {
+			printToLog("[INFO] User did not provide their own combat script. Defaulting to Full Auto combat script.")
+			
+			combatScript = listOf(
+				"Turn 1:",
+				"enableFullAuto",
+				"end"
+			)
+		}
 		
 		var startCheckFlag = false
 		var summonCheckFlag = false
