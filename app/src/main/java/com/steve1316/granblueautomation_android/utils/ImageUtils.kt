@@ -24,7 +24,6 @@ class ImageUtils(context: Context, private val game: Game) {
     
     // Initialize Google's ML OCR.
     private val textRecognizer = TextRecognition.getClient()
-    var totalItemAmount = 0
     
     private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
     
@@ -426,11 +425,11 @@ class ImageUtils(context: Context, private val game: Game) {
      * @param templateName File name of the template image.
      * @return Sum of all the item's amounts.
      */
-    fun findFarmedItems(templateName: String) {
+    fun findFarmedItems(templateName: String): Int {
         game.printToLog("[INFO] Now detecting item rewards.", MESSAGE_TAG = TAG)
     
         // Reset the total item amount.
-        totalItemAmount = 0
+        var totalItemAmount = 0
         
         // Get the locations of all of the specified item.
         val itemLocations: ArrayList<Point> = findAll(templateName, isItem = true)
@@ -467,6 +466,8 @@ class ImageUtils(context: Context, private val game: Game) {
     
         // Wait a few seconds for the asynchronous operations of Google's OCR to finish.
         game.wait(3.0)
+        
+        return totalItemAmount
     }
     
     /**
