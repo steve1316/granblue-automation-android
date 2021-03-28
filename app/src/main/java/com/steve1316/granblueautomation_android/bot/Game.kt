@@ -36,6 +36,7 @@ class Game(myContext: Context) {
 	private var itemName: String = ""
 	private var itemAmount: Int = 0
 	private var itemAmountFarmed: Int = 0
+	private var amountOfRuns: Int = 0
 	private var combatScriptName: String = ""
 	private var combatScript: List<String> = arrayListOf()
 	private var summonList: List<String> = arrayListOf()
@@ -428,7 +429,53 @@ class Game(myContext: Context) {
 	 * @param isEventNightmare Skip the incrementation of runs attempted if this was a Event Nightmare. Defaults to false.
 	 */
 	fun collectLoot(isPendingBattle: Boolean = false, isEventNightmare: Boolean = false) {
-		TODO("not yet implemented")
+		var amountGained = 0
+		
+		// Close all popups until the bot reaches the Loot Collected screen.
+		if(imageUtils.confirmLocation("exp_gained")) {
+			while(!imageUtils.confirmLocation("loot_collected", tries = 1)) {
+				findAndClickButton("close", tries = 1, suppressError = true)
+				findAndClickButton("cancel", tries = 1, suppressError = true)
+				findAndClickButton("ok", tries = 1, suppressError = true)
+				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
+			}
+			
+			// Now that the bot is at the Loot Collected screen, detect any user-specified items.
+			if(!isPendingBattle && !isEventNightmare) {
+				amountGained = if(!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+					imageUtils.findFarmedItems(itemName)
+				} else {
+					1
+				}
+				
+				itemAmountFarmed += amountGained
+				amountOfRuns += 1
+			}
+		}
+		
+		if(!isPendingBattle && !isEventNightmare) {
+			if(!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+				printToLog("********************************************************************************")
+				printToLog("********************************************************************************")
+				printToLog("[INFO] Farming Mode: $farmingMode")
+				printToLog("[INFO] Mission: $missionName")
+				printToLog("[INFO] Summons: $summonList")
+				printToLog("[INFO] # of $itemName gained this run: $amountGained")
+				printToLog("[INFO] # of $itemName gained in total: $itemAmountFarmed/$itemAmount")
+				printToLog("[INFO] # of runs completed: $amountOfRuns")
+				printToLog("********************************************************************************")
+				printToLog("********************************************************************************")
+			} else {
+				printToLog("********************************************************************************")
+				printToLog("********************************************************************************")
+				printToLog("[INFO] Farming Mode: $farmingMode")
+				printToLog("[INFO] Mission: $missionName")
+				printToLog("[INFO] Summons: $summonList")
+				printToLog("[INFO] # of runs completed: $amountOfRuns")
+				printToLog("********************************************************************************")
+				printToLog("********************************************************************************")
+			}
+		}
 	}
 	
 	/**
@@ -607,8 +654,7 @@ class Game(myContext: Context) {
 				
 				// Finally, start Combat Mode. If it ended successfully, detect loot and do it again if necessary.
 				if(combatMode.startCombatMode(combatScript)) {
-					// TODO: Flesh out the collectLoot().
-					//collectLoot()
+					collectLoot()
 					
 					if(itemAmountFarmed < itemAmount) {
 						if(farmingMode != "Coop") {
@@ -690,8 +736,7 @@ class Game(myContext: Context) {
 				} else {
 					// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
 					if(combatMode.startCombatMode(combatScript)) {
-						// TODO: Flesh out the collectLoot().
-						//collectLoot()
+						collectLoot()
 						
 						if(itemAmountFarmed < itemAmount) {
 							// Clear away any Pending Battles.
