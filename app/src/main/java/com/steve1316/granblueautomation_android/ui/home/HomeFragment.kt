@@ -129,7 +129,7 @@ class HomeFragment : Fragment() {
      * @return True if the application has overlay permission and has enabled the Accessibility Service for it. Otherwise, return False.
      */
     private fun startReadyCheck(): Boolean {
-        if(!checkForOverlayPermission() || !checkForAccessibilityPermission() || !checkForAccessibilityAlive()) {
+        if(!checkForOverlayPermission() || !checkForAccessibilityPermission()) {
             return false
         }
         
@@ -217,26 +217,5 @@ class HomeFragment : Fragment() {
         }
         
         return false
-    }
-    
-    private fun checkForAccessibilityAlive(): Boolean {
-        if(MyAccessibilityService.isInstanceInitialized()) {
-            return true
-        } else {
-            // Moves the user to the Accessibility Settings if the service is not detected.
-            AlertDialog.Builder(myContext).apply {
-                setTitle(R.string.accessibility_uninitialized)
-                setMessage(R.string.accessibility_uninitialized_message)
-                setPositiveButton(R.string.go_to_settings) { _, _ ->
-                    Log.d(TAG, "Accessibility Service is uninitialized. Moving user to Accessibility Settings.")
-                    val accessibilitySettingsIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                    myContext.startActivity(accessibilitySettingsIntent)
-                }
-                setNegativeButton(android.R.string.cancel, null)
-                show()
-            }
-            
-            return false
-        }
     }
 }

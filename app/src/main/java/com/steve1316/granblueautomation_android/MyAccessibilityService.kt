@@ -33,10 +33,6 @@ class MyAccessibilityService : AccessibilityService() {
         fun getInstance(): MyAccessibilityService {
             return instance
         }
-        
-        fun isInstanceInitialized(): Boolean {
-            return this::instance.isInitialized
-        }
     }
     
     override fun onServiceConnected() {
