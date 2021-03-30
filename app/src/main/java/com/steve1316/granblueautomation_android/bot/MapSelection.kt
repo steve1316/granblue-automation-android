@@ -390,6 +390,8 @@ class MapSelection(private val game: Game) {
 						mapName != "Six Dragon Trial") {
 						// Scroll the screen down if the selected mission is located on the bottom half of the page.
 						game.gestureUtils.scroll()
+						
+						game.wait(1.0)
 					}
 					
 					// Find the specified mission popup.
