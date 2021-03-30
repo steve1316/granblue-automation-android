@@ -378,7 +378,7 @@ class MapSelection(private val game: Game) {
 				
 				// Format the mission name based on the difficulty.
 				val formattedMissionName: String = if(difficulty == "Normal" || difficulty == "Hard") {
-					missionName.substring(1)
+					missionName.substring(2)
 				} else if(difficulty == "Very Hard" || difficulty == "Extreme") {
 					missionName.substring(3)
 				} else {
