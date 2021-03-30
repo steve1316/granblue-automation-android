@@ -51,6 +51,13 @@ class MyAccessibilityService : AccessibilityService() {
         return
     }
     
+    override fun onDestroy() {
+        super.onDestroy()
+        
+        Log.d(TAG, "Accessibility Service for GAA is now stopped.")
+        Toast.makeText(myContext, "Accessibility Service for GAA is now stopped.", Toast.LENGTH_SHORT).show()
+    }
+    
     /**
      * Wait the specified seconds to account for ping or loading.
      *
@@ -82,6 +89,12 @@ class MyAccessibilityService : AccessibilityService() {
         val dispatchResult = dispatchGesture(gesture, null, null)
         if(!ignoreWait) {
             wait(0.5)
+        }
+        
+        if(dispatchResult) {
+            Log.d(TAG, "Tapping x: $x, y: $y")
+        } else {
+            Log.e(TAG, "Failed to dispatch gesture")
         }
         
         return dispatchResult
@@ -134,6 +147,10 @@ class MyAccessibilityService : AccessibilityService() {
             wait(0.5)
         }
         
+        if(!dispatchResult) {
+            Log.e(TAG, "Failed to dispatch scroll gesture.")
+        }
+        
         return dispatchResult
     }
     
@@ -162,6 +179,12 @@ class MyAccessibilityService : AccessibilityService() {
         val dispatchResult = dispatchGesture(gesture, null, null)
         if(!ignoreWait) {
             wait(0.5)
+        }
+        
+        if(dispatchResult) {
+            Log.d(TAG, "Swiping from ($oldX, $oldY) to ($newX, $newY).")
+        } else {
+            Log.e(TAG, "Failed to dispatch swipe gesture.")
         }
         
         return dispatchResult
