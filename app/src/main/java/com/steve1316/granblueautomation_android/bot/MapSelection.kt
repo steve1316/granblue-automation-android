@@ -719,10 +719,10 @@ class MapSelection(private val game: Game) {
 						game.gestureUtils.tap(dreadBarragePlayButtonLocations[4].x, dreadBarragePlayButtonLocations[4].y)
 					}
 				}
-				
-				game.wait(2.0)
 			}
 		}
+		
+		game.wait(1.0)
 		
 		// At this point, the bot has already selected the mission and thus it should now check if it needs any AP.
 		game.checkAP()
