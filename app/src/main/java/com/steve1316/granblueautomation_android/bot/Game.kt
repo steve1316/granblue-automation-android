@@ -623,14 +623,17 @@ class Game(myContext: Context) {
 			)
 		}
 		
-		var startCheckFlag = false
-		var summonCheckFlag = false
+		var startCheckFlag: Boolean
+		var summonCheckFlag: Boolean
+		
+		printToLog("[INFO] Now selecting the Mission...")
+		
 		
 		// Primary workflow loop for Farming Mode.
 		while(itemAmountFarmed < itemAmount) {
-			printToLog("[INFO] Now selecting the Mission...")
-			
-			mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+			// Reset the Party Selection and Summon Selection flag.
+			startCheckFlag = false
+			summonCheckFlag = false
 			
 			// Loop and attempt to select a Summon. Reset Summons if necessary.
 			while(!summonCheckFlag && farmingMode != "Coop") {
@@ -726,9 +729,7 @@ class Game(myContext: Context) {
 							} else if(farmingMode == "Special" && checkDimensionalHalo()) {
 								// Make sure that the bot goes back to the Home screen when completing an Dimensional Halo.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							}
-							
-							else {
+							} else {
 								findAndClickButton("cancel", tries = 1, suppressError = true)
 								wait(1.0)
 								findAndClickButton("close", tries = 1, suppressError = true)
@@ -753,7 +754,6 @@ class Game(myContext: Context) {
 				if(imageUtils.confirmLocation("no_loot", tries = 1)) {
 					printToLog("[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
 					goBackHome(confirmLocationCheck = true)
-					summonCheckFlag = false
 				} else {
 					// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
 					if(combatMode.startCombatMode(combatScript)) {
@@ -773,7 +773,6 @@ class Game(myContext: Context) {
 				// Party.
 				printToLog("[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
 				mapSelection.joinRaid(missionName)
-				summonCheckFlag = false
 			}
 		}
 		
