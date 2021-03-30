@@ -450,25 +450,23 @@ class Game(myContext: Context) {
 		var amountGained = 0
 		
 		// Close all popups until the bot reaches the Loot Collected screen.
-		if(imageUtils.confirmLocation("exp_gained")) {
-			while(!imageUtils.confirmLocation("loot_collected", tries = 1)) {
-				findAndClickButton("close", tries = 1, suppressError = true)
-				findAndClickButton("cancel", tries = 1, suppressError = true)
-				findAndClickButton("ok", tries = 1, suppressError = true)
-				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
+		while(!imageUtils.confirmLocation("loot_collected", tries = 1)) {
+			findAndClickButton("close", tries = 1, suppressError = true)
+			findAndClickButton("cancel", tries = 1, suppressError = true)
+			findAndClickButton("ok", tries = 1, suppressError = true)
+			findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
+		}
+		
+		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
+		if(!isPendingBattle && !isEventNightmare) {
+			amountGained = if(!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+				imageUtils.findFarmedItems(itemName)
+			} else {
+				1
 			}
 			
-			// Now that the bot is at the Loot Collected screen, detect any user-specified items.
-			if(!isPendingBattle && !isEventNightmare) {
-				amountGained = if(!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
-					imageUtils.findFarmedItems(itemName)
-				} else {
-					1
-				}
-				
-				itemAmountFarmed += amountGained
-				amountOfRuns += 1
-			}
+			itemAmountFarmed += amountGained
+			amountOfRuns += 1
 		}
 		
 		if(!isPendingBattle && !isEventNightmare) {
