@@ -230,13 +230,13 @@ class MapSelection(private val game: Game) {
 				game.gestureUtils.tap(worldButtonLocation.x + 557, worldButtonLocation.y + 48)
 			} else if(missionName == "Trust Busting Dustup") {
 				game.printToLog("[INFO] Moving to Chapter 36 (123) node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 527, worldButtonLocation.y + 28)
+				game.gestureUtils.tap(worldButtonLocation.x + 714, worldButtonLocation.y + 30)
 			} else if(missionName == "Erste Kingdom Episode 4") {
 				game.printToLog("[INFO] Moving to Chapter 70 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 587, worldButtonLocation.y + 318)
 			} else if(missionName == "Imperial Wanderer's Soul") {
 				game.printToLog("[INFO] Moving to Chapter 55 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 472, worldButtonLocation.y + 328)
+				game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 320)
 			}
 			
 			// Now that the correct chapter node has been selected, scroll down the screen.
