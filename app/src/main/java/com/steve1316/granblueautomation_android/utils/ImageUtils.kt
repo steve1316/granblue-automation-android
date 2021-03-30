@@ -449,11 +449,14 @@ class ImageUtils(context: Context, private val game: Game) {
                 // Start the asynchronous operation of text detection. Increment the total item amount whenever it detects a numerical amount.
                 textRecognizer.process(inputImage).addOnSuccessListener {
                     if(it.textBlocks.size == 0) {
-                        Log.d(TAG, "[DEBUG] No text detected.")
+                        // If no amount was detected in the cropped region, that means that the amount is 1 as only amounts greater than 1 appear
+                        // in the cropped region.
+                        totalItemAmount += 1
                     } else {
                         for(block in it.textBlocks) {
                             try {
                                 val detectedAmount: Int = block.text.toInt()
+                                game.printToLog("[DEBUG] Detected item amount: $detectedAmount", MESSAGE_TAG = TAG)
                                 totalItemAmount += detectedAmount
                             } catch(e: NumberFormatException) {}
                         }
