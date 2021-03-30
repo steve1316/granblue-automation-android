@@ -249,7 +249,6 @@ class MediaProjectionService : Service() {
 				try {
 					// Perform cleanup.
 					virtualDisplay.release()
-					imageReader.setOnImageAvailableListener(null, null)
 					
 					// Now re-create the VirtualDisplay based on the new width and height of the rotated screen.
 					createVirtualDisplay()
@@ -274,9 +273,6 @@ class MediaProjectionService : Service() {
 				
 				// Destroy the VirtualDisplay.
 				virtualDisplay.release()
-				
-				// Remove the listener from the ImageReader.
-				imageReader.setOnImageAvailableListener(null, null)
 				
 				// Disable the OrientationChangeCallback.
 				orientationChangeCallback?.disable()
