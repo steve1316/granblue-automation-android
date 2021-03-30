@@ -194,12 +194,9 @@ class HomeFragment : Fragment() {
             // Check the string of enabled accessibility services to see if this application's accessibility service is there.
             val enabled = prefString.contains(myContext.packageName.toString() + "/" + MyAccessibilityService::class.java.name)
     
-            return if(enabled) {
+            if(enabled) {
                 Log.d(TAG, "This application's Accessibility Service is currently turned on.")
-                true
-            } else {
-                Log.e(TAG, "This application's Accessibility Service is currently turned off.")
-                false
+                return true
             }
         }
         
