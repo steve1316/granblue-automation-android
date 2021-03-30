@@ -27,6 +27,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     
     private val missionsForQuest: Map<String, ArrayList<String>> = MissionData.mapsForQuest
     private val missionsForSpecial: Map<String, ArrayList<String>> = MissionData.mapsForSpecial
+    private val missionsForRaid: Map<String, ArrayList<String>> = MissionData.mapsForRaid
     private val missionsForEvent: Map<String, ArrayList<String>> = MissionData.mapsForEvent
     private val missionsForEventTokenDrawboxes: Map<String, ArrayList<String>> = MissionData.mapsForEventTokenDrawboxes
     
@@ -71,32 +72,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "farmingModePicker" -> {
                     // Fill out the new entries and values for Missions based on the newly chosen Farming Mode.
                     val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
-                    when (farmingModePicker.value) {
-                        "Quest" -> {
-                            itemsForQuest.forEach { (key, _) ->
-                                newEntries.add(key)
-                                newEntryValues.add(key)
-                            }
-                        }
-                        "Special" -> {
-                            itemsForSpecial.forEach { (key, _) ->
-                                newEntries.add(key)
-                                newEntryValues.add(key)
-                            }
-                        }
-                        "Coop" -> {
-                            itemsForCoop.forEach { (key, _) ->
-                                newEntries.add(key)
-                                newEntryValues.add(key)
-                            }
-                        }
-                        "Raid" -> {
-                            itemsForRaid.forEach { (key, _) ->
-                                newEntries.add(key)
-                                newEntryValues.add(key)
-                            }
-                        }
-                    }
+                    val missionPicker: ListPreference = findPreference("missionPicker")!!
     
                     sharedPreferences.edit {
                         putString("farmingMode", farmingModePicker.value)
@@ -104,9 +80,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
     
                     // Populate the Mission picker with the missions associated with the newly chosen Farming Mode.
-                    val missionPicker: ListPreference = findPreference("missionPicker")!!
-                    missionPicker.entries = newEntries.toTypedArray()
-                    missionPicker.entryValues = newEntryValues.toTypedArray()
+                    populateMissionListPreference()
     
                     // Now reset the values of the Mission and Item pickers to indicate that a new Farming Mode means a new Mission which in turn will
                     // affect what the user wants to choose next.
@@ -126,75 +100,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 "missionPicker" -> {
                     val missionPicker: ListPreference = findPreference("missionPicker")!!
-                    val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
-                    var mapName = ""
-    
-                    // Fill out the new entries and values for Items based on the newly chosen Mission. Also determine the Map if applicable.
-                    when (farmingModePicker.value) {
-                        "Quest" -> {
-                            itemsForQuest.forEach { (key, value) ->
-                                if(key == missionPicker.value) {
-                                    value.forEach {
-                                        newEntries.add(it)
-                                        newEntryValues.add(it)
-                                    }
-                                }
-                            }
-    
-                            missionsForQuest.forEach { (key, value) ->
-                                if(value.contains(missionPicker.value)) {
-                                    mapName = key
-                                }
-                            }
-                        }
-                        "Special" -> {
-                            itemsForSpecial.forEach { (key, value) ->
-                                if(key == missionPicker.value) {
-                                    value.forEach {
-                                        newEntries.add(it)
-                                        newEntryValues.add(it)
-                                    }
-                                }
-                            }
-    
-                            missionsForSpecial.forEach { (key, value) ->
-                                if(value.contains(missionPicker.value)) {
-                                    mapName = key
-                                }
-                            }
-                        }
-                        "Coop" -> {
-                            itemsForCoop.forEach { (key, value) ->
-                                if(key == missionPicker.value) {
-                                    value.forEach {
-                                        newEntries.add(it)
-                                        newEntryValues.add(it)
-                                    }
-                                }
-                            }
-                        }
-                        "Raid" -> {
-                            itemsForRaid.forEach { (key, value) ->
-                                if(key == missionPicker.value) {
-                                    value.forEach {
-                                        newEntries.add(it)
-                                        newEntryValues.add(it)
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    val itemPicker: ListPreference = findPreference("itemPicker")!!
     
                     sharedPreferences.edit {
-                        putString("mapName", mapName)
                         putString("missionName", missionPicker.value)
                         commit()
                     }
     
-                    // Populate the Item picker with the items associated with the newly chosen Mission.
-                    val itemPicker: ListPreference = findPreference("itemPicker")!!
-                    itemPicker.entries = newEntries.toTypedArray()
-                    itemPicker.entryValues = newEntryValues.toTypedArray()
+                    // Populate the Item list based on the Mission selected. Save the Map for the Mission if possible.
+                    populateItemListPreference()
     
                     // Now reset the value of the Item picker.
                     resetItemSharedPreference()
@@ -404,21 +318,25 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val newEntries = mutableListOf<CharSequence>()
         val newEntryValues = mutableListOf<CharSequence>()
     
-        val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
+        val farmingMode = sharedPreferences.getString("farmingMode", "")
         val missionPicker: ListPreference = findPreference("missionPicker")!!
     
         // Get the item entries based on the selected Farming Mode.
-        when (farmingModePicker.value) {
+        when (farmingMode) {
             "Quest" -> {
-                itemsForQuest.forEach { (key, _) ->
-                    newEntries.add(key)
-                    newEntryValues.add(key)
+                missionsForQuest.forEach { (_, value) ->
+                    value.forEach {
+                        newEntries.add(it)
+                        newEntryValues.add(it)
+                    }
                 }
             }
             "Special" -> {
-                itemsForSpecial.forEach { (key, _) ->
-                    newEntries.add(key)
-                    newEntryValues.add(key)
+                missionsForSpecial.forEach { (_, value) ->
+                    value.forEach {
+                        newEntries.add(it)
+                        newEntryValues.add(it)
+                    }
                 }
             }
             "Coop" -> {
@@ -428,9 +346,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
             }
             "Raid" -> {
-                itemsForRaid.forEach { (key, _) ->
-                    newEntries.add(key)
-                    newEntryValues.add(key)
+                missionsForRaid.forEach { (_, value) ->
+                    value.forEach {
+                        newEntries.add(it)
+                        newEntryValues.add(it)
+                    }
                 }
             }
         }
@@ -447,14 +367,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val newEntryValues = mutableListOf<CharSequence>()
     
         val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
-        val missionPicker: ListPreference = findPreference("missionPicker")!!
+        val missionName = sharedPreferences.getString("missionName", "")!!
         val itemPicker: ListPreference = findPreference("itemPicker")!!
     
         // Get the item entries based on the selected Mission.
         when (farmingModePicker.value) {
             "Quest" -> {
+                missionsForQuest.forEach { (missionKey, missionValue) ->
+                    // Save the Map that the Mission takes place on.
+                    if(missionValue.contains(missionName)) {
+                        sharedPreferences.edit().apply {
+                            putString("mapName", missionKey)
+                            apply()
+                        }
+                    }
+                }
+                
                 itemsForQuest.forEach { (key, value) ->
-                    if(key == missionPicker.value) {
+                    if(key == missionName) {
                         value.forEach {
                             newEntries.add(it)
                             newEntryValues.add(it)
@@ -463,8 +393,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
             }
             "Special" -> {
+                missionsForSpecial.forEach { (missionKey, missionValue) ->
+                    // Save the Map that the Mission takes place on.
+                    if(missionValue.contains(missionName)) {
+                        sharedPreferences.edit().apply {
+                            putString("mapName", missionKey)
+                            apply()
+                        }
+                    }
+                }
+                
+                // Remove any detected difficulty prefix.
+                val formattedMissionName = if(missionName.startsWith("N ", true) || missionName.startsWith("H ", true) ||
+                    missionName.startsWith("VH ", true) || missionName.startsWith("EX ", true)) {
+                    val missionNameList = missionName.split(" ")
+                    missionNameList.subList(1, missionNameList.size).joinToString(" ")
+                } else {
+                    missionName
+                }
+                
                 itemsForSpecial.forEach { (key, value) ->
-                    if(key == missionPicker.value) {
+                    if(key == formattedMissionName) {
                         value.forEach {
                             newEntries.add(it)
                             newEntryValues.add(it)
@@ -474,7 +423,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             "Coop" -> {
                 itemsForCoop.forEach { (key, value) ->
-                    if(key == missionPicker.value) {
+                    if(key == missionName) {
                         value.forEach {
                             newEntries.add(it)
                             newEntryValues.add(it)
@@ -484,7 +433,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             "Raid" -> {
                 itemsForRaid.forEach { (key, value) ->
-                    if(key == missionPicker.value) {
+                    if(key == missionName) {
                         value.forEach {
                             newEntries.add(it)
                             newEntryValues.add(it)
@@ -618,7 +567,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val missionPicker: ListPreference = findPreference("missionPicker")!!
         missionPicker.value = null
         sharedPreferences.edit {
-            remove("mission")
+            remove("mapName")
+            remove("missionName")
             commit()
         }
     }
@@ -630,7 +580,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val itemPicker: ListPreference = findPreference("itemPicker")!!
         itemPicker.value = null
         sharedPreferences.edit {
-            remove("item")
+            remove("itemName")
             commit()
         }
     }
