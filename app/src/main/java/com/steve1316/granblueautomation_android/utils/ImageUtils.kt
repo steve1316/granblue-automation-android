@@ -188,11 +188,11 @@ class ImageUtils(context: Context, private val game: Game) {
      * @return A Pair of source and template Bitmaps.
      */
     private fun getBitmaps(templateName: String, templateFolderName: String): Pair<Bitmap?, Bitmap?> {
-        // Scroll the screen back and forth a bit to let MediaProjection's ImageReader acquire new images.
-        game.gestureUtils.swipe(1f, 1f, 1f, 2f, 100L, ignoreWait = true)
-        game.gestureUtils.swipe(1f, 2f, 1f, 1f, 100L, ignoreWait = true)
+        var sourceBitmap: Bitmap? = null
         
-        val sourceBitmap = MediaProjectionService.takeScreenshotNow()
+        while(sourceBitmap == null) {
+            sourceBitmap = MediaProjectionService.takeScreenshotNow()
+        }
         
         var templateBitmap: Bitmap?
     
