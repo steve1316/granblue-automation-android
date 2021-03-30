@@ -11,11 +11,13 @@ class ItemData {
 			"Special Op's Request" to arrayListOf("Fine Sand Bottle", "Untamed Flame", "Blistering Ore"),
 			"Threat to the Fisheries" to arrayListOf("Fresh Water Jug", "Soothing Splash", "Glowing Coral"),
 			"The Fruit of Lumacie" to arrayListOf("Rough Stone", "Swirling Amber", "Coarse Alluvium"),
+			"Whiff of Danger" to arrayListOf("Rough Stone", "Swirling Amber", "Coarse Alluvium"),
 			"I Challenge You!" to arrayListOf("Falcon Feather", "Spring Water Jug", "Vermilion Stone"),
 			"For Whom the Bell Tolls" to arrayListOf("Slimy Shroom", "Hollow Soul", "Lacrimosa"),
 			"Golonzo's Battles of Old" to arrayListOf("Wheat Stalk", "Iron Cluster", "Olea Plant"),
 			"The Dungeon Diet" to arrayListOf("Indigo Fruit", "Foreboding Clover", "Blood Amber"),
-			"Trust Busting Dustup" to arrayListOf("Sand Brick", "Native Reed", "Antique Cloth"),
+			"Trust Busting Dustup" to arrayListOf("Sand Brick", "Native Reed"),
+			"Erste Kingdom Episode 4" to arrayListOf("Antique Cloth"),
 			"Imperial Wanderer's Soul" to arrayListOf("Prosperity Flame", "Explosive Material", "Steel Liquid")
 		)
 		
@@ -31,7 +33,7 @@ class ItemData {
 			),
 			"Violet Trial" to arrayListOf("Prism Chip", "Flawed Prism", "Flawless Prism", "Rainbow Prism"),
 			"Shiny Slime Search!" to arrayListOf("EXP"),
-			"Six Dragon Trials" to arrayListOf(
+			"Six Dragon Trial" to arrayListOf(
 				"Red Dragon Scale", "Blue Dragon Scale", "Brown Dragon Scale", "Green Dragon Scale", "White Dragon Scale",
 				"Black Dragon Scale"
 			),
@@ -47,8 +49,12 @@ class ItemData {
 			),
 			"Corow Showdown" to arrayListOf("Solar Ring", "Sunlight Quartz", "Halo Light Quartz", "Corow Anima", "Corow Omega Anima"),
 			"Diablo Showdown" to arrayListOf("Twilight Cloth Strip", "Shadow Silver", "Phantom Demon Jewel", "Diablo Anima", "Diablo Omega Anima"),
-			"Extreme Trials" to arrayListOf("Hellfire Fragment", "Deluge Fragment", "Wasteland Fragment", "Typhoon Fragment"),
-			"Angel Halo" to arrayListOf("Angel Halo Weapons")
+			"The Hellfire Trial" to arrayListOf("Hellfire Fragment"),
+			"The Deluge Trial" to arrayListOf("Deluge Fragment"),
+			"The Wasteland Trial" to arrayListOf("Wasteland Fragment"),
+			"The Typhoon Trial" to arrayListOf("Typhoon Fragment"),
+			"Angel Halo" to arrayListOf("Angel Halo Weapons"),
+			"Campaign-Exclusive Quest" to arrayListOf("Repeated Runs")
 		)
 		
 		val itemsForCoop = mapOf(
@@ -56,44 +62,44 @@ class ItemData {
 			"EX1-1 Corridor of Puzzles" to arrayListOf("Warrior Creed", "Mage Creed"),
 			"EX1-3 Lost in the Dark" to arrayListOf("Warrior Creed", "Mage Creed"),
 			"EX2-2 Time of Judgement" to arrayListOf(
-				"Evil Judge Crystal", "Pilgrim Distinction", "Mage Distinction", "Alchemist Distinction",
-				"Monk's Distinction", "Keraunos Replica", "Faust Replica"
+				"Keraunos Replica", "Faust Replica", "Mage Distinction", "Pilgrim Distinction", "Alchemist Distinction", "Monk's Distinction",
+				"Evil Judge Crystal"
 			),
 			"EX2-3 Time of Revelation" to arrayListOf(
-				"Infernal Garnet", "Gladiator Distinction", "Fencer Distinction", "Dual Wielder Distinction",
-				"Forester's Distinction", "Avenger Replica", "Hellion Gauntlet Replica"
+				"Avenger Replica", "Hellion Gauntlet Replica", "Gladiator Distinction", "Fencer Distinction", "Dual Wielder Distinction",
+				"Forester's Distinction", "Infernal Garnet"
 			),
 			"EX2-4 Time of Eminence" to arrayListOf(
-				"Halo Light Quartz", "Bandit Distinction", "Troubadour Distinction", "Mystic Distinction",
-				"Shredder Distinction", "Nirvana Replica", "Romulus Spear Replica", "Murakumo Replica"
+				"Nirvana Replica", "Romulus Spear Replica", "Murakumo Replica", "Bandit Distinction", "Troubadour Distinction", "Mystic Distinction",
+				"Shredder Distinction", "Contractor Distinction", "Halo Light Quartz"
 			),
 			"EX3-2 Rule of the Tundra" to arrayListOf(
 				"Frozen Hell Prism", "Guardian Distinction", "Combatant Distinction", "Sword Master Distinction",
 				"Dragoon's Distinction", "Skofnung Replica", "Langeleik Replica", "Kapilavastu Replica"
 			),
 			"EX3-3 Rule of the Plains" to arrayListOf(
-				"Horseman's Plate", "Sharpshooter Distinction", "Cavalryman Distinction", "Gunslinger Distinction",
-				"Oliver Replica", "Rosenbogen Replica", "Misericorde Replica"
+				"Oliver Replica", "Rosenbogen Replica",  "Sharpshooter Distinction", "Gunslinger Distinction", "Cavalryman Distinction",
+				"Longstrider's Distinction", "Horseman's Plate"
 			),
 			"EX3-4 Rule of the Twilight" to arrayListOf(
-				"Phantom Demon Jewel", "Samurai Distinction", "Ninja Distinction", "Assassin Distinction",
-				"Ipetam Replica", "Proximo Replica", "Nebuchad Replica", "Muramasa Replica"
+				"Ipetam Replica", "Muramasa Replica", "Proximo Replica", "Samurai Distinction", "Assassin Distinction", "Ninja Distinction",
+				"Dancer Distinction", "Phantom Demon Jewel"
 			),
 			"EX4-2 Amidst the Waves" to arrayListOf(
-				"Pilgrim Distinction", "Mage Distinction", "Alchemist Distinction", "Mystic Distinction",
-				"Monk's Distinction", "Oliver Replica", "Langeleik Replica", "Romulus Spear Replica", "Proximo Replica", "Kapilavastu Replica"
+				"Oliver Replica", "Romulus Spear Replica", "Kapilavastu Replica", "Mystic Distinction", "Pilgrim Distinction", "Alchemist Distinction",
+				"Mage Distinction", "Monk's Distinction"
 			),
 			"EX4-3 Amidst the Petals" to arrayListOf(
-				"Sharpshooter Distinction", "Samurai Distinction", "Ninja Distinction", "Gunslinger Distinction",
-				"Assassin Distinction", "Longstrider's Distinction", "Langeleik Replica", "Misericorde Replica", "Faust Replica"
+				"Langeleik Replica", "Faust Replica", "Misericorde Replica", "Arabesque Replica", "Ninja Distinction", "Samurai Distinction",
+				"Sharpshooter Distinction", "Gunslinger Distinction", "Longstrider's Distinction", "Dancer Distinction"
 			),
 			"EX4-4 Amidst Severe Cliffs" to arrayListOf(
-				"Gladiator Distinction", "Fencer Distinction", "Combatant Distinction", "Sword Master Distinction",
-				"Aschallon Replica", "Hellion Gauntlet Replica", "Muramasa Replica", "Practice Drum"
+				"Hellion Gauntlet Replica", "Muramasa Replica", "Aschallon Replica", "Practice Drum", "Combatant Distinction", "Gladiator Distinction",
+				"Sword Master Distinction", "Fencer Distinction"
 			),
 			"EX4-5 Amidst the Flames" to arrayListOf(
-				"Guardian Distinction", "Bandit Distinction", "Troubadour Distinction", "Cavalryman Distinction",
-				"Dragoon's Distinction", "Ipetam Replica", "Murakumo Replica", "Nebuchad Replica"
+				"Ipetam Replica", "Murakumo Replica", "Nebuchad Replica", "Proximo Replica", "Guardian Distinction", "Cavalryman Distinction",
+				"Bandit Distinction", "Troubadour Distinction", "Dragoon's Distinction", "Contractor Distinction"
 			)
 		)
 		
