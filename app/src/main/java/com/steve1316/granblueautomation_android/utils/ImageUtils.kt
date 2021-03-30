@@ -29,8 +29,8 @@ class ImageUtils(context: Context, private val game: Game) {
     
     companion object {
         private var matchFilePath: String = ""
-        lateinit var matchLocation: Point
-        var matchLocations: ArrayList<Point> = arrayListOf()
+        private lateinit var matchLocation: Point
+        private var matchLocations: ArrayList<Point> = arrayListOf()
     
         /**
          * Saves the file path to the saved match image file for debugging purposes.
