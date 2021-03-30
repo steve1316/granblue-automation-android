@@ -10,20 +10,20 @@
         <item>Quest</item>
         <item>Special</item>
         <item>Coop</item>
-        <item>Raid</item>
-        <item>Event</item>
-        <item>Event (Token Drawboxes)</item>
-        <item>Dread Barrage</item>
+<!--        <item>Raid</item>-->
+<!--        <item>Event</item>-->
+<!--        <item>Event (Token Drawboxes)</item>-->
+<!--        <item>Dread Barrage</item>-->
     </string-array>
 
     <string-array name="farming_mode_values">
         <item>Quest</item>
         <item>Special</item>
         <item>Coop</item>
-        <item>Raid</item>
-        <item>Event</item>
-        <item>Event (Token Drawboxes)</item>
-        <item>Dread Barrage</item>
+<!--        <item>Raid</item>-->
+<!--        <item>Event</item>-->
+<!--        <item>Event (Token Drawboxes)</item>-->
+<!--        <item>Dread Barrage</item>-->
     </string-array>
 
     <string-array name="summon_list">
