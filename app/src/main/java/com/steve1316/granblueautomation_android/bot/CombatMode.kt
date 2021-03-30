@@ -785,6 +785,8 @@ class CombatMode(private val game: Game) {
 					// Enable Full Auto.
 					game.findAndClickButton("full_auto")
 				} else {
+					game.gestureUtils.tap(enabledSemiAutoButtonLocation.x, enabledSemiAutoButtonLocation.y)
+					
 					game.printToLog("[COMBAT] Semi Auto is now enabled.", MESSAGE_TAG = TAG)
 				}
 			} else {
