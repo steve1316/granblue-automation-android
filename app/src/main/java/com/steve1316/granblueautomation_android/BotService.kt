@@ -122,7 +122,8 @@ class BotService: Service() {
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		return super.onStartCommand(intent, flags, startId)
+		// Do not attempt to restart the bot service if it crashes.
+		return START_NOT_STICKY
 	}
 	
 	override fun onBind(intent: Intent?): IBinder? {
@@ -134,5 +135,8 @@ class BotService: Service() {
 		
 		// Remove the overlay View that holds the overlay button.
 		windowManager.removeView(overlayView)
+		
+		val service = Intent(myContext, MyAccessibilityService::class.java)
+		myContext.stopService(service)
 	}
 }
