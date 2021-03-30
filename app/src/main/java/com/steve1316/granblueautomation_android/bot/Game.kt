@@ -628,6 +628,11 @@ class Game(myContext: Context) {
 		
 		printToLog("[INFO] Now selecting the Mission...")
 		
+		if(farmingMode != "Raid") {
+			mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+		} else {
+			mapSelection.joinRaid(missionName)
+		}
 		
 		// Primary workflow loop for Farming Mode.
 		while(itemAmountFarmed < itemAmount) {
