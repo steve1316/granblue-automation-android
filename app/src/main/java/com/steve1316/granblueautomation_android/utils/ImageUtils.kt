@@ -337,6 +337,7 @@ class ImageUtils(context: Context, private val game: Game) {
                     }
     
                     game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
+                    game.wait(1.0)
                 }
             }
             
