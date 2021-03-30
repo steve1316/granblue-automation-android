@@ -23,8 +23,7 @@ class MissionData {
 				"VH Cerulean Trial", "N Violet Trial", "H Violet Trial", "VH Violet Trial"),
 			"Shiny Slime Search!" to arrayListOf("N Shiny Slime Search!", "H Shiny Slime Search!", "VH Shiny Slime Search!"),
 			"Six Dragon Trial" to arrayListOf("N Six Dragon Trial", "H Six Dragon Trial", "VH Six Dragon Trial"),
-			"Elemental Treasure Quests" to arrayListOf("The Hellfire Trial", "The Deluge Trial", "The Wasteland Trial", "The Typhoon Trial",
-				"The Aurora Trial", "The Oblivion Trial"),
+			"Elemental Treasure Quests" to arrayListOf("The Hellfire Trial", "The Deluge Trial", "The Wasteland Trial", "The Typhoon Trial"),
 			"Showdowns" to arrayListOf("H Ifrit Showdown", "VH Ifrit Showdown", "EX Ifrit Showdown", "H Cocytus Showdown", "VH Cocytus Showdown",
 				"EX Cocytus Showdown", "H Vohu Manah Showdown", "VH Vohu Manah Showdown", "EX Vohu Manah Showdown", "H Sagittarius Showdown",
 				"VH Sagittarius Showdown", "EX Sagittarius Showdown", "H Corow Showdown", "VH Corow Showdown", "EX Corow Showdown", "H Diablo Showdown",
@@ -47,6 +46,11 @@ class MissionData {
 			"Grimnir" to arrayListOf("Lvl 120 Grimnir"),
 			"Metatron" to arrayListOf("Lvl 120 Metatron"),
 			"Avatar" to arrayListOf("Lvl 120 Avatar"),
+			
+			"Michael" to arrayListOf("Lvl 100 Michael"),
+			"Gabriel" to arrayListOf("Lvl 100 Gabriel"),
+			"Uriel" to arrayListOf("Lvl 100 Uriel"),
+			"Raphael" to arrayListOf("Lvl 100 Raphael"),
 			
 			"Grand Order" to arrayListOf("Lvl 100 Grand Order"),
 			"Proto Bahamut" to arrayListOf("Lvl 100 Proto Bahamut", "Lvl 150 Proto Bahamut"),
@@ -75,7 +79,15 @@ class MissionData {
 			
 			"Tiamat Malice" to arrayListOf("Lvl 150 Tiamat Malice"),
 			"Leviathan Malice" to arrayListOf("Lvl 150 Leviathan Malice"),
-			"Phronesis" to arrayListOf("Lvl 150 Phronesis")
+			"Phronesis" to arrayListOf("Lvl 150 Phronesis"),
+			"Luminiera Malice" to arrayListOf("Lvl 150 Luminiera Malice"),
+			
+			"Wilnas" to arrayListOf("Lvl 200 Wilnas"),
+			"Wamdus" to arrayListOf("Lvl 200 Wamdus"),
+			"Galleon" to arrayListOf("Lvl 200 Galleon"),
+			"Ewiyar" to arrayListOf("Lvl 200 Ewiyar"),
+			"Lu Woh" to arrayListOf("Lvl 200 Lu Woh"),
+			"Fediel" to arrayListOf("Lvl 200 Fediel")
 		)
 		
 		val mapsForEvent = mapOf(
