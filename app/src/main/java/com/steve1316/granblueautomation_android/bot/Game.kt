@@ -755,5 +755,16 @@ class Game(myContext: Context) {
 				summonCheckFlag = false
 			}
 		}
+		
+		printToLog("********************************************************************************")
+		printToLog("********************************************************************************")
+		printToLog("[INFO] Farming Mode has ended")
+		printToLog("********************************************************************************")
+		printToLog("********************************************************************************")
+		
+		// TODO: Display Alert signalling the end of Farming Mode.
+		
+		// TODO: Update the bot's status to Not Running.
+		
 	}
 }
