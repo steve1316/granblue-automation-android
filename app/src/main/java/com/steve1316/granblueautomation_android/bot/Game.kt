@@ -535,8 +535,9 @@ class Game(myContext: Context) {
 	 * Start Farming Mode with the provided parameters from the user's choices in the settings.
 	 *
 	 * @param context: The context for the application.
+	 * @return True if Farming Mode completed successfully. False otherwise.
 	 */
-	fun startFarmingMode(context: Context) {
+	fun startFarmingMode(context: Context): Boolean {
 		// Grab all necessary information from SharedPreferences.
 		farmingMode = SettingsFragment.getStringSharedPreference(context, "farmingMode")
 		mapName = SettingsFragment.getStringSharedPreference(context, "mapName")
@@ -548,6 +549,10 @@ class Game(myContext: Context) {
 		summonList = SettingsFragment.getStringSharedPreference(context, "summon").split("|")
 		groupNumber = SettingsFragment.getIntSharedPreference(context, "groupNumber")
 		partyNumber = SettingsFragment.getIntSharedPreference(context, "partyNumber")
+		
+		// TODO: Display Alert to user indicating whether they are ready to start or not. Include information of what their settings are.
+		//  Additionally, return false if any of the required settings is missing. This can happen when users change settings after the overlay
+		//  button has been displayed.
 		
 		if(itemName != "EXP") {
 			printToLog("################################################################################")
@@ -782,5 +787,6 @@ class Game(myContext: Context) {
 		
 		// TODO: Update the bot's status to Not Running.
 		
+		return true
 	}
 }
