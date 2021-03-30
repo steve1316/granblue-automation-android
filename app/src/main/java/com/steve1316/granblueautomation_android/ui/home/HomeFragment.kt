@@ -57,7 +57,7 @@ class HomeFragment : Fragment() {
         
         var combatScriptName = SettingsFragment.getStringSharedPreference(myContext, "combatScriptName")
         var farmingMode = SettingsFragment.getStringSharedPreference(myContext, "farmingMode")
-        var mission = SettingsFragment.getStringSharedPreference(myContext, "missionName")
+        val mapName = SettingsFragment.getStringSharedPreference(myContext, "mapName")
         var missionName = SettingsFragment.getStringSharedPreference(myContext, "missionName")
         var itemName = SettingsFragment.getStringSharedPreference(myContext, "itemName")
         val itemAmount = SettingsFragment.getIntSharedPreference(myContext, "itemAmount")
@@ -88,7 +88,7 @@ class HomeFragment : Fragment() {
         }
         
         settingsStatusTextView.text = "Farming Mode: $farmingMode\n" +
-                "\nMission: $mission\n" +
+                "\nMap: $mapName\n" +
                 "\nMission: $missionName\n" +
                 "\nItem: $itemName\n" +
                 "\nItem Amount: $itemAmount\n" +
