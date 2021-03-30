@@ -417,6 +417,11 @@ class ImageUtils(context: Context, private val game: Game) {
             matchAll(sourceBitmap, templateBitmap)
         }
         
+        // Sort the match locations by ascending y coordinates.
+        matchLocations.sortBy { it.y }
+        
+        Log.d(TAG, "Found match locations for $templateName: $matchLocations.")
+        
         return matchLocations
     }
     
