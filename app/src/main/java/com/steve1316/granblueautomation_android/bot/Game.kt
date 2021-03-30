@@ -666,7 +666,7 @@ class Game(myContext: Context) {
 					coopFirstRun = false
 					
 					// Click the "Start" button to start the Coop Mission.
-					findAndClickButton("ccop_start")
+					findAndClickButton("coop_start")
 				}
 				
 				printToLog("[INFO] Starting Coop Mission.")
