@@ -21,7 +21,7 @@ class MapSelection(private val game: Game) {
 	private fun checkMapLocation(islandName: String, formattedIslandName: String, currentLocation: String): Boolean {
 		// Phantagrande Skydom Page 1
 		if(islandName == "Port Breeze Archipelago" || islandName == "Valtz Duchy" || islandName == "Auguste Isles" || islandName == "Lumacie Archipelago" ||
-			islandName == "Albion Citadel") {
+			islandName == "Albion Citadel" || islandName == "Zinkenstill") {
 			if(currentLocation == "Mist-Shrouded Isle" || currentLocation == "Golonzo Island" || currentLocation == "Amalthea Island"
 				|| currentLocation == "Former Capital Mephorash" || currentLocation == "Agastia") {
 				game.findAndClickButton("world_left_arrow")
@@ -58,7 +58,7 @@ class MapSelection(private val game: Game) {
 		else if(islandName == "Mist-Shrouded Isle" || islandName == "Golonzo Island" || islandName == "Amalthea Island" || islandName == "Former Capital " +
 			"Mephorash" || islandName == "Agastia") {
 			if(currentLocation == "Port Breeze Archipelago" || currentLocation == "Valtz Duchy" || currentLocation == "Auguste Isles" ||
-				currentLocation == "Lumacie Archipelago" || currentLocation == "Albion Citadel") {
+				currentLocation == "Lumacie Archipelago" || currentLocation == "Albion Citadel" || currentLocation == "Zinkenstill") {
 				game.findAndClickButton("world_right_arrow")
 			}
 			
@@ -122,6 +122,11 @@ class MapSelection(private val game: Game) {
 				
 				// Determine what island the bot is currently at.
 				when {
+					game.imageUtils.confirmLocation("map_zinkenstill", tries = 1) -> {
+						game.printToLog("[INFO] Bot's current location is at Zinkenstill. Now moving to $mapName...",
+							MESSAGE_TAG = TAG)
+						currentLocation = "Zinkenstill"
+					}
 					game.imageUtils.confirmLocation("map_port_breeze_archipelago", tries = 1) -> {
 						game.printToLog("[INFO] Bot's current location is at Port Breeze Archipelago. Now moving to $mapName...",
 							MESSAGE_TAG = TAG)
