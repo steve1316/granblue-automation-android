@@ -65,38 +65,34 @@ class MediaProjectionService : Service() {
 		 * @return Bitmap of the latest acquired screenshot.
 		 */
 		fun takeScreenshotNow(): Bitmap? {
-			var image: Image? = null
 			var sourceBitmap: Bitmap? = null
 			
-			// Loop until the ImageReader grabs a valid Image.
-			while(image == null) {
-				image = imageReader.acquireLatestImage()
+			val image: Image? = imageReader.acquireLatestImage()
+			
+			if(image != null) {
+				val planes: Array<Plane> = image.planes
+				val buffer = planes[0].buffer
+				val pixelStride = planes[0].pixelStride
+				val rowStride = planes[0].rowStride
+				val rowPadding: Int = rowStride - pixelStride * displayWidth
 				
-				if(image != null) {
-					val planes: Array<Plane> = image.planes
-					val buffer = planes[0].buffer
-					val pixelStride = planes[0].pixelStride
-					val rowStride = planes[0].rowStride
-					val rowPadding: Int = rowStride - pixelStride * displayWidth
-					
-					// Create the Bitmap.
-					sourceBitmap = Bitmap.createBitmap(displayWidth + rowPadding / pixelStride, displayHeight, Bitmap.Config.ARGB_8888)
-					sourceBitmap.copyPixelsFromBuffer(buffer)
-					
-					// Now write the Bitmap to the specified file inside the /files/temp/ folder.
-					SCREENSHOT_NUM++
-					val fos = FileOutputStream("$tempDirectory/source.jpg")
-					sourceBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-					
-					// Perform cleanup by closing streams and freeing up memory.
-					try {
-						fos.close()
-					} catch (ioe: IOException) {
-						ioe.printStackTrace()
-					}
-					
-					image.close()
+				// Create the Bitmap.
+				sourceBitmap = Bitmap.createBitmap(displayWidth + rowPadding / pixelStride, displayHeight, Bitmap.Config.ARGB_8888)
+				sourceBitmap.copyPixelsFromBuffer(buffer)
+				
+				// Now write the Bitmap to the specified file inside the /files/temp/ folder.
+				SCREENSHOT_NUM++
+				val fos = FileOutputStream("$tempDirectory/source.jpg")
+				sourceBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+				
+				// Perform cleanup by closing streams and freeing up memory.
+				try {
+					fos.close()
+				} catch (ioe: IOException) {
+					ioe.printStackTrace()
 				}
+				
+				image.close()
 			}
 			
 			return sourceBitmap
