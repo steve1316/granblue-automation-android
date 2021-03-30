@@ -371,18 +371,21 @@ class Game(myContext: Context) {
 	 * Checks if the user has available AP. If not, then it will refill it.
 	 *
 	 * @param useFullElixir Will use Full Elixir instead of Half Elixir. Defaults to false.
+	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
-	fun checkAP(useFullElixir: Boolean = false) {
+	fun checkAP(useFullElixir: Boolean = false, tries: Int = 3) {
+		var numberOfTries = tries
+		
 		while((farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) ||
 			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
 			if(imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 				if(!useFullElixir) {
 					printToLog("[INFO] AP ran out! Using Half Elixir...")
-					val location = imageUtils.findButton("refill_half_ap")!!
+					val location = imageUtils.findButton("refill_half_elixir")!!
 					gestureUtils.tap(location.x, location.y + 370)
 				} else {
 					printToLog("[INFO] AP ran out! Using Full Elixir...")
-					val location = imageUtils.findButton("refill_full_ap")!!
+					val location = imageUtils.findButton("refill_full_elixir")!!
 					gestureUtils.tap(location.x, location.y + 370)
 				}
 				
@@ -390,6 +393,11 @@ class Game(myContext: Context) {
 				
 				// Press the "OK" button to confirm the item usage.
 				findAndClickButton("ok")
+			}
+			
+			numberOfTries -= 1
+			if(numberOfTries <= 0) {
+				break
 			}
 		}
 		
@@ -400,23 +408,33 @@ class Game(myContext: Context) {
 	 * Checks if the user has available EP. If not, then it will refill it.
 	 *
 	 * @param useSoulBalm Will use Soul Balm instead of Soul Berry. Defaults to false.
+	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
-	fun checkEP(useSoulBalm: Boolean = false) {
-		if(farmingMode == "Raid" && imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
-			if(!useSoulBalm) {
-				printToLog("[INFO] EP ran out! Using Soul Berry...")
-				val location = imageUtils.findButton("refill_half_ep")!!
-				gestureUtils.tap(location.x, location.y + 370)
-			} else {
-				printToLog("[INFO] EP ran out! Using Soul Balm...")
-				val location = imageUtils.findButton("refill_full_ep")!!
-				gestureUtils.tap(location.x, location.y + 370)
+	fun checkEP(useSoulBalm: Boolean = false, tries: Int = 3) {
+		var numberOfTries = tries
+		
+		while(farmingMode == "Raid" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
+			if(imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
+				if(!useSoulBalm) {
+					printToLog("[INFO] EP ran out! Using Soul Berry...")
+					val location = imageUtils.findButton("refill_soul_berry")!!
+					gestureUtils.tap(location.x, location.y + 370)
+				} else {
+					printToLog("[INFO] EP ran out! Using Soul Balm...")
+					val location = imageUtils.findButton("refill_soul_balm")!!
+					gestureUtils.tap(location.x, location.y + 370)
+				}
+				
+				wait(1.0)
+				
+				// Press the "OK" button to confirm the item usage.
+				findAndClickButton("ok")
 			}
 			
-			wait(1.0)
-			
-			// Press the "OK" button to confirm the item usage.
-			findAndClickButton("ok")
+			numberOfTries -= 1
+			if(numberOfTries <= 0) {
+				break
+			}
 		}
 		
 		printToLog("[INFO] EP is available.")
