@@ -233,7 +233,7 @@ class Game(myContext: Context) {
 			gestureUtils.tap(summonLocation.x, summonLocation.y)
 			
 			// Check for CAPTCHA.
-			//checkForCAPTCHA()
+			checkForCAPTCHA()
 			
 			true
 		} else {
