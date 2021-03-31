@@ -169,7 +169,7 @@ class Game(myContext: Context) {
 	/**
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
-	fun checkForCAPTCHA() {
+	private fun checkForCAPTCHA() {
 		wait(2.0)
 		
 		if(imageUtils.confirmLocation("captcha", tries = 1)) {
