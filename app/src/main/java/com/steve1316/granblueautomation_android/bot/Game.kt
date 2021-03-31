@@ -140,7 +140,7 @@ class Game(myContext: Context) {
 			if(tempLocation == null) {
 				tempLocation = imageUtils.findButton("raid_bouncing", tries = tries, suppressError = suppressError)
 			}
-		} else if(buttonName.toLowerCase(Locale.ROOT) == "coop") {
+		} else if(buttonName.toLowerCase(Locale.ROOT) == "coop_start") {
 			tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError)
 			if(tempLocation == null) {
 				tempLocation = imageUtils.findButton("coop_start_faded", tries = tries, suppressError = suppressError)
@@ -636,8 +636,7 @@ class Game(myContext: Context) {
 		
 		// Primary workflow loop for Farming Mode.
 		while(itemAmountFarmed < itemAmount) {
-			// Reset the Party Selection and Summon Selection flag.
-			startCheckFlag = false
+			// Reset the Summon Selection flag.
 			summonCheckFlag = false
 			
 			// Loop and attempt to select a Summon. Reset Summons if necessary.
@@ -667,9 +666,10 @@ class Game(myContext: Context) {
 					
 					// Click the "Start" button to start the Coop Mission.
 					findAndClickButton("coop_start")
+				} else {
+					printToLog("[INFO] Starting Coop Mission.")
+					startCheckFlag = true
 				}
-				
-				printToLog("[INFO] Starting Coop Mission.")
 			}
 			
 			if(startCheckFlag && farmingMode != "Raid") {
@@ -705,12 +705,25 @@ class Game(myContext: Context) {
 								findAndClickButton("close")
 							}
 							
+							wait(1.0)
+							
+							// Now that the bot is back at the Coop Room, check if it is closed due to time running out.
+							if(imageUtils.confirmLocation("coop_room_closed", tries = 1)) {
+								printToLog("[INFO] Coop room has closed due to time running out.")
+								break
+							}
+							
 							// Now start the Coop Mission again.
 							findAndClickButton("coop_start")
+							
+							wait(1.0)
+							
+							// Check for available AP.
+							checkAP()
 						}
 						
 						// For every Farming Mode other than Coop, continuously close all popups until the bot reaches the Summon Selection screen.
-						while(!imageUtils.confirmLocation("select_summon", tries = 1)) {
+						while(farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
 							if(farmingMode == "Dread Barrage" && imageUtils.confirmLocation("dread_barrage_unparalleled_foe", tries = 1)) {
 								// Find all the locations of the "AP 0" texts underneath each Unparalleled Foe.
 								// val ap0Locations = imageUtils.findAll("ap_0")

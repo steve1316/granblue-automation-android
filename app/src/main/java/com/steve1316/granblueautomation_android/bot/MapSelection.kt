@@ -267,18 +267,24 @@ class MapSelection(private val game: Game) {
 			game.findAndClickButton("home_menu")
 			game.findAndClickButton("coop")
 			
+			game.wait(1.0)
+			
 			if(game.imageUtils.confirmLocation("coop")) {
 				// Scroll the screen down a little bit.
-				game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+				game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
+				
+				game.wait(1.0)
 				
 				// Find all occurrences of the "Host Quest" button.
 				val hostButtonLocations = game.imageUtils.findAll("coop_host_quest")
 				
-				if(missionName == "In a Dusk Dream") {
+				if(missionName == "H3-1 In a Dusk Dream") {
 					// Check if the difficulty is already selected. If not, select it.
 					if(!game.findAndClickButton("coop_hard_selected", tries = 1)) {
 						game.findAndClickButton("coop_hard", tries = 1)
 					}
+					
+					game.wait(1.0)
 					
 					game.printToLog("[INFO] Hard difficulty for Coop is now selected.", MESSAGE_TAG = TAG)
 					
@@ -297,10 +303,11 @@ class MapSelection(private val game: Game) {
 					
 					game.printToLog("[INFO] Extra difficulty for Coop is now selected.", MESSAGE_TAG = TAG)
 					
-					val listForCoopEX1 = arrayListOf("Corridor of Puzzles", "empty", "Lost in the Dark")
-					val listForCoopEX2 = arrayListOf("Time of Judgement", "Time of Revelation", "Time of Eminence")
-					val listForCoopEX3 = arrayListOf("Rule of the Tundra", "Rule of the Plains", "Rule of the Twilight")
-					val listForCoopEX4 = arrayListOf("Amidst the Waves", "Amidst the Petals", "Amidst Severe Cliffs", "Amidst the Flames")
+					val listForCoopEX1 = arrayListOf("EX1-1 Corridor of Puzzles", "empty", "EX1-3 Lost in the Dark")
+					val listForCoopEX2 = arrayListOf("EX2-2 Time of Judgement", "EX2-3 Time of Revelation", "EX2-4 Time of Eminence")
+					val listForCoopEX3 = arrayListOf("EX3-2 Rule of the Tundra", "EX3-3 Rule of the Plains", "EX3-4 Rule of the Twilight")
+					val listForCoopEX4 = arrayListOf("EX4-2 Amidst the Waves", "EX4-3 Amidst the Petals", "EX4-4 Amidst Severe Cliffs",
+						"EX4-5 Amidst the Flames")
 					
 					// Select the category for the specified EX mission. For EX2 to EX4, skip past the first missions of each.
 					if(listForCoopEX1.contains(missionName)) {
@@ -322,8 +329,8 @@ class MapSelection(private val game: Game) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].y)
+							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].x,
+								hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].y)
 						}
 					} else if(listForCoopEX3.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX3...", MESSAGE_TAG = TAG)
@@ -333,8 +340,8 @@ class MapSelection(private val game: Game) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].y)
+							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].x,
+								hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].y)
 						}
 					} else if(listForCoopEX4.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX4...", MESSAGE_TAG = TAG)
@@ -344,8 +351,8 @@ class MapSelection(private val game: Game) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName) + 1].y)
+							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].x,
+								hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].y)
 						}
 					}
 				}
@@ -356,7 +363,7 @@ class MapSelection(private val game: Game) {
 				
 				// Scroll the screen down to see the "OK" button in case of small screens.
 				game.gestureUtils.scroll()
-				game.findAndClickButton("ok")
+				game.findAndClickButton("coop_ok")
 				
 				// Just in case, check for the "You retreated from the raid battle" popup.
 				game.wait(1.0)
