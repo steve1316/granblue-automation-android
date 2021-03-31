@@ -774,8 +774,7 @@ class MapSelection(private val game: Game) {
 			// TODO: Adjust number of Raids joined here.
 		} else {
 			// Start loot detection if there it is available.
-			// TODO: Implement collectLoot()
-			// game.collectLoot(isPendingBattle = true)
+			game.collectLoot(isPendingBattle = true)
 			
 			// TODO: Adjust number of Raids joined here.
 		}

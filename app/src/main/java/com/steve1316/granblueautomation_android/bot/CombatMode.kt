@@ -142,7 +142,6 @@ class CombatMode(private val game: Game) {
 		}
 		
 		// After the initial popup vanishes to reveal a new popup, either select a Character target or tap the confirmation button.
-		// TODO: Flesh out ImageUtils' waitVanish().
 		if(game.imageUtils.waitVanish("tap_the_item_to_use", timeout = 5)) {
 			when (formattedCommand) {
 				"usegreenpotion" -> {

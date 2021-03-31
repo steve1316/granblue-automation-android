@@ -17,8 +17,6 @@ import kotlin.collections.ArrayList
 
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
- *
- * TODO: Make sure that in the constructor that you read in all of the preferences that the user set in the settings for Farming Mode.
  */
 class Game(myContext: Context) {
 	private val TAG: String = "GAA_Game"
