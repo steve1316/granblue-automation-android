@@ -65,9 +65,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     // This listener is triggered whenever the user changes a Preference setting in the Settings Page.
     private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         if(key != null) {
-            val newEntries = mutableListOf<CharSequence>()
-            val newEntryValues = mutableListOf<CharSequence>()
-    
             when (key) {
                 "farmingModePicker" -> {
                     // Fill out the new entries and values for Missions based on the newly chosen Farming Mode.
@@ -77,6 +74,30 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     sharedPreferences.edit {
                         putString("farmingMode", farmingModePicker.value)
                         commit()
+                    }
+                    
+                    if(farmingModePicker.value == "Coop") {
+                        val summonPicker: Preference = findPreference("summonPicker")!!
+                        summonPicker.title = "Select Summon(s)"
+                        summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+                        summonPicker.isEnabled = false
+    
+                        // Go through every checked item and set them to false.
+                        if(this::summonListCheckedItems.isInitialized) {
+                            for (i in summonListCheckedItems.indices) {
+                                summonListCheckedItems[i] = false
+                            }
+                        }
+    
+                        // After that, clear the list of user-selected summons and the one in SharedPreferences.
+                        userSelectedSummonList.clear()
+                        sharedPreferences.edit {
+                            remove("summon")
+                            commit()
+                        }
+                    } else {
+                        val summonPicker: Preference = findPreference("summonPicker")!!
+                        summonPicker.title = "Select Summon(s)*"
                     }
     
                     // Populate the Mission picker with the missions associated with the newly chosen Farming Mode.
@@ -133,7 +154,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     itemAmountPicker.isEnabled = true
     
                     // Build the Summon Selection AlertDialog.
-                    createSummonDialog()
+                    val farmingMode = sharedPreferences.getString("farmingMode", "")
+                    if(farmingMode != "Coop") {
+                        val summonPicker: Preference = findPreference("summonPicker")!!
+                        summonPicker.isEnabled = true
+                        createSummonDialog()
+                    }
     
                     // Finally, enable the Combat Mode PreferenceCategory.
                     val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
@@ -270,6 +296,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // direct user's attention as they go through the settings down the page.
         if(farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
             farmingModePicker.value = farmingModePreferences
+    
+            // Build the AlertDialog for Summons or disable it if its Coop.
+            if(farmingModePreferences != "Coop") {
+                createSummonDialog()
+            } else {
+                val summonPicker: Preference = findPreference("summonPicker")!!
+                summonPicker.title = "Select Summon(s)"
+                summonPicker.isEnabled = false
+                summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+            }
             
             // Populate and enable the Mission picker as the next step for the user.
             populateMissionListPreference()
@@ -300,7 +336,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             // Now reveal the Combat Mode PreferenceCategory that houses the Combat Script, Summons, and Group/Party Preference pickers.
             val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
             combatModePreferenceCategory.isEnabled = true
-            createSummonDialog()
         }
         
         if(summonPreferences != null && summonPreferences.isNotEmpty() && summonPreferences[0] != "") {

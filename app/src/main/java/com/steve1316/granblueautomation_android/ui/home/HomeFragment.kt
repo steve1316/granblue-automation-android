@@ -64,8 +64,9 @@ class HomeFragment : Fragment() {
         var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
         val groupNumber = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
         val partyNumber = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
-    
-        startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && summon.isNotEmpty() && summon[0] != "")
+        
+        startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() &&
+                summon[0] != "") || (farmingMode == "Coop" && summon.isNotEmpty() && summon[0] == "")))
         
         if(combatScriptName == "") {
             combatScriptName = ""
@@ -83,7 +84,7 @@ class HomeFragment : Fragment() {
             itemName = "Missing"
         }
         
-        if(summon[0] == "") {
+        if(summon[0] == "" && farmingMode != "Coop") {
             summon = listOf("Requires at least 1 Summon")
         }
         
