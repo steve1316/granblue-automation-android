@@ -17,6 +17,7 @@ import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
+import java.io.File
 
 class HomeFragment : Fragment() {
     private val TAG: String = "GAA_HomeFragment"
@@ -48,6 +49,98 @@ class HomeFragment : Fragment() {
                 stopProjection()
                 startButton.text = getString(R.string.bot_start)
             }
+        }
+        
+        // Check if the application created the config.yaml file yet and if not, create it.
+        val file = File(myContext.getExternalFilesDir(null), "config.yaml")
+        if(!file.exists()) {
+            file.createNewFile()
+            
+            val content = "---\n" +
+                    "########################################\n" +
+                    "# Read the instructions on the GitHub repository README.md on how to get these keys in order to allow the bot to farm Raids via Twitter.\n" +
+                    "########################################\n" +
+                    "\"twitter\":\n" +
+                    "  \"apiKey\": \n" +
+                    "  \"apiKeySecret\": \n" +
+                    "  \"accessToken\": \n" +
+                    "  \"accessTokenSecret\": \n" +
+                    "\n" +
+                    "########################################\n" +
+                    "# Enable using Full Elixir or Soul Balms for refill.\n" +
+                    "########################################\n" +
+                    "\"refill\":\n" +
+                    "  \"fullElixir\": false\n" +
+                    "  \"soulBalm\": false\n" +
+                    "\n" +
+                    "########################################\n" +
+                    "# Enable delay in seconds between runs to serve as a resting period.\n" +
+                    "# Note: If both enableDelayBetweenRuns and enableRandomizedDelayBetweenRuns is turned on, only enableDelayBetweenRuns will be used.\n" +
+                    "########################################\n" +
+                    "\"delayBetweenRuns\":\n" +
+                    "  \"enableDelayBetweenRuns\": false\n" +
+                    "  \"delayInSeconds\": 15 # Default is 15 seconds.\n" +
+                    "  \"enableRandomizedDelayBetweenRuns\": false\n" +
+                    "  \"delayInSecondsLowerBound\": 15 # Default is 15 seconds.\n" +
+                    "  \"delayInSecondsUpperBound\": 60 # Default is 60 seconds.\n" +
+                    "\n" +
+                    "########################################\n" +
+                    "# Adjust the delay after performing the following actions as the bot is processing your combat script.\n" +
+                    "# The following timings are optimized at an average ping of around 120ms. You can find out your ping to the Granblue Fantasy servers by typing in your terminal on a computer:\n" +
+                    "# ping game.granbluefantasy.jp\n" +
+                    "# You do not need to worry about changing the idle time after attacking as the bot now waits until a new Turn begins before continuing.\n" +
+                    "########################################\n" +
+                    "\"idleAfterAction\":\n" +
+                    "  \"idleAfterSkillInSeconds\": 4 # Default is 4 seconds.\n" +
+                    "  \"idleAfterSummonInSeconds\": 7 # Default is 7 seconds.\n" +
+                    "\n" +
+                    "########################################\n" +
+                    "# Settings for Dimensional Halo.\n" +
+                    "########################################\n" +
+                    "\"dimensionalHalo\":\n" +
+                    "  \"enableDimensionalHalo\": false\n" +
+                    "  \"dimensionalHaloCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"dimensionalHaloSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"dimensionalHaloGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+                    "  \"dimensionalHaloPartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+                    "\n" +
+                    "########################################\n" +
+                    "# Settings for Event Nightmares.\n" +
+                    "########################################\n" +
+                    "\"event\":\n" +
+                    "  \"enableEventNightmare\": false\n" +
+                    "  \"eventNightmareCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"eventNightmareSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"eventNightmareGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+                    "  \"eventNightmarePartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+                    "\n" +
+                    "########################################\n" +
+                    "# Settings for Rise of the Beasts Extreme+.\n" +
+                    "########################################\n" +
+                    "\"rotb\":\n" +
+                    "  \"enableROTBExtremePlus\": false\n" +
+                    "  \"rotbExtremePlusCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"rotbExtremePlusSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"rotbExtremePlusGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+                    "  \"rotbExtremePlusPartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+                    "\n" +
+                    "########################################\n" +
+                    "# Settings for Dread Barrage Unparalleled Foes.\n" +
+                    "########################################\n" +
+                    "\"dreadBarrage\":\n" +
+                    "  \"enableUnparalleledFoe\": false\n" +
+                    "  \"enableUnparalleledFoeLevel95\": false # You can only choose one. If you enable both, the bot will select Level 95. If none are selected, the bot will default to Level 95.\n" +
+                    "  \"enableUnparalleledFoeLevel175\": false\n" +
+                    "  \"unparalleledFoeCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"unparalleledFoeSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
+                    "  \"unparalleledFoeGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+                    "  \"unparalleledFoePartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode."
+            
+            file.writeText(content)
+            
+            Log.d(TAG, "Created config.yaml.")
+        } else {
+            Log.d(TAG, "config.yaml already exists.")
         }
         
         // Update the TextView here based on the information of the SharedPreferences. Required preferences to check for are Farming Mode, Mission,
