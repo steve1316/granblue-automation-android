@@ -192,6 +192,12 @@ class ImageUtils(context: Context, private val game: Game) {
         
         while(sourceBitmap == null) {
             sourceBitmap = MediaProjectionService.takeScreenshotNow()
+            
+            if(sourceBitmap == null) {
+                game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
+                game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+                game.wait(0.5)
+            }
         }
         
         var templateBitmap: Bitmap?
