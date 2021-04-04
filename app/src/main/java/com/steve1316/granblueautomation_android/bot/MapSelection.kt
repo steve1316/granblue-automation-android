@@ -1,5 +1,8 @@
 package com.steve1316.granblueautomation_android.bot
 
+import android.content.Context
+import android.util.Log
+import com.steve1316.granblueautomation_android.data.RoomCodeData
 import org.opencv.core.Point
 import java.util.*
 import kotlin.collections.ArrayList
@@ -7,8 +10,10 @@ import kotlin.collections.ArrayList
 /**
  * Provides the utility functions needed for perform navigation for Farming Mode throughout Granblue Fantasy.
  */
-class MapSelection(private val game: Game) {
+class MapSelection(context: Context, private val game: Game, private val twitterRoomFinder: TwitterRoomFinder) {
 	private val TAG: String = "GAA_MapSelection"
+	
+	private var numberOfRaidsJoined: Int = 0
 	
 	/**
 	 * Helper function to assist selectMap() in navigating to the correct island for Quest Farming Mode.
@@ -771,12 +776,17 @@ class MapSelection(private val game: Game) {
 			
 			// Navigate back to the Quests screen.
 			game.findAndClickButton("quests")
-			// TODO: Adjust number of Raids joined here.
+			
+			if(numberOfRaidsJoined > 0) {
+				numberOfRaidsJoined -= 1
+			}
 		} else {
 			// Start loot detection if there it is available.
 			game.collectLoot(isPendingBattle = true)
 			
-			// TODO: Adjust number of Raids joined here.
+			if(numberOfRaidsJoined > 0) {
+				numberOfRaidsJoined -= 1
+			}
 		}
 	}
 	
@@ -843,7 +853,7 @@ class MapSelection(private val game: Game) {
 		
 		val joinedLocations = game.imageUtils.findAll("joined")
 		if(joinedLocations.size != 0) {
-			// TODO: Update number of Raids joined.
+			numberOfRaidsJoined = joinedLocations.size
 		}
 	}
 	
@@ -858,8 +868,9 @@ class MapSelection(private val game: Game) {
 		game.goBackHome(confirmLocationCheck = true)
 		game.findAndClickButton("quest")
 		
-		// Check for the "You retreated from the raid battle" popup.
 		game.wait(1.0)
+		
+		// Check for the "You retreated from the raid battle" popup.
 		if(game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
 			game.findAndClickButton("ok")
 		}
@@ -867,8 +878,14 @@ class MapSelection(private val game: Game) {
 		if(game.imageUtils.confirmLocation("quest")) {
 			checkPendingBattles("raid")
 			
+			game.wait(1.0)
+			
 			// Now go to the Backup Requests screen.
 			game.findAndClickButton("raid")
+			
+			game.wait(1.0)
+			
+			Log.d(TAG, "Looking for $missionName.")
 			
 			// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
 			var firstRun = true
@@ -877,45 +894,76 @@ class MapSelection(private val game: Game) {
 				// Check for any joined Raids.
 				checkJoinedRaids()
 				
-				// TODO: Perform check if the user has 3 Raids joined already.
+				// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
+				while(numberOfRaidsJoined >= 3) {
+					game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 60 seconds to see if any finish.", MESSAGE_TAG = TAG)
+					game.goBackHome(confirmLocationCheck = true)
+					
+					game.wait(60.0)
+					
+					game.findAndClickButton("quest")
+					game.wait(1.0)
+					game.findAndClickButton("raid")
+					
+					checkPendingBattles("Raid")
+				}
 				
 				// Move to the "Enter ID" section of the Backup Requests screen.
 				game.printToLog("[INFO] Moving to the \"Enter ID\" section of the Backup Requests screen...", MESSAGE_TAG = TAG)
 				game.findAndClickButton("enter_id")
 				
-				// Save the locations of the "Join Room" button and the "Room Code" textbox.
-				val joinRoomButtonLocation: Point?
-				val roomCodeTextBoxLocation: Point?
+				// Save the locations of the "Join Room" button and the "Room Code" text box.
+				var joinRoomButtonLocation: Point? = Point()
+				var roomCodeTextBoxLocation: Point? = Point()
 				if(firstRun) {
-					joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")
-					roomCodeTextBoxLocation = game.imageUtils.findButton("room_code_text_box")
+					joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
+					roomCodeTextBoxLocation = Point(joinRoomButtonLocation.x - 410.0, joinRoomButtonLocation.y)
 				}
 				
-				// TODO: Implement TwitterRoomFinder first.
+				// Get recent room codes for the specified Raid.
+				val roomCodes: ArrayList<String> = twitterRoomFinder.findMostRecentRoomCodes(missionName)
 				
-				// TODO: In the case of unable to join using the current room code, simply hit the "Reload" button to clear the text box.
-				
-				if(!checkPendingBattles("raid") && !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
-					&& !game.imageUtils.confirmLocation("already_taking_part", tries = 1)
-					&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)) {
-					// Check for EP.
-					// game.checkEP()
+				roomCodes.forEach { roomCode ->
+					Log.d(TAG, "Room code: $roomCode")
 					
-					// TODO: Increment number of Raids joined.
-					// game.printToLog("[SUCCESS] Joining {room_code} was successful.", MESSAGE_TAG = TAG)
+					// Set the room code.
+					RoomCodeData.roomCode = roomCode
 					
-					return game.imageUtils.confirmLocation("select_summon")
-				} else {
-					// Clear the textbox by reloading the page.
-					// game.printToLog("[WARNING] {room_code} already ended or invalid.", MESSAGE_TAG = TAG)
-					game.findAndClickButton("reload")
-					firstRun = false
+					// Select the "Room Code" text box. The AccessibilityService should pick up that the textbox is a EditText and will paste the
+					// room code into it.
+					game.gestureUtils.tap(roomCodeTextBoxLocation?.x!!, roomCodeTextBoxLocation.y, longPress = true)
+					
+					// Wait several seconds to allow enough time for MyAccessibilityService to paste the code.
+					game.wait(3.0)
+					
+					// Now tap the "Join Room" button.
+					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y)
+					
+					if(!checkPendingBattles("raid") && !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
+						&& !game.imageUtils.confirmLocation("already_taking_part", tries = 1)
+						&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)) {
+						// Check for EP.
+						game.checkEP()
+						
+						game.printToLog("[SUCCESS] Joining {room_code} was successful.", MESSAGE_TAG = TAG)
+						numberOfRaidsJoined += 1
+						
+						return game.imageUtils.confirmLocation("select_summon")
+					} else {
+						// Clear the text box by reloading the page.
+						game.printToLog("[WARNING] $roomCode already ended or invalid.", MESSAGE_TAG = TAG)
+						game.findAndClickButton("reload")
+						firstRun = false
+						
+						game.wait(1.0)
+						game.findAndClickButton("enter_id")
+					}
 				}
 				
-//					tries -= 1
-//					game.printToLog("[WARNING] Could not find any valid room codes. \\nWaiting 60 seconds and then trying again with $tries " +
-//							"tries left before exiting.", MESSAGE_TAG = TAG)
-//					game.wait(60.0)
+				tries -= 1
+				game.printToLog("[WARNING] Could not find any valid room codes. \\nWaiting 60 seconds and then trying again with $tries " +
+						"tries left before exiting.", MESSAGE_TAG = TAG)
+				game.wait(60.0)
 			}
 		}
 		
