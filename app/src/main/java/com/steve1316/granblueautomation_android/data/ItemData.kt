@@ -104,69 +104,119 @@ class ItemData {
 		)
 		
 		val itemsForRaid = mapOf(
-			"Tiamat Omega" to arrayListOf(
+			"Lvl 50 Tiamat Omega" to arrayListOf(
 				"Tiamat Omega", "Tiamat Anima", "Tiamat Omega Anima", "Tiamat Amood Omega", "Tiamat Bolt Omega",
 				"Tiamat Gauntlet Omega", "Tiamat Glaive Omega"
 			),
-			"Colossus Omega" to arrayListOf(
+			"Lvl 100 Tiamat Omega Ayr" to arrayListOf(
+				"Tiamat Omega", "Tiamat Anima", "Tiamat Omega Anima", "Tiamat Amood Omega", "Tiamat Bolt Omega",
+				"Tiamat Gauntlet Omega", "Tiamat Glaive Omega"
+			),
+			"Lvl 70 Colossus Omega" to arrayListOf(
 				"Colossus Omega", "Colossus Anima", "Colossus Omega Anima", "Colossus Blade Omega", "Colossus Cane Omega",
 				"Colossus Carbine Omega", "Colossus Fist Omega"
 			),
-			"Leviathan Omega" to arrayListOf(
+			"Lvl 100 Colossus Omega" to arrayListOf(
+				"Colossus Omega", "Colossus Anima", "Colossus Omega Anima", "Colossus Blade Omega", "Colossus Cane Omega",
+				"Colossus Carbine Omega", "Colossus Fist Omega"
+			),
+			"Lvl 60 Leviathan Omega" to arrayListOf(
 				"Leviathan Omega", "Leviathan Anima", "Leviathan Omega Anima", "Leviathan Bow Omega", "Leviathan Gaze Omega",
 				"Leviathan Scepter Omega", "Leviathan Spear Omega"
 			),
-			"Yggdrasil Omega" to arrayListOf(
+			"Lvl 100 Leviathan Omega" to arrayListOf(
+				"Leviathan Omega", "Leviathan Anima", "Leviathan Omega Anima", "Leviathan Bow Omega", "Leviathan Gaze Omega",
+				"Leviathan Scepter Omega", "Leviathan Spear Omega"
+			),
+			"Lvl 60 Yggdrasil Omega" to arrayListOf(
 				"Yggdrasil Omega", "Yggdrasil Anima", "Yggdrasil Omega Anima", "Yggdrasil Bow Omega",
 				"Yggdrasil Crystal Blade Omega", "Yggdrasil Dagger Omega", "Yggdrasil Dewbranch Omega"
 			),
-			"Luminiera Omega" to arrayListOf(
+			"Lvl 100 Yggdrasil Omega" to arrayListOf(
+				"Yggdrasil Omega", "Yggdrasil Anima", "Yggdrasil Omega Anima", "Yggdrasil Bow Omega",
+				"Yggdrasil Crystal Blade Omega", "Yggdrasil Dagger Omega", "Yggdrasil Dewbranch Omega"
+			),
+			"Lvl 75 Luminiera Omega" to arrayListOf(
 				"Luminiera Omega", "Luminiera Anima", "Luminiera Omega Anima", "Luminiera Bhuj Omega", "Luminiera Bolt Omega",
 				"Luminiera Harp Omega", "Luminiera Sword Omega"
 			),
-			"Celeste Omega" to arrayListOf(
+			"Lvl 100 Luminiera Omega" to arrayListOf(
+				"Luminiera Omega", "Luminiera Anima", "Luminiera Omega Anima", "Luminiera Bhuj Omega", "Luminiera Bolt Omega",
+				"Luminiera Harp Omega", "Luminiera Sword Omega"
+			),
+			"Lvl 75 Celeste Omega" to arrayListOf(
 				"Celeste Omega", "Celeste Anima", "Celeste Omega Anima", "Celeste Harp Omega", "Celeste Claw Omega",
 				"Celeste Horn Omega", "Celeste Zaghnal Omega"
 			),
-			"Shiva" to arrayListOf("Shiva Anima", "Shiva Omega Anima", "Hand of Brahman", "Scimitar of Brahman", "Trident of Brahman", "Nilakantha"),
-			"Europa" to arrayListOf("Europa Anima", "Europa Omega Anima", "Tyros Bow", "Tyros Scepter", "Tyros Zither", "Spirit of Mana"),
-			"Godsworn Alexiel" to arrayListOf(
+			"Lvl 100 Celeste Omega" to arrayListOf(
+				"Celeste Omega", "Celeste Anima", "Celeste Omega Anima", "Celeste Harp Omega", "Celeste Claw Omega",
+				"Celeste Horn Omega", "Celeste Zaghnal Omega"
+			),
+
+			"Lvl 120 Shiva" to arrayListOf("Shiva Anima", "Shiva Omega Anima", "Hand of Brahman", "Scimitar of Brahman", "Trident of Brahman", "Nilakantha"),
+			"Lvl 120 Europa" to arrayListOf("Europa Anima", "Europa Omega Anima", "Tyros Bow", "Tyros Scepter", "Tyros Zither", "Spirit of Mana"),
+			"Lvl 120 Godsworn Alexiel" to arrayListOf(
 				"Alexiel Anima", "Alexiel Omega Anima", "Nibelung Horn", "Nibelung Klinge", "Nibelung Messer",
 				"Godsworn Edge"
 			),
-			"Grimnir" to arrayListOf(
+			"Lvl 120 Grimnir" to arrayListOf(
 				"Grimnir Anima", "Grimnir Omega Anima", "Last Storm Blade", "Last Storm Harp", "Last Storm Lance",
 				"Coruscant Crozier"
 			),
-			"Metatron" to arrayListOf(
+			"Lvl 120 Metatron" to arrayListOf(
 				"Metatron Anima", "Metatron Omega Anima", "Mittron's Treasured Blade", "Mittron's Gauntlet", "Mittron's Bow",
 				"Pillar of Flame"
 			),
-			"Avatar" to arrayListOf("Avatar Anima", "Avatar Omega Anima", "Abyss Striker", "Abyss Spine", "Abyss Gaze", "Zechariah"),
-			"Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),
-			"Macula Marius" to arrayListOf("Macula Marius Anima", "Macula Marius Omega Anima", "Ancient Auberon", "Auberon"),
-			"Medusa" to arrayListOf("Medusa Anima", "Medusa Omega Anima", "Ancient Perseus", "Perseus"),
-			"Nezha" to arrayListOf("Nezha Anima", "Nezha Omega Anima", "Ancient Nalakuvara", "Nalakuvara"),
-			"Apollo" to arrayListOf("Apollo Anima", "Apollo Omega Anima", "Ancient Bow of Artemis", "Bow of Artemis"),
-			"Dark Angel Olivia" to arrayListOf("Dark Angel Olivia Anima", "Dark Angel Olivia Omega Anima", "Ancient Cortana", "Cortana"),
-			"Athena" to arrayListOf("Athena Anima", "Athena Omega Anima", "Erichthonius", "Sword of Pallas"),
-			"Grani" to arrayListOf("Grani Anima", "Grani Omega Anima", "Bow of Sigurd", "Wilhelm"),
-			"Baal" to arrayListOf("Baal Anima", "Baal Omega Anima", "Solomon's Axe", "Spymur's Vision"),
-			"Garuda" to arrayListOf("Garuda Anima", "Garuda Omega Anima", "Plume of Suparna", "Indra's Edge"),
-			"Odin" to arrayListOf("Odin Anima", "Odin Omega Anima", "Gungnir", "Sleipnir Shoe"),
-			"Lich" to arrayListOf("Lich Anima", "Lich Omega Anima", "Obscuritas", "Phantasmas"),
-			"Prometheus" to arrayListOf("Prometheus Anima", "Fire of Prometheus", "Chains of Caucasus"),
-			"Ca Ong" to arrayListOf("Ca Ong Anima", "Keeper of Hallowed Ground", "Savior of Hallowed Ground"),
-			"Gilgamesh" to arrayListOf("Gilgamesh Anima", "All-Might Spear", "All-Might Battle-Axe"),
-			"Morrigna" to arrayListOf("Morrigna Anima", "Le Fay", "Unius"),
-			"Hector" to arrayListOf("Hector Anima", "Bow of Iliad", "Adamantine Gauntlet"),
-			"Anubis" to arrayListOf("Anubis Anima", "Hermanubis", "Scales of Dominion"),
-			"Tiamat Malice" to arrayListOf("Tiamat Malice Anima", "Hatsoiiłhał", "Majestas"),
-			"Leviathan Malice" to arrayListOf("Leviathan Malice Anima", "Kaladanda", "Kris of Hypnos"),
-			"Phronesis" to arrayListOf("Phronesis Anima", "Dark Thrasher", "Master Bamboo Sword"),
-			"Grand Order" to arrayListOf("Azure Feather", "Heavenly Horn"),
-			"Proto Bahamut" to arrayListOf("Horn of Bahamut", "Champion Merit", "Primeval Horn"),
-			"Rose Queen" to arrayListOf("Rose Petal")
+			"Lvl 120 Avatar" to arrayListOf("Avatar Anima", "Avatar Omega Anima", "Abyss Striker", "Abyss Spine", "Abyss Gaze", "Zechariah"),
+
+			"Lvl 100 Michael" to arrayListOf("Michael Anima"),
+			"Lvl 100 Gabriel" to arrayListOf("Gabriel Anima"),
+			"Lvl 100 Uriel" to arrayListOf("Uriel Anima"),
+			"Lvl 100 Raphael" to arrayListOf("Raphael Anima"),
+			
+			"Lvl 110 Rose Queen" to arrayListOf("Rose Petal"),
+			"Lvl 100 Grand Order" to arrayListOf("Azure Feather", "Heavenly Horn"),
+			"Lvl 100 Proto Bahamut" to arrayListOf("Champion Merit", "Horn of Bahamut"),
+			"Lvl 150 Proto Bahamut" to arrayListOf("Primeval Horn"),
+			
+			"Lvl 100 Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),
+			"Lvl 120 Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),
+			"Lvl 100 Macula Marius" to arrayListOf("Macula Marius Anima", "Macula Marius Omega Anima", "Ancient Auberon", "Auberon"),
+			"Lvl 120 Macula Marius" to arrayListOf("Macula Marius Anima", "Macula Marius Omega Anima", "Ancient Auberon", "Auberon"),
+			"Lvl 100 Medusa" to arrayListOf("Medusa Anima", "Medusa Omega Anima", "Ancient Perseus", "Perseus"),
+			"Lvl 120 Medusa" to arrayListOf("Medusa Anima", "Medusa Omega Anima", "Ancient Perseus", "Perseus"),
+			"Lvl 100 Nezha" to arrayListOf("Nezha Anima", "Nezha Omega Anima", "Ancient Nalakuvara", "Nalakuvara"),
+			"Lvl 120 Nezha" to arrayListOf("Nezha Anima", "Nezha Omega Anima", "Ancient Nalakuvara", "Nalakuvara"),
+			"Lvl 100 Apollo" to arrayListOf("Apollo Anima", "Apollo Omega Anima", "Ancient Bow of Artemis", "Bow of Artemis"),
+			"Lvl 120 Apollo" to arrayListOf("Apollo Anima", "Apollo Omega Anima", "Ancient Bow of Artemis", "Bow of Artemis"),
+			"Lvl 100 Dark Angel Olivia" to arrayListOf("Dark Angel Olivia Anima", "Dark Angel Olivia Omega Anima", "Ancient Cortana", "Cortana"),
+			"Lvl 120 Dark Angel Olivia" to arrayListOf("Dark Angel Olivia Anima", "Dark Angel Olivia Omega Anima", "Ancient Cortana", "Cortana"),
+			
+			"Lvl 100 Athena" to arrayListOf("Athena Anima", "Athena Omega Anima", "Erichthonius", "Sword of Pallas"),
+			"Lvl 100 Grani" to arrayListOf("Grani Anima", "Grani Omega Anima", "Bow of Sigurd", "Wilhelm"),
+			"Lvl 100 Baal" to arrayListOf("Baal Anima", "Baal Omega Anima", "Solomon's Axe", "Spymur's Vision"),
+			"Lvl 100 Garuda" to arrayListOf("Garuda Anima", "Garuda Omega Anima", "Plume of Suparna", "Indra's Edge"),
+			"Lvl 100 Odin" to arrayListOf("Odin Anima", "Odin Omega Anima", "Gungnir", "Sleipnir Shoe"),
+			"Lvl 100 Lich" to arrayListOf("Lich Anima", "Lich Omega Anima", "Obscuritas", "Phantasmas"),
+			
+			"Lvl 120 Prometheus" to arrayListOf("Prometheus Anima", "Fire of Prometheus", "Chains of Caucasus"),
+			"Lvl 120 Ca Ong" to arrayListOf("Ca Ong Anima", "Keeper of Hallowed Ground", "Savior of Hallowed Ground"),
+			"Lvl 120 Gilgamesh" to arrayListOf("Gilgamesh Anima", "All-Might Spear", "All-Might Battle-Axe"),
+			"Lvl 120 Morrigna" to arrayListOf("Morrigna Anima", "Le Fay", "Unius"),
+			"Lvl 120 Hector" to arrayListOf("Hector Anima", "Bow of Iliad", "Adamantine Gauntlet"),
+			"Lvl 120 Anubis" to arrayListOf("Anubis Anima", "Hermanubis", "Scales of Dominion"),
+			
+			"Lvl 150 Tiamat Malice" to arrayListOf("Tiamat Malice Anima", "Hatsoiiłhał", "Majestas"),
+			"Lvl 150 Leviathan Malice" to arrayListOf("Leviathan Malice Anima", "Kaladanda", "Kris of Hypnos"),
+			"Lvl 150 Phronesis" to arrayListOf("Phronesis Anima", "Dark Thrasher", "Master Bamboo Sword"),
+			"Lvl 150 Luminiera Malice" to arrayListOf("Luminiera Malice Anima", "Colomba", "Seyfert"),
+			
+			"Lvl 200 Wilnas" to arrayListOf("Wilnas's Finger"),
+			"Lvl 200 Wamdus" to arrayListOf("Wamdus's Cnidocyte"),
+			"Lvl 200 Galleon" to arrayListOf("Galleon's Jaw"),
+			"Lvl 200 Ewiyar" to arrayListOf("Ewiyar's Beak"),
+			"Lvl 200 Lu Woh" to arrayListOf("Lu Woh's Horn"),
+			"Lvl 200 Fediel" to arrayListOf("Fediel's Spine"),
 		)
 	}
 }
