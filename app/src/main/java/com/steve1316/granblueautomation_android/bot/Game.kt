@@ -22,7 +22,8 @@ class Game(myContext: Context) {
 	private val TAG: String = "GAA_Game"
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
-	private val mapSelection: MapSelection = MapSelection(this)
+	private val twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext)
+	private val mapSelection: MapSelection = MapSelection(myContext, this, twitterRoomFinder)
 	private val combatMode: CombatMode = CombatMode(this)
 	
 	private val startTime: Long = System.currentTimeMillis()
@@ -73,6 +74,8 @@ class Game(myContext: Context) {
 		}
 		
 		messageLog.add(printTime() + " " + message)
+		
+		// TODO: Offer a way to save this into a text file.
 	}
 	
 	/**
