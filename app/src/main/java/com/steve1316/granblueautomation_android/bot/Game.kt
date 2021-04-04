@@ -742,7 +742,7 @@ class Game(myContext: Context) {
 								printToLog("[INFO] Bot ran out of Treasures to host this Mission! Falling back to Very Hard Raid.")
 								findAndClickButton("ok")
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if(farmingMode == "Special" && checkDimensionalHalo()) {
+							} else if(farmingMode == "Special" && itemName == "Angel Halo Weapons" && checkDimensionalHalo()) {
 								// Make sure that the bot goes back to the Home screen when completing an Dimensional Halo.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 							} else {
