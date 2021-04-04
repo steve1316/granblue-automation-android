@@ -10,9 +10,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.*
+import com.sksamuel.hoplite.ConfigLoader
 import com.steve1316.granblueautomation_android.R
+import com.steve1316.granblueautomation_android.data.ConfigData
 import com.steve1316.granblueautomation_android.data.ItemData
 import com.steve1316.granblueautomation_android.data.MissionData
+import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val TAG: String = "GAA_SettingsFragment"
@@ -342,7 +345,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
             groupPicker.value = "Group $groupPreferences"
             partyPicker.value = "Party $partyPreferences"
         }
-        
+    
+        // Save the Twitter API keys and tokens to SharedPreferences.
+        val file = File(context?.getExternalFilesDir(null), "config.yaml")
+        if(file.exists() && !sharedPreferences.contains("apiKey")) {
+            val config = ConfigLoader().loadConfigOrThrow<ConfigData>(file)
+            sharedPreferences.edit {
+                putString("apiKey", config.twitter.apiKey)
+                putString("apiKeySecret", config.twitter.apiKeySecret)
+                putString("accessToken", config.twitter.accessToken)
+                putString("accessTokenSecret", config.twitter.accessTokenSecret)
+                commit()
+            }
+            
+            Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.yaml.")
+        }
+    
         Log.d(TAG, "Preferences created")
     }
     
