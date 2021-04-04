@@ -75,16 +75,23 @@ class MyAccessibilityService : AccessibilityService() {
      * @param x The x coordinate of the point.
      * @param y The y coordinate of the point.
      * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
+     * @param longPress Whether or not to long press.
      * @return True if the tap gesture was executed successfully. False otherwise.
      */
-    fun tap(x: Double, y: Double, ignoreWait: Boolean = false): Boolean {
+    fun tap(x: Double, y: Double, ignoreWait: Boolean = false, longPress: Boolean = false): Boolean {
         val tapPath = Path().apply {
             moveTo(x.toFloat(), y.toFloat())
         }
-        
-        val gesture = GestureDescription.Builder().apply {
-            addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1))
-        }.build()
+    
+        val gesture: GestureDescription = if(longPress) {
+            GestureDescription.Builder().apply {
+                addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1000, true))
+            }.build()
+        } else {
+            GestureDescription.Builder().apply {
+                addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1))
+            }.build()
+        }
         
         val dispatchResult = dispatchGesture(gesture, null, null)
         if(!ignoreWait) {
@@ -92,7 +99,11 @@ class MyAccessibilityService : AccessibilityService() {
         }
         
         if(dispatchResult) {
-            Log.d(TAG, "Tapping x: $x, y: $y")
+            if(longPress) {
+                Log.d(TAG, "Long pressing x: $x, y: $y")
+            } else {
+                Log.d(TAG, "Tapping x: $x, y: $y")
+            }
         } else {
             Log.e(TAG, "Failed to dispatch gesture")
         }
