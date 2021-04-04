@@ -33,6 +33,7 @@ By downloading this application, you consent to your account potentially getting
 
 # Requirements
 1. [Android Device (API 29+ or Android 10+)](https://developer.android.com/about/versions)
+   1. APK available to download is for devices that support arm64-v8a ABI. For devices that use a different ABI, follow the instructions below on how to build your own APK.
 2. [Granblue Fantasy account](http://game.granbluefantasy.jp/)
 3. [Twitter Developer account (optional, needed to farm Raids)](https://developer.twitter.com/en)
 
@@ -42,6 +43,7 @@ By downloading this application, you consent to your account potentially getting
    2. Go to ```https://opencv.org/releases/``` and download OpenCV 4.5.1 (make sure to download the Android version of OpenCV) and extract it.
    3. Create a new folder inside the root of the project repository named ```opencv``` and copy the extracted files in ```/OpenCV-android-sdk/sdk/``` from Step 2 into it.
    4. Open the project repository in ```Android Studio``` and you can now build and run on your Android Device or build your own .apk file.
+   5. You can set ```universalApk``` to ```true``` in the ```build.gradle``` for the application to build a one-for-all .apk file or adjust the ```include 'arm64-v8a'``` to customize which ABI to build the .apk file for.
 2. Once you have it running, fill out the required sections marked with * in the Settings page of the application.
 3. Now go back to the Home page. The settings you have selected will be shown to you in the text box below the ```Start``` button.
 4. Now tap on the ```Start``` button. If this is the first time, it will ask you to give the application ```Overlay``` permission and then to enable its ```Accessibility Service```.
