@@ -6,10 +6,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Path
+import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.EditText
 import android.widget.Toast
+import com.steve1316.granblueautomation_android.data.RoomCodeData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -44,6 +47,20 @@ class MyAccessibilityService : AccessibilityService() {
     }
     
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if(event?.source != null && RoomCodeData.roomCode != "" && event.source?.className.toString().contains(EditText::class.java.simpleName)) {
+            Log.d(TAG, "Copying ${RoomCodeData.roomCode}")
+            
+            // Paste the room code.
+            val arguments = Bundle()
+            arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, RoomCodeData.roomCode)
+            event.source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+    
+            Log.d(TAG, "Pasted ${RoomCodeData.roomCode}")
+    
+            // Now reset the room code to prevent looping of onAccessibilityEvent().
+            RoomCodeData.roomCode = ""
+        }
+        
         return
     }
     
