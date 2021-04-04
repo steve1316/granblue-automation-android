@@ -11,14 +11,23 @@ android {
         applicationId "com.steve1316.granblueautomation_android"
         minSdkVersion 29
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.5.1"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            // Attempt to reduce the size of the apk file by following the steps outlined in https://stackoverflow.com/a/45074929
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // Other parameters for attempting to reduce the size of the apk file.
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
         }
     }
     compileOptions {
@@ -27,6 +36,17 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    // Instead of making a very large universal apk file, only make apk for arm64-v8a ABI as its the most common ABI.
+    splits {
+        abi {
+            enable true
+            reset()
+            // include "armeabi","armeabi-v7a",'arm64-v8a',"mips","x86","x86_64",'arm64-v8a'
+            include 'arm64-v8a'
+            universalApk false
+        }
     }
 }
 
