@@ -37,7 +37,23 @@ By downloading this application, you consent to your account potentially getting
 3. [Twitter Developer account (optional, needed to farm Raids)](https://developer.twitter.com/en)
 
 # Instructions
-1. WIP
+1. Download the .apk file from the ```Releases``` section on the right and install it on your Android device. If you want to build the .apk yourself, do the following:
+   1. Download and extract the project repository.
+   2. Go to ```https://opencv.org/releases/``` and download OpenCV 4.5.1 (make sure to download the Android version of OpenCV) and extract it.
+   3. Create a new folder inside the root of the project repository named ```opencv``` and copy the extracted files in ```/OpenCV-android-sdk/sdk/``` from Step 2 into it.
+   4. Open the project repository in ```Android Studio``` and you can now build and run on your Android Device or build your own .apk file.
+2. Once you have it running, fill out the required sections marked with * in the Settings page of the application.
+3. Now go back to the Home page. The settings you have selected will be shown to you in the text box below the ```Start``` button.
+4. Now tap on the ```Start``` button. If this is the first time, it will ask you to give the application ```Overlay``` permission and then to enable its ```Accessibility Service```.
+5. Once both are enabled, tapping on the ```Start``` button again will display an overlay button that you can move around the screen.
+6. Navigate yourself to Granblue Fantasy's main page and press the overlay button to start. It is recommended to move the overlay button to the bottom left corner such that it covers the ```Back``` button to avoid interruption.
+7. Whenever you want to stop, press the overlay button again to terminate the bot.
+
+## If you want to farm Raids, follow the instructions below:
+1. Make sure to run the application at least once. Check the application's ```files``` folder located inside internal storage's ```Android/data/com.steve1316.granblueautomation_android/``` directory.
+2. Locate the file named ```config.yaml``` file. For ease of use, send it to your computer.
+3. Now follow the instructions under the ```Instructions for the Raid component of this application (optional, only if you want to farm Raids)``` section of ```https://github.com/steve1316/granblue-automation-pyautogui``` to obtain your own consumer keys and tokens to connect to the Twitter API.
+4. Once you have them, copy them into the respective fields inside ```config.yaml``` using your preferred text editor. After that, move the file back to where it belonged on your Android device.
 
 # Technologies Used
 1. [MediaProjection - Used to obtain full screenshots](https://developer.android.com/reference/android/media/projection/MediaProjection)
