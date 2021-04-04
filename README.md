@@ -17,10 +17,19 @@ Screenshots are taken via the MediaProjection and OpenCV performs image processi
 By downloading this application, you consent to your account potentially getting flagged for excessive usage and banned by KMR. I hold no responsibility for how much you use this application for. I trust you have the self-control necessary to use this application in reasonable bursts of time and to give yourself breaks in between.
 
 # Features
-- [ ] Choose between various Farming Modes (Quest, Special, Coop, Raid, Event, Event (Token Drawboxes), Dread Barrage, ROTB, Guild Wars).
-- [ ] Choose your own custom combat script.
+- [ ] Choose between various Farming Modes:
+  - [x] Quest
+  - [x] Special
+  - [x] Coop
+  - [x] Raid
+  - [ ] Event
+  - [ ] Event (Token Drawboxes)
+  - [ ] Rise of the Beasts
+  - [ ] Guild Wars
+  - [ ] Dread Barrage
+- [x] Choose your own custom combat script.
 - [ ] Alert for when anti-bot CAPTCHA pops up.
-- [ ] Customizable settings such as amount of time and Item/Summon selection.
+- [x] Customizable settings such as Item/Summon selection and delays between each run.
 
 # Requirements
 1. [Android Device (API 29+ or Android 10+)](https://developer.android.com/about/versions)
@@ -31,8 +40,9 @@ By downloading this application, you consent to your account potentially getting
 1. WIP
 
 # Technologies Used
-1. [Android Studio](https://developer.android.com/studio)
-2. [Kotlin Language](https://developer.android.com/kotlin)
-3. [MediaProjection](https://developer.android.com/reference/android/media/projection/MediaProjection)
-4. [AccessibilityService](https://developer.android.com/reference/android/accessibilityservice/AccessibilityService)
-5. [OpenCV Android 4.5.1](https://opencv.org/releases/)
+1. [MediaProjection - Used to obtain full screenshots](https://developer.android.com/reference/android/media/projection/MediaProjection)
+2. [AccessibilityService - Used to dispatch gestures like tapping and scrolling](https://developer.android.com/reference/android/accessibilityservice/AccessibilityService)
+3. [OpenCV Android 4.5.1 - Used to template match](https://opencv.org/releases/)
+4. [Google Firebase ML Kit - Used for text detection](https://developers.google.com/ml-kit/vision/text-recognition/android)
+5. [Hoplite - Used to read config.yaml for customized user settings](https://github.com/sksamuel/hoplite)
+6. [Twitter4j - Used to connect to Twitter API to fetch room codes](https://github.com/Twitter4J/Twitter4J)
