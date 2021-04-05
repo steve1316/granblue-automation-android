@@ -561,7 +561,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			
 			// Remove the difficulty prefix from the mission name.
 			val formattedMissionName : String = if(difficulty == "Normal" || difficulty == "Hard") {
-				missionName.substring(1)
+				missionName.substring(2)
 			} else if(difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Impossible") {
 				missionName.substring(3)
 			} else {
