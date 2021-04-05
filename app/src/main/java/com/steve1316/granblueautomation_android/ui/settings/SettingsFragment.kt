@@ -38,6 +38,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val itemsForSpecial: Map<String, ArrayList<String>> = ItemData.itemsForSpecial
     private val itemsForCoop: Map<String, ArrayList<String>> = ItemData.itemsForCoop
     private val itemsForRaid: Map<String, ArrayList<String>> = ItemData.itemsForRaid
+    private val itemsForEvent: Map<String, ArrayList<String>> = ItemData.itemsForEvent
+    private val itemsForEventTokenDrawboxes: Map<String, ArrayList<String>> = ItemData.itemsForEventTokenDrawboxes
     
     companion object {
         /**
@@ -401,6 +403,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+            "Event" -> {
+                missionsForEvent.forEach { (_, value) ->
+                    value.forEach {
+                        newEntries.add(it)
+                    }
+                }
+            }
+            "Event (Token Drawboxes)" -> {
+                missionsForEventTokenDrawboxes.forEach { (_, value) ->
+                    value.forEach {
+                        newEntries.add(it)
+                    }
+                }
+            }
         }
     
         missionPicker.entries = newEntries.toTypedArray()
@@ -481,6 +497,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         value.forEach {
                             newEntries.add(it)
                         }
+                    }
+                }
+            }
+            "Event" -> {
+                itemsForEvent.forEach { (key, value) ->
+                    if(key == missionName) {
+                        value.forEach {
+                            newEntries.add(it)
+                        }
+                    }
+                }
+            }
+            "Event (Token Drawboxes)" -> {
+                itemsForEventTokenDrawboxes.forEach { (key, value) ->
+                    if(key == missionName) {
+                        value.forEach {
+                            newEntries.add(it)
                         }
                     }
                 }

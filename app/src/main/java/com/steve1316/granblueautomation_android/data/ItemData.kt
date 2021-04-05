@@ -218,5 +218,22 @@ class ItemData {
 			"Lvl 200 Lu Woh" to arrayListOf("Lu Woh's Horn"),
 			"Lvl 200 Fediel" to arrayListOf("Fediel's Spine"),
 		)
+		
+		val itemsForEvent = mapOf(
+			"VH Event Quest" to arrayListOf("Repeated Runs"),
+			"EX Event Quest" to arrayListOf("Repeated Runs"),
+			"VH Event Raid" to arrayListOf("Repeated Runs"),
+			"EX Event Raid" to arrayListOf("Repeated Runs")
+		)
+		
+		val itemsForEventTokenDrawboxes = mapOf(
+			"N Event Quest" to arrayListOf("Repeated Runs"),
+			"H Event Quest" to arrayListOf("Repeated Runs"),
+			"VH Event Quest" to arrayListOf("Repeated Runs"),
+			"EX Event Quest" to arrayListOf("Repeated Runs"),
+			"VH Event Raid" to arrayListOf("Repeated Runs"),
+			"EX Event Raid" to arrayListOf("Repeated Runs"),
+			"IM Event Raid" to arrayListOf("Repeated Runs")
+		)
 	}
 }
