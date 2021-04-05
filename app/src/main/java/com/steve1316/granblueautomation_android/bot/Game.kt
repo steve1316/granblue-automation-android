@@ -624,6 +624,7 @@ class Game(myContext: Context) {
 			)
 		}
 		
+		val eventQuests = arrayListOf("N Event Quest", "H Event Quest", "VH Event Quest", "EX Event Quest")
 		var startCheckFlag: Boolean
 		var summonCheckFlag: Boolean
 		
@@ -693,6 +694,9 @@ class Game(myContext: Context) {
 								mapSelection.checkPendingBattles(farmingMode)
 								
 								// Now that Pending Battles have been cleared away, select the Mission again.
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							} else if(farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
+								// Select the Mission again if doing Event Quests since it does not have a "Play Again" button.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 							}
 						} else {
