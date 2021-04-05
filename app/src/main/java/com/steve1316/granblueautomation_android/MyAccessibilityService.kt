@@ -115,15 +115,15 @@ class MyAccessibilityService : AccessibilityService() {
             wait(0.5)
         }
         
-        if(dispatchResult) {
-            if(longPress) {
-                Log.d(TAG, "Long pressing x: $x, y: $y")
-            } else {
-                Log.d(TAG, "Tapping x: $x, y: $y")
-            }
-        } else {
-            Log.e(TAG, "Failed to dispatch gesture")
-        }
+//        if(dispatchResult) {
+//            if(longPress) {
+//                Log.d(TAG, "Long pressing x: $x, y: $y")
+//            } else {
+//                Log.d(TAG, "Tapping x: $x, y: $y")
+//            }
+//        } else {
+//            Log.e(TAG, "Failed to dispatch gesture")
+//        }
         
         return dispatchResult
     }
@@ -209,11 +209,11 @@ class MyAccessibilityService : AccessibilityService() {
             wait(0.5)
         }
         
-        if(dispatchResult) {
-            Log.d(TAG, "Swiping from ($oldX, $oldY) to ($newX, $newY).")
-        } else {
-            Log.e(TAG, "Failed to dispatch swipe gesture.")
-        }
+//        if(dispatchResult) {
+//            Log.d(TAG, "Swiping from ($oldX, $oldY) to ($newX, $newY).")
+//        } else {
+//            Log.e(TAG, "Failed to dispatch swipe gesture.")
+//        }
         
         return dispatchResult
     }
