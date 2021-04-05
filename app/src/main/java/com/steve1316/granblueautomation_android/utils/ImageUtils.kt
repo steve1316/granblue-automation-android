@@ -203,7 +203,7 @@ class ImageUtils(context: Context, private val game: Game) {
         var templateBitmap: Bitmap?
     
         // Get the Bitmap from the template image file inside the specified folder.
-        myContext.assets?.open("$templateFolderName/$templateName.png").use { inputStream ->
+        myContext.assets?.open("$templateFolderName/$templateName.webp").use { inputStream ->
             // Get the Bitmap from the template image file and then start matching.
             templateBitmap = BitmapFactory.decodeStream(inputStream)
         }
