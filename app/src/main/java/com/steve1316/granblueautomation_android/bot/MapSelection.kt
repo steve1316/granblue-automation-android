@@ -1,6 +1,5 @@
 package com.steve1316.granblueautomation_android.bot
 
-import android.content.Context
 import android.util.Log
 import com.steve1316.granblueautomation_android.data.RoomCodeData
 import org.opencv.core.Point
@@ -10,7 +9,7 @@ import kotlin.collections.ArrayList
 /**
  * Provides the utility functions needed for perform navigation for Farming Mode throughout Granblue Fantasy.
  */
-class MapSelection(context: Context, private val game: Game, private val twitterRoomFinder: TwitterRoomFinder) {
+class MapSelection(private val game: Game, private val twitterRoomFinder: TwitterRoomFinder) {
 	private val TAG: String = "GAA_MapSelection"
 	
 	private var numberOfRaidsJoined: Int = 0

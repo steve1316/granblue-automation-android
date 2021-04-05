@@ -23,7 +23,7 @@ class Game(myContext: Context) {
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	private val twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext)
-	private val mapSelection: MapSelection = MapSelection(myContext, this, twitterRoomFinder)
+	private val mapSelection: MapSelection = MapSelection(this, twitterRoomFinder)
 	private val combatMode: CombatMode = CombatMode(this)
 	
 	private val startTime: Long = System.currentTimeMillis()
