@@ -22,8 +22,8 @@ By downloading this application, you consent to your account potentially getting
   - [x] Special
   - [x] Coop
   - [x] Raid
-  - [ ] Event
-  - [ ] Event (Token Drawboxes)
+  - [x] Event
+  - [x] Event (Token Drawboxes)
   - [ ] Rise of the Beasts
   - [ ] Guild Wars
   - [ ] Dread Barrage
