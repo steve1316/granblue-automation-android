@@ -3,23 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory app:title="Farming Mode" app:summary="Options marked with * are required">
         <ListPreference
-            app:entries="@array/farming_mode_entries"
-            app:entryValues="@array/farming_mode_values"
+            app:entries="@array/farming_mode_list"
+            app:entryValues="@array/farming_mode_list"
             app:key="farmingModePicker"
             app:title="Select Farming Mode*"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:entries="@array/list_entries"
-            app:entryValues="@array/list_values"
+            app:entries="@array/empty_list"
+            app:entryValues="@array/empty_list"
             app:key="missionPicker"
             android:enabled="false"
             app:title="Select Mission to farm from*"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:entries="@array/list_entries"
-            app:entryValues="@array/list_values"
+            app:entries="@array/empty_list"
+            app:entryValues="@array/empty_list"
             app:key="itemPicker"
             android:enabled="false"
             app:title="Select Item to farm*"
@@ -49,16 +49,16 @@
             app:summary="Select the Summon(s) in order from highest to lowest priority for Combat Mode." />
 
         <ListPreference
-            app:entries="@array/group_entries"
-            app:entryValues="@array/group_values"
+            app:entries="@array/group_list"
+            app:entryValues="@array/group_list"
             app:defaultValue="Group 1"
             app:key="groupPicker"
             app:title="Select Group"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:entries="@array/party_entries"
-            app:entryValues="@array/party_values"
+            app:entries="@array/party_list"
+            app:entryValues="@array/party_list"
             app:defaultValue="Party 1"
             app:key="partyPicker"
             app:title="Select Party"

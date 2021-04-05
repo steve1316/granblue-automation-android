@@ -1,28 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="list_entries">
+    <string-array name="empty_list">
     </string-array>
 
-    <string-array name="list_values">
-    </string-array>
-
-    <string-array name="farming_mode_entries">
+    <string-array name="farming_mode_list">
         <item>Quest</item>
         <item>Special</item>
         <item>Coop</item>
         <item>Raid</item>
-<!--        <item>Event</item>-->
-<!--        <item>Event (Token Drawboxes)</item>-->
-<!--        <item>Dread Barrage</item>-->
-    </string-array>
-
-    <string-array name="farming_mode_values">
-        <item>Quest</item>
-        <item>Special</item>
-        <item>Coop</item>
-        <item>Raid</item>
-<!--        <item>Event</item>-->
-<!--        <item>Event (Token Drawboxes)</item>-->
+        <item>Event</item>
+        <item>Event (Token Drawboxes)</item>
+<!--        <item>Rise of the Beasts</item>-->
 <!--        <item>Dread Barrage</item>-->
     </string-array>
 
@@ -53,7 +41,7 @@
         <item>Black Rabbit</item>
     </string-array>
 
-    <string-array name="group_entries">
+    <string-array name="group_list">
         <item>Group 1</item>
         <item>Group 2</item>
         <item>Group 3</item>
@@ -63,26 +51,7 @@
         <item>Group 7</item>
     </string-array>
 
-    <string-array name="group_values">
-        <item>Group 1</item>
-        <item>Group 2</item>
-        <item>Group 3</item>
-        <item>Group 4</item>
-        <item>Group 5</item>
-        <item>Group 6</item>
-        <item>Group 7</item>
-    </string-array>
-
-    <string-array name="party_entries">
-        <item>Party 1</item>
-        <item>Party 2</item>
-        <item>Party 3</item>
-        <item>Party 4</item>
-        <item>Party 5</item>
-        <item>Party 6</item>
-    </string-array>
-
-    <string-array name="party_values">
+    <string-array name="party_list">
         <item>Party 1</item>
         <item>Party 2</item>
         <item>Party 3</item>

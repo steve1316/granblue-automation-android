@@ -369,7 +369,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
      */
     private fun populateMissionListPreference() {
         val newEntries = mutableListOf<CharSequence>()
-        val newEntryValues = mutableListOf<CharSequence>()
     
         val farmingMode = sharedPreferences.getString("farmingMode", "")
         val missionPicker: ListPreference = findPreference("missionPicker")!!
@@ -380,7 +379,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 missionsForQuest.forEach { (_, value) ->
                     value.forEach {
                         newEntries.add(it)
-                        newEntryValues.add(it)
                     }
                 }
             }
@@ -388,28 +386,25 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 missionsForSpecial.forEach { (_, value) ->
                     value.forEach {
                         newEntries.add(it)
-                        newEntryValues.add(it)
                     }
                 }
             }
             "Coop" -> {
                 itemsForCoop.forEach { (key, _) ->
                     newEntries.add(key)
-                    newEntryValues.add(key)
                 }
             }
             "Raid" -> {
                 missionsForRaid.forEach { (_, value) ->
                     value.forEach {
                         newEntries.add(it)
-                        newEntryValues.add(it)
                     }
                 }
             }
         }
     
         missionPicker.entries = newEntries.toTypedArray()
-        missionPicker.entryValues = newEntryValues.toTypedArray()
+        missionPicker.entryValues = newEntries.toTypedArray()
     }
     
     /**
@@ -417,7 +412,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
      */
     private fun populateItemListPreference() {
         val newEntries = mutableListOf<CharSequence>()
-        val newEntryValues = mutableListOf<CharSequence>()
     
         val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
         val missionName = sharedPreferences.getString("missionName", "")!!
@@ -440,7 +434,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if(key == missionName) {
                         value.forEach {
                             newEntries.add(it)
-                            newEntryValues.add(it)
                         }
                     }
                 }
@@ -469,7 +462,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if(key == formattedMissionName) {
                         value.forEach {
                             newEntries.add(it)
-                            newEntryValues.add(it)
                         }
                     }
                 }
@@ -479,7 +471,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if(key == missionName) {
                         value.forEach {
                             newEntries.add(it)
-                            newEntryValues.add(it)
                         }
                     }
                 }
@@ -489,7 +480,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if(key == missionName) {
                         value.forEach {
                             newEntries.add(it)
-                            newEntryValues.add(it)
+                        }
                         }
                     }
                 }
@@ -497,7 +488,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     
         itemPicker.entries = newEntries.toTypedArray()
-        itemPicker.entryValues = newEntryValues.toTypedArray()
+        itemPicker.entryValues = newEntries.toTypedArray()
     }
     
     /**
