@@ -11,23 +11,23 @@ android {
         applicationId "com.steve1316.granblueautomation_android"
         minSdkVersion 29
         targetSdkVersion 30
-        versionCode 4
-        versionName "0.6.0"
+        versionCode 5
+        versionName "0.6.1"
     }
 
     buildTypes {
-        release {
+        debug {
             // Attempt to reduce the size of the apk file by following the steps outlined in https://stackoverflow.com/a/45074929
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            // Other parameters for attempting to reduce the size of the apk file.
-            debuggable false
-            jniDebuggable false
-            renderscriptDebuggable false
-            pseudoLocalesEnabled false
-            zipAlignEnabled true
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def versionName = defaultConfig.versionName
+                    outputFileName = "v${versionName}-GAA-arm64-v8a.apk"
+                }
+            }
         }
     }
     compileOptions {
