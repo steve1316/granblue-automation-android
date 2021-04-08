@@ -33,6 +33,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val missionsForRaid: Map<String, ArrayList<String>> = MissionData.mapsForRaid
     private val missionsForEvent: Map<String, ArrayList<String>> = MissionData.mapsForEvent
     private val missionsForEventTokenDrawboxes: Map<String, ArrayList<String>> = MissionData.mapsForEventTokenDrawboxes
+    private val missionsForGuildWars: Map<String, ArrayList<String>> = MissionData.mapsForGuildWars
     
     private val itemsForQuest: Map<String, ArrayList<String>> = ItemData.itemsForQuest
     private val itemsForSpecial: Map<String, ArrayList<String>> = ItemData.itemsForSpecial
@@ -40,6 +41,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val itemsForRaid: Map<String, ArrayList<String>> = ItemData.itemsForRaid
     private val itemsForEvent: Map<String, ArrayList<String>> = ItemData.itemsForEvent
     private val itemsForEventTokenDrawboxes: Map<String, ArrayList<String>> = ItemData.itemsForEventTokenDrawboxes
+    private val itemsForGuildWars: Map<String, ArrayList<String>> = ItemData.itemsForGuildWars
     
     companion object {
         /**
@@ -417,6 +419,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+            "Guild Wars" -> {
+                missionsForGuildWars.forEach { (_, value) ->
+                    value.forEach {
+                        newEntries.add(it)
+                    }
+                }
+            }
         }
     
         missionPicker.entries = newEntries.toTypedArray()
@@ -511,6 +520,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             "Event (Token Drawboxes)" -> {
                 itemsForEventTokenDrawboxes.forEach { (key, value) ->
+                    if(key == missionName) {
+                        value.forEach {
+                            newEntries.add(it)
+                        }
+                    }
+                }
+            }
+            "Guild Wars" -> {
+                itemsForGuildWars.forEach { (key, value) ->
                     if(key == missionName) {
                         value.forEach {
                             newEntries.add(it)
