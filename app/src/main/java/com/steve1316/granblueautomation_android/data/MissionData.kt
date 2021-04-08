@@ -99,5 +99,10 @@ class MissionData {
 			"Event Quest" to arrayListOf("N Event Quest", "H Event Quest", "VH Event Quest", "EX Event Quest"),
 			"Event Raid" to arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
 		)
+		
+		val mapsForGuildWars = mapOf(
+			"Nightmare" to arrayListOf("NM90", "NM95", "NM100", "NM150"),
+			"Meat" to arrayListOf("Very Hard", "Extreme", "Extreme+")
+		)
 	}
 }

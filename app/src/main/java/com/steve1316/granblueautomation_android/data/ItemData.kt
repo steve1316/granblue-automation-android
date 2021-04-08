@@ -235,5 +235,15 @@ class ItemData {
 			"EX Event Raid" to arrayListOf("Repeated Runs"),
 			"IM Event Raid" to arrayListOf("Repeated Runs")
 		)
+		
+		val itemsForGuildWars = mapOf(
+			"Very Hard" to arrayListOf("Repeated Runs"),
+			"Extreme" to arrayListOf("Repeated Runs"),
+			"Extreme+" to arrayListOf("Repeated Runs"),
+			"NM90" to arrayListOf("Repeated Runs"),
+			"NM95" to arrayListOf("Repeated Runs"),
+			"NM100" to arrayListOf("Repeated Runs"),
+			"NM150" to arrayListOf("Repeated Runs")
+		)
 	}
 }
