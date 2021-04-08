@@ -731,6 +731,99 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 				}
 			}
+		} else if(farmingMode.toLowerCase(Locale.ROOT) == "guild wars") {
+			game.printToLog("[INFO] Navigating to Guild Wars now.", MESSAGE_TAG = TAG)
+			
+			// Go to the Guild Wars banner by tapping on the "Menu" button.
+			game.findAndClickButton("home_menu")
+			var bannerLocations = game.imageUtils.findAll("event_banner")
+			if(bannerLocations.size == 0) {
+				bannerLocations = game.imageUtils.findAll("event_banner_blue")
+			}
+			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y)
+			
+			game.wait(1.0)
+			
+			if(game.imageUtils.confirmLocation("guild_wars")) {
+				// Scroll down the screen a bit.
+				game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+				
+				game.wait(1.0)
+				
+				if(difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Extreme+") {
+					game.printToLog("[INFO] Now proceeding to farm meat.", MESSAGE_TAG = TAG)
+					
+					// Click on the banner to farm meat.
+					game.findAndClickButton("guild_wars_meat")
+					
+					if(game.imageUtils.confirmLocation("guild_wars_meat")) {
+						// Now click on the specified Mission to start.
+						if(difficulty == "Very Hard") {
+							game.printToLog("Hosting Very Hard now.", MESSAGE_TAG = TAG)
+							game.findAndClickButton("guild_wars_meat_very_hard")
+						} else if(difficulty == "Extreme") {
+							game.printToLog("Hosting Extreme now.", MESSAGE_TAG = TAG)
+							game.findAndClickButton("guild_wars_meat_extreme")
+						} else if(difficulty == "Extreme+") {
+							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
+							game.findAndClickButton("guild_wars_meat_extreme+")
+							
+							// TODO: Alert the user if they did not unlock Extreme+ and stop the bot.
+						}
+					}
+				} else {
+					game.printToLog("[INFO] Now proceeding to farm Nightmares.", MESSAGE_TAG = TAG)
+					
+					// Click on the banner to farm meat.
+					game.findAndClickButton("guild_wars_nightmare")
+					
+					if(game.imageUtils.confirmLocation("guild_wars_nightmare")) {
+						// If today is the first day of Guild Wars, only NM90 is available.
+						when {
+							game.imageUtils.confirmLocation("guild_wars_nightmare_first_day", tries = 1) -> {
+								game.printToLog("[INFO] Today is the first day so hosting NM90.", MESSAGE_TAG = TAG)
+								game.findAndClickButton("ok")
+								
+								// TODO: Alert the user if they lack the meat to host this and stp the bot.
+							}
+							
+							// Now click on the specified Mission to start.
+							difficulty == "NM90" -> {
+								game.printToLog("Hosting NM90 now.", MESSAGE_TAG = TAG)
+								game.findAndClickButton("guild_wars_nightmare_90")
+							}
+							difficulty == "NM95" -> {
+								game.printToLog("Hosting NM95 now.", MESSAGE_TAG = TAG)
+								game.findAndClickButton("guild_wars_nightmare_95")
+							}
+							difficulty == "NM100" -> {
+								game.printToLog("Hosting NM100 now.", MESSAGE_TAG = TAG)
+								game.findAndClickButton("guild_wars_nightmare_100")
+							}
+							difficulty == "NM150" -> {
+								game.printToLog("Hosting NM150 now.", MESSAGE_TAG = TAG)
+								game.findAndClickButton("guild_wars_nightmare_150")
+							}
+						}
+					} else {
+						// If there is not enough meat to host, host Extreme+ instead.
+						game.printToLog("[WARNING] User lacks the meat to host any Nightmares. Farming Extreme+ instead.", MESSAGE_TAG = TAG)
+						game.findAndClickButton("close")
+						
+						game.printToLog("[INFO] Hosting Extreme+ now.", MESSAGE_TAG = TAG)
+						
+						// Click on the banner to farm meat.
+						game.findAndClickButton("guild_wars_meat")
+						
+						if(game.imageUtils.confirmLocation("guild_wars_meat")) {
+							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
+							game.findAndClickButton("guild_wars_meat_extreme+")
+							
+							// TODO: Alert the user if they did not unlock Extreme+ and stop the bot.
+						}
+					}
+				}
+			}
 		}
 		
 		game.wait(1.0)
