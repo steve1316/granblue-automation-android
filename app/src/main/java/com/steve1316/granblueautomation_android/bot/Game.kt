@@ -609,6 +609,30 @@ class Game(myContext: Context) {
 					difficulty = "5 Star"
 				}
 			}
+		} else if(farmingMode == "Guild Wars") {
+			when {
+				missionName.indexOf("Very Hard") == 0 -> {
+					difficulty = "Very Hard"
+				}
+				missionName.indexOf("Extreme+") == 0 -> {
+					difficulty = "Extreme+"
+				}
+				missionName.indexOf("Extreme") == 0 -> {
+					difficulty = "Extreme"
+				}
+				missionName.indexOf("NM90") == 0 -> {
+					difficulty = "NM90"
+				}
+				missionName.indexOf("NM95") == 0 -> {
+					difficulty = "NM95"
+				}
+				missionName.indexOf("NM100") == 0 -> {
+					difficulty = "NM100"
+				}
+				missionName.indexOf("NM150") == 0 -> {
+					difficulty = "NM150"
+				}
+			}
 		}
 		
 		// TODO: Perform advanced settings setup for Dimensional Halo, Event Nightmare, ROTB Extreme+, and Dread Barrage Unparalleled Foes.
