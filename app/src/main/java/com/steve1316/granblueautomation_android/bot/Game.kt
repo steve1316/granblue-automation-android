@@ -784,6 +784,17 @@ class Game(myContext: Context) {
 							
 							wait(1.0)
 							
+							// If the bot tried to repeat a Extreme/Impossible/Nightmare difficulty Event Raid and it lacked the treasures to host
+							// it, go back to selectMap().
+							if((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") and imageUtils.confirmLocation
+									("not_enough_treasure")) {
+								findAndClickButton("ok")
+								
+								wait(1.0)
+								
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							}
+							
 							// Check for available AP.
 							checkAP()
 							
