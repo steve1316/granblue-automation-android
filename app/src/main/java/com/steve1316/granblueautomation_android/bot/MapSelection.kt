@@ -758,15 +758,16 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					
 					if(game.imageUtils.confirmLocation("guild_wars_meat")) {
 						// Now click on the specified Mission to start.
+						val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
 						if(difficulty == "Very Hard") {
 							game.printToLog("Hosting Very Hard now.", MESSAGE_TAG = TAG)
-							game.findAndClickButton("guild_wars_meat_very_hard")
+							game.gestureUtils.tap(meatLocation.x, meatLocation.y)
 						} else if(difficulty == "Extreme") {
 							game.printToLog("Hosting Extreme now.", MESSAGE_TAG = TAG)
-							game.findAndClickButton("guild_wars_meat_extreme")
+							game.gestureUtils.tap(meatLocation.x + 230.0, meatLocation.y)
 						} else if(difficulty == "Extreme+") {
 							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
-							game.findAndClickButton("guild_wars_meat_extreme+")
+							game.gestureUtils.tap(meatLocation.x + 620.0, meatLocation.y)
 							
 							// TODO: Alert the user if they did not unlock Extreme+ and stop the bot.
 						}
@@ -817,7 +818,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						
 						if(game.imageUtils.confirmLocation("guild_wars_meat")) {
 							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
-							game.findAndClickButton("guild_wars_meat_extreme+")
+							val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
+							game.gestureUtils.tap(meatLocation.x + 300.0, meatLocation.y)
 							
 							// TODO: Alert the user if they did not unlock Extreme+ and stop the bot.
 						}
