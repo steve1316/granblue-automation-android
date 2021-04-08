@@ -9,7 +9,7 @@ import kotlin.collections.ArrayList
 /**
  * Provides the utility functions needed for perform navigation for Farming Mode throughout Granblue Fantasy.
  */
-class MapSelection(private val game: Game, private val twitterRoomFinder: TwitterRoomFinder) {
+class MapSelection(private val game: Game, private val twitterRoomFinder: TwitterRoomFinder?) {
 	private val TAG: String = "GAA_MapSelection"
 	
 	private var numberOfRaidsJoined: Int = 0
@@ -1014,8 +1014,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					roomCodeTextBoxLocation = Point(joinRoomButtonLocation.x - 410.0, joinRoomButtonLocation.y)
 				}
 				
+				var roomCodes: ArrayList<String> = arrayListOf()
 				// Get recent room codes for the specified Raid.
-				val roomCodes: ArrayList<String> = twitterRoomFinder.findMostRecentRoomCodes(missionName)
+				if(twitterRoomFinder != null) {
+					roomCodes = twitterRoomFinder.findMostRecentRoomCodes(missionName)
+				}
 				
 				roomCodes.forEach { roomCode ->
 					Log.d(TAG, "Room code: $roomCode")

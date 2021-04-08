@@ -351,18 +351,30 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     
         // Save the Twitter API keys and tokens to SharedPreferences.
-        val file = File(context?.getExternalFilesDir(null), "config.yaml")
-        if(file.exists() && !sharedPreferences.contains("apiKey")) {
-            val config = ConfigLoader().loadConfigOrThrow<ConfigData>(file)
+        try {
+            val file = File(context?.getExternalFilesDir(null), "config.yaml")
+            if(file.exists() && !sharedPreferences.contains("apiKey")) {
+                val config = ConfigLoader().loadConfigOrThrow<ConfigData>(file)
+                sharedPreferences.edit {
+                    putString("apiKey", config.twitter.apiKey)
+                    putString("apiKeySecret", config.twitter.apiKeySecret)
+                    putString("accessToken", config.twitter.accessToken)
+                    putString("accessTokenSecret", config.twitter.accessTokenSecret)
+                    commit()
+                }
+        
+                Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.yaml.")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "ERROR: ${e.printStackTrace()}")
+    
             sharedPreferences.edit {
-                putString("apiKey", config.twitter.apiKey)
-                putString("apiKeySecret", config.twitter.apiKeySecret)
-                putString("accessToken", config.twitter.accessToken)
-                putString("accessTokenSecret", config.twitter.accessTokenSecret)
+                remove("apiKey")
+                remove("apiKeySecret")
+                remove("accessToken")
+                remove("accessTokenSecret")
                 commit()
             }
-            
-            Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.yaml.")
         }
     
         Log.d(TAG, "Preferences created")

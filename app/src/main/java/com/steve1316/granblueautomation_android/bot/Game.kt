@@ -18,12 +18,12 @@ import kotlin.collections.ArrayList
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
-class Game(myContext: Context) {
+class Game(private val myContext: Context) {
 	private val TAG: String = "GAA_Game"
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
-	private val twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext)
-	private val mapSelection: MapSelection = MapSelection(this, twitterRoomFinder)
+	private var twitterRoomFinder: TwitterRoomFinder? = null
+	private lateinit var mapSelection: MapSelection
 	private val combatMode: CombatMode = CombatMode(this)
 	
 	private val startTime: Long = System.currentTimeMillis()
@@ -554,6 +554,12 @@ class Game(myContext: Context) {
 		// TODO: Display Alert to user indicating whether they are ready to start or not. Include information of what their settings are.
 		//  Additionally, return false if any of the required settings is missing. This can happen when users change settings after the overlay
 		//  button has been displayed.
+		
+		if(farmingMode == "Raid") {
+			twitterRoomFinder = TwitterRoomFinder(myContext)
+		}
+		
+		mapSelection = MapSelection(this, twitterRoomFinder)
 		
 		if(itemName != "EXP") {
 			printToLog("################################################################################")
