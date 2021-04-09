@@ -130,44 +130,69 @@ class Game(private val myContext: Context) {
 	fun findAndClickButton(buttonName: String, tries: Int = 2, suppressError: Boolean = false): Boolean {
 		Log.d(TAG, "[DEBUG] Now attempting to find and click the ${buttonName.toUpperCase(Locale.ROOT)} button.")
 		var tempLocation: Point?
+		var newButtonName = buttonName
 		
 		if (buttonName.toLowerCase(Locale.ROOT) == "quest") {
 			tempLocation = imageUtils.findButton("quest_blue", tries = 1, suppressError = suppressError)
+			newButtonName = "quest_blue"
+			
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("quest_red", tries = 1, suppressError = suppressError)
+				newButtonName = "quest_red"
 			}
+			
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries = 1, suppressError = suppressError)
+				newButtonName = "quest_blue_strike_time"
 			}
+			
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("quest_red_strike_time", tries = 1, suppressError = suppressError)
+				newButtonName = "quest_red_strike_time"
 			}
+			
 		} else if (buttonName.toLowerCase(Locale.ROOT) == "raid") {
 			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
+			newButtonName = "raid_flat"
+			
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("raid_bouncing", tries = tries, suppressError = suppressError)
+				newButtonName = "raid_bouncing"
 			}
+			
 		} else if (buttonName.toLowerCase(Locale.ROOT) == "coop_start") {
 			tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError)
+			newButtonName = "coop_start_flat"
+			
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("coop_start_faded", tries = tries, suppressError = suppressError)
+				newButtonName = "coop_start_faded"
 			}
+			
 		} else if (buttonName.toLowerCase(Locale.ROOT) == "event_special_quest") {
 			tempLocation = imageUtils.findButton("event_special_quest_flat", tries = tries, suppressError = suppressError)
+			newButtonName = "event_special_quest_flat"
+			
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("event_special_quest_bouncing", tries = tries, suppressError = suppressError)
+				newButtonName = "event_special_quest_bouncing"
 			}
+			
 		} else if (buttonName.toLowerCase(Locale.ROOT) == "world") {
 			tempLocation = imageUtils.findButton("world", tries = tries, suppressError = suppressError)
+			newButtonName = "world"
+			
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("world2", tries = tries, suppressError = suppressError)
+				newButtonName = "world2"
 			}
+			
 		} else {
 			tempLocation = imageUtils.findButton(buttonName, tries = tries, suppressError = suppressError)
 		}
 		
 		return if (tempLocation != null) {
-			gestureUtils.tap(tempLocation.x, tempLocation.y)
+			gestureUtils.tap(tempLocation.x, tempLocation.y, newButtonName)
 		} else {
 			false
 		}
@@ -237,7 +262,7 @@ class Game(private val myContext: Context) {
 		
 		return if (summonLocation != null) {
 			// Select the Summon.
-			gestureUtils.tap(summonLocation.x, summonLocation.y)
+			gestureUtils.tap(summonLocation.x, summonLocation.y, "template_summon")
 			
 			// Check for CAPTCHA.
 			checkForCAPTCHA()
@@ -291,9 +316,9 @@ class Game(private val myContext: Context) {
 			}
 			
 			if (it == "choose_a_summon" && imageLocation != null) {
-				gestureUtils.tap(imageLocation.x, imageLocation.y + 400)
+				gestureUtils.tap(imageLocation.x, imageLocation.y + 400, "template_summon")
 			} else if (it != "choose_a_summon" && imageLocation != null) {
-				gestureUtils.tap(imageLocation.x, imageLocation.y)
+				gestureUtils.tap(imageLocation.x, imageLocation.y, it)
 			}
 			
 			wait(1.0)
@@ -345,7 +370,7 @@ class Game(private val myContext: Context) {
 			787.0 - (140 * (groupNumber - 1))
 		}
 		
-		gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0)
+		gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
 		wait(1.0)
 		
 		// Select the Party.
@@ -355,7 +380,7 @@ class Game(private val myContext: Context) {
 			690.0 - (130 * (partyNumber - 1))
 		}
 		
-		gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0)
+		gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
 		wait(1.0)
 		
 		printToLog("[SUCCESS] Selected Group and Party successfully.")
@@ -392,11 +417,11 @@ class Game(private val myContext: Context) {
 				if (!useFullElixir) {
 					printToLog("[INFO] AP ran out! Using Half Elixir...")
 					val location = imageUtils.findButton("refill_half_elixir")!!
-					gestureUtils.tap(location.x, location.y + 370)
+					gestureUtils.tap(location.x, location.y + 370, "use")
 				} else {
 					printToLog("[INFO] AP ran out! Using Full Elixir...")
 					val location = imageUtils.findButton("refill_full_elixir")!!
-					gestureUtils.tap(location.x, location.y + 370)
+					gestureUtils.tap(location.x, location.y + 370, "use")
 				}
 				
 				wait(1.0)
@@ -428,11 +453,11 @@ class Game(private val myContext: Context) {
 				if (!useSoulBalm) {
 					printToLog("[INFO] EP ran out! Using Soul Berry...")
 					val location = imageUtils.findButton("refill_soul_berry")!!
-					gestureUtils.tap(location.x, location.y + 370)
+					gestureUtils.tap(location.x, location.y + 370, "use")
 				} else {
 					printToLog("[INFO] EP ran out! Using Soul Balm...")
 					val location = imageUtils.findButton("refill_soul_balm")!!
-					gestureUtils.tap(location.x, location.y + 370)
+					gestureUtils.tap(location.x, location.y + 370, "use")
 				}
 				
 				wait(1.0)

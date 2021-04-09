@@ -28,7 +28,7 @@ class CombatMode(private val game: Game) {
 		if (partyWipeIndicatorLocation != null) {
 			// Tap on the blue indicator to get rid of the overlay.
 			game.wait(2.0)
-			game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y)
+			game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y, "party_wipe_indicator")
 			
 			if (game.farmingMode != "Raid" && game.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
 				// Close the popup that asks if you want to use a Full Elixir. Then tap the red "Retreat" button.
@@ -80,14 +80,14 @@ class CombatMode(private val game: Game) {
 		// Check for Lyria dialog popup first.
 		var combatDialogLocation = game.imageUtils.findDialog("dialog_lyria", tries = 1)
 		if (combatDialogLocation != null) {
-			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y)
+			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
 		}
 		
 		// Then check for Vyrn dialog popup next.
 		combatDialogLocation = game.imageUtils.findDialog("dialog_vyrn", tries = 1)
 		if (combatDialogLocation != null) {
-			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y)
+			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
 		}
 	}
@@ -136,9 +136,9 @@ class CombatMode(private val game: Game) {
 			// Blue and Support Potions share the same image but they are at different positions on the screen.
 			val potionLocations = game.imageUtils.findAll(formattedCommand)
 			if (formattedCommand == "usebluepotion") {
-				game.gestureUtils.tap(potionLocations[0].x, potionLocations[0].y)
+				game.gestureUtils.tap(potionLocations[0].x, potionLocations[0].y, formattedCommand)
 			} else {
-				game.gestureUtils.tap(potionLocations[1].x, potionLocations[1].y)
+				game.gestureUtils.tap(potionLocations[1].x, potionLocations[1].y, formattedCommand)
 			}
 		} else {
 			game.findAndClickButton(formattedCommand)
@@ -206,7 +206,7 @@ class CombatMode(private val game: Game) {
 		// taps the button no matter the appearance of the "Request Backup" button, which changes frequently.
 		val cancelButtonLocation = game.imageUtils.findButton("cancel")
 		if (cancelButtonLocation != null) {
-			game.gestureUtils.tap(cancelButtonLocation.x + 500, cancelButtonLocation.y)
+			game.gestureUtils.tap(cancelButtonLocation.x + 500, cancelButtonLocation.y, "cancel")
 		}
 		
 		game.wait(1.0)
@@ -284,8 +284,8 @@ class CombatMode(private val game: Game) {
 		val y = attackButtonLocation!!.y + 290.0
 		
 		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
-		game.gestureUtils.tap(x, y, ignoreWait = true)
-		game.gestureUtils.tap(x, y)
+		game.gestureUtils.tap(x, y, "template_character", ignoreWait = true)
+		game.gestureUtils.tap(x, y, "template_character")
 	}
 	
 	/**
@@ -324,8 +324,8 @@ class CombatMode(private val game: Game) {
 			val y = attackButtonLocation!!.y + 395.0
 			
 			// Double tap the Skill to avoid any popups caused by other Raid participants.
-			game.gestureUtils.tap(x, y, ignoreWait = true)
-			game.gestureUtils.tap(x, y)
+			game.gestureUtils.tap(x, y, "template_skill", ignoreWait = true)
+			game.gestureUtils.tap(x, y, "template_skill")
 			
 			// Check if the Skill requires a target.
 			if (game.imageUtils.confirmLocation("use_skill", tries = 1, suppressError = true)) {
@@ -339,27 +339,27 @@ class CombatMode(private val game: Game) {
 						when (skillCommandList[0]) {
 							"target(1)" -> {
 								game.printToLog("[COMBAT] Targeting Character 1 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0)
+								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
 							}
 							"target(2)" -> {
 								game.printToLog("[COMBAT] Targeting Character 2 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0)
+								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0, "template_target")
 							}
 							"target(3)" -> {
 								game.printToLog("[COMBAT] Targeting Character 3 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0)
+								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
 							}
 							"target(4)" -> {
 								game.printToLog("[COMBAT] Targeting Character 4 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0)
+								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0, "template_target")
 							}
 							"target(5)" -> {
 								game.printToLog("[COMBAT] Targeting Character 5 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0)
+								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0, "template_target")
 							}
 							"target(6)" -> {
 								game.printToLog("[COMBAT] Targeting Character 6 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0)
+								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
 							}
 							else -> {
 								game.printToLog("[WARNING] Invalid command received for Skill targeting.", MESSAGE_TAG = TAG)
@@ -395,22 +395,22 @@ class CombatMode(private val game: Game) {
 				// Now tap on the specified Summon.
 				when (j) {
 					1 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0)
+						game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0, "summon")
 					}
 					2 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0)
+						game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0, "summon")
 					}
 					3 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0)
+						game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0, "summon")
 					}
 					4 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0)
+						game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0, "summon")
 					}
 					5 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0)
+						game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0, "summon")
 					}
 					6 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0)
+						game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0, "summon")
 					}
 				}
 				
@@ -418,7 +418,7 @@ class CombatMode(private val game: Game) {
 					val okButtonLocation = game.imageUtils.findButton("ok")
 					
 					if (okButtonLocation != null) {
-						game.gestureUtils.tap(okButtonLocation.x, okButtonLocation.y)
+						game.gestureUtils.tap(okButtonLocation.x, okButtonLocation.y, "ok")
 						
 						// Now wait for the Summon animation to complete.
 						game.wait(7.0)
@@ -522,7 +522,7 @@ class CombatMode(private val game: Game) {
 							game.printToLog("[COMBAT] Ending Turn $turnNumber")
 							
 							val chargeAttacks = findChargeAttacks()
-							game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y)
+							game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y, "attack")
 							
 							game.wait(3.0 + chargeAttacks)
 							
@@ -536,7 +536,7 @@ class CombatMode(private val game: Game) {
 						
 						val tempNextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
 						if (tempNextButtonLocation != null) {
-							game.gestureUtils.tap(tempNextButtonLocation.x, tempNextButtonLocation.y)
+							game.gestureUtils.tap(tempNextButtonLocation.x, tempNextButtonLocation.y, "next")
 							game.wait(3.0)
 						}
 						
@@ -680,7 +680,7 @@ class CombatMode(private val game: Game) {
 						
 						val nextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
 						if (nextButtonLocation != null) {
-							game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y)
+							game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
 							break
 						}
 					}
@@ -713,14 +713,14 @@ class CombatMode(private val game: Game) {
 									"$turnNumber by moving on to the next Wave.", MESSAGE_TAG = TAG
 						)
 						
-						game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y)
+						game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
 						
 						game.wait(3.0)
 					} else {
 						game.printToLog("[COMBAT] Ending Turn $turnNumber by attacking now.", MESSAGE_TAG = TAG)
 						
 						val chargeAttacks = findChargeAttacks()
-						game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y)
+						game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y, "attack")
 						
 						// Peek ahead of the combat script while the Party is currently attacking and see if it detects the command
 						// "enableSemiAuto" outside of a Turn block.
@@ -756,7 +756,7 @@ class CombatMode(private val game: Game) {
 										"$turnNumber by moving on to the next Wave.", MESSAGE_TAG = TAG
 							)
 							
-							game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y)
+							game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
 							
 							game.wait(3.0)
 						}
@@ -800,12 +800,12 @@ class CombatMode(private val game: Game) {
 					// Enable Full Auto.
 					game.findAndClickButton("full_auto")
 				} else {
-					game.gestureUtils.tap(enabledSemiAutoButtonLocation.x, enabledSemiAutoButtonLocation.y)
+					game.gestureUtils.tap(enabledSemiAutoButtonLocation.x, enabledSemiAutoButtonLocation.y, "semi_auto")
 					
 					game.printToLog("[COMBAT] Semi Auto is now enabled.", MESSAGE_TAG = TAG)
 				}
 			} else {
-				game.gestureUtils.tap(enabledSemiAutoButtonLocation.x, enabledSemiAutoButtonLocation.y)
+				game.gestureUtils.tap(enabledSemiAutoButtonLocation.x, enabledSemiAutoButtonLocation.y, "semi_auto")
 				game.printToLog("[COMBAT] Semi Auto is now enabled.", MESSAGE_TAG = TAG)
 			}
 		}
@@ -841,7 +841,7 @@ class CombatMode(private val game: Game) {
 				game.printToLog("[COMBAT] Ending Turn $turnNumber by attacking now.", MESSAGE_TAG = TAG)
 				
 				val chargeAttacks = findChargeAttacks()
-				game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y)
+				game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y, "attack")
 				
 				game.wait(3.0 + chargeAttacks)
 				
@@ -855,7 +855,7 @@ class CombatMode(private val game: Game) {
 			
 			val nextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
 			if (nextButtonLocation != null) {
-				game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y)
+				game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
 				game.wait(3.0)
 			}
 		}

@@ -39,19 +39,19 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				
 				when (islandName) {
 					"Port Breeze Archipelago" -> {
-						game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289)
+						game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289, "world_right_arrow")
 					}
 					"Valtz Duchy" -> {
-						game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118)
+						game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118, "world_right_arrow")
 					}
 					"Auguste Isles" -> {
-						game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54)
+						game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54, "world_right_arrow")
 					}
 					"Lumacie Archipelago" -> {
-						game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159)
+						game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159, "world_right_arrow")
 					}
 					"Albion Citadel" -> {
-						game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344)
+						game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344, "world_right_arrow")
 					}
 				}
 			}
@@ -76,19 +76,19 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				
 				when (islandName) {
 					"Mist-Shrouded Isle" -> {
-						game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342)
+						game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342, "world_left_arrow")
 					}
 					"Golonzo Island" -> {
-						game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255)
+						game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255, "world_left_arrow")
 					}
 					"Amalthea Island" -> {
-						game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34)
+						game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34, "world_left_arrow")
 					}
 					"Former Capital Mephorash" -> {
-						game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43)
+						game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43, "world_left_arrow")
 					}
 					"Agastia" -> {
-						game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267)
+						game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267, "world_left_arrow")
 					}
 				}
 			}
@@ -220,40 +220,40 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			// "World" button.
 			if (missionName == "Scattered Cargo") {
 				game.printToLog("[INFO] Moving to Chapter 1 (115) node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 227, worldButtonLocation.y + 213)
+				game.gestureUtils.tap(worldButtonLocation.x + 227, worldButtonLocation.y + 213, "template_node")
 			} else if (missionName == "Lucky Charm Hunt") {
 				game.printToLog("[INFO] Moving to Chapter 6 (122) node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 757, worldButtonLocation.y + 43)
+				game.gestureUtils.tap(worldButtonLocation.x + 757, worldButtonLocation.y + 43, "template_node")
 			} else if (missionName == "Special Op's Request") {
 				game.printToLog("[INFO] Moving to Chapter 8 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 577, worldButtonLocation.y + 343)
+				game.gestureUtils.tap(worldButtonLocation.x + 577, worldButtonLocation.y + 343, "template_node")
 			} else if (missionName == "Threat to the Fisheries") {
 				game.printToLog("[INFO] Moving to Chapter 9 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 497, worldButtonLocation.y + 258)
+				game.gestureUtils.tap(worldButtonLocation.x + 497, worldButtonLocation.y + 258, "template_node")
 			} else if (missionName == "The Fruit of Lumacie" || missionName == "Whiff of Danger") {
 				game.printToLog("[INFO] Moving to Chapter 13 (39/52) node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 197, worldButtonLocation.y + 208)
+				game.gestureUtils.tap(worldButtonLocation.x + 197, worldButtonLocation.y + 208, "template_node")
 			} else if (missionName == "I Challenge You!") {
 				game.printToLog("[INFO] Moving to Chapter 17 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 262, worldButtonLocation.y + 268)
+				game.gestureUtils.tap(worldButtonLocation.x + 262, worldButtonLocation.y + 268, "template_node")
 			} else if (missionName == "For Whom the Bell Tolls") {
 				game.printToLog("[INFO] Moving to Chapter 22 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 417, worldButtonLocation.y + 78)
+				game.gestureUtils.tap(worldButtonLocation.x + 417, worldButtonLocation.y + 78, "template_node")
 			} else if (missionName == "Golonzo's Battles of Old") {
 				game.printToLog("[INFO] Moving to Chapter 25 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 457, worldButtonLocation.y + 18)
+				game.gestureUtils.tap(worldButtonLocation.x + 457, worldButtonLocation.y + 18, "template_node")
 			} else if (missionName == "The Dungeon Diet") {
 				game.printToLog("[INFO] Moving to Chapter 30 (44/65) node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 557, worldButtonLocation.y + 48)
+				game.gestureUtils.tap(worldButtonLocation.x + 557, worldButtonLocation.y + 48, "template_node")
 			} else if (missionName == "Trust Busting Dustup") {
 				game.printToLog("[INFO] Moving to Chapter 36 (123) node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 714, worldButtonLocation.y + 30)
+				game.gestureUtils.tap(worldButtonLocation.x + 714, worldButtonLocation.y + 30, "template_node")
 			} else if (missionName == "Erste Kingdom Episode 4") {
 				game.printToLog("[INFO] Moving to Chapter 70 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 587, worldButtonLocation.y + 318)
+				game.gestureUtils.tap(worldButtonLocation.x + 587, worldButtonLocation.y + 318, "template_node")
 			} else if (missionName == "Imperial Wanderer's Soul") {
 				game.printToLog("[INFO] Moving to Chapter 55 node...", MESSAGE_TAG = TAG)
-				game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 320)
+				game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 320, "template_node")
 			}
 			
 			// Now that the correct chapter node has been selected, scroll down the screen.
@@ -307,10 +307,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					
 					// Select the category, "Save the Oceans", which should be the 3rd category.
 					game.printToLog("[INFO] Now navigating to \"In a Dusk Dream\" for Hard difficulty...", MESSAGE_TAG = TAG)
-					game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y)
+					game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y, "coop_host_quest")
 					if (game.imageUtils.confirmLocation("coop_save_the_oceans")) {
 						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-						game.gestureUtils.tap(hostRoundButtonLocations[0].x, hostRoundButtonLocations[0].y)
+						game.gestureUtils.tap(hostRoundButtonLocations[0].x, hostRoundButtonLocations[0].y, "coop_host_quest_circle")
 					}
 				} else {
 					// Check if the difficulty is already selected. If not, select it.
@@ -332,53 +332,57 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					if (listForCoopEX1.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX1...", MESSAGE_TAG = TAG)
 						
-						game.gestureUtils.tap(hostButtonLocations[0].x, hostButtonLocations[0].y)
+						game.gestureUtils.tap(hostButtonLocations[0].x, hostButtonLocations[0].y, "coop_host_quest")
 						if (game.imageUtils.confirmLocation("coop_ex1")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 							game.gestureUtils.tap(
 								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].x,
-								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].y
+								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].y,
+								"coop_host_quest_circle"
 							)
 						}
 					} else if (listForCoopEX2.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX2...", MESSAGE_TAG = TAG)
 						
-						game.gestureUtils.tap(hostButtonLocations[1].x, hostButtonLocations[1].y)
+						game.gestureUtils.tap(hostButtonLocations[1].x, hostButtonLocations[1].y, "coop_host_quest")
 						if (game.imageUtils.confirmLocation("coop_ex2")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 							game.gestureUtils.tap(
 								hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].y
+								hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].y,
+								"coop_host_quest_circle"
 							)
 						}
 					} else if (listForCoopEX3.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX3...", MESSAGE_TAG = TAG)
 						
-						game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y)
+						game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y, "coop_host_quest")
 						if (game.imageUtils.confirmLocation("coop_ex3")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 							game.gestureUtils.tap(
 								hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].y
+								hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].y,
+								"coop_host_quest_circle"
 							)
 						}
 					} else if (listForCoopEX4.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX4...", MESSAGE_TAG = TAG)
 						
-						game.gestureUtils.tap(hostButtonLocations[3].x, hostButtonLocations[3].y)
+						game.gestureUtils.tap(hostButtonLocations[3].x, hostButtonLocations[3].y, "coop_host_quest")
 						if (game.imageUtils.confirmLocation("coop_ex4")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 							game.gestureUtils.tap(
 								hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].y
+								hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].y,
+								"coop_host_quest_circle"
 							)
 						}
 					}
@@ -440,7 +444,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Tap the mission's "Select" button.
 					missionLocation.x += 405
 					missionLocation.y += 175
-					game.gestureUtils.tap(missionLocation.x, missionLocation.y)
+					game.gestureUtils.tap(missionLocation.x, missionLocation.y, formattedMapName)
 					
 					if (mapName == "Basic Treasure Quests") {
 						// Open up "Basic Treasure Quests" sub-missions popup.
@@ -449,15 +453,15 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						when (formattedMissionName) {
 							"Scarlet Trial" -> {
 								game.printToLog("[INFO] Opening up Scarlet Trial mission popup...", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 							}
 							"Cerulean Trial" -> {
 								game.printToLog("[INFO] Opening up Cerulean Trial mission popup...", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 							}
 							"Violet Trial" -> {
 								game.printToLog("[INFO] Opening up Violet Trial mission popup...", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 							}
 						}
 						
@@ -467,13 +471,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						
 						when (difficulty) {
 							"Normal" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 							}
 							"Hard" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 							}
 							"Very Hard" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 							}
 						}
 						
@@ -484,13 +488,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						
 						when (difficulty) {
 							"Normal" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 							}
 							"Hard" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 							}
 							"Very Hard" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 							}
 						}
 						
@@ -500,22 +504,22 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						
 						when (formattedMissionName) {
 							"The Hellfire Trial" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 							}
 							"The Deluge Trial" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 							}
 							"The Wasteland Trial" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 							}
 							"The Typhoon Trial" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y, "play_round_button")
 							}
 							"The Aurora Trial" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y, "play_round_button")
 							}
 							"The Oblivion Trial" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y, "play_round_button")
 							}
 						}
 						
@@ -525,22 +529,22 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						
 						when (formattedMissionName) {
 							"Ifrit Showdown" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 							}
 							"Cocytus Showdown" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 							}
 							"Vohu Manah Showdown" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 							}
 							"Sagittarius Showdown" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y, "play_round_button")
 							}
 							"Corow Showdown" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y, "play_round_button")
 							}
 							"Diablo Showdown" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y, "play_round_button")
 							}
 						}
 						
@@ -550,13 +554,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						
 						when (difficulty) {
 							"Hard" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 							}
 							"Very Hard" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 							}
 							"Extreme" -> {
-								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y)
+								game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 							}
 						}
 						
@@ -576,7 +580,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			if (bannerLocations.size == 0) {
 				bannerLocations = game.imageUtils.findAll("event_banner_blue")
 			}
-			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y)
+			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 			
 			// Check if there is a "Daily Missions" popup and close it.
 			game.wait(1.0)
@@ -613,13 +617,15 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						game.printToLog("[INFO] Now hosting Event Quest...", MESSAGE_TAG = TAG)
 						game.gestureUtils.tap(
 							selectButtonLocations[0 + nightmareIsAvailable].x, selectButtonLocations[0 +
-									nightmareIsAvailable].y
+									nightmareIsAvailable].y,
+							"select"
 						)
 					} else if (farmingMode.toLowerCase(Locale.ROOT) == "event raid") {
 						game.printToLog("[INFO] Now hosting Event Raid...", MESSAGE_TAG = TAG)
 						game.gestureUtils.tap(
 							selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 +
-									nightmareIsAvailable].y
+									nightmareIsAvailable].y,
+							"select"
 						)
 					}
 					
@@ -630,9 +636,9 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					
 					// Now select the chosen difficulty.
 					if (difficulty == "Very Hard") {
-						game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y)
+						game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
 					} else if (difficulty == "Extreme") {
-						game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y)
+						game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y, "play_round_button")
 					}
 				}
 			} else {
@@ -684,16 +690,16 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Now select the chosen difficulty.
 					when (difficulty) {
 						"Normal" -> {
-							game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y)
+							game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
 						}
 						"Hard" -> {
-							game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y)
+							game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y, "play_round_button")
 						}
 						"Very Hard" -> {
-							game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y)
+							game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y, "play_round_button")
 						}
 						"Extreme" -> {
-							game.gestureUtils.tap(playRoundButtonLocations[3].x, playRoundButtonLocations[3].y)
+							game.gestureUtils.tap(playRoundButtonLocations[3].x, playRoundButtonLocations[3].y, "play_round_button")
 						}
 					}
 				}
@@ -753,23 +759,23 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				when (difficulty) {
 					"1 Star" -> {
 						game.printToLog("[INFO] Now starting 1 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[0].x, dreadBarragePlayButtonLocations[0].y)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[0].x, dreadBarragePlayButtonLocations[0].y, "dread_barrage_play")
 					}
 					"2 Star" -> {
 						game.printToLog("[INFO] Now starting 2 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[1].x, dreadBarragePlayButtonLocations[1].y)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[1].x, dreadBarragePlayButtonLocations[1].y, "dread_barrage_play")
 					}
 					"3 Star" -> {
 						game.printToLog("[INFO] Now starting 3 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[2].x, dreadBarragePlayButtonLocations[2].y)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[2].x, dreadBarragePlayButtonLocations[2].y, "dread_barrage_play")
 					}
 					"4 Star" -> {
 						game.printToLog("[INFO] Now starting 4 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[3].x, dreadBarragePlayButtonLocations[3].y)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[3].x, dreadBarragePlayButtonLocations[3].y, "dread_barrage_play")
 					}
 					"5 Star" -> {
 						game.printToLog("[INFO] Now starting 5 Star Dread Barrage Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(dreadBarragePlayButtonLocations[4].x, dreadBarragePlayButtonLocations[4].y)
+						game.gestureUtils.tap(dreadBarragePlayButtonLocations[4].x, dreadBarragePlayButtonLocations[4].y, "dread_barrage_play")
 					}
 				}
 			}
@@ -782,7 +788,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			if (bannerLocations.size == 0) {
 				bannerLocations = game.imageUtils.findAll("event_banner_blue")
 			}
-			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y)
+			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 			
 			game.wait(1.0)
 			
@@ -803,13 +809,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
 						if (difficulty == "Very Hard") {
 							game.printToLog("Hosting Very Hard now.", MESSAGE_TAG = TAG)
-							game.gestureUtils.tap(meatLocation.x, meatLocation.y)
+							game.gestureUtils.tap(meatLocation.x, meatLocation.y, "guild_wars_meat_very_hard")
 						} else if (difficulty == "Extreme") {
 							game.printToLog("Hosting Extreme now.", MESSAGE_TAG = TAG)
-							game.gestureUtils.tap(meatLocation.x + 230.0, meatLocation.y)
+							game.gestureUtils.tap(meatLocation.x + 230.0, meatLocation.y, "guild_wars_meat_very_hard")
 						} else if (difficulty == "Extreme+") {
 							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
-							game.gestureUtils.tap(meatLocation.x + 620.0, meatLocation.y)
+							game.gestureUtils.tap(meatLocation.x + 620.0, meatLocation.y, "guild_wars_meat_very_hard")
 							
 							// TODO: Alert the user if they did not unlock Extreme+ and stop the bot.
 						}
@@ -861,7 +867,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
 							val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
-							game.gestureUtils.tap(meatLocation.x + 300.0, meatLocation.y)
+							game.gestureUtils.tap(meatLocation.x + 300.0, meatLocation.y, "guild_wars_meat_very_hard")
 							
 							// TODO: Alert the user if they did not unlock Extreme+ and stop the bot.
 						}
@@ -1081,13 +1087,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					
 					// Select the "Room Code" text box. The AccessibilityService should pick up that the textbox is a EditText and will paste the
 					// room code into it.
-					game.gestureUtils.tap(roomCodeTextBoxLocation?.x!!, roomCodeTextBoxLocation.y, longPress = true)
+					game.gestureUtils.tap(roomCodeTextBoxLocation?.x!!, roomCodeTextBoxLocation.y, "template_room_code_textbox", longPress = true)
 					
 					// Wait several seconds to allow enough time for MyAccessibilityService to paste the code.
 					game.wait(3.0)
 					
 					// Now tap the "Join Room" button.
-					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y)
+					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y, "join_a_room")
 					
 					if (!checkPendingBattles("raid") && !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
 						&& !game.imageUtils.confirmLocation("already_taking_part", tries = 1)
