@@ -5,6 +5,8 @@ import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Path
 import android.os.Bundle
 import android.util.Log
@@ -127,6 +129,7 @@ class MyAccessibilityService : AccessibilityService() {
 	 *
 	 * @param x The x coordinate of the point.
 	 * @param y The y coordinate of the point.
+	 * @param buttonName The name of the image to tap.
 	 * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
 	 * @param longPress Whether or not to long press.
 	 * @return True if the tap gesture was executed successfully. False otherwise.
@@ -176,9 +179,9 @@ class MyAccessibilityService : AccessibilityService() {
 	 * @return True if the scroll gesture was executed successfully. False otherwise.
 	 */
 	fun scroll(
-        action: AccessibilityNodeInfo.AccessibilityAction = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN, duration: Long
-        = 500L, ignoreWait: Boolean = false
-    ): Boolean {
+		action: AccessibilityNodeInfo.AccessibilityAction = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN, duration: Long
+		= 500L, ignoreWait: Boolean = false
+	): Boolean {
 		val scrollPath = Path()
 		
 		// Get certain portions of the screen's dimensions.
@@ -188,20 +191,20 @@ class MyAccessibilityService : AccessibilityService() {
 		val bottom: Float = (displayMetrics.heightPixels * 0.25).toFloat()
 		
 		when (action) {
-            AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP -> {
-                // Create a Path to scroll the screen up starting from the bottom and swiping to the top.
-                scrollPath.apply {
-                    moveTo(middle, bottom)
-                    lineTo(middle, top)
-                }
-            }
-            AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN -> {
-                // Create a Path to scroll the screen down starting from the top and swiping to the bottom.
-                scrollPath.apply {
-                    moveTo(middle, top)
-                    lineTo(middle, bottom)
-                }
-            }
+			AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP -> {
+				// Create a Path to scroll the screen up starting from the bottom and swiping to the top.
+				scrollPath.apply {
+					moveTo(middle, bottom)
+					lineTo(middle, top)
+				}
+			}
+			AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN -> {
+				// Create a Path to scroll the screen down starting from the top and swiping to the bottom.
+				scrollPath.apply {
+					moveTo(middle, top)
+					lineTo(middle, bottom)
+				}
+			}
 			else -> {
 				Log.e(TAG, "Invalid action received.")
 			}

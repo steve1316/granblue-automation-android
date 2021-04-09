@@ -106,9 +106,9 @@ class ImageUtils(context: Context, private val game: Game) {
 			// debugging purposes to see if this algorithm found the match accurately or not.
 			if (matchFilePath != "") {
 				Imgproc.rectangle(
-                    sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()),
-                    Scalar(0.0, 128.0, 0.0), 5
-                )
+					sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()),
+					Scalar(0.0, 128.0, 0.0), 5
+				)
 				Imgcodecs.imwrite("$matchFilePath/match.png", sourceMat)
 			}
 			
@@ -152,11 +152,11 @@ class ImageUtils(context: Context, private val game: Game) {
 				
 				// Draw a rectangle around the match and then save it to the specified file.
 				Imgproc.rectangle(
-                    sourceMat, tempMatchLocation, Point(
-                        tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
-                                templateMat.rows()
-                    ), Scalar(255.0, 255.0, 255.0), 5
-                )
+					sourceMat, tempMatchLocation, Point(
+						tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
+								templateMat.rows()
+					), Scalar(255.0, 255.0, 255.0), 5
+				)
 				Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				
 				// Center the location coordinates and then save it to the arrayList.
@@ -170,11 +170,11 @@ class ImageUtils(context: Context, private val game: Game) {
 				
 				// Draw a rectangle around the match and then save it to the specified file.
 				Imgproc.rectangle(
-                    sourceMat, tempMatchLocation, Point(
-                        tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
-                                templateMat.rows()
-                    ), Scalar(255.0, 255.0, 255.0), 5
-                )
+					sourceMat, tempMatchLocation, Point(
+						tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
+								templateMat.rows()
+					), Scalar(255.0, 255.0, 255.0), 5
+				)
 				Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				
 				// Center the location coordinates and then save it to the arrayList.
@@ -238,7 +238,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		var numberOfTries = tries
 		
 		while (numberOfTries > 0) {
-            val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
+			val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
 			
 			if (sourceBitmap != null && templateBitmap != null) {
 				val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
@@ -247,9 +247,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					if (numberOfTries <= 0) {
 						if (!suppressError) {
 							game.printToLog(
-                                "[WARNING] Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button.",
-                                MESSAGE_TAG = TAG
-                            )
+								"[WARNING] Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button.",
+								MESSAGE_TAG = TAG
+							)
 						}
 						
 						return null
@@ -279,7 +279,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		val folderName = "headers"
 		var numberOfTries = tries
 		while (numberOfTries > 0) {
-            val (sourceBitmap, templateBitmap) = getBitmaps(templateName + "_header", folderName)
+			val (sourceBitmap, templateBitmap) = getBitmaps(templateName + "_header", folderName)
 			
 			if (sourceBitmap != null && templateBitmap != null) {
 				val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
@@ -292,9 +292,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					game.wait(1.0)
 				} else {
 					game.printToLog(
-                        "[SUCCESS] Current location confirmed to be at ${templateName.toUpperCase(Locale.ROOT)}.",
-                        MESSAGE_TAG = TAG
-                    )
+						"[SUCCESS] Current location confirmed to be at ${templateName.toUpperCase(Locale.ROOT)}.",
+						MESSAGE_TAG = TAG
+					)
 					return true
 				}
 			} else {
@@ -304,9 +304,9 @@ class ImageUtils(context: Context, private val game: Game) {
 		
 		if (!suppressError) {
 			game.printToLog(
-                "[WARNING] Failed to confirm the bot's location at ${templateName.toUpperCase(Locale.ROOT)}.",
-                MESSAGE_TAG = TAG
-            )
+				"[WARNING] Failed to confirm the bot's location at ${templateName.toUpperCase(Locale.ROOT)}.",
+				MESSAGE_TAG = TAG
+			)
 		}
 		
 		return false
@@ -338,7 +338,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			while (summonLocation == null && summonIndex <= summonList.size) {
 				// Go through each Summon detected on the Summon Selection screen and see if they match with the selected Summon.
 				val summonName = summonList[summonIndex]
-                val (sourceBitmap, templateBitmap) = getBitmaps(summonName, folderName)
+				val (sourceBitmap, templateBitmap) = getBitmaps(summonName, folderName)
 				
 				if (sourceBitmap != null && templateBitmap != null && match(sourceBitmap, templateBitmap)) {
 					summonLocation = matchLocation
@@ -388,7 +388,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		var numberOfTries = tries
 		
 		while (numberOfTries > 0) {
-            val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
+			val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
 			
 			if (sourceBitmap != null && templateBitmap != null) {
 				val resultFlag: Boolean = match(sourceBitmap, templateBitmap)
@@ -428,8 +428,8 @@ class ImageUtils(context: Context, private val game: Game) {
 		} else {
 			"items"
 		}
-        
-        val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
+		
+		val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
 		
 		// Clear the ArrayList first before attempting to find all matches.
 		matchLocations.clear()
@@ -462,15 +462,15 @@ class ImageUtils(context: Context, private val game: Game) {
 		val itemLocations: ArrayList<Point> = findAll(templateName, isItem = true)
 		
 		// Grab a reference to the source bitmap.
-        val (sourceBitmap, _) = getBitmaps(templateName, "items")
+		val (sourceBitmap, _) = getBitmaps(templateName, "items")
 		
 		if (sourceBitmap != null) {
 			for (itemLocation in itemLocations) {
 				// Crop the source bitmap to hold only the item amount.
 				val croppedItemAmountBitmap = Bitmap.createBitmap(
-                    sourceBitmap, (itemLocation.x + 50).toInt(), (itemLocation.y).toInt() - 10,
-                    35, 50
-                )
+					sourceBitmap, (itemLocation.x + 50).toInt(), (itemLocation.y).toInt() - 10,
+					35, 50
+				)
 				
 				// Create a InputImage object for Google's ML OCR.
 				val inputImage = InputImage.fromBitmap(croppedItemAmountBitmap, 0)
