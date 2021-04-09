@@ -173,10 +173,10 @@ class Game(private val myContext: Context) {
 	private fun checkForCAPTCHA() {
 		wait(2.0)
 		
-		if(imageUtils.confirmLocation("captcha", tries = 1)) {
-			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Throwing exception now."))
+		if (imageUtils.confirmLocation("captcha", tries = 1)) {
+			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Stopping the bot now."))
 		} else {
-			printToLog("[CAPTCHA] CAPTCHA not detected.")
+			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
 		}
 	}
 	
