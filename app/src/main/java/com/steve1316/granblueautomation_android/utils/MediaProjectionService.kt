@@ -46,11 +46,11 @@ class MediaProjectionService : Service() {
 		private var orientationChangeCallback: OrientationEventListener? = null
 		private lateinit var tempDirectory: String
 		private lateinit var threadHandler: Handler
-
+		
 		var displayWidth: Int = 0
 		var displayHeight: Int = 0
 		var displayDPI: Int = 0
-
+		
 		private lateinit var virtualDisplay: VirtualDisplay
 		private lateinit var defaultDisplay: Display
 		private lateinit var windowManager: WindowManager
@@ -69,7 +69,7 @@ class MediaProjectionService : Service() {
 			
 			val image: Image? = imageReader.acquireLatestImage()
 			
-			if(image != null) {
+			if (image != null) {
 				val planes: Array<Plane> = image.planes
 				val buffer = planes[0].buffer
 				val pixelStride = planes[0].pixelStride
@@ -166,16 +166,16 @@ class MediaProjectionService : Service() {
 		
 		// Creates a temporary folder if it does not already exist to store source images.
 		val externalFilesDir: File? = getExternalFilesDir(null)
-		if(externalFilesDir != null) {
+		if (externalFilesDir != null) {
 			tempDirectory = externalFilesDir.absolutePath + "/temp/"
 			val newTempDirectory = File(tempDirectory)
 			
 			// If the /files/temp/ folder does not exist, create it.
-			if(!newTempDirectory.exists()) {
+			if (!newTempDirectory.exists()) {
 				val successfullyCreated: Boolean = newTempDirectory.mkdirs()
 				
 				// If the folder was not able to be created for some reason, log the error and stop the MediaProjection Service.
-				if(!successfullyCreated) {
+				if (!successfullyCreated) {
 					Log.e(TAG, "Failed to create the /files/temp/ folder.")
 					stopSelf()
 				} else {
@@ -222,7 +222,7 @@ class MediaProjectionService : Service() {
 				val botStartIntent = Intent(this, BotService::class.java)
 				startService(botStartIntent)
 			}
-		} else if(isStopCommand(intent)) {
+		} else if (isStopCommand(intent)) {
 			// Perform cleanup on the MediaProjection service and then stop itself.
 			Log.d(TAG, "Received STOP Intent for MediaProjection. Stopping MediaProjection service.")
 			stopMediaProjection()
@@ -240,7 +240,7 @@ class MediaProjectionService : Service() {
 		
 		override fun onOrientationChanged(orientation: Int) {
 			val newRotation: Int = (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
-			if(newRotation != oldRotation) {
+			if (newRotation != oldRotation) {
 				oldRotation = newRotation
 				try {
 					// Perform cleanup.
@@ -250,8 +250,10 @@ class MediaProjectionService : Service() {
 					createVirtualDisplay()
 				} catch (e: Exception) {
 					Log.e(TAG_OrientationChangeCallback, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.")
-					Toast.makeText(myContext, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.",
-						Toast.LENGTH_SHORT).show()
+					Toast.makeText(
+						myContext, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.",
+						Toast.LENGTH_SHORT
+					).show()
 				}
 			}
 		}
@@ -260,7 +262,7 @@ class MediaProjectionService : Service() {
 	/**
 	 * Custom Callback for when it is necessary to stop the MediaProjection.
 	 */
-	private inner class MediaProjectionStopCallback: MediaProjection.Callback() {
+	private inner class MediaProjectionStopCallback : MediaProjection.Callback() {
 		private val TAG_MediaProjectionStopCallback = "GAA_MediaProjectionStopCallback"
 		
 		override fun onStop() {
@@ -297,7 +299,7 @@ class MediaProjectionService : Service() {
 	 */
 	private fun startMediaProjection(resultCode: Int, data: Intent) {
 		// Retrieve the MediaProjection object.
-		if(mediaProjection == null) {
+		if (mediaProjection == null) {
 			mediaProjection = (getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager).getMediaProjection(resultCode, data)
 		}
 		
@@ -309,13 +311,13 @@ class MediaProjectionService : Service() {
 		
 		// Create the VirtualDisplay and start reading in screenshots.
 		createVirtualDisplay()
-
+		
 		// Attach the OrientationChangeCallback.
 		orientationChangeCallback = OrientationChangeCallback(this)
-		if((orientationChangeCallback as OrientationChangeCallback).canDetectOrientation()) {
+		if ((orientationChangeCallback as OrientationChangeCallback).canDetectOrientation()) {
 			(orientationChangeCallback as OrientationChangeCallback).enable()
 		}
-
+		
 		// Attach the MediaProjectionStopCallback to the MediaProjection object.
 		mediaProjection?.registerCallback(MediaProjectionStopCallback(), threadHandler)
 		
@@ -351,7 +353,9 @@ class MediaProjectionService : Service() {
 		imageReader = ImageReader.newInstance(displayWidth, displayHeight, PixelFormat.RGBA_8888, 2)
 		
 		// Now create the VirtualDisplay.
-		virtualDisplay = mediaProjection?.createVirtualDisplay("Granblue Automation Android's Virtual Display", displayWidth, displayHeight,
-			displayDPI, getVirtualDisplayFlags(), imageReader.surface, null, threadHandler)!!
+		virtualDisplay = mediaProjection?.createVirtualDisplay(
+			"Granblue Automation Android's Virtual Display", displayWidth, displayHeight,
+			displayDPI, getVirtualDisplayFlags(), imageReader.surface, null, threadHandler
+		)!!
 	}
 }

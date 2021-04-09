@@ -1,6 +1,9 @@
 package com.steve1316.granblueautomation_android.utils
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -67,13 +70,15 @@ class NotificationUtils {
 		 * @param context The application context.
 		 * @return A new Notification object.
 		 */
-		private fun createNewNotification(context: Context) : Notification {
+		private fun createNewNotification(context: Context): Notification {
 			// Create a STOP Intent for the MediaProjection service.
 			val stopIntent = Intent(context, StopServiceReceiver::class.java)
 			
 			// Create a PendingIntent in order to add a action button to stop the MediaProjection service in the notification.
-			val stopPendingIntent: PendingIntent = PendingIntent.getBroadcast(context, System.currentTimeMillis().toInt(), stopIntent, PendingIntent
-				.FLAG_CANCEL_CURRENT)
+			val stopPendingIntent: PendingIntent = PendingIntent.getBroadcast(
+				context, System.currentTimeMillis().toInt(), stopIntent, PendingIntent
+					.FLAG_CANCEL_CURRENT
+			)
 			
 			return NotificationCompat.Builder(context, CHANNEL_ID).apply {
 				setSmallIcon(R.drawable.ic_baseline_control_camera_24)
@@ -95,7 +100,7 @@ class NotificationUtils {
 		 */
 		fun updateNotification(context: Context, isRunning: Boolean) {
 			var contentText = "Bot process is NOT RUNNING"
-			if(isRunning) {
+			if (isRunning) {
 				contentText = "Bot process is RUNNING"
 			}
 			
@@ -103,8 +108,10 @@ class NotificationUtils {
 			val stopIntent = Intent(context, StopServiceReceiver::class.java)
 			
 			// Create a PendingIntent in order to add a action button to stop the MediaProjection service in the notification.
-			val stopPendingIntent: PendingIntent = PendingIntent.getBroadcast(context, System.currentTimeMillis().toInt(), stopIntent, PendingIntent
-				.FLAG_CANCEL_CURRENT)
+			val stopPendingIntent: PendingIntent = PendingIntent.getBroadcast(
+				context, System.currentTimeMillis().toInt(), stopIntent, PendingIntent
+					.FLAG_CANCEL_CURRENT
+			)
 			
 			val newNotification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
 				setSmallIcon(R.drawable.ic_baseline_control_camera_24)
@@ -117,7 +124,7 @@ class NotificationUtils {
 				setShowWhen(true)
 			}.build()
 			
-			if(!this::notificationManager.isInitialized) {
+			if (!this::notificationManager.isInitialized) {
 				notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 			}
 			

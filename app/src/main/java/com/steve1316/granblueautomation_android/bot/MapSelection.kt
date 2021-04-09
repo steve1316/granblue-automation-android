@@ -4,7 +4,6 @@ import android.util.Log
 import com.steve1316.granblueautomation_android.data.RoomCodeData
 import org.opencv.core.Point
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Provides the utility functions needed for perform navigation for Farming Mode throughout Granblue Fantasy.
@@ -24,15 +23,17 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 	 */
 	private fun checkMapLocation(islandName: String, formattedIslandName: String, currentLocation: String): Boolean {
 		// Phantagrande Skydom Page 1
-		if(islandName == "Port Breeze Archipelago" || islandName == "Valtz Duchy" || islandName == "Auguste Isles" || islandName == "Lumacie Archipelago" ||
-			islandName == "Albion Citadel" || islandName == "Zinkenstill") {
-			if(currentLocation == "Mist-Shrouded Isle" || currentLocation == "Golonzo Island" || currentLocation == "Amalthea Island"
-				|| currentLocation == "Former Capital Mephorash" || currentLocation == "Agastia") {
+		if (islandName == "Port Breeze Archipelago" || islandName == "Valtz Duchy" || islandName == "Auguste Isles" || islandName == "Lumacie Archipelago" ||
+			islandName == "Albion Citadel" || islandName == "Zinkenstill"
+		) {
+			if (currentLocation == "Mist-Shrouded Isle" || currentLocation == "Golonzo Island" || currentLocation == "Amalthea Island"
+				|| currentLocation == "Former Capital Mephorash" || currentLocation == "Agastia"
+			) {
 				game.findAndClickButton("world_left_arrow")
 			}
 			
 			// Use a manual way to tap on the correct island if image matching for the island name failed.
-			if(!game.findAndClickButton(formattedIslandName, tries = 1)) {
+			if (!game.findAndClickButton(formattedIslandName, tries = 1)) {
 				val arrowLocation = game.imageUtils.findButton("world_right_arrow")
 					?: throw Exception("Unable to find the location of the right arrow for the World.")
 				
@@ -59,15 +60,17 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 		
 		// Phantagrande Skydom Page 2
-		else if(islandName == "Mist-Shrouded Isle" || islandName == "Golonzo Island" || islandName == "Amalthea Island" || islandName == "Former Capital " +
-			"Mephorash" || islandName == "Agastia") {
-			if(currentLocation == "Port Breeze Archipelago" || currentLocation == "Valtz Duchy" || currentLocation == "Auguste Isles" ||
-				currentLocation == "Lumacie Archipelago" || currentLocation == "Albion Citadel" || currentLocation == "Zinkenstill") {
+		else if (islandName == "Mist-Shrouded Isle" || islandName == "Golonzo Island" || islandName == "Amalthea Island" || islandName == "Former Capital " +
+			"Mephorash" || islandName == "Agastia"
+		) {
+			if (currentLocation == "Port Breeze Archipelago" || currentLocation == "Valtz Duchy" || currentLocation == "Auguste Isles" ||
+				currentLocation == "Lumacie Archipelago" || currentLocation == "Albion Citadel" || currentLocation == "Zinkenstill"
+			) {
 				game.findAndClickButton("world_right_arrow")
 			}
 			
 			// Use a manual way to tap on the correct island if image matching for the island name failed.
-			if(!game.findAndClickButton(formattedIslandName, tries = 1)) {
+			if (!game.findAndClickButton(formattedIslandName, tries = 1)) {
 				val arrowLocation = game.imageUtils.findButton("world_left_arrow")
 					?: throw Exception("Unable to find the location of the left arrow for the World.")
 				
@@ -112,12 +115,12 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
-		if(farmingMode.toLowerCase(Locale.ROOT) == "quest") {
+		if (farmingMode.toLowerCase(Locale.ROOT) == "quest") {
 			val checkLocation: Boolean
 			var currentLocation = ""
 			
 			// Check if the bot is already at the island where the mission takes place in. If not, navigate to it.
-			if(game.imageUtils.confirmLocation("map_$formattedMapName", tries = 1)) {
+			if (game.imageUtils.confirmLocation("map_$formattedMapName", tries = 1)) {
 				game.printToLog("[INFO] Bot is currently on the correct island for the mission.", MESSAGE_TAG = TAG)
 				checkLocation = true
 			} else {
@@ -127,13 +130,17 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				// Determine what island the bot is currently at.
 				when {
 					game.imageUtils.confirmLocation("map_zinkenstill", tries = 1) -> {
-						game.printToLog("[INFO] Bot's current location is at Zinkenstill. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[INFO] Bot's current location is at Zinkenstill. Now moving to $mapName...",
+							MESSAGE_TAG = TAG
+						)
 						currentLocation = "Zinkenstill"
 					}
 					game.imageUtils.confirmLocation("map_port_breeze_archipelago", tries = 1) -> {
-						game.printToLog("[INFO] Bot's current location is at Port Breeze Archipelago. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[INFO] Bot's current location is at Port Breeze Archipelago. Now moving to $mapName...",
+							MESSAGE_TAG = TAG
+						)
 						currentLocation = "Port Breeze Archipelago"
 					}
 					game.imageUtils.confirmLocation("map_valtz_duchy", tries = 1) -> {
@@ -145,8 +152,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						currentLocation = "Auguste Isles"
 					}
 					game.imageUtils.confirmLocation("map_lumacie_archipelago", tries = 1) -> {
-						game.printToLog("[INFO] Bot's current location is at Lumacie Archipelago. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[INFO] Bot's current location is at Lumacie Archipelago. Now moving to $mapName...",
+							MESSAGE_TAG = TAG
+						)
 						currentLocation = "Lumacie Archipelago"
 					}
 					game.imageUtils.confirmLocation("map_albion_citadel", tries = 1) -> {
@@ -154,8 +163,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						currentLocation = "Albion Citadel"
 					}
 					game.imageUtils.confirmLocation("map_mist_shrouded_isle", tries = 1) -> {
-						game.printToLog("[INFO] Bot's current location is at Mist-Shrouded Isle. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[INFO] Bot's current location is at Mist-Shrouded Isle. Now moving to $mapName...",
+							MESSAGE_TAG = TAG
+						)
 						currentLocation = "Mist-Shrouded Isle"
 					}
 					game.imageUtils.confirmLocation("map_golonzo_island", tries = 1) -> {
@@ -167,8 +178,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						currentLocation = "Amalthea Island"
 					}
 					game.imageUtils.confirmLocation("map_former_capital_mephorash", tries = 1) -> {
-						game.printToLog("[INFO] Bot's current location is at Former Capital Mephorash. Now moving to $mapName...",
-							MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[INFO] Bot's current location is at Former Capital Mephorash. Now moving to $mapName...",
+							MESSAGE_TAG = TAG
+						)
 						currentLocation = "Former Capital Mephorash"
 					}
 					game.imageUtils.confirmLocation("map_agastia", tries = 1) -> {
@@ -182,7 +195,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			game.findAndClickButton("quest", suppressError = true)
 			
 			// If the bot is currently not at the correct island, move to it.
-			if(!checkLocation) {
+			if (!checkLocation) {
 				// Tap the "World" button.
 				game.findAndClickButton("world")
 				
@@ -195,50 +208,50 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			
 			// Find the "World" button.
 			var worldButtonLocation = game.imageUtils.findButton("world", tries = 2)
-			if(worldButtonLocation == null) {
+			if (worldButtonLocation == null) {
 				worldButtonLocation = game.imageUtils.findButton("world2", tries = 2)
 			}
 			
-			if(worldButtonLocation == null) {
+			if (worldButtonLocation == null) {
 				throw Exception("Unable to find the location of the World button.")
 			}
 			
 			// Now that the bot is on the correct island and is at the Quests screen, tap the correct chapter node using the location of the
 			// "World" button.
-			if(missionName == "Scattered Cargo") {
+			if (missionName == "Scattered Cargo") {
 				game.printToLog("[INFO] Moving to Chapter 1 (115) node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 227, worldButtonLocation.y + 213)
-			} else if(missionName == "Lucky Charm Hunt") {
+			} else if (missionName == "Lucky Charm Hunt") {
 				game.printToLog("[INFO] Moving to Chapter 6 (122) node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 757, worldButtonLocation.y + 43)
-			} else if(missionName == "Special Op's Request") {
+			} else if (missionName == "Special Op's Request") {
 				game.printToLog("[INFO] Moving to Chapter 8 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 577, worldButtonLocation.y + 343)
-			} else if(missionName == "Threat to the Fisheries") {
+			} else if (missionName == "Threat to the Fisheries") {
 				game.printToLog("[INFO] Moving to Chapter 9 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 497, worldButtonLocation.y + 258)
-			} else if(missionName == "The Fruit of Lumacie" || missionName == "Whiff of Danger") {
+			} else if (missionName == "The Fruit of Lumacie" || missionName == "Whiff of Danger") {
 				game.printToLog("[INFO] Moving to Chapter 13 (39/52) node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 197, worldButtonLocation.y + 208)
-			} else if(missionName == "I Challenge You!") {
+			} else if (missionName == "I Challenge You!") {
 				game.printToLog("[INFO] Moving to Chapter 17 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 262, worldButtonLocation.y + 268)
-			} else if(missionName == "For Whom the Bell Tolls") {
+			} else if (missionName == "For Whom the Bell Tolls") {
 				game.printToLog("[INFO] Moving to Chapter 22 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 417, worldButtonLocation.y + 78)
-			} else if(missionName == "Golonzo's Battles of Old") {
+			} else if (missionName == "Golonzo's Battles of Old") {
 				game.printToLog("[INFO] Moving to Chapter 25 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 457, worldButtonLocation.y + 18)
-			} else if(missionName == "The Dungeon Diet") {
+			} else if (missionName == "The Dungeon Diet") {
 				game.printToLog("[INFO] Moving to Chapter 30 (44/65) node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 557, worldButtonLocation.y + 48)
-			} else if(missionName == "Trust Busting Dustup") {
+			} else if (missionName == "Trust Busting Dustup") {
 				game.printToLog("[INFO] Moving to Chapter 36 (123) node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 714, worldButtonLocation.y + 30)
-			} else if(missionName == "Erste Kingdom Episode 4") {
+			} else if (missionName == "Erste Kingdom Episode 4") {
 				game.printToLog("[INFO] Moving to Chapter 70 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 587, worldButtonLocation.y + 318)
-			} else if(missionName == "Imperial Wanderer's Soul") {
+			} else if (missionName == "Imperial Wanderer's Soul") {
 				game.printToLog("[INFO] Moving to Chapter 55 node...", MESSAGE_TAG = TAG)
 				game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 320)
 			}
@@ -251,7 +264,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			
 			// Now tap on the mission node to start.
 			val formattedMissionName = missionName.toLowerCase(Locale.ROOT).replace(" ", "_")
-			if(!game.findAndClickButton(formattedMissionName)) {
+			if (!game.findAndClickButton(formattedMissionName)) {
 				// If the bot failed to find and click on the mission node the first time, scroll down the screen again.
 				game.gestureUtils.scroll()
 				
@@ -261,19 +274,19 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			}
 			
 			// If the mission name is "Erste Kingdom Episode 4", select the "Ch. 70 - Erste Kingdom" option.
-			if(missionName == "Erste Kingdom Episode 4") {
+			if (missionName == "Erste Kingdom Episode 4") {
 				game.findAndClickButton("episode_4")
 				game.findAndClickButton("ok")
 			}
 			
-		} else if(farmingMode.toLowerCase(Locale.ROOT) == "coop") {
+		} else if (farmingMode.toLowerCase(Locale.ROOT) == "coop") {
 			// Tap the "Menu" button at the top right corner of the Home screen and go to Coop.
 			game.findAndClickButton("home_menu")
 			game.findAndClickButton("coop")
 			
 			game.wait(1.0)
 			
-			if(game.imageUtils.confirmLocation("coop")) {
+			if (game.imageUtils.confirmLocation("coop")) {
 				// Scroll the screen down a little bit.
 				game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
 				
@@ -282,9 +295,9 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				// Find all occurrences of the "Host Quest" button.
 				val hostButtonLocations = game.imageUtils.findAll("coop_host_quest")
 				
-				if(missionName == "H3-1 In a Dusk Dream") {
+				if (missionName == "H3-1 In a Dusk Dream") {
 					// Check if the difficulty is already selected. If not, select it.
-					if(!game.findAndClickButton("coop_hard_selected", tries = 1)) {
+					if (!game.findAndClickButton("coop_hard_selected", tries = 1)) {
 						game.findAndClickButton("coop_hard", tries = 1)
 					}
 					
@@ -295,13 +308,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Select the category, "Save the Oceans", which should be the 3rd category.
 					game.printToLog("[INFO] Now navigating to \"In a Dusk Dream\" for Hard difficulty...", MESSAGE_TAG = TAG)
 					game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y)
-					if(game.imageUtils.confirmLocation("coop_save_the_oceans")) {
+					if (game.imageUtils.confirmLocation("coop_save_the_oceans")) {
 						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 						game.gestureUtils.tap(hostRoundButtonLocations[0].x, hostRoundButtonLocations[0].y)
 					}
 				} else {
 					// Check if the difficulty is already selected. If not, select it.
-					if(!game.findAndClickButton("coop_extra_selected", tries = 1)) {
+					if (!game.findAndClickButton("coop_extra_selected", tries = 1)) {
 						game.findAndClickButton("coop_extra", tries = 1)
 					}
 					
@@ -310,53 +323,63 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					val listForCoopEX1 = arrayListOf("EX1-1 Corridor of Puzzles", "empty", "EX1-3 Lost in the Dark")
 					val listForCoopEX2 = arrayListOf("EX2-2 Time of Judgement", "EX2-3 Time of Revelation", "EX2-4 Time of Eminence")
 					val listForCoopEX3 = arrayListOf("EX3-2 Rule of the Tundra", "EX3-3 Rule of the Plains", "EX3-4 Rule of the Twilight")
-					val listForCoopEX4 = arrayListOf("EX4-2 Amidst the Waves", "EX4-3 Amidst the Petals", "EX4-4 Amidst Severe Cliffs",
-						"EX4-5 Amidst the Flames")
+					val listForCoopEX4 = arrayListOf(
+						"EX4-2 Amidst the Waves", "EX4-3 Amidst the Petals", "EX4-4 Amidst Severe Cliffs",
+						"EX4-5 Amidst the Flames"
+					)
 					
 					// Select the category for the specified EX mission. For EX2 to EX4, skip past the first missions of each.
-					if(listForCoopEX1.contains(missionName)) {
+					if (listForCoopEX1.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX1...", MESSAGE_TAG = TAG)
 						
 						game.gestureUtils.tap(hostButtonLocations[0].x, hostButtonLocations[0].y)
-						if(game.imageUtils.confirmLocation("coop_ex1")) {
+						if (game.imageUtils.confirmLocation("coop_ex1")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].x,
-								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].y)
+							game.gestureUtils.tap(
+								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].x,
+								hostRoundButtonLocations[listForCoopEX1.indexOf(missionName)].y
+							)
 						}
-					} else if(listForCoopEX2.contains(missionName)) {
+					} else if (listForCoopEX2.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX2...", MESSAGE_TAG = TAG)
 						
 						game.gestureUtils.tap(hostButtonLocations[1].x, hostButtonLocations[1].y)
-						if(game.imageUtils.confirmLocation("coop_ex2")) {
+						if (game.imageUtils.confirmLocation("coop_ex2")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].y)
+							game.gestureUtils.tap(
+								hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].x,
+								hostRoundButtonLocations[listForCoopEX2.indexOf(missionName) + 1].y
+							)
 						}
-					} else if(listForCoopEX3.contains(missionName)) {
+					} else if (listForCoopEX3.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX3...", MESSAGE_TAG = TAG)
 						
 						game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y)
-						if(game.imageUtils.confirmLocation("coop_ex3")) {
+						if (game.imageUtils.confirmLocation("coop_ex3")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].y)
+							game.gestureUtils.tap(
+								hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].x,
+								hostRoundButtonLocations[listForCoopEX3.indexOf(missionName) + 1].y
+							)
 						}
-					} else if(listForCoopEX4.contains(missionName)) {
+					} else if (listForCoopEX4.contains(missionName)) {
 						game.printToLog("[INFO] Now navigating to \"$missionName\" for EX4...", MESSAGE_TAG = TAG)
 						
 						game.gestureUtils.tap(hostButtonLocations[3].x, hostButtonLocations[3].y)
-						if(game.imageUtils.confirmLocation("coop_ex4")) {
+						if (game.imageUtils.confirmLocation("coop_ex4")) {
 							game.printToLog("[INFO] Now selecting \"$missionName\"...", MESSAGE_TAG = TAG)
 							
 							val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
-							game.gestureUtils.tap(hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].x,
-								hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].y)
+							game.gestureUtils.tap(
+								hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].x,
+								hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].y
+							)
 						}
 					}
 				}
@@ -371,7 +394,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				
 				// Just in case, check for the "You retreated from the raid battle" popup.
 				game.wait(1.0)
-				if(game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+				if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
 					game.findAndClickButton("ok")
 				}
 				
@@ -380,25 +403,26 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				game.findAndClickButton("coop_select_party")
 			}
 			
-		} else if(farmingMode.toLowerCase(Locale.ROOT) == "special") {
+		} else if (farmingMode.toLowerCase(Locale.ROOT) == "special") {
 			// Go to the Quests screen and then to the Special Quest screen.
 			game.findAndClickButton("quest", suppressError = true)
 			
-			if(game.imageUtils.confirmLocation("quest")) {
+			if (game.imageUtils.confirmLocation("quest")) {
 				game.findAndClickButton("special")
 				
 				// Format the mission name based on the difficulty.
-				val formattedMissionName: String = if(difficulty == "Normal" || difficulty == "Hard") {
+				val formattedMissionName: String = if (difficulty == "Normal" || difficulty == "Hard") {
 					missionName.substring(2)
-				} else if(difficulty == "Very Hard" || difficulty == "Extreme") {
+				} else if (difficulty == "Very Hard" || difficulty == "Extreme") {
 					missionName.substring(3)
 				} else {
 					missionName
 				}
 				
-				if(game.imageUtils.confirmLocation("special")) {
-					if(mapName != "Campaign-Exclusive Quest" && mapName != "Basic Treasure Quests" && mapName != "Shiny Slime Search!" &&
-						mapName != "Six Dragon Trial") {
+				if (game.imageUtils.confirmLocation("special")) {
+					if (mapName != "Campaign-Exclusive Quest" && mapName != "Basic Treasure Quests" && mapName != "Shiny Slime Search!" &&
+						mapName != "Six Dragon Trial"
+					) {
 						// Scroll the screen down if the selected mission is located on the bottom half of the page.
 						game.gestureUtils.scroll()
 						
@@ -406,8 +430,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					
 					// Find the specified mission popup.
-					val missionLocation = game.imageUtils.findButton(formattedMapName) ?: throw Exception("Could not find the " +
-							"$formattedMapName button.")
+					val missionLocation = game.imageUtils.findButton(formattedMapName) ?: throw Exception(
+						"Could not find the " +
+								"$formattedMapName button."
+					)
 					
 					game.printToLog("[INFO] Navigating to $mapName...", MESSAGE_TAG = TAG)
 					
@@ -416,7 +442,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					missionLocation.y += 175
 					game.gestureUtils.tap(missionLocation.x, missionLocation.y)
 					
-					if(mapName == "Basic Treasure Quests") {
+					if (mapName == "Basic Treasure Quests") {
 						// Open up "Basic Treasure Quests" sub-missions popup.
 						var roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 						
@@ -451,7 +477,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 							}
 						}
 						
-					} else if(mapName == "Shiny Slime Search!" || mapName == "Six Dragon Trial" || mapName == "Angel Halo") {
+					} else if (mapName == "Shiny Slime Search!" || mapName == "Six Dragon Trial" || mapName == "Angel Halo") {
 						// Open up the mission's difficulty selection popup and then select its difficulty.
 						game.printToLog("[INFO] Now selecting $difficulty $mapName...", MESSAGE_TAG = TAG)
 						val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
@@ -468,7 +494,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 							}
 						}
 						
-					} else if(mapName == "Elemental Treasure Quests") {
+					} else if (mapName == "Elemental Treasure Quests") {
 						game.printToLog("[INFO] Now selecting $missionName...", MESSAGE_TAG = TAG)
 						val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 						
@@ -493,7 +519,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 							}
 						}
 						
-					} else if(mapName == "Showdowns") {
+					} else if (mapName == "Showdowns") {
 						game.printToLog("[INFO] Opening up $formattedMissionName mission popup...", MESSAGE_TAG = TAG)
 						var roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 						
@@ -534,7 +560,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 							}
 						}
 						
-					} else if(mapName == "Campaign-Exclusive Quest") {
+					} else if (mapName == "Campaign-Exclusive Quest") {
 						game.printToLog("[INFO] Selecting Campaign-Exclusive Quest...", MESSAGE_TAG = TAG)
 						
 						// There is only 1 "Play" button for this time-limited quest.
@@ -543,37 +569,37 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				}
 			}
 			
-		} else if(farmingMode.toLowerCase(Locale.ROOT) == "event" || farmingMode.toLowerCase(Locale.ROOT) == "event (token drawboxes)") {
+		} else if (farmingMode.toLowerCase(Locale.ROOT) == "event" || farmingMode.toLowerCase(Locale.ROOT) == "event (token drawboxes)") {
 			// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 			game.findAndClickButton("home_menu")
 			var bannerLocations = game.imageUtils.findAll("event_banner")
-			if(bannerLocations.size == 0) {
+			if (bannerLocations.size == 0) {
 				bannerLocations = game.imageUtils.findAll("event_banner_blue")
 			}
 			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y)
 			
 			// Check if there is a "Daily Missions" popup and close it.
 			game.wait(1.0)
-			if(game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
+			if (game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
 				game.printToLog("[INFO] Detected \"Daily Missions\" popup. Closing it...", MESSAGE_TAG = TAG)
 				game.findAndClickButton("cancel")
 			}
 			
 			// Remove the difficulty prefix from the mission name.
-			val formattedMissionName : String = if(difficulty == "Normal" || difficulty == "Hard") {
+			val formattedMissionName: String = if (difficulty == "Normal" || difficulty == "Hard") {
 				missionName.substring(2)
-			} else if(difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Impossible") {
+			} else if (difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Impossible") {
 				missionName.substring(3)
 			} else {
 				missionName
 			}
 			
-			if(farmingMode.toLowerCase(Locale.ROOT) == "event") {
+			if (farmingMode.toLowerCase(Locale.ROOT) == "event") {
 				game.findAndClickButton("event_special_quest")
 				
-				if(game.imageUtils.confirmLocation("special")) {
+				if (game.imageUtils.confirmLocation("special")) {
 					// Check if there is a Nightmare already available.
-					val nightmareIsAvailable: Int = if(game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
+					val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
 						1
 					} else {
 						0
@@ -583,14 +609,18 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					val selectButtonLocations = game.imageUtils.findAll("select")
 					
 					// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
-					if(formattedMissionName == "event quest") {
+					if (formattedMissionName == "event quest") {
 						game.printToLog("[INFO] Now hosting Event Quest...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(selectButtonLocations[0 + nightmareIsAvailable].x, selectButtonLocations[0 +
-								nightmareIsAvailable].y)
-					} else if(farmingMode.toLowerCase(Locale.ROOT) == "event raid") {
+						game.gestureUtils.tap(
+							selectButtonLocations[0 + nightmareIsAvailable].x, selectButtonLocations[0 +
+									nightmareIsAvailable].y
+						)
+					} else if (farmingMode.toLowerCase(Locale.ROOT) == "event raid") {
 						game.printToLog("[INFO] Now hosting Event Raid...", MESSAGE_TAG = TAG)
-						game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 +
-								nightmareIsAvailable].y)
+						game.gestureUtils.tap(
+							selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 +
+									nightmareIsAvailable].y
+						)
 					}
 					
 					game.wait(1.0)
@@ -599,9 +629,9 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
 					
 					// Now select the chosen difficulty.
-					if(difficulty == "Very Hard") {
+					if (difficulty == "Very Hard") {
 						game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y)
-					} else if(difficulty == "Extreme") {
+					} else if (difficulty == "Extreme") {
 						game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y)
 					}
 				}
@@ -609,7 +639,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				// Scroll down the screen a little bit for this UI layout that has Token Drawboxes.
 				game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 				
-				if(formattedMissionName.toLowerCase(Locale.ROOT) == "event raid") {
+				if (formattedMissionName.toLowerCase(Locale.ROOT) == "event raid") {
 					// Bring up the "Raid Battle" popup. Scroll the screen down a bit in case of small screen size.
 					game.printToLog("[INFO] Now hosting Event Raid...", MESSAGE_TAG = TAG)
 					game.findAndClickButton("event_raid_battle")
@@ -629,16 +659,20 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					
 					// If the user does not have enough Treasures to host a Extreme or Impossible Raid, host a Very Hard Raid instead.
-					if(difficulty == "Extreme" && !game.imageUtils.waitVanish("event_raid_extreme", timeout = 3)) {
-						game.printToLog("[INFO] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...",
-							MESSAGE_TAG = TAG)
+					if (difficulty == "Extreme" && !game.imageUtils.waitVanish("event_raid_extreme", timeout = 3)) {
+						game.printToLog(
+							"[INFO] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...",
+							MESSAGE_TAG = TAG
+						)
 						game.findAndClickButton("event_very_hard_raid")
-					} else if(difficulty == "Impossible" && !game.imageUtils.waitVanish("event_raid_impossible", timeout = 3)) {
-						game.printToLog("[INFO] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...",
-							MESSAGE_TAG = TAG)
+					} else if (difficulty == "Impossible" && !game.imageUtils.waitVanish("event_raid_impossible", timeout = 3)) {
+						game.printToLog(
+							"[INFO] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...",
+							MESSAGE_TAG = TAG
+						)
 						game.findAndClickButton("event_very_hard_raid")
 					}
-				} else if(formattedMissionName.toLowerCase(Locale.ROOT) == "event quest") {
+				} else if (formattedMissionName.toLowerCase(Locale.ROOT) == "event quest") {
 					game.printToLog("[INFO] Now hosting Event Quest...", MESSAGE_TAG = TAG)
 					game.findAndClickButton("event_quests")
 					
@@ -665,7 +699,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				}
 			}
 			
-		} else if(farmingMode.toLowerCase(Locale.ROOT) == "dread barrage") {
+		} else if (farmingMode.toLowerCase(Locale.ROOT) == "dread barrage") {
 			// Scroll the screen down a little bit and then click on the Dread Barrage banner.
 			game.printToLog("[INFO] Now navigating to Dread Barrage...", MESSAGE_TAG = TAG)
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
@@ -673,21 +707,27 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			
 			game.wait(2.0)
 			
-			if(game.imageUtils.confirmLocation("dread_barrage")) {
+			if (game.imageUtils.confirmLocation("dread_barrage")) {
 				// Check if there is already a hosted Dread Barrage mission.
-				if(game.imageUtils.confirmLocation("resume_quests", tries = 1)) {
+				if (game.imageUtils.confirmLocation("resume_quests", tries = 1)) {
 					game.printToLog("[WARNING] Detected that there is already a hosted Dread Barrage mission.", MESSAGE_TAG = TAG)
 					var expiryTimeInSeconds = 0
 					
-					while(game.imageUtils.confirmLocation("resume_quests", tries = 1)) {
+					while (game.imageUtils.confirmLocation("resume_quests", tries = 1)) {
 						// The bot will wait for a total of 1 hour and 30 miuntes for either the Raid's timer to expire or for anyone else in
 						// the room to clear it.
-						game.printToLog("[WARNING] The bot will now either wait for the expiry time of 1 hour and 30 minutes or for " +
-								"someone else in the room to clear it.", MESSAGE_TAG = TAG)
-						game.printToLog("[WARNING] The bot will now refresh the page every 30 seconds to check if it is still there " +
-								"before proceeding.", MESSAGE_TAG = TAG)
-						game.printToLog("User can either wait it out, revive and fight it to completion, or retreat from the mission " +
-								"manually.", MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[WARNING] The bot will now either wait for the expiry time of 1 hour and 30 minutes or for " +
+									"someone else in the room to clear it.", MESSAGE_TAG = TAG
+						)
+						game.printToLog(
+							"[WARNING] The bot will now refresh the page every 30 seconds to check if it is still there " +
+									"before proceeding.", MESSAGE_TAG = TAG
+						)
+						game.printToLog(
+							"User can either wait it out, revive and fight it to completion, or retreat from the mission " +
+									"manually.", MESSAGE_TAG = TAG
+						)
 						
 						game.wait(30.0)
 						
@@ -695,13 +735,15 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						game.wait(2.0)
 						
 						expiryTimeInSeconds += 30
-						if(expiryTimeInSeconds >= 5400) {
+						if (expiryTimeInSeconds >= 5400) {
 							break
 						}
 					}
 					
-					game.printToLog("[SUCCESS] Hosted Dread Barrage mission is now gone either because of timeout or someone else in " +
-							"the room killed it. Moving on...", MESSAGE_TAG = TAG)
+					game.printToLog(
+						"[SUCCESS] Hosted Dread Barrage mission is now gone either because of timeout or someone else in " +
+								"the room killed it. Moving on...", MESSAGE_TAG = TAG
+					)
 				}
 				
 				// Find the locations of all the "Play" buttons at the top of the window.
@@ -731,41 +773,41 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 				}
 			}
-		} else if(farmingMode.toLowerCase(Locale.ROOT) == "guild wars") {
+		} else if (farmingMode.toLowerCase(Locale.ROOT) == "guild wars") {
 			game.printToLog("[INFO] Navigating to Guild Wars now.", MESSAGE_TAG = TAG)
 			
 			// Go to the Guild Wars banner by tapping on the "Menu" button.
 			game.findAndClickButton("home_menu")
 			var bannerLocations = game.imageUtils.findAll("event_banner")
-			if(bannerLocations.size == 0) {
+			if (bannerLocations.size == 0) {
 				bannerLocations = game.imageUtils.findAll("event_banner_blue")
 			}
 			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y)
 			
 			game.wait(1.0)
 			
-			if(game.imageUtils.confirmLocation("guild_wars")) {
+			if (game.imageUtils.confirmLocation("guild_wars")) {
 				// Scroll down the screen a bit.
 				game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 				
 				game.wait(1.0)
 				
-				if(difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Extreme+") {
+				if (difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Extreme+") {
 					game.printToLog("[INFO] Now proceeding to farm meat.", MESSAGE_TAG = TAG)
 					
 					// Click on the banner to farm meat.
 					game.findAndClickButton("guild_wars_meat")
 					
-					if(game.imageUtils.confirmLocation("guild_wars_meat")) {
+					if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 						// Now click on the specified Mission to start.
 						val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
-						if(difficulty == "Very Hard") {
+						if (difficulty == "Very Hard") {
 							game.printToLog("Hosting Very Hard now.", MESSAGE_TAG = TAG)
 							game.gestureUtils.tap(meatLocation.x, meatLocation.y)
-						} else if(difficulty == "Extreme") {
+						} else if (difficulty == "Extreme") {
 							game.printToLog("Hosting Extreme now.", MESSAGE_TAG = TAG)
 							game.gestureUtils.tap(meatLocation.x + 230.0, meatLocation.y)
-						} else if(difficulty == "Extreme+") {
+						} else if (difficulty == "Extreme+") {
 							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
 							game.gestureUtils.tap(meatLocation.x + 620.0, meatLocation.y)
 							
@@ -778,7 +820,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Click on the banner to farm meat.
 					game.findAndClickButton("guild_wars_nightmare")
 					
-					if(game.imageUtils.confirmLocation("guild_wars_nightmare")) {
+					if (game.imageUtils.confirmLocation("guild_wars_nightmare")) {
 						// If today is the first day of Guild Wars, only NM90 is available.
 						when {
 							game.imageUtils.confirmLocation("guild_wars_nightmare_first_day", tries = 1) -> {
@@ -816,7 +858,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						// Click on the banner to farm meat.
 						game.findAndClickButton("guild_wars_meat")
 						
-						if(game.imageUtils.confirmLocation("guild_wars_meat")) {
+						if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 							game.printToLog("Hosting Extreme+ now.", MESSAGE_TAG = TAG)
 							val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
 							game.gestureUtils.tap(meatLocation.x + 300.0, meatLocation.y)
@@ -834,25 +876,31 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.checkAP()
 		
 		// Finally, double-check to see if the bot is at the Summon Selection screen.
-		if(farmingMode.toLowerCase(Locale.ROOT) != "coop") {
+		if (farmingMode.toLowerCase(Locale.ROOT) != "coop") {
 			game.printToLog("[INFO] Now checking if the bot is currently at the Summon Selection screen...", MESSAGE_TAG = TAG)
-			return if(game.imageUtils.confirmLocation("select_summon")) {
+			return if (game.imageUtils.confirmLocation("select_summon")) {
 				game.printToLog("[SUCCESS] Bot arrived at the Summon Selection screen after selecting the mission.", MESSAGE_TAG = TAG)
 				true
 			} else {
-				game.printToLog("[WARNING] Bot did not arrive at the Summon Selection screen after selecting the mission.",
-					MESSAGE_TAG = TAG)
+				game.printToLog(
+					"[WARNING] Bot did not arrive at the Summon Selection screen after selecting the mission.",
+					MESSAGE_TAG = TAG
+				)
 				false
 			}
 		} else {
 			game.printToLog("[INFO] Now checking if the bot is currently at the Coop Party Selection screen...", MESSAGE_TAG = TAG)
-			return if(game.imageUtils.confirmLocation("coop_without_support_summon")) {
-				game.printToLog("[SUCCESS] Bot arrived at the Party Selection screen after selecting the Coop mission.",
-					MESSAGE_TAG = TAG)
+			return if (game.imageUtils.confirmLocation("coop_without_support_summon")) {
+				game.printToLog(
+					"[SUCCESS] Bot arrived at the Party Selection screen after selecting the Coop mission.",
+					MESSAGE_TAG = TAG
+				)
 				true
 			} else {
-				game.printToLog("[WARNING] Bot did not arrive at the Party Selection screen after selecting the Coop mission.",
-					MESSAGE_TAG = TAG)
+				game.printToLog(
+					"[WARNING] Bot did not arrive at the Party Selection screen after selecting the Coop mission.",
+					MESSAGE_TAG = TAG
+				)
 				false
 			}
 		}
@@ -865,20 +913,20 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.findAndClickButton("tap_here_to_see_rewards")
 		game.wait(1.0)
 		
-		if(game.imageUtils.confirmLocation("no_loot", tries = 1)) {
+		if (game.imageUtils.confirmLocation("no_loot", tries = 1)) {
 			game.printToLog("[INFO] No loot can be collected. Backing out...")
 			
 			// Navigate back to the Quests screen.
 			game.findAndClickButton("quests")
 			
-			if(numberOfRaidsJoined > 0) {
+			if (numberOfRaidsJoined > 0) {
 				numberOfRaidsJoined -= 1
 			}
 		} else {
 			// Start loot detection if there it is available.
 			game.collectLoot(isPendingBattle = true)
 			
-			if(numberOfRaidsJoined > 0) {
+			if (numberOfRaidsJoined > 0) {
 				numberOfRaidsJoined -= 1
 			}
 		}
@@ -895,13 +943,18 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
-		if((farmingMode.toLowerCase(Locale.ROOT) == "raid" && game.imageUtils.confirmLocation("check_your_pending_battles", tries = 1,
-				suppressError = true)) ||
-			(farmingMode.toLowerCase(Locale.ROOT) != "raid" && game.imageUtils.confirmLocation("quest_results_pending_battles", tries = 1,
-				suppressError = true))) {
+		if ((farmingMode.toLowerCase(Locale.ROOT) == "raid" && game.imageUtils.confirmLocation(
+				"check_your_pending_battles", tries = 1,
+				suppressError = true
+			)) ||
+			(farmingMode.toLowerCase(Locale.ROOT) != "raid" && game.imageUtils.confirmLocation(
+				"quest_results_pending_battles", tries = 1,
+				suppressError = true
+			))
+		) {
 			game.printToLog("[INFO] Found Pending Battles that need collecting from.", MESSAGE_TAG = TAG)
 			
-			if(farmingMode.toLowerCase(Locale.ROOT) == "raid") {
+			if (farmingMode.toLowerCase(Locale.ROOT) == "raid") {
 				game.findAndClickButton("ok")
 			} else {
 				game.findAndClickButton("quest_results_pending_battles")
@@ -909,12 +962,12 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			
 			game.wait(1.0)
 			
-			if(game.imageUtils.confirmLocation("pending_battles", tries = 1)) {
-				while(game.imageUtils.findButton("tap_here_to_see_rewards", tries = 1) != null) {
+			if (game.imageUtils.confirmLocation("pending_battles", tries = 1)) {
+				while (game.imageUtils.findButton("tap_here_to_see_rewards", tries = 1) != null) {
 					clearPendingBattle()
 					
 					// While on the Loot Collected screen, if there are more Pending Battles then head back to the Pending Battles screen.
-					if(game.findAndClickButton("quest_results_pending_battles", tries = 1)) {
+					if (game.findAndClickButton("quest_results_pending_battles", tries = 1)) {
 						game.wait(1.0)
 						
 						// TODO: Close the Skyscope mission popup.
@@ -946,7 +999,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.wait(1.0)
 		
 		val joinedLocations = game.imageUtils.findAll("joined")
-		if(joinedLocations.size != 0) {
+		if (joinedLocations.size != 0) {
 			numberOfRaidsJoined = joinedLocations.size
 		}
 	}
@@ -965,11 +1018,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.wait(1.0)
 		
 		// Check for the "You retreated from the raid battle" popup.
-		if(game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
 			game.findAndClickButton("ok")
 		}
 		
-		if(game.imageUtils.confirmLocation("quest")) {
+		if (game.imageUtils.confirmLocation("quest")) {
 			checkPendingBattles("raid")
 			
 			game.wait(1.0)
@@ -984,12 +1037,12 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
 			var firstRun = true
 			var tries = 10
-			while(tries > 0) {
+			while (tries > 0) {
 				// Check for any joined Raids.
 				checkJoinedRaids()
 				
 				// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
-				while(numberOfRaidsJoined >= 3) {
+				while (numberOfRaidsJoined >= 3) {
 					game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 60 seconds to see if any finish.", MESSAGE_TAG = TAG)
 					game.goBackHome(confirmLocationCheck = true)
 					
@@ -1009,14 +1062,14 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				// Save the locations of the "Join Room" button and the "Room Code" text box.
 				var joinRoomButtonLocation: Point? = Point()
 				var roomCodeTextBoxLocation: Point? = Point()
-				if(firstRun) {
+				if (firstRun) {
 					joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
 					roomCodeTextBoxLocation = Point(joinRoomButtonLocation.x - 410.0, joinRoomButtonLocation.y)
 				}
 				
 				var roomCodes: ArrayList<String> = arrayListOf()
 				// Get recent room codes for the specified Raid.
-				if(twitterRoomFinder != null) {
+				if (twitterRoomFinder != null) {
 					roomCodes = twitterRoomFinder.findMostRecentRoomCodes(missionName)
 				}
 				
@@ -1036,9 +1089,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Now tap the "Join Room" button.
 					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y)
 					
-					if(!checkPendingBattles("raid") && !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
+					if (!checkPendingBattles("raid") && !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
 						&& !game.imageUtils.confirmLocation("already_taking_part", tries = 1)
-						&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)) {
+						&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)
+					) {
 						// Check for EP.
 						game.checkEP()
 						
@@ -1058,8 +1112,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				}
 				
 				tries -= 1
-				game.printToLog("[WARNING] Could not find any valid room codes. \\nWaiting 60 seconds and then trying again with $tries " +
-						"tries left before exiting.", MESSAGE_TAG = TAG)
+				game.printToLog(
+					"[WARNING] Could not find any valid room codes. \\nWaiting 60 seconds and then trying again with $tries " +
+							"tries left before exiting.", MESSAGE_TAG = TAG
+				)
 				game.wait(60.0)
 			}
 		}

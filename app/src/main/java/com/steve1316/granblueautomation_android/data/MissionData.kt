@@ -19,15 +19,33 @@ class MissionData {
 		)
 		
 		val mapsForSpecial = mapOf(
-			"Basic Treasure Quests" to arrayListOf("N Scarlet Trial", "H Scarlet Trial", "VH Scarlet Trial", "N Cerulean Trial", "H Cerulean Trial",
-				"VH Cerulean Trial", "N Violet Trial", "H Violet Trial", "VH Violet Trial"),
+			"Basic Treasure Quests" to arrayListOf(
+				"N Scarlet Trial", "H Scarlet Trial", "VH Scarlet Trial", "N Cerulean Trial", "H Cerulean Trial",
+				"VH Cerulean Trial", "N Violet Trial", "H Violet Trial", "VH Violet Trial"
+			),
 			"Shiny Slime Search!" to arrayListOf("N Shiny Slime Search!", "H Shiny Slime Search!", "VH Shiny Slime Search!"),
 			"Six Dragon Trial" to arrayListOf("N Six Dragon Trial", "H Six Dragon Trial", "VH Six Dragon Trial"),
 			"Elemental Treasure Quests" to arrayListOf("The Hellfire Trial", "The Deluge Trial", "The Wasteland Trial", "The Typhoon Trial"),
-			"Showdowns" to arrayListOf("H Ifrit Showdown", "VH Ifrit Showdown", "EX Ifrit Showdown", "H Cocytus Showdown", "VH Cocytus Showdown",
-				"EX Cocytus Showdown", "H Vohu Manah Showdown", "VH Vohu Manah Showdown", "EX Vohu Manah Showdown", "H Sagittarius Showdown",
-				"VH Sagittarius Showdown", "EX Sagittarius Showdown", "H Corow Showdown", "VH Corow Showdown", "EX Corow Showdown", "H Diablo Showdown",
-				"VH Diablo Showdown", "EX Diablo Showdown"),
+			"Showdowns" to arrayListOf(
+				"H Ifrit Showdown",
+				"VH Ifrit Showdown",
+				"EX Ifrit Showdown",
+				"H Cocytus Showdown",
+				"VH Cocytus Showdown",
+				"EX Cocytus Showdown",
+				"H Vohu Manah Showdown",
+				"VH Vohu Manah Showdown",
+				"EX Vohu Manah Showdown",
+				"H Sagittarius Showdown",
+				"VH Sagittarius Showdown",
+				"EX Sagittarius Showdown",
+				"H Corow Showdown",
+				"VH Corow Showdown",
+				"EX Corow Showdown",
+				"H Diablo Showdown",
+				"VH Diablo Showdown",
+				"EX Diablo Showdown"
+			),
 			"Angel Halo" to arrayListOf("N Angel Halo", "H Angel Halo", "VH Angel Halo"),
 			"Campaign-Exclusive Quest" to arrayListOf("Campaign-Exclusive Quest")
 		)

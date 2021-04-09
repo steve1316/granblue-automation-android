@@ -7,7 +7,10 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.IBinder
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
 import com.steve1316.granblueautomation_android.bot.Game
@@ -18,14 +21,14 @@ import kotlin.math.roundToInt
 /**
  * This Service will begin workflow automation based on the chosen preference settings.
  */
-class BotService: Service() {
+class BotService : Service() {
 	private val TAG: String = "GAA_BotService"
 	private lateinit var myContext: Context
 	private lateinit var overlayView: View
 	private lateinit var overlayButton: ImageButton
 	
 	companion object {
-		private var thread: Thread = Thread()
+		private lateinit var thread: Thread
 		private lateinit var windowManager: WindowManager
 		private val overlayLayoutParams = WindowManager.LayoutParams().apply {
 			type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -51,7 +54,7 @@ class BotService: Service() {
 		
 		// This button is able to be moved around the screen and clicking it will start/stop the game automation.
 		overlayButton = overlayView.findViewById(R.id.bot_actions_overlay_button)
-		overlayButton.setOnTouchListener(object: View.OnTouchListener {
+		overlayButton.setOnTouchListener(object : View.OnTouchListener {
 			private var initialX: Int = 0
 			private var initialY: Int = 0
 			private var initialTouchX: Float = 0F
@@ -60,7 +63,7 @@ class BotService: Service() {
 			override fun onTouch(v: View?, event: MotionEvent?): Boolean {
 				val action = event?.action
 				
-				if(action == MotionEvent.ACTION_DOWN) {
+				if (action == MotionEvent.ACTION_DOWN) {
 					// Get the initial position.
 					initialX = overlayLayoutParams.x
 					initialY = overlayLayoutParams.y
@@ -70,11 +73,11 @@ class BotService: Service() {
 					initialTouchY = event.rawY
 					
 					return false
-				} else if(action == MotionEvent.ACTION_UP) {
+				} else if (action == MotionEvent.ACTION_UP) {
 					val elapsedTime: Long = event.eventTime - event.downTime
-					if(elapsedTime < 100L) {
+					if (elapsedTime < 100L) {
 						// Update both the Notification and the overlay button to reflect the current bot status.
-						if(!isRunning) {
+						if (!isRunning) {
 							Log.d(TAG, "Bot Service for GAA is now running.")
 							Toast.makeText(myContext, "Bot Service for GAA is now running.", Toast.LENGTH_SHORT).show()
 							isRunning = true
@@ -86,7 +89,7 @@ class BotService: Service() {
 							thread = thread {
 								try {
 									game.startFarmingMode(myContext)
-								} catch(e: Exception) {
+								} catch (e: Exception) {
 									game.printToLog("Application encountered Exception: ${e.printStackTrace()}", MESSAGE_TAG = TAG, isError = true)
 								}
 							}
@@ -99,11 +102,11 @@ class BotService: Service() {
 							NotificationUtils.updateNotification(myContext, isRunning)
 							overlayButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
 						}
-
+						
 						// Returning true here freezes the animation of the click on the button.
 						return false
 					}
-				} else if(action == MotionEvent.ACTION_MOVE) {
+				} else if (action == MotionEvent.ACTION_MOVE) {
 					val xDiff = (event.rawX - initialTouchX).roundToInt()
 					val yDiff = (event.rawY - initialTouchY).roundToInt()
 					
@@ -120,7 +123,7 @@ class BotService: Service() {
 			}
 		})
 	}
-
+	
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		// Do not attempt to restart the bot service if it crashes.
 		return START_NOT_STICKY
@@ -129,7 +132,7 @@ class BotService: Service() {
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
 	}
-
+	
 	override fun onDestroy() {
 		super.onDestroy()
 		

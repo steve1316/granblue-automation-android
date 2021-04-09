@@ -63,13 +63,13 @@ class TwitterRoomFinder(myContext: Context) {
 		// Filter out tweets that the bot already visited.
 		val tweets: MutableList<Status> = mutableListOf()
 		tweetsEN.forEach { tweet ->
-			if(!alreadyVisitedIDs.contains(tweet.id)) {
+			if (!alreadyVisitedIDs.contains(tweet.id)) {
 				alreadyVisitedIDs.add(tweet.id)
 				tweets.add(tweet)
 			}
 		}
 		tweetsJP.forEach { tweet ->
-			if(!alreadyVisitedIDs.contains(tweet.id)) {
+			if (!alreadyVisitedIDs.contains(tweet.id)) {
 				alreadyVisitedIDs.add(tweet.id)
 				tweets.add(tweet)
 			}
@@ -94,10 +94,10 @@ class TwitterRoomFinder(myContext: Context) {
 			
 			// For each split element, parse the Room Code and save it.
 			splitText.forEach { text ->
-				if(text.contains(":Battle") || text.contains(":参戦ID")) {
+				if (text.contains(":Battle") || text.contains(":参戦ID")) {
 					val roomCode = splitText[index - 1]
 					
-					if(!alreadyVisitedRoomCodes.contains(roomCode)) {
+					if (!alreadyVisitedRoomCodes.contains(roomCode)) {
 						alreadyVisitedRoomCodes.add(roomCode)
 						roomCodes.add(roomCode)
 					}

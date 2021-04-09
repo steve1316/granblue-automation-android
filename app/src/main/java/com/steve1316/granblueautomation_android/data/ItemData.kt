@@ -78,7 +78,7 @@ class ItemData {
 				"Dragoon's Distinction", "Skofnung Replica", "Langeleik Replica", "Kapilavastu Replica"
 			),
 			"EX3-3 Rule of the Plains" to arrayListOf(
-				"Oliver Replica", "Rosenbogen Replica",  "Sharpshooter Distinction", "Gunslinger Distinction", "Cavalryman Distinction",
+				"Oliver Replica", "Rosenbogen Replica", "Sharpshooter Distinction", "Gunslinger Distinction", "Cavalryman Distinction",
 				"Longstrider's Distinction", "Horseman's Plate"
 			),
 			"EX3-4 Rule of the Twilight" to arrayListOf(
@@ -86,16 +86,28 @@ class ItemData {
 				"Dancer Distinction", "Phantom Demon Jewel"
 			),
 			"EX4-2 Amidst the Waves" to arrayListOf(
-				"Oliver Replica", "Romulus Spear Replica", "Kapilavastu Replica", "Mystic Distinction", "Pilgrim Distinction", "Alchemist Distinction",
-				"Mage Distinction", "Monk's Distinction"
+				"Oliver Replica",
+				"Romulus Spear Replica",
+				"Kapilavastu Replica",
+				"Mystic Distinction",
+				"Pilgrim Distinction",
+				"Alchemist Distinction",
+				"Mage Distinction",
+				"Monk's Distinction"
 			),
 			"EX4-3 Amidst the Petals" to arrayListOf(
 				"Langeleik Replica", "Faust Replica", "Misericorde Replica", "Arabesque Replica", "Ninja Distinction", "Samurai Distinction",
 				"Sharpshooter Distinction", "Gunslinger Distinction", "Longstrider's Distinction", "Dancer Distinction"
 			),
 			"EX4-4 Amidst Severe Cliffs" to arrayListOf(
-				"Hellion Gauntlet Replica", "Muramasa Replica", "Aschallon Replica", "Practice Drum", "Combatant Distinction", "Gladiator Distinction",
-				"Sword Master Distinction", "Fencer Distinction"
+				"Hellion Gauntlet Replica",
+				"Muramasa Replica",
+				"Aschallon Replica",
+				"Practice Drum",
+				"Combatant Distinction",
+				"Gladiator Distinction",
+				"Sword Master Distinction",
+				"Fencer Distinction"
 			),
 			"EX4-5 Amidst the Flames" to arrayListOf(
 				"Ipetam Replica", "Murakumo Replica", "Nebuchad Replica", "Proximo Replica", "Guardian Distinction", "Cavalryman Distinction",
@@ -152,8 +164,15 @@ class ItemData {
 				"Celeste Omega", "Celeste Anima", "Celeste Omega Anima", "Celeste Harp Omega", "Celeste Claw Omega",
 				"Celeste Horn Omega", "Celeste Zaghnal Omega"
 			),
-
-			"Lvl 120 Shiva" to arrayListOf("Shiva Anima", "Shiva Omega Anima", "Hand of Brahman", "Scimitar of Brahman", "Trident of Brahman", "Nilakantha"),
+			
+			"Lvl 120 Shiva" to arrayListOf(
+				"Shiva Anima",
+				"Shiva Omega Anima",
+				"Hand of Brahman",
+				"Scimitar of Brahman",
+				"Trident of Brahman",
+				"Nilakantha"
+			),
 			"Lvl 120 Europa" to arrayListOf("Europa Anima", "Europa Omega Anima", "Tyros Bow", "Tyros Scepter", "Tyros Zither", "Spirit of Mana"),
 			"Lvl 120 Godsworn Alexiel" to arrayListOf(
 				"Alexiel Anima", "Alexiel Omega Anima", "Nibelung Horn", "Nibelung Klinge", "Nibelung Messer",
@@ -168,7 +187,7 @@ class ItemData {
 				"Pillar of Flame"
 			),
 			"Lvl 120 Avatar" to arrayListOf("Avatar Anima", "Avatar Omega Anima", "Abyss Striker", "Abyss Spine", "Abyss Gaze", "Zechariah"),
-
+			
 			"Lvl 100 Michael" to arrayListOf("Michael Anima"),
 			"Lvl 100 Gabriel" to arrayListOf("Gabriel Anima"),
 			"Lvl 100 Uriel" to arrayListOf("Uriel Anima"),

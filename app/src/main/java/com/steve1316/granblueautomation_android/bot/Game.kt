@@ -4,16 +4,15 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import com.steve1316.granblueautomation_android.MyAccessibilityService
+import com.steve1316.granblueautomation_android.data.SummonData
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.ImageUtils
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
-import com.steve1316.granblueautomation_android.data.SummonData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
@@ -54,9 +53,14 @@ class Game(private val myContext: Context) {
 	private fun printTime(): String {
 		val elapsedMillis: Long = System.currentTimeMillis() - startTime
 		
-		return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(elapsedMillis), TimeUnit.MILLISECONDS.toMinutes(elapsedMillis)
-				- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)), TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit
-			.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis)))
+		return String.format(
+			"%02d:%02d:%02d",
+			TimeUnit.MILLISECONDS.toHours(elapsedMillis),
+			TimeUnit.MILLISECONDS.toMinutes(elapsedMillis)
+					- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)),
+			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit
+				.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
+		)
 	}
 	
 	/**
@@ -67,7 +71,7 @@ class Game(private val myContext: Context) {
 	 * @param isError Flag to determine whether to display log message in console as debug or error.
 	 */
 	fun printToLog(message: String, MESSAGE_TAG: String = TAG, isError: Boolean = false) {
-		if(!isError) {
+		if (!isError) {
 			Log.d(MESSAGE_TAG, message)
 		} else {
 			Log.e(MESSAGE_TAG, message)
@@ -85,19 +89,21 @@ class Game(private val myContext: Context) {
 	 * @param displayInfoCheck Whether or not it should print display info into the log.
 	 */
 	fun goBackHome(confirmLocationCheck: Boolean = false, displayInfoCheck: Boolean = false) {
-		if(!imageUtils.confirmLocation("home")) {
+		if (!imageUtils.confirmLocation("home")) {
 			printToLog("[INFO] Moving back to the Home screen...")
 			findAndClickButton("home")
 		} else {
 			printToLog("[INFO] Bot is already at the Home screen.")
 		}
 		
-		if(displayInfoCheck) {
-			printToLog("Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, " +
-					"Screen DPI: ${MediaProjectionService.displayDPI}")
+		if (displayInfoCheck) {
+			printToLog(
+				"Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, " +
+						"Screen DPI: ${MediaProjectionService.displayDPI}"
+			)
 		}
 		
-		if(confirmLocationCheck) {
+		if (confirmLocationCheck) {
 			imageUtils.confirmLocation("home")
 		}
 	}
@@ -125,42 +131,42 @@ class Game(private val myContext: Context) {
 		Log.d(TAG, "[DEBUG] Now attempting to find and click the ${buttonName.toUpperCase(Locale.ROOT)} button.")
 		var tempLocation: Point?
 		
-		if(buttonName.toLowerCase(Locale.ROOT) == "quest") {
+		if (buttonName.toLowerCase(Locale.ROOT) == "quest") {
 			tempLocation = imageUtils.findButton("quest_blue", tries = 1, suppressError = suppressError)
-			if(tempLocation == null) {
+			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("quest_red", tries = 1, suppressError = suppressError)
 			}
-			if(tempLocation == null) {
+			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries = 1, suppressError = suppressError)
 			}
-			if(tempLocation == null) {
+			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("quest_red_strike_time", tries = 1, suppressError = suppressError)
 			}
-		} else if(buttonName.toLowerCase(Locale.ROOT) == "raid") {
+		} else if (buttonName.toLowerCase(Locale.ROOT) == "raid") {
 			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
-			if(tempLocation == null) {
+			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("raid_bouncing", tries = tries, suppressError = suppressError)
 			}
-		} else if(buttonName.toLowerCase(Locale.ROOT) == "coop_start") {
+		} else if (buttonName.toLowerCase(Locale.ROOT) == "coop_start") {
 			tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError)
-			if(tempLocation == null) {
+			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("coop_start_faded", tries = tries, suppressError = suppressError)
 			}
-		} else if(buttonName.toLowerCase(Locale.ROOT) == "event_special_quest") {
+		} else if (buttonName.toLowerCase(Locale.ROOT) == "event_special_quest") {
 			tempLocation = imageUtils.findButton("event_special_quest_flat", tries = tries, suppressError = suppressError)
-			if(tempLocation == null) {
+			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("event_special_quest_bouncing", tries = tries, suppressError = suppressError)
 			}
-		} else if(buttonName.toLowerCase(Locale.ROOT) == "world") {
+		} else if (buttonName.toLowerCase(Locale.ROOT) == "world") {
 			tempLocation = imageUtils.findButton("world", tries = tries, suppressError = suppressError)
-			if(tempLocation == null) {
+			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("world2", tries = tries, suppressError = suppressError)
 			}
 		} else {
 			tempLocation = imageUtils.findButton(buttonName, tries = tries, suppressError = suppressError)
 		}
 		
-		return if(tempLocation != null) {
+		return if (tempLocation != null) {
 			gestureUtils.tap(tempLocation.x, tempLocation.y)
 		} else {
 			false
@@ -229,7 +235,7 @@ class Game(private val myContext: Context) {
 		// Find the location of one of the Summons.
 		val summonLocation = imageUtils.findSummon(newSummonList, summonElementList)
 		
-		return if(summonLocation != null) {
+		return if (summonLocation != null) {
 			// Select the Summon.
 			gestureUtils.tap(summonLocation.x, summonLocation.y)
 			
@@ -257,17 +263,19 @@ class Game(private val myContext: Context) {
 		// Scroll the screen down to attempt to see the "Gameplay Extras" button.
 		gestureUtils.swipe(500f, 1000f, 500f, 400f)
 		
-		val listOfSteps: ArrayList<String> = arrayListOf("gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
-			"choose_a_summon", "ok", "close", "menu", "retreat", "retreat_confirmation", "next")
+		val listOfSteps: ArrayList<String> = arrayListOf(
+			"gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
+			"choose_a_summon", "ok", "close", "menu", "retreat", "retreat_confirmation", "next"
+		)
 		
 		listOfSteps.forEach {
-			if(it == "trial_battles_old_lignoid") {
+			if (it == "trial_battles_old_lignoid") {
 				// Make sure to confirm that the bot arrived at the Trial Battles screen.
 				wait(2.0)
 				imageUtils.confirmLocation("trial_battles")
 			}
 			
-			if(it == "close") {
+			if (it == "close") {
 				// Wait a few seconds and then confirm its location.
 				wait(5.0)
 				imageUtils.confirmLocation("trial_battles_description")
@@ -275,16 +283,16 @@ class Game(private val myContext: Context) {
 			
 			var imageLocation: Point? = imageUtils.findButton(it)
 			
-			while((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
+			while ((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
 				// Keep swiping the screen down until the bot finds the specified button.
 				gestureUtils.swipe(500f, 1500f, 500f, 500f)
 				wait(1.0)
 				imageLocation = imageUtils.findButton(it, tries = 1)
 			}
 			
-			if(it == "choose_a_summon" && imageLocation != null) {
+			if (it == "choose_a_summon" && imageLocation != null) {
 				gestureUtils.tap(imageLocation.x, imageLocation.y + 400)
-			} else if(it != "choose_a_summon" && imageLocation != null) {
+			} else if (it != "choose_a_summon" && imageLocation != null) {
 				gestureUtils.tap(imageLocation.x, imageLocation.y)
 			}
 			
@@ -303,18 +311,18 @@ class Game(private val myContext: Context) {
 		var numberOfTries = tries
 		
 		// Search for the location of the "Set" button based on the Group number.
-		while(setLocation == null) {
-			setLocation = if(groupNumber < 8) {
+		while (setLocation == null) {
+			setLocation = if (groupNumber < 8) {
 				imageUtils.findButton("party_set_a", tries = 1)
 			} else {
 				imageUtils.findButton("party_set_b", tries = 1)
 			}
 			
-			if(setLocation == null) {
+			if (setLocation == null) {
 				numberOfTries -= 1
 				
-				if(numberOfTries <= 0) {
-					if(groupNumber < 8) {
+				if (numberOfTries <= 0) {
+					if (groupNumber < 8) {
 						throw(Resources.NotFoundException("Could not find Set A."))
 					} else {
 						throw(Resources.NotFoundException("Could not find Set B."))
@@ -322,7 +330,7 @@ class Game(private val myContext: Context) {
 				}
 				
 				// Switch over and search for the other Set.
-				setLocation = if(groupNumber < 8) {
+				setLocation = if (groupNumber < 8) {
 					imageUtils.findButton("party_set_b", tries = 1)
 				} else {
 					imageUtils.findButton("party_set_a", tries = 1)
@@ -331,7 +339,7 @@ class Game(private val myContext: Context) {
 		}
 		
 		// Select the Group.
-		var equation: Double = if(groupNumber == 1) {
+		var equation: Double = if (groupNumber == 1) {
 			787.0
 		} else {
 			787.0 - (140 * (groupNumber - 1))
@@ -341,7 +349,7 @@ class Game(private val myContext: Context) {
 		wait(1.0)
 		
 		// Select the Party.
-		equation = if(partyNumber == 1) {
+		equation = if (partyNumber == 1) {
 			690.0
 		} else {
 			690.0 - (130 * (partyNumber - 1))
@@ -349,7 +357,7 @@ class Game(private val myContext: Context) {
 		
 		gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0)
 		wait(1.0)
-	
+		
 		printToLog("[SUCCESS] Selected Group and Party successfully.")
 		
 		// Start the mission by clicking "OK".
@@ -357,7 +365,7 @@ class Game(private val myContext: Context) {
 		wait(2.0)
 		
 		// Detect if a "This raid battle has already ended" popup appeared.
-		if(farmingMode == "Raid" && imageUtils.confirmLocation("raid_just_ended_home_redirect", tries = 1)) {
+		if (farmingMode == "Raid" && imageUtils.confirmLocation("raid_just_ended_home_redirect", tries = 1)) {
 			printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
 			
 			// TODO: Determine whether or not the bot should head back home.
@@ -377,10 +385,11 @@ class Game(private val myContext: Context) {
 	fun checkAP(useFullElixir: Boolean = false, tries: Int = 3) {
 		var numberOfTries = tries
 		
-		while((farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) ||
-			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
-			if(imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
-				if(!useFullElixir) {
+		while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) ||
+			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))
+		) {
+			if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+				if (!useFullElixir) {
 					printToLog("[INFO] AP ran out! Using Half Elixir...")
 					val location = imageUtils.findButton("refill_half_elixir")!!
 					gestureUtils.tap(location.x, location.y + 370)
@@ -397,7 +406,7 @@ class Game(private val myContext: Context) {
 			}
 			
 			numberOfTries -= 1
-			if(numberOfTries <= 0) {
+			if (numberOfTries <= 0) {
 				break
 			}
 		}
@@ -414,9 +423,9 @@ class Game(private val myContext: Context) {
 	fun checkEP(useSoulBalm: Boolean = false, tries: Int = 3) {
 		var numberOfTries = tries
 		
-		while(farmingMode == "Raid" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
-			if(imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
-				if(!useSoulBalm) {
+		while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
+			if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
+				if (!useSoulBalm) {
 					printToLog("[INFO] EP ran out! Using Soul Berry...")
 					val location = imageUtils.findButton("refill_soul_berry")!!
 					gestureUtils.tap(location.x, location.y + 370)
@@ -433,7 +442,7 @@ class Game(private val myContext: Context) {
 			}
 			
 			numberOfTries -= 1
-			if(numberOfTries <= 0) {
+			if (numberOfTries <= 0) {
 				break
 			}
 		}
@@ -451,7 +460,7 @@ class Game(private val myContext: Context) {
 		var amountGained = 0
 		
 		// Close all popups until the bot reaches the Loot Collected screen.
-		while(!imageUtils.confirmLocation("loot_collected", tries = 1)) {
+		while (!imageUtils.confirmLocation("loot_collected", tries = 1)) {
 			findAndClickButton("close", tries = 1, suppressError = true)
 			findAndClickButton("cancel", tries = 1, suppressError = true)
 			findAndClickButton("ok", tries = 1, suppressError = true)
@@ -459,8 +468,8 @@ class Game(private val myContext: Context) {
 		}
 		
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
-		if(!isPendingBattle && !isEventNightmare) {
-			amountGained = if(!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+		if (!isPendingBattle && !isEventNightmare) {
+			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
 				imageUtils.findFarmedItems(itemName)
 			} else {
 				1
@@ -470,8 +479,8 @@ class Game(private val myContext: Context) {
 			amountOfRuns += 1
 		}
 		
-		if(!isPendingBattle && !isEventNightmare) {
-			if(!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+		if (!isPendingBattle && !isEventNightmare) {
+			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
@@ -499,7 +508,7 @@ class Game(private val myContext: Context) {
 	 * Detects any "Friend Request" popups and close them.
 	 */
 	fun checkFriendRequest() {
-		if(imageUtils.confirmLocation("friend_request", tries = 1)) {
+		if (imageUtils.confirmLocation("friend_request", tries = 1)) {
 			printToLog("[INFO] Detected \"Friend Request\" popup. Closing it now...")
 			findAndClickButton("cancel")
 		}
@@ -555,13 +564,13 @@ class Game(private val myContext: Context) {
 		//  Additionally, return false if any of the required settings is missing. This can happen when users change settings after the overlay
 		//  button has been displayed.
 		
-		if(farmingMode == "Raid") {
+		if (farmingMode == "Raid") {
 			twitterRoomFinder = TwitterRoomFinder(myContext)
 		}
 		
 		mapSelection = MapSelection(this, twitterRoomFinder)
 		
-		if(itemName != "EXP") {
+		if (itemName != "EXP") {
 			printToLog("################################################################################")
 			printToLog("################################################################################")
 			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
@@ -579,7 +588,7 @@ class Game(private val myContext: Context) {
 		
 		// Parse the difficulty for the chosen Mission.
 		var difficulty = ""
-		if(farmingMode == "Special" || farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)" || farmingMode == "Rise of the Beasts") {
+		if (farmingMode == "Special" || farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)" || farmingMode == "Rise of the Beasts") {
 			when {
 				missionName.indexOf("N ") == 0 -> {
 					difficulty = "Normal"
@@ -597,7 +606,7 @@ class Game(private val myContext: Context) {
 					difficulty = "Impossible"
 				}
 			}
-		} else if(farmingMode == "Dread Barrage") {
+		} else if (farmingMode == "Dread Barrage") {
 			when {
 				missionName.indexOf("1 Star") == 0 -> {
 					difficulty = "1 Star"
@@ -615,7 +624,7 @@ class Game(private val myContext: Context) {
 					difficulty = "5 Star"
 				}
 			}
-		} else if(farmingMode == "Guild Wars") {
+		} else if (farmingMode == "Guild Wars") {
 			when {
 				missionName.indexOf("Very Hard") == 0 -> {
 					difficulty = "Very Hard"
@@ -644,7 +653,7 @@ class Game(private val myContext: Context) {
 		// TODO: Perform advanced settings setup for Dimensional Halo, Event Nightmare, ROTB Extreme+, and Dread Barrage Unparalleled Foes.
 		
 		// If the user did not select a combat script, use the default Full Auto combat script.
-		if(combatScript.isEmpty() || combatScript[0] == "") {
+		if (combatScript.isEmpty() || combatScript[0] == "") {
 			printToLog("[INFO] User did not provide their own combat script. Defaulting to Full Auto combat script.")
 			
 			combatScript = listOf(
@@ -660,24 +669,24 @@ class Game(private val myContext: Context) {
 		
 		printToLog("[INFO] Now selecting the Mission...")
 		
-		if(farmingMode != "Raid") {
+		if (farmingMode != "Raid") {
 			mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 		} else {
 			mapSelection.joinRaid(missionName)
 		}
 		
 		// Primary workflow loop for Farming Mode.
-		while(itemAmountFarmed < itemAmount) {
+		while (itemAmountFarmed < itemAmount) {
 			// Reset the Summon Selection flag.
 			summonCheckFlag = false
 			
 			// Loop and attempt to select a Summon. Reset Summons if necessary.
-			while(!summonCheckFlag && farmingMode != "Coop") {
+			while (!summonCheckFlag && farmingMode != "Coop") {
 				summonCheckFlag = selectSummon()
 				
 				// If the return came back as false, that means the Summons were reset.
-				if(!summonCheckFlag) {
-					if(farmingMode != "Raid") {
+				if (!summonCheckFlag) {
+					if (farmingMode != "Raid") {
 						printToLog("[INFO] Selecting Mission again after resetting Summons.")
 						mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 					} else {
@@ -689,10 +698,10 @@ class Game(private val myContext: Context) {
 			
 			// Perform Party Selection and then start the Mission. Do not perform Party Selection for Coop after the initial setup as starting the
 			// Coop Mission again reuses the same Party.
-			if(farmingMode != "Coop") {
+			if (farmingMode != "Coop") {
 				startCheckFlag = selectPartyAndStartMission()
 			} else {
-				if(coopFirstRun) {
+				if (coopFirstRun) {
 					startCheckFlag = selectPartyAndStartMission()
 					coopFirstRun = false
 					
@@ -704,28 +713,28 @@ class Game(private val myContext: Context) {
 				}
 			}
 			
-			if(startCheckFlag && farmingMode != "Raid") {
+			if (startCheckFlag && farmingMode != "Raid") {
 				wait(3.0)
 				
 				// Check for "Items Picked Up" popup that appears after starting a Quest Mission.
-				if(farmingMode == "Quest" && imageUtils.confirmLocation("items_picked_up", tries = 1)) {
+				if (farmingMode == "Quest" && imageUtils.confirmLocation("items_picked_up", tries = 1)) {
 					printToLog("[INFO] Detected \"Items Picked Up\" popup. Closing it now...")
 					findAndClickButton("ok")
 				}
 				
 				// Finally, start Combat Mode. If it ended successfully, detect loot and do it again if necessary.
-				if(combatMode.startCombatMode(combatScript)) {
+				if (combatMode.startCombatMode(combatScript)) {
 					collectLoot()
 					
-					if(itemAmountFarmed < itemAmount) {
-						if(farmingMode != "Coop") {
-							if(!findAndClickButton("play_again")) {
+					if (itemAmountFarmed < itemAmount) {
+						if (farmingMode != "Coop") {
+							if (!findAndClickButton("play_again")) {
 								// Clear away any Pending Battles.
 								mapSelection.checkPendingBattles(farmingMode)
 								
 								// Now that Pending Battles have been cleared away, select the Mission again.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if(farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
+							} else if (farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
 								// Select the Mission again if doing Event Quests since it does not have a "Play Again" button.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 							}
@@ -736,14 +745,14 @@ class Game(private val myContext: Context) {
 							wait(1.0)
 							
 							// Check for "Daily Missions" popup for Coop.
-							if(imageUtils.confirmLocation("coop_daily_missions", tries = 1)) {
+							if (imageUtils.confirmLocation("coop_daily_missions", tries = 1)) {
 								findAndClickButton("close")
 							}
 							
 							wait(1.0)
 							
 							// Now that the bot is back at the Coop Room, check if it is closed due to time running out.
-							if(imageUtils.confirmLocation("coop_room_closed", tries = 1)) {
+							if (imageUtils.confirmLocation("coop_room_closed", tries = 1)) {
 								printToLog("[INFO] Coop room has closed due to time running out.")
 								break
 							}
@@ -758,28 +767,28 @@ class Game(private val myContext: Context) {
 						}
 						
 						// For every Farming Mode other than Coop, continuously close all popups until the bot reaches the Summon Selection screen.
-						while(farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
-							if(farmingMode == "Dread Barrage" && imageUtils.confirmLocation("dread_barrage_unparalleled_foe", tries = 1)) {
+						while (farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
+							if (farmingMode == "Dread Barrage" && imageUtils.confirmLocation("dread_barrage_unparalleled_foe", tries = 1)) {
 								// Find all the locations of the "AP 0" texts underneath each Unparalleled Foe.
 								// val ap0Locations = imageUtils.findAll("ap_0")
 								
 								// Start the Unparalleled Foe that the user specified for in the Settings.
 								// TODO: Flesh out this section.
-							} else if(farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("proud_solo_quest", tries = 1)) {
+							} else if (farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("proud_solo_quest", tries = 1)) {
 								// Scroll the screen down a little bit to see the "Close" button for the "Proud Solo Quest" popup for ROTB.
 								gestureUtils.swipe(500f, 1000f, 500f, 400f)
-							} else if(farmingMode == "Rise of the Beasts" && checkROTBExtremePlus()) {
+							} else if (farmingMode == "Rise of the Beasts" && checkROTBExtremePlus()) {
 								// Make sure that the bot goes back to the Home screen when completing an Extreme+.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if((farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare()) {
+							} else if ((farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare()) {
 								// Make sure that the bot goes back to the Home screen when completing an Event Nightmare.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if(farmingMode == "Event (Token Drawboxes)" && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
+							} else if (farmingMode == "Event (Token Drawboxes)" && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
 								// Host a Very Hard Raid if the bot lacked the Treasures to host an Extreme/Impossible Raid.
 								printToLog("[INFO] Bot ran out of Treasures to host this Mission! Falling back to Very Hard Raid.")
 								findAndClickButton("ok")
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if(farmingMode == "Special" && itemName == "Angel Halo Weapons" && checkDimensionalHalo()) {
+							} else if (farmingMode == "Special" && itemName == "Angel Halo Weapons" && checkDimensionalHalo()) {
 								// Make sure that the bot goes back to the Home screen when completing an Dimensional Halo.
 								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 							} else {
@@ -792,8 +801,9 @@ class Game(private val myContext: Context) {
 							
 							// If the bot tried to repeat a Extreme/Impossible/Nightmare difficulty Event Raid and it lacked the treasures to host
 							// it, go back to selectMap().
-							if((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") and imageUtils.confirmLocation
-									("not_enough_treasure")) {
+							if ((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") and imageUtils.confirmLocation
+									("not_enough_treasure")
+							) {
 								findAndClickButton("ok")
 								
 								wait(1.0)
@@ -812,18 +822,18 @@ class Game(private val myContext: Context) {
 					printToLog("[INFO] Restarting the Mission due to retreating...")
 					mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 				}
-			} else if(startCheckFlag && farmingMode == "Raid") {
+			} else if (startCheckFlag && farmingMode == "Raid") {
 				// Cover the occasional case where joining the Raid after selecting the Summon and Party led to the Quest Results screen with no
 				// loot to collect.
-				if(imageUtils.confirmLocation("no_loot", tries = 1)) {
+				if (imageUtils.confirmLocation("no_loot", tries = 1)) {
 					printToLog("[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
 					goBackHome(confirmLocationCheck = true)
 				} else {
 					// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
-					if(combatMode.startCombatMode(combatScript)) {
+					if (combatMode.startCombatMode(combatScript)) {
 						collectLoot()
 						
-						if(itemAmountFarmed < itemAmount) {
+						if (itemAmountFarmed < itemAmount) {
 							// Clear away any Pending Battles.
 							mapSelection.checkPendingBattles(farmingMode)
 							
@@ -832,7 +842,7 @@ class Game(private val myContext: Context) {
 						}
 					}
 				}
-			} else if(!startCheckFlag && farmingMode == "Raid") {
+			} else if (!startCheckFlag && farmingMode == "Raid") {
 				// If the bot reaches here, that means that the Raid ended before the bot could start the Mission after selecting the Summon and
 				// Party.
 				printToLog("[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
