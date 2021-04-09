@@ -86,6 +86,42 @@ class MyAccessibilityService : AccessibilityService() {
 		}
 	}
 	
+	private fun randomizeTapLocation(x: Double, y: Double, buttonName: String): Pair<Int, Int> {
+		// Get the Bitmap from the template image file inside the specified folder.
+		val templateBitmap: Bitmap
+		myContext.assets?.open("buttons/$buttonName.webp").use { inputStream ->
+			// Get the Bitmap from the template image file and then start matching.
+			templateBitmap = BitmapFactory.decodeStream(inputStream)
+		}
+		
+		val width = templateBitmap.width
+		val height = templateBitmap.height
+		
+		// Randomize the tapping location.
+		val x0: Int = (x - (width / 2)).toInt()
+		val x1: Int = (x + (width / 2)).toInt()
+		val y0: Int = (y - (height / 2)).toInt()
+		val y1: Int = (y + (height / 2)).toInt()
+		
+		var newX: Int
+		var newY: Int
+		
+		while (true) {
+			val newWidth: Int = (10..(width - 10)).random()
+			val newHeight: Int = (10..(height - 10)).random()
+			
+			newX = x0 + newWidth
+			newY = y0 + newHeight
+			
+			// If the new coordinates are within the bounds of the template image, break out of the loop.
+			if (newX > x0 || newX < x1 || newY > y0 || newY < y1) {
+				break
+			}
+		}
+		
+		return Pair(newX, newY)
+	}
+	
 	/**
 	 * Creates a tap gesture on the specified point on the screen.
 	 *
@@ -95,9 +131,12 @@ class MyAccessibilityService : AccessibilityService() {
 	 * @param longPress Whether or not to long press.
 	 * @return True if the tap gesture was executed successfully. False otherwise.
 	 */
-	fun tap(x: Double, y: Double, ignoreWait: Boolean = false, longPress: Boolean = false): Boolean {
+	fun tap(x: Double, y: Double, buttonName: String, ignoreWait: Boolean = false, longPress: Boolean = false): Boolean {
+		// Randomize the tapping location.
+		val (newX, newY) = randomizeTapLocation(x, y, buttonName)
+		
 		val tapPath = Path().apply {
-			moveTo(x.toFloat(), y.toFloat())
+			moveTo(newX.toFloat(), newY.toFloat())
 		}
 		
 		val gesture: GestureDescription = if (longPress) {
