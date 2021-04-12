@@ -824,9 +824,18 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					game.printToLog("[INFO] Now proceeding to farm Nightmares.", MESSAGE_TAG = TAG)
 					
 					// Click on the banner to farm meat.
-					game.findAndClickButton("guild_wars_nightmare")
+					if (difficulty != "NM150") {
+						game.findAndClickButton("guild_wars_nightmare")
+					} else {
+						game.printToLog("Hosting NM150 now.", MESSAGE_TAG = TAG)
+						game.findAndClickButton("guild_wars_nightmare_150")
+						
+						if (game.imageUtils.confirmLocation("guild_wars_nightmare")) {
+							game.findAndClickButton("start")
+						}
+					}
 					
-					if (game.imageUtils.confirmLocation("guild_wars_nightmare")) {
+					if (difficulty != "NM150" && game.imageUtils.confirmLocation("guild_wars_nightmare")) {
 						// If today is the first day of Guild Wars, only NM90 is available.
 						when {
 							game.imageUtils.confirmLocation("guild_wars_nightmare_first_day", tries = 1) -> {
@@ -848,10 +857,6 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 							difficulty == "NM100" -> {
 								game.printToLog("Hosting NM100 now.", MESSAGE_TAG = TAG)
 								game.findAndClickButton("guild_wars_nightmare_100")
-							}
-							difficulty == "NM150" -> {
-								game.printToLog("Hosting NM150 now.", MESSAGE_TAG = TAG)
-								game.findAndClickButton("guild_wars_nightmare_150")
 							}
 						}
 					} else {
