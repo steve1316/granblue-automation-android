@@ -11,8 +11,8 @@ android {
         applicationId "com.steve1316.granblueautomation_android"
         minSdkVersion 29
         targetSdkVersion 30
-        versionCode 9
-        versionName "0.6.5"
+        versionCode 10
+        versionName "0.6.6"
     }
 
     buildTypes {

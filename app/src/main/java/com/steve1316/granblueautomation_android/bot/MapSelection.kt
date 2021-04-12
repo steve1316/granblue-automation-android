@@ -823,15 +823,17 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				} else {
 					game.printToLog("[INFO] Now proceeding to farm Nightmares.", MESSAGE_TAG = TAG)
 					
-					// Click on the banner to farm meat.
+					var startCheckForNM150 = false
+					
+					// Click on the banner to farm Nightmares.
 					if (difficulty != "NM150") {
 						game.findAndClickButton("guild_wars_nightmare")
 					} else {
 						game.printToLog("Hosting NM150 now.", MESSAGE_TAG = TAG)
 						game.findAndClickButton("guild_wars_nightmare_150")
 						
-						if (game.imageUtils.confirmLocation("guild_wars_nightmare")) {
-							game.findAndClickButton("start")
+						if (game.imageUtils.confirmLocation("guild_wars_nightmare") && game.findAndClickButton("start")) {
+							startCheckForNM150 = true
 						}
 					}
 					
@@ -859,10 +861,14 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 								game.findAndClickButton("guild_wars_nightmare_100")
 							}
 						}
-					} else {
+					} else if (!startCheckForNM150) {
 						// If there is not enough meat to host, host Extreme+ instead.
-						game.printToLog("[WARNING] User lacks the meat to host any Nightmares. Farming Extreme+ instead.", MESSAGE_TAG = TAG)
-						game.findAndClickButton("close")
+						game.printToLog("[WARNING] User lacks the meat to host the Nightmare. Farming Extreme+ instead.", MESSAGE_TAG = TAG)
+						if (difficulty != "NM150") {
+							game.findAndClickButton("close")
+						} else {
+							game.findAndClickButton("cancel")
+						}
 						
 						game.printToLog("[INFO] Hosting Extreme+ now.", MESSAGE_TAG = TAG)
 						
