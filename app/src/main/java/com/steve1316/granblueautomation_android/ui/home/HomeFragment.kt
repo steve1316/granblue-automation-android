@@ -141,7 +141,7 @@ class HomeFragment : Fragment() {
 			
 			file.writeText(content)
 			
-			Log.d(TAG, "Created config.yaml.")
+			Log.d(TAG, "Created config.yaml in internal storage.")
 		} else {
 			Log.d(TAG, "config.yaml already exists.")
 		}

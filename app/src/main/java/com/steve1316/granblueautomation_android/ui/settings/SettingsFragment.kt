@@ -15,7 +15,8 @@ import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
 import com.steve1316.granblueautomation_android.data.ItemData
 import com.steve1316.granblueautomation_android.data.MissionData
-import java.io.File
+import java.io.*
+import kotlin.collections.ArrayList
 
 class SettingsFragment : PreferenceFragmentCompat() {
 	private val TAG: String = "GAA_SettingsFragment"
@@ -363,10 +364,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					commit()
 				}
 				
-				Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.yaml.")
+				Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.")
 			}
 		} catch (e: Exception) {
-			Log.e(TAG, "ERROR: ${e.printStackTrace()}")
+			Log.e(TAG, "Encountered error while saving Twitter API credentials to SharedPreferences from config: $e")
+			Log.e(TAG, "Clearing any existing Twitter API credentials from SharedPreferences...")
 			
 			sharedPreferences.edit {
 				remove("apiKey")
@@ -692,6 +694,4 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			commit()
 		}
 	}
-	
-	// TODO: Implement options for the user to choose item to farm, amount of it, mission, Summons, combat script, etc.
 }
