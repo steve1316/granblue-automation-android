@@ -11,15 +11,15 @@ android {
         applicationId "com.steve1316.granblueautomation_android"
         minSdkVersion 29
         targetSdkVersion 30
-        versionCode 10
-        versionName "0.6.6"
+        versionCode 11
+        versionName "0.6.7"
     }
 
     buildTypes {
         debug {
-            // Attempt to reduce the size of the apk file by following the steps outlined in https://stackoverflow.com/a/45074929
-            minifyEnabled true
-            shrinkResources true
+            // Minifying would eliminate crucial classes necessary for twitter4j and Hoplite to function properly.
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             applicationVariants.all { variant ->
@@ -75,5 +75,5 @@ dependencies {
     implementation 'com.sksamuel.hoplite:hoplite-yaml:1.4.0'
 
     // Twitter4j is used to connect to the Twitter API.
-    implementation 'org.twitter4j:twitter4j-stream:4.0.6'
+    implementation 'org.twitter4j:twitter4j-stream:4.0.7'
 }
