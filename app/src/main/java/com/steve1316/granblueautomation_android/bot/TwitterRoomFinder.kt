@@ -16,30 +16,37 @@ import twitter4j.conf.ConfigurationBuilder
 class TwitterRoomFinder(myContext: Context, game: Game) {
 	private val TAG: String = "GAA_TwitterRoomFinder"
 	
-	private var twitter: Twitter
+	private lateinit var twitter: Twitter
 	
 	private val alreadyVisitedRoomCodes: ArrayList<String> = arrayListOf()
 	private val alreadyVisitedIDs: ArrayList<Long> = arrayListOf()
 	
 	init {
-		Log.d(TAG, "Connecting to Twitter API...")
-		
-		// Initialize the Twitter object.
-		val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
-			.setOAuthConsumerKey(SettingsFragment.getStringSharedPreference(myContext, "apiKey"))
-			.setOAuthConsumerSecret(SettingsFragment.getStringSharedPreference(myContext, "apiKeySecret"))
-			.setOAuthAccessToken(SettingsFragment.getStringSharedPreference(myContext, "accessToken"))
-			.setOAuthAccessTokenSecret(SettingsFragment.getStringSharedPreference(myContext, "accessTokenSecret"))
-		
-		twitter = TwitterFactory(configurationBuilder.build()).instance
-		
-		Log.d(TAG, "Connection to Twitter API is successful.")
-		
-		// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
-		val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-		StrictMode.setThreadPolicy(policy)
-		
-		Log.d(TAG, "Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.")
+		try {
+			game.printToLog("\n[INFO] Connecting to Twitter API...", MESSAGE_TAG = TAG)
+			
+			// Initialize the Twitter object.
+			val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
+				.setOAuthConsumerKey(SettingsFragment.getStringSharedPreference(myContext, "apiKey"))
+				.setOAuthConsumerSecret(SettingsFragment.getStringSharedPreference(myContext, "apiKeySecret"))
+				.setOAuthAccessToken(SettingsFragment.getStringSharedPreference(myContext, "accessToken"))
+				.setOAuthAccessTokenSecret(SettingsFragment.getStringSharedPreference(myContext, "accessTokenSecret"))
+			
+			twitter = TwitterFactory(configurationBuilder.build()).instance
+			
+			// Test connection by fetching user's timeline.
+			twitter.timelines().homeTimeline
+			
+			game.printToLog("[SUCCESS] Connection to Twitter API is successful.", MESSAGE_TAG = TAG)
+			
+			// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
+			val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+			StrictMode.setThreadPolicy(policy)
+			
+			game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", MESSAGE_TAG = TAG)
+		} catch (e: Exception) {
+			game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.printStackTrace()}", MESSAGE_TAG = TAG, isError = true)
+		}
 	}
 	
 	/**
