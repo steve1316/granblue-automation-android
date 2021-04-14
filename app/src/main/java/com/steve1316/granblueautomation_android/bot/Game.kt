@@ -585,12 +585,8 @@ class Game(private val myContext: Context) {
 		groupNumber = SettingsFragment.getIntSharedPreference(context, "groupNumber")
 		partyNumber = SettingsFragment.getIntSharedPreference(context, "partyNumber")
 		
-		// TODO: Display Alert to user indicating whether they are ready to start or not. Include information of what their settings are.
-		//  Additionally, return false if any of the required settings is missing. This can happen when users change settings after the overlay
-		//  button has been displayed.
-		
 		if (farmingMode == "Raid") {
-			twitterRoomFinder = TwitterRoomFinder(myContext)
+			twitterRoomFinder = TwitterRoomFinder(myContext, this)
 		}
 		
 		mapSelection = MapSelection(this, twitterRoomFinder)
@@ -880,8 +876,6 @@ class Game(private val myContext: Context) {
 		printToLog("[INFO] Farming Mode has ended")
 		printToLog("********************************************************************************")
 		printToLog("********************************************************************************")
-		
-		// TODO: Display Alert signalling the end of Farming Mode.
 		
 		// TODO: Update the bot's status to Not Running.
 		
