@@ -1010,9 +1010,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.wait(1.0)
 		
 		val joinedLocations = game.imageUtils.findAll("joined")
-		if (joinedLocations.size != 0) {
-			numberOfRaidsJoined = joinedLocations.size
-		}
+		numberOfRaidsJoined = joinedLocations.size
 	}
 	
 	/**
@@ -1117,14 +1115,14 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						game.findAndClickButton("reload")
 						firstRun = false
 						
-						game.wait(1.0)
+						game.wait(2.0)
 						game.findAndClickButton("enter_id")
 					}
 				}
 				
 				tries -= 1
 				game.printToLog(
-					"[WARNING] Could not find any valid room codes. \\nWaiting 60 seconds and then trying again with $tries " +
+					"[WARNING] Could not find any valid room codes. \nWaiting 60 seconds and then trying again with $tries " +
 							"tries left before exiting.", MESSAGE_TAG = TAG
 				)
 				game.wait(60.0)
