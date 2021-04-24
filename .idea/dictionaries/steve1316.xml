@@ -2,11 +2,25 @@
   <dictionary name="steve1316">
     <words>
       <w>accessibilityservice</w>
+      <w>cooldown</w>
       <w>drawboxes</w>
+      <w>enablefullauto</w>
+      <w>enablesemiauto</w>
       <w>gaa</w>
       <w>gameplay</w>
       <w>granblue</w>
       <w>granblueautomation</w>
+      <w>lyria</w>
+      <w>requestbackup</w>
+      <w>tweetbackup</w>
+      <w>usebluepotion</w>
+      <w>useclarityherb</w>
+      <w>usefullelixir</w>
+      <w>usegreenpotion</w>
+      <w>userevivalpotion</w>
+      <w>useskill</w>
+      <w>usesupportpotion</w>
+      <w>vyrn</w>
     </words>
   </dictionary>
 </component>
