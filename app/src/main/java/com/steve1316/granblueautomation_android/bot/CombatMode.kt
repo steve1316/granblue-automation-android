@@ -6,7 +6,7 @@ import java.util.*
 /**
  * This class handles the Combat Mode and offers helper functions to assist it.
  */
-class CombatMode(private val game: Game) {
+class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
 	private val TAG: String = "GAA_CombatMode"
 	
 	private var retreatCheckFlag = false
