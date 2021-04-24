@@ -38,7 +38,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 1, suppressError = true)
 		if (partyWipeIndicatorLocation != null) {
 			// Tap on the blue indicator to get rid of the overlay.
-			game.wait(2.0)
 			game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y, "party_wipe_indicator")
 			
 			if (game.farmingMode != "Raid" && game.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
@@ -522,50 +521,47 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						// Clear any detected dialog popups that might obstruct the "Attack" button.
 						findCombatDialog()
 						
-						val tempAttackButtonLocation = game.imageUtils.findButton("attack", tries = 1, suppressError = true)
-						if (tempAttackButtonLocation != null) {
+						if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) != null) {
 							game.printToLog("[COMBAT] Ending Turn $turnNumber")
 							
 							// Tap the "Attack" button.
 							game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y, "attack")
 							
-							game.wait(3.0 + chargeAttacks)
+							// Wait until the "Cancel" button vanishes from the screen.
+							if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
+								while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
+									if (debugMode) {
+										game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", MESSAGE_TAG = TAG)
+									}
+									
+									game.wait(1.0)
+								}
+							}
+							
+							// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
+							if (game.farmingMode != "Quest" && game.farmingMode != "Special") {
+								game.findAndClickButton("reload")
+							}
 							
 							waitForAttack()
 							
 							game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
 							
-							partyWipeCheck()
 							turnNumber += 1
 						}
 						
-						val tempNextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
-						if (tempNextButtonLocation != null) {
-							game.gestureUtils.tap(tempNextButtonLocation.x, tempNextButtonLocation.y, "next")
+						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 							game.wait(3.0)
 						}
 						
-						if (retreatCheckFlag || game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) || game
-								.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)
-						) {
-							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-							game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-							
-							return false
-						} else if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-							game.printToLog("[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-							
-							game.findAndClickButton("ok")
-							
-							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+						// Check if the Battle has ended.
+						if (retreatCheckFlag || game.imageUtils.confirmLocation("exp_gained", tries = 1) || game.imageUtils.confirmLocation("no_loot", tries = 1) ||
+							game.imageUtils.confirmLocation("battle_concluded", tries = 1)) {
+							game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 							game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
 							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-							
 							return false
 						}
 					}
@@ -627,205 +623,169 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							
 							useCharacterSkill(characterSelected, skillCommandList)
 							
-							game.wait(3.0)
-							
 							if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-								game.printToLog("[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-								
-								game.findAndClickButton("ok")
-								
+								game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
 								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 								game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
 								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-								
-								return false
+								game.findAndClickButton("reload")
+								return true
 							}
 						}
 						
-						// Execute Summon commands here.
-						if (command.contains("summon")) {
-							useSummon(command)
-							
-							if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-								game.printToLog("[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-								
-								game.findAndClickButton("ok")
-								
-								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-								game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-								
-								return false
-							}
-						}
-						
-						if (command.contains("requestbackup")) {
+						// Handle any other supported command.
+						else if (command == "requestbackup") {
 							requestBackup()
-						} else if (command.contains("tweetbackup")) {
+						} else if (command == "tweetbackup") {
 							tweetBackup()
 						} else if (healingItemCommands.contains(command)) {
 							useCombatHealingItem(command)
-						} else if (command.contains("enablesemiauto")) {
+						} else if (command.contains("summon")) {
+							useSummon(command)
+						} else if (command == "enablesemiauto") {
 							game.printToLog("[COMBAT] Enabling Semi Auto.", MESSAGE_TAG = TAG)
 							semiAutoCheckFlag = true
 							break
-						} else if (command.contains("enablefullauto")) {
+						} else if (command == "enablefullauto") {
 							game.printToLog("[COMBAT] Enabling Full Auto.", MESSAGE_TAG = TAG)
-							val enabledCheckFlag = game.findAndClickButton("full_auto")
+							fullAutoCheckFlag = game.findAndClickButton("full_auto", tries = 3)
 							
 							// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
-							if (!enabledCheckFlag) {
+							if (!fullAutoCheckFlag) {
 								game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", MESSAGE_TAG = TAG)
 								semiAutoCheckFlag = true
-							} else {
-								fullAutoCheckFlag = true
 							}
 							
 							break
 						}
 						
-						val nextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
-						if (nextButtonLocation != null) {
-							game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
+						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 							break
 						}
 					}
 				}
 				
 				// Handle certain commands that could be present outside of a Turn block.
+				if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablesemiauto") {
 					game.printToLog("[COMBAT] Enabling Semi Auto.", MESSAGE_TAG = TAG)
 					semiAutoCheckFlag = true
 					break
-				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command.contains("enablefullauto")) {
+				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablefullauto") {
 					game.printToLog("[COMBAT] Enabling Full Auto.", MESSAGE_TAG = TAG)
-					val enabledCheckFlag = game.findAndClickButton("full_auto")
+					fullAutoCheckFlag = game.findAndClickButton("full_auto")
 					
 					// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
-					if (!enabledCheckFlag) {
+					if (!fullAutoCheckFlag) {
 						game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", MESSAGE_TAG = TAG)
 						semiAutoCheckFlag = true
-					} else {
-						fullAutoCheckFlag = true
 					}
 					
 					break
 				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end") {
-					// End the current Turn block and attack.
-					var nextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
+					// Tap the "Attack" button once every command inside the Turn Block has been processed.
+					game.printToLog("[COMBAT] Ending Turn $turnNumber")
+					game.findAndClickButton("attack", tries = 10)
 					
-					if (nextButtonLocation != null) {
-						game.printToLog(
-							"[COMBAT] All enemies on screen have been eliminated before the bot could attack. Preserving Turn " +
-									"$turnNumber by moving on to the next Wave.", MESSAGE_TAG = TAG
-						)
-						
-						game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
-						
-						game.wait(3.0)
-					} else {
-						game.printToLog("[COMBAT] Ending Turn $turnNumber by attacking now.", MESSAGE_TAG = TAG)
-						
-						val chargeAttacks = findChargeAttacks()
-						game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y, "attack")
-						
-						// Peek ahead of the combat script while the Party is currently attacking and see if it detects the command
-						// "enableSemiAuto" outside of a Turn block.
-						var tempIndex = 0
-						if (combatScript.isNotEmpty()) {
-							val tempCommand = combatScript[tempIndex]
-							
-							if (!semiAutoCheckFlag && !fullAutoCheckFlag && tempCommand.contains("enablesemiauto")) {
-								game.printToLog("[COMBAT] Enabling Semi Auto.", MESSAGE_TAG = TAG)
-								game.findAndClickButton("semi_auto")
-								semiAutoCheckFlag = true
-								break
-							} else if (tempCommand.contains("turn")) {
-								break
+					// Wait until the "Cancel" button vanishes from the screen.
+					if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
+						while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
+							if (debugMode) {
+								game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", MESSAGE_TAG = TAG)
 							}
 							
-							tempIndex += 1
-						}
-						
-						game.wait(3.0 + chargeAttacks)
-						
-						waitForAttack()
-						
-						game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
-						
-						partyWipeCheck()
-						turnNumber += 1
-						
-						nextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
-						if (nextButtonLocation != null) {
-							game.printToLog(
-								"[COMBAT] All enemies on screen have been eliminated before the bot could attack. Preserving Turn " +
-										"$turnNumber by moving on to the next Wave.", MESSAGE_TAG = TAG
-							)
-							
-							game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
-							
-							game.wait(3.0)
+							game.wait(1.0)
 						}
 					}
-				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "exit") {
-					game.printToLog("[COMBAT] Leaving this Raid without retreating.", MESSAGE_TAG = TAG)
 					
-					game.goBackHome(confirmLocationCheck = true)
-					return false
+					// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
+					if (game.farmingMode != "Quest" && game.farmingMode != "Special") {
+						game.findAndClickButton("reload")
+					}
+					
+					waitForAttack()
+					
+					game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
+					
+					turnNumber += 1
+					
+					if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+						game.wait(3.0)
+					}
 				}
 			}
 		}
 		
-		// When the bot arrives here, that means it has either processed all the commands inside the combat script, the Party retreated, or
-		// Full Auto or Semi Auto was turned on.
-		game.printToLog(
-			"[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.",
-			MESSAGE_TAG = TAG
-		)
+		// When the bot arrives here, all the commands in the combat script has been processed.
+		game.printToLog("[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.", MESSAGE_TAG = TAG)
+		
+		// Until the bot reaches the Quest Results screen, keep pressing the "Attack" and "Next" buttons if not Semi Auto or Full Auto.
+		while (!retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
+			!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
+			// Clear any detected dialog popups that might obstruct the "Attack" button.
+			findCombatDialog()
+			
+			// Tap the "Attack" button once every command inside the Turn Block has been processed.
+			game.printToLog("[COMBAT] Ending Turn $turnNumber")
+			game.findAndClickButton("attack", tries = 10)
+			
+			// Wait until the "Cancel" button vanishes from the screen.
+			if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
+				while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
+					if (debugMode) {
+						game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", MESSAGE_TAG = TAG)
+					}
+					
+					game.wait(1.0)
+				}
+			}
+			
+			// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
+			if (game.farmingMode != "Quest" && game.farmingMode != "Special") {
+				game.findAndClickButton("reload")
+			}
+			
+			waitForAttack()
+			
+			game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
+			
+			turnNumber += 1
+			
+			if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+				game.wait(3.0)
+			}
+		}
 		
 		// Double check to see if Semi Auto is turned on. Note that the "Semi Auto" button only appears while the Party is attacking.
-		if (!retreatCheckFlag && semiAutoCheckFlag) {
+		if (!retreatCheckFlag && semiAutoCheckFlag && !fullAutoCheckFlag) {
 			game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", MESSAGE_TAG = TAG)
 			
-			var enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
+			val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
 			if (enabledSemiAutoButtonLocation == null) {
 				// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
 				game.findAndClickButton("attack")
 				
 				game.wait(2.0)
 				
-				enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto")
+				semiAutoCheckFlag = game.findAndClickButton("semi_auto", tries = 5)
 				
-				// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the
-				// screen instead.
-				if (enabledSemiAutoButtonLocation == null) {
+				// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the screen instead.
+				if (!semiAutoCheckFlag) {
 					game.printToLog("[COMBAT] Failed to enable Semi Auto. Falling back to Full Auto.", MESSAGE_TAG = TAG)
-					semiAutoCheckFlag = false
 					fullAutoCheckFlag = true
 					
 					// Enable Full Auto.
 					game.findAndClickButton("full_auto")
 				} else {
-					game.gestureUtils.tap(enabledSemiAutoButtonLocation.x, enabledSemiAutoButtonLocation.y, "semi_auto")
-					
 					game.printToLog("[COMBAT] Semi Auto is now enabled.", MESSAGE_TAG = TAG)
 				}
-			} else {
-				game.gestureUtils.tap(enabledSemiAutoButtonLocation.x, enabledSemiAutoButtonLocation.y, "semi_auto")
-				game.printToLog("[COMBAT] Semi Auto is now enabled.", MESSAGE_TAG = TAG)
 			}
 		}
 		
-		// Primary loop workflow for Semi Auto / Full Auto.
-		while (!retreatCheckFlag && (semiAutoCheckFlag || fullAutoCheckFlag) && !game.imageUtils.confirmLocation(
-				"exp_gained", tries = 1,
-				suppressError = true
-			) && !game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)
-		) {
+		// Primary loop workflow for Semi Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
+		while (!retreatCheckFlag && !fullAutoCheckFlag && semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
+			!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
 			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
 				game.printToLog("[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
 				game.findAndClickButton("ok")
@@ -833,41 +793,20 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			}
 			
 			partyWipeCheck()
-			
-			game.wait(3.0)
+			game.wait(1.0)
 		}
 		
-		// Until the bot reaches the Quest Results screen, keep pressing the "Attack" and "Next" buttons if not Semi Auto or Full Auto.
-		while (!retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag && !game.imageUtils.confirmLocation(
-				"exp_gained", tries = 1,
-				suppressError = true
-			) && !game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)
-		) {
-			findCombatDialog()
-			
-			val tempAttackButtonLocation = game.imageUtils.findButton("attack", tries = 1, suppressError = true)
-			if (tempAttackButtonLocation != null) {
-				game.printToLog("[COMBAT] Starting Turn $turnNumber.", MESSAGE_TAG = TAG)
-				game.printToLog("[COMBAT] Ending Turn $turnNumber by attacking now.", MESSAGE_TAG = TAG)
-				
-				val chargeAttacks = findChargeAttacks()
-				game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y, "attack")
-				
-				game.wait(3.0 + chargeAttacks)
-				
-				waitForAttack()
-				
-				game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
-				
-				partyWipeCheck()
-				turnNumber += 1
+		// Primary loop workflow for Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
+		while (!retreatCheckFlag && fullAutoCheckFlag && !semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
+			!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
+			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
+				game.printToLog("[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
+				game.findAndClickButton("ok")
+				break
 			}
 			
-			val nextButtonLocation = game.imageUtils.findButton("next", tries = 1, suppressError = true)
-			if (nextButtonLocation != null) {
-				game.gestureUtils.tap(nextButtonLocation.x, nextButtonLocation.y, "next")
-				game.wait(3.0)
-			}
+			partyWipeCheck()
+			game.wait(1.0)
 		}
 		
 		game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
