@@ -508,14 +508,15 @@ class ImageUtils(context: Context, private val game: Game) {
 	 *
 	 * @param templateName File name of the template image.
 	 * @param timeout Amount of time to wait before timing out. Default is 5 seconds.
+	 * @param suppressError Whether or not to suppress saving error messages to the log.
 	 * @return True if the specified image vanished from the screen. False otherwise.
 	 */
-	fun waitVanish(templateName: String, timeout: Int = 5): Boolean {
+	fun waitVanish(templateName: String, timeout: Int = 5, suppressError: Boolean = false): Boolean {
 		var remaining = timeout
-		if (findButton(templateName, tries = 1) == null) {
+		if (findButton(templateName, tries = 1, suppressError = suppressError) == null) {
 			return true
 		} else {
-			while (findButton(templateName, tries = 1) == null) {
+			while (findButton(templateName, tries = 1, suppressError = suppressError) == null) {
 				game.wait(1.0)
 				remaining -= 1
 				if (remaining <= 0) {
