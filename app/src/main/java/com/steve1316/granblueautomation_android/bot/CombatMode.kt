@@ -9,14 +9,23 @@ import java.util.*
 class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
 	private val TAG: String = "GAA_CombatMode"
 	
+	private var healingItemCommands = listOf(
+		"usegreenpotion.target(1)",
+		"usegreenpotion.target(2)",
+		"usegreenpotion.target(3)",
+		"usegreenpotion.target(4)",
+		"usebluepotion",
+		"usefullelixir",
+		"usesupportpotion",
+		"useclarityherb.target(1)",
+		"useclarityherb.target(2)",
+		"useclarityherb.target(3)",
+		"useclarityherb.target(4)",
+		"userevivalpotion"
+	)
+	
 	private var retreatCheckFlag = false
 	private var attackButtonLocation: Point? = null
-	
-	private var healingItemCommands = listOf(
-		"usegreenpotion.target(1)", "usegreenpotion.target(2)", "usegreenpotion.target(3)",
-		"usegreenpotion.target(4)", "usebluepotion", "usefullelixir", "usesupportpotion", "useclarityherb.target(1)", "useclarityherb.target(2)",
-		"useclarityherb.target(3)", "useclarityherb.target(4)", "userevivalpotion"
-	)
 	
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
@@ -112,9 +121,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		healingItemCommandList.drop(1)
 		
 		// Parse the target if the user is using a Green Potion or a Clarity Herb.
-		if ((healingItemCommand == "usegreenpotion" || healingItemCommand == "useclarityherb") && healingItemCommandList[0]
-				.contains("target")
-		) {
+		if ((healingItemCommand == "usegreenpotion" || healingItemCommand == "useclarityherb") && healingItemCommandList[0].contains("target")) {
 			when (healingItemCommandList[0]) {
 				"target(1)" -> {
 					target = 1
@@ -169,7 +176,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					game.printToLog("[COMBAT] Using Support Potion on the whole Party.", MESSAGE_TAG = TAG)
 					game.findAndClickButton("ok")
 				}
-				"useclaritypotion" -> {
+				"useclarityherb" -> {
 					game.printToLog("[COMBAT] Using Clarity Herb on Character $target.", MESSAGE_TAG = TAG)
 					selectCharacter(target)
 				}
@@ -444,8 +451,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		var tries = 10
 		
 		while ((!retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null) ||
-			(!retreatCheckFlag && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null)
-		) {
+			(!retreatCheckFlag && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null)) {
 			// Stagger the checks for dialog popups during Combat Mode.
 			if (tries % 2 == 0) {
 				findCombatDialog()
@@ -454,11 +460,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			game.wait(1.0)
 			
 			tries -= 1
-			if (tries <= 0 || game.imageUtils.findButton("attack", tries = 1, suppressError = true) != null || game.imageUtils.findButton(
-					"next",
-					tries = 1, suppressError = true
-				) != null
-			) {
+			if (tries <= 0 || game.imageUtils.findButton("attack", tries = 1, suppressError = true) != null ||
+				game.imageUtils.findButton("next", tries = 1, suppressError = true) != null) {
 				break
 			}
 			
