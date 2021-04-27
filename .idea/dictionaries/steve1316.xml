@@ -2,16 +2,39 @@
   <dictionary name="steve1316">
     <words>
       <w>accessibilityservice</w>
+      <w>agastia</w>
+      <w>amalthea</w>
+      <w>baihu</w>
+      <w>cocytus</w>
       <w>cooldown</w>
+      <w>corow</w>
+      <w>diablo</w>
       <w>drawboxes</w>
+      <w>dustup</w>
       <w>enablefullauto</w>
       <w>enablesemiauto</w>
+      <w>erste</w>
       <w>gaa</w>
       <w>gameplay</w>
+      <w>golonzo</w>
       <w>granblue</w>
       <w>granblueautomation</w>
+      <w>granbluefantasy</w>
+      <w>hoplite</w>
+      <w>ifrit</w>
+      <w>lignoid</w>
+      <w>lumacie</w>
       <w>lyria</w>
+      <w>manah</w>
+      <w>mephorash</w>
+      <w>minifying</w>
+      <w>phantagrande</w>
+      <w>qinglong</w>
       <w>requestbackup</w>
+      <w>rotb</w>
+      <w>skydom</w>
+      <w>skyscope</w>
+      <w>textbox</w>
       <w>tweetbackup</w>
       <w>usebluepotion</w>
       <w>useclarityherb</w>
@@ -20,7 +43,12 @@
       <w>userevivalpotion</w>
       <w>useskill</w>
       <w>usesupportpotion</w>
+      <w>valtz</w>
+      <w>vohu</w>
       <w>vyrn</w>
+      <w>xuanwu</w>
+      <w>zhuque</w>
+      <w>zinkenstill</w>
     </words>
   </dictionary>
 </component>
