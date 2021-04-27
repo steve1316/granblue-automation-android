@@ -26,11 +26,18 @@ class Game(private val myContext: Context) {
 	private val combatMode: CombatMode = CombatMode(this)
 	
 	private val startTime: Long = System.currentTimeMillis()
-	private var messageLog: ArrayList<String> = arrayListOf()
+	
+	private var enableDelayBetweenRuns: Boolean = false
+	private var delayBetweenRuns: Int = 1
+	private var enableRandomizedDelayBetweenRuns: Boolean = false
+	private var randomizedDelayBetweenRuns: Int = 1
+	
+	private var debugMode: Boolean = false
 	
 	var farmingMode: String = ""
 	private var mapName: String = ""
 	private var missionName: String = ""
+	private var difficulty: String = ""
 	private var itemName: String = ""
 	private var itemAmount: Int = 0
 	private var itemAmountFarmed: Int = 0
@@ -209,6 +216,43 @@ class Game(private val myContext: Context) {
 		} else {
 			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
 		}
+	}
+	
+	/**
+	 * Execute a delay after every run completed based on user settings from config.yaml.
+	 */
+	private fun delayBetweenRuns() {
+		if (enableDelayBetweenRuns) {
+			// Check if the provided delay is valid.
+			if (delayBetweenRuns < 0) {
+				printToLog("\n[INFO] Provided delay in seconds for the resting period is not valid. Defaulting to 15 seconds.")
+				delayBetweenRuns = 15
+			}
+			
+			printToLog("\n[INFO] Now waiting for $delayBetweenRuns seconds as the resting period. Please do not navigate from the current screen.")
+			
+			wait(delayBetweenRuns.toDouble())
+		} else if (!enableDelayBetweenRuns && enableRandomizedDelayBetweenRuns) {
+			// Check if the lower and upper bounds are valid.
+			if (delayBetweenRuns < 0 || delayBetweenRuns > randomizedDelayBetweenRuns) {
+				printToLog("\n[INFO] Provided lower bound delay in seconds for the resting period is not valid. Defaulting to 15 seconds.")
+				delayBetweenRuns = 15
+			}
+			
+			if (randomizedDelayBetweenRuns < 0 || randomizedDelayBetweenRuns < delayBetweenRuns) {
+				printToLog("\n[INFO] Provided upper bound delay in seconds for the resting period is not valid. Defaulting to 60 seconds.")
+				randomizedDelayBetweenRuns = 60
+			}
+			
+			val newSeconds = Random().nextInt(randomizedDelayBetweenRuns - delayBetweenRuns) + delayBetweenRuns
+			printToLog(
+				"\n[INFO] Given the bounds of ($delayBetweenRuns, $randomizedDelayBetweenRuns), bot will now wait for $newSeconds seconds as a resting period. Please do not navigate from the " +
+						"current screen.")
+			
+			wait(newSeconds.toDouble())
+		}
+		
+		printToLog("\n[INFO] Resting period complete.")
 	}
 	
 	/**
