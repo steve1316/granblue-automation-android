@@ -36,7 +36,31 @@ class Game(private val myContext: Context) {
 	private var enableRandomizedDelayBetweenRuns: Boolean = false
 	private var randomizedDelayBetweenRuns: Int = 1
 	
-	private var debugMode: Boolean = false
+	private var enableDimensionalHalo: Boolean = false
+	private var dimensionalHaloCombatScript: String = ""
+	private var dimensionalHaloSummonList: List<String> = listOf()
+	private var dimensionalHaloGroupNumber: Int = 0
+	private var dimensionalHaloPartyNumber: Int = 0
+	
+	private var enableEventNightmare: Boolean = false
+	private var eventNightmareCombatScript: String = ""
+	private var eventNightmareSummonList: List<String> = listOf()
+	private var eventNightmareGroupNumber: Int = 0
+	private var eventNightmarePartyNumber: Int = 0
+	
+	private var enableROTBExtremePlus: Boolean = false
+	private var rotbExtremePlusCombatScript: String = ""
+	private var rotbExtremePlusSummonList: List<String> = listOf()
+	private var rotbExtremePlusGroupNumber: Int = 0
+	private var rotbExtremePlusPartyNumber: Int = 0
+	
+	private var enableUnparalleledFoe: Boolean = false
+	private var enableUnparalleledFoeLevel95: Boolean = false
+	private var enableUnparalleledFoeLevel175: Boolean = false
+	private var unparalleledFoeCombatScript: String = ""
+	private var unparalleledFoeSummonList: List<String> = listOf()
+	private var unparalleledFoeGroupNumber: Int = 0
+	private var unparalleledFoePartyNumber: Int = 0
 	
 	var farmingMode: String = ""
 	private var mapName: String = ""
@@ -663,7 +687,14 @@ class Game(private val myContext: Context) {
 	}
 	
 	private fun advancedSetup() {
-	
+		if (farmingMode == "Special" && missionName == "VH Angel Halo" && enableDimensionalHalo && (itemName == "EXP" || itemName == "Angel Halo Weapons")) {
+			printToLog("\n[INFO] Initializing settings for Dimensional Halo...")
+			
+			if (dimensionalHaloCombatScript == "") {
+				printToLog("[INFO] Combat Script for Dimensional Halo will reuse the one for Farming Mode.")
+				// dimensionalHaloCombatScript = combatScript
+			}
+		}
 	}
 	
 	/**
