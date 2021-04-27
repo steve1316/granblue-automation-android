@@ -783,6 +783,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			}
 		}
 		
+		var sleepPreventionTimer = 0
+		
 		// Primary loop workflow for Semi Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
 		while (!retreatCheckFlag && !fullAutoCheckFlag && semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
 			!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
@@ -792,8 +794,17 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				break
 			}
 			
+			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
+			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 300 == 0) {
+				game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
+				game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
+				game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+			}
+			
 			partyWipeCheck()
 			game.wait(1.0)
+			
+			sleepPreventionTimer += 1
 		}
 		
 		// Primary loop workflow for Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
@@ -805,8 +816,17 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				break
 			}
 			
+			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
+			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 300 == 0) {
+				game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
+				game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
+				game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+			}
+			
 			partyWipeCheck()
 			game.wait(1.0)
+			
+			sleepPreventionTimer += 1
 		}
 		
 		game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
