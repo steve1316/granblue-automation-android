@@ -64,4 +64,40 @@
             app:title="Select Party"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
+
+    <PreferenceCategory app:title="Misc" app:key="miscTitle">
+        <CheckBoxPreference
+            app:key="debugModeCheckBox"
+            app:title="Enable Debug Mode"
+            app:summary="Allows debugging messages to be shown in the log to reveal diagnostic information and potential errors." />
+
+        <SwitchPreference
+            app:key="delayBetweenRunsSwitch"
+            app:title="Enable Singular Delay Between Runs"
+            app:summary="Allows a static delay in seconds after each completed run." />
+
+        <SwitchPreference
+            app:key="randomizedDelayBetweenRunsSwitch"
+            app:title="Enable randomized Delays Between Runs"
+            app:summary="Allows a randomized delay in seconds after each completed run using the provided lower and upper limits inclusive." />
+
+        <SeekBarPreference
+            android:enabled="false"
+            app:key="delayBetweenRunsSeekBar"
+            app:title="Set Delay Between Runs In Seconds"
+            app:min="1"
+            android:max="60"
+            app:defaultValue="1"
+            app:showSeekBarValue="true" />
+
+        <SeekBarPreference
+            app:isPreferenceVisible="false"
+            app:key="randomizedDelayBetweenRunsSeekBar"
+            app:title="Set Upper Limit Delay Between Runs In Seconds"
+            app:min="1"
+            android:max="60"
+            app:defaultValue="1"
+            app:showSeekBarValue="true" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

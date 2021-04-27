@@ -206,6 +206,66 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         commit()
                     }
                 }
+				"debugModeCheckBox" -> {
+					val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
+					sharedPreferences.edit {
+						putBoolean("debugMode", debugModeCheckBox.isChecked)
+						commit()
+					}
+				}
+				"delayBetweenRunsSwitch" -> {
+					val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
+					
+					// Disable the randomized delay between runs settings.
+					val randomizedDelayBetweenRunsSwitch: SwitchPreference = findPreference("randomizedDelayBetweenRunsSwitch")!!
+					randomizedDelayBetweenRunsSwitch.isChecked = false
+					val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
+					randomizedDelayBetweenRunsSeekBar.isVisible = false
+					
+					sharedPreferences.edit {
+						putBoolean("enableDelayBetweenRuns", delayBetweenRunsSwitch.isChecked)
+						putBoolean("enableRandomizedDelayBetweenRuns", false)
+						commit()
+					}
+				}
+				"randomizedDelayBetweenRunsSwitch" -> {
+					// Reveal the Randomized Delay Between Runs SeekBar and then constrain its minimum value to the current value of the singular Delay Between Runs SeekBar.
+					val randomizedDelayBetweenRunsSwitch: SwitchPreference = findPreference("randomizedDelayBetweenRunsSwitch")!!
+					val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
+					val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
+					randomizedDelayBetweenRunsSeekBar.isVisible = true
+					if (randomizedDelayBetweenRunsSeekBar.value < delayBetweenRunsSeekBar.value) {
+						// Makes sure that the value of the randomized SeekBar is not lower as it is the upper limit.
+						randomizedDelayBetweenRunsSeekBar.value = delayBetweenRunsSeekBar.value
+					}
+					randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
+					
+					// Disable the delay between runs settings.
+					val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
+					delayBetweenRunsSwitch.isChecked = false
+					
+					sharedPreferences.edit {
+						putBoolean("enableDelayBetweenRuns", false)
+						putBoolean("enableRandomizedDelayBetweenRuns", randomizedDelayBetweenRunsSwitch.isChecked)
+						commit()
+					}
+				}
+				"delayBetweenRunsSeekBar" -> {
+					val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
+					
+					sharedPreferences.edit {
+						putInt("delayBetweenRuns", delayBetweenRunsSeekBar.value.toString().toInt())
+						commit()
+					}
+				}
+				"randomizedDelayBetweenRunsSeekBar" -> {
+					val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
+					
+					sharedPreferences.edit {
+						putInt("randomizedDelayBetweenRuns", randomizedDelayBetweenRunsSeekBar.value.toString().toInt())
+						commit()
+					}
+				}
 			}
 		}
 	}
@@ -295,7 +355,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		// Get the SharedPreferences.
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 		
-		// Grab the preferences from the previous time the user used the app.
+		// Grab the saved preferences from the previous time the user used the app.
 		val farmingModePreferences = sharedPreferences.getString("farmingMode", "")
 		val missionPreferences = sharedPreferences.getString("missionName", "")
 		val itemPreferences = sharedPreferences.getString("itemName", "")
@@ -303,17 +363,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val summonPreferences = sharedPreferences.getString("summon", "")?.split("|")
 		val groupPreferences = sharedPreferences.getInt("groupNumber", 1)
 		val partyPreferences = sharedPreferences.getInt("partyNumber", 1)
+		val debugModePreferences = sharedPreferences.getBoolean("debugMode", false)
+		val enableDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
+		val enableRandomizedDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
+		val delayBetweenRunsPreferences = sharedPreferences.getInt("delayBetweenRuns", 1)
+		val randomizedDelayBetweenRunsPreferences = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		
-		// Get references to the Preferences.
+		// Get references to the Preference components.
 		val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
 		val missionPicker: ListPreference = findPreference("missionPicker")!!
 		val itemPicker: ListPreference = findPreference("itemPicker")!!
 		val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
 		val groupPicker: ListPreference = findPreference("groupPicker")!!
 		val partyPicker: ListPreference = findPreference("partyPicker")!!
+		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
+		val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
+		val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
+		val randomizedDelayBetweenRunsSwitch: SwitchPreference = findPreference("randomizedDelayBetweenRunsSwitch")!!
+		val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
 		
-		// Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones enabled to
-		// direct user's attention as they go through the settings down the page.
+		// Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones enabled to direct user's attention as they go through the settings
+		// down the page.
+		
 		if (farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
 			farmingModePicker.value = farmingModePreferences
 			
@@ -363,6 +434,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			partyPicker.value = "Party $partyPreferences"
 		}
 		
+		debugModeCheckBox.isChecked = debugModePreferences
+		
+		delayBetweenRunsSwitch.isChecked = enableDelayBetweenRunsPreferences
+		delayBetweenRunsSeekBar.value = delayBetweenRunsPreferences
+		
+		randomizedDelayBetweenRunsSwitch.isChecked = enableRandomizedDelayBetweenRunsPreferences
+		randomizedDelayBetweenRunsSeekBar.value = randomizedDelayBetweenRunsPreferences
+		randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
+		
 		// Save the Twitter API keys and tokens to SharedPreferences.
 		try {
 			val file = File(context?.getExternalFilesDir(null), "config.yaml")
@@ -391,7 +471,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			}
 		}
 		
-		Log.d(TAG, "Preferences created")
+		Log.d(TAG, "Preferences created successfully.")
 	}
 	
 	/**
