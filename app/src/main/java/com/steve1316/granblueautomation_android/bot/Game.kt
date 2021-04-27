@@ -96,9 +96,8 @@ class Game(private val myContext: Context) {
 	 * Go back to the Home screen by tapping the "Home" button.
 	 *
 	 * @param confirmLocationCheck Whether or not the bot should confirm that it has arrived at the Home screen.
-	 * @param displayInfoCheck Whether or not it should print display info into the log.
 	 */
-	fun goBackHome(confirmLocationCheck: Boolean = false, displayInfoCheck: Boolean = false) {
+	fun goBackHome(confirmLocationCheck: Boolean = false) {
 		if (!imageUtils.confirmLocation("home")) {
 			printToLog("[INFO] Moving back to the Home screen...")
 			findAndClickButton("home")
