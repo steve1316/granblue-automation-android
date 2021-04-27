@@ -8,6 +8,7 @@ import com.steve1316.granblueautomation_android.data.SummonData
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.ImageUtils
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
+import com.steve1316.granblueautomation_android.utils.MessageLog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
@@ -82,9 +83,13 @@ class Game(private val myContext: Context) {
 			Log.e(MESSAGE_TAG, message)
 		}
 		
-		messageLog.add(printTime() + " " + message)
-		
-		// TODO: Offer a way to save this into a text file.
+		// Remove the newline prefix if needed and place it where it should be.
+		if (message.startsWith("\n")) {
+			val newMessage = message.removePrefix("\n")
+			MessageLog.messageLog.add("\n" + printTime() + " " + newMessage)
+		} else {
+			MessageLog.messageLog.add(printTime() + " " + message)
+		}
 	}
 	
 	/**
