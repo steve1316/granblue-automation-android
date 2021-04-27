@@ -14,6 +14,7 @@ import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
 import com.steve1316.granblueautomation_android.bot.Game
+import com.steve1316.granblueautomation_android.utils.MessageLog
 import com.steve1316.granblueautomation_android.utils.NotificationUtils
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
@@ -88,13 +89,18 @@ class BotService : Service() {
 							
 							thread = thread {
 								try {
+									// Clear the Message Log.
+									MessageLog.messageLog.clear()
+									
 									game.startFarmingMode(myContext)
 								} catch (e: Exception) {
 									game.printToLog("Application encountered Exception: ${e.printStackTrace()}", MESSAGE_TAG = TAG, isError = true)
+									MessageLog.saveLogToFile(myContext)
 								}
 							}
 						} else {
 							thread.interrupt()
+							MessageLog.saveLogToFile(myContext)
 							
 							Log.d(TAG, "Bot Service for GAA is now stopped.")
 							Toast.makeText(myContext, "Bot Service for GAA is now stopped.", Toast.LENGTH_SHORT).show()
