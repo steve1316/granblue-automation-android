@@ -20,11 +20,14 @@ import java.util.concurrent.TimeUnit
  */
 class Game(private val myContext: Context) {
 	private val TAG: String = "GAA_Game"
+	
+	private var debugMode: Boolean = SettingsFragment.getBooleanSharedPreference(myContext, "debugMode")
+	
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	private var twitterRoomFinder: TwitterRoomFinder? = null
 	private lateinit var mapSelection: MapSelection
-	private val combatMode: CombatMode = CombatMode(this)
+	private val combatMode: CombatMode = CombatMode(this, debugMode)
 	
 	private val startTime: Long = System.currentTimeMillis()
 	
@@ -671,8 +674,6 @@ class Game(private val myContext: Context) {
 	 */
 	fun startFarmingMode(context: Context): Boolean {
 		// Grab all necessary information from SharedPreferences.
-		
-		debugMode = SettingsFragment.getBooleanSharedPreference(context, "debugMode")
 		
 		enableDelayBetweenRuns = SettingsFragment.getBooleanSharedPreference(context, "enableDelayBetweenRuns")
 		delayBetweenRuns = SettingsFragment.getIntSharedPreference(context, "delayBetweenRuns")
