@@ -68,6 +68,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 			return sharedPreferences.getInt(key, 1)
 		}
+		
+		/**
+		 * Get a Boolean value from the SharedPreferences using the provided key.
+		 *
+		 * @param context The context for the application.
+		 * @param key The name of the preference to retrieve.
+		 * @return The value that is associated with the key.
+		 */
+		fun getBooleanSharedPreference(context: Context, key: String): Boolean {
+			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+			return sharedPreferences.getBoolean(key, false)
+		}
 	}
 	
 	// This listener is triggered whenever the user changes a Preference setting in the Settings Page.
