@@ -585,7 +585,7 @@ class Game(private val myContext: Context) {
 	/**
 	 * Detect any popups and attempt to close them all with the final destination being the Summon Selection screen.
 	 */
-	fun checkForPopups() {
+	private fun checkForPopups() {
 		while (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
 			// Break out of the loop if the bot detected the "Not Enough AP" popup.
 			if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
