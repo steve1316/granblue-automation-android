@@ -203,6 +203,12 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		return false
 	}
 	
+	/**
+	 * Navigates the bot to the specified Quest mission.
+	 *
+	 * @param mapName Name of the Map to look for the specified Mission.
+	 * @param missionName Name of the Mission to farm.
+	 */
 	private fun navigateToQuest(mapName: String, missionName: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -339,6 +345,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	/**
+	 * Navigates the bot to the specified Special mission.
+	 *
+	 * @param mapName Name of the Map to look for the specified Mission.
+	 * @param missionName Name of the Mission to farm.
+	 * @param difficulty Difficulty of the specified Mission.
+	 */
 	private fun navigateToSpecial(mapName: String, missionName: String, difficulty: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -523,6 +536,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	/**
+	 * Navigates the bot to the specified Coop mission.
+	 *
+	 * @param missionName Name of the Mission to farm.
+	 */
 	private fun navigateToCoop(missionName: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -660,6 +678,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	/**
+	 * Navigates the bot to the specified Event or Event (Token Drawboxes) mission.
+	 *
+	 * @param farmingMode The specified Farming Mode, Event or Event (Token Drawboxes).
+	 * @param missionName Name of the Mission to farm.
+	 * @param difficulty Difficulty of the specified Mission.
+	 */
 	private fun navigateToEvent(farmingMode: String, missionName: String, difficulty: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -786,6 +811,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	/**
+	 * Navigates the bot to the specified Dread Barrage mission.
+	 *
+	 * @param difficulty Difficulty of the specified Mission.
+	 */
 	private fun navigateToDreadBarrage(difficulty: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -852,6 +882,12 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	/**
+	 * Navigates the bot to the specified Rise of the Beasts mission.
+	 *
+	 * @param missionName Name of the Mission to farm.
+	 * @param difficulty Difficulty of the specified Mission.
+	 */
 	private fun navigateToROTB(missionName: String, difficulty: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -950,6 +986,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	/**
+	 * Navigates the bot to the specified Guild Wars mission.
+	 *
+	 * @param difficulty Difficulty of the specified Mission.
+	 */
 	private fun navigateToGuildWars(difficulty: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -1058,6 +1099,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	/**
+	 * Navigates the bot to the specified Proving Grounds mission.
+	 *
+	 * @param difficulty Difficulty of the specified Mission.
+	 */
 	private fun navigateToProvingGrounds(difficulty: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
