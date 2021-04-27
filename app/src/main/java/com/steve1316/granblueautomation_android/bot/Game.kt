@@ -582,6 +582,47 @@ class Game(private val myContext: Context) {
 	}
 	
 	/**
+	 * Detect any popups and attempt to close them all with the final destination being the Summon Selection screen.
+	 */
+	fun checkForPopups() {
+		while (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+			// Break out of the loop if the bot detected the "Not Enough AP" popup.
+			if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+				break
+			}
+			
+			if (farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("proud_solo_quest", tries = 1)) {
+				// Scroll down the screen a little bit because the popup itself is too long.
+				gestureUtils.scroll()
+			}
+			
+			// Check for certain popups for certain Farming Modes.
+			if ((farmingMode == "Rise of the Beasts" && checkROTBExtremePlus()) ||
+				(farmingMode == "Special" && missionName == "VH Angel Halo" && itemName == "Angel Halo Weapons" && checkDimensionalHalo()) ||
+				(farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare()) {
+				// Make sure the bot goes back to the Home screen so that the "Play Again" functionality comes back.
+				mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+				break
+			}
+			
+			// If the bot tried to repeat a Extreme/Impossible difficulty Event Raid and it lacked the treasures to host it, go back to the Mission again.
+			if ((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
+				findAndClickButton("ok")
+				delayBetweenRuns()
+				mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+				break
+			}
+			
+			// Attempt to close the popup by clicking on any detected "Close" and "Cancel" buttons.
+			if (!findAndClickButton("close", tries = 1, suppressError = true)) {
+				findAndClickButton("cancel", tries = 1, suppressError = true)
+			}
+			
+			wait(1.0)
+		}
+	}
+	
+	/**
 	 * Detects any "Friend Request" popups and close them.
 	 */
 	fun checkFriendRequest() {
