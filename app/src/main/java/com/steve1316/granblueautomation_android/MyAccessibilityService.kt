@@ -78,13 +78,11 @@ class MyAccessibilityService : AccessibilityService() {
 	}
 	
 	/**
-	 * Wait the specified seconds to account for ping or loading.
-	 *
-	 * @param seconds Number of seconds to pause execution.
+	 * This receiver will wait the specified seconds to account for ping or loading.
 	 */
-	private fun wait(seconds: Double) {
+	private fun Double.wait() {
 		runBlocking {
-			delay((seconds * 1000).toLong())
+			delay((this@wait * 1000).toLong())
 		}
 	}
 	
@@ -154,18 +152,8 @@ class MyAccessibilityService : AccessibilityService() {
 		
 		val dispatchResult = dispatchGesture(gesture, null, null)
 		if (!ignoreWait) {
-			wait(0.5)
+			0.5.wait()
 		}
-
-//        if(dispatchResult) {
-//            if(longPress) {
-//                Log.d(TAG, "Long pressing x: $x, y: $y")
-//            } else {
-//                Log.d(TAG, "Tapping x: $x, y: $y")
-//            }
-//        } else {
-//            Log.e(TAG, "Failed to dispatch gesture")
-//        }
 		
 		return dispatchResult
 	}
@@ -178,10 +166,7 @@ class MyAccessibilityService : AccessibilityService() {
 	 * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
 	 * @return True if the scroll gesture was executed successfully. False otherwise.
 	 */
-	fun scroll(
-		action: AccessibilityNodeInfo.AccessibilityAction = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN, duration: Long
-		= 500L, ignoreWait: Boolean = false
-	): Boolean {
+	fun scroll(action: AccessibilityNodeInfo.AccessibilityAction = AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN, duration: Long = 500L, ignoreWait: Boolean = false): Boolean {
 		val scrollPath = Path()
 		
 		// Get certain portions of the screen's dimensions.
@@ -216,7 +201,7 @@ class MyAccessibilityService : AccessibilityService() {
 		
 		val dispatchResult = dispatchGesture(gesture, null, null)
 		if (!ignoreWait) {
-			wait(0.5)
+			0.5.wait()
 		}
 		
 		if (!dispatchResult) {
@@ -250,14 +235,8 @@ class MyAccessibilityService : AccessibilityService() {
 		
 		val dispatchResult = dispatchGesture(gesture, null, null)
 		if (!ignoreWait) {
-			wait(0.5)
+			0.5.wait()
 		}
-
-//        if(dispatchResult) {
-//            Log.d(TAG, "Swiping from ($oldX, $oldY) to ($newX, $newY).")
-//        } else {
-//            Log.e(TAG, "Failed to dispatch swipe gesture.")
-//        }
 		
 		return dispatchResult
 	}
