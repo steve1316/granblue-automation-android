@@ -6,8 +6,6 @@ package com.steve1316.granblueautomation_android.data
 data class ConfigData(
 	val twitter: TwitterData,
 	val refill: RefillData,
-	val delayBetweenRuns: DelayBetweenRunsData,
-	val idleAfterAction: IdleAfterActionData,
 	val dimensionalHalo: DimensionalHaloData,
 	val event: EventNightmareData,
 	val rotb: RiseOfTheBeastsData,
@@ -23,22 +21,6 @@ data class TwitterData(val apiKey: String, val apiKeySecret: String, val accessT
  * Determine whether or not the user wants to use Full Elixir/Soul Balm to refill.
  */
 data class RefillData(val fullElixir: Boolean = false, val soulBalm: Boolean = false)
-
-/**
- * Enable delays after every successful run.
- */
-data class DelayBetweenRunsData(
-	val enableDelayBetweenRuns: Boolean = false,
-	val delayInSeconds: Int = 15,
-	val enableRandomizedDelayBetweenRuns: Boolean = false,
-	val delayInSecondsLowerBound: Int = 15,
-	val delayInSecondsUpperBound: Int = 60
-)
-
-/**
- * Enable delays after every Skill or Summon action.
- */
-data class IdleAfterActionData(val idleAfterSkillInSeconds: Int = 4, val idleAfterSummonInSeconds: Int = 7)
 
 /**
  * Settings needed to do Dimensional Halo.

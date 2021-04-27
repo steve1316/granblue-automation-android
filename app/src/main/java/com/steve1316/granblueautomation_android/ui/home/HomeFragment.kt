@@ -78,27 +78,6 @@ class HomeFragment : Fragment() {
 					"  \"soulBalm\": false\n" +
 					"\n" +
 					"########################################\n" +
-					"# Enable delay in seconds between runs to serve as a resting period.\n" +
-					"# Note: If both enableDelayBetweenRuns and enableRandomizedDelayBetweenRuns is turned on, only enableDelayBetweenRuns will be used.\n" +
-					"########################################\n" +
-					"\"delayBetweenRuns\":\n" +
-					"  \"enableDelayBetweenRuns\": false\n" +
-					"  \"delayInSeconds\": 15 # Default is 15 seconds.\n" +
-					"  \"enableRandomizedDelayBetweenRuns\": false\n" +
-					"  \"delayInSecondsLowerBound\": 15 # Default is 15 seconds.\n" +
-					"  \"delayInSecondsUpperBound\": 60 # Default is 60 seconds.\n" +
-					"\n" +
-					"########################################\n" +
-					"# Adjust the delay after performing the following actions as the bot is processing your combat script.\n" +
-					"# The following timings are optimized at an average ping of around 120ms. You can find out your ping to the Granblue Fantasy servers by typing in your terminal on a computer:\n" +
-					"# ping game.granbluefantasy.jp\n" +
-					"# You do not need to worry about changing the idle time after attacking as the bot now waits until a new Turn begins before continuing.\n" +
-					"########################################\n" +
-					"\"idleAfterAction\":\n" +
-					"  \"idleAfterSkillInSeconds\": 4 # Default is 4 seconds.\n" +
-					"  \"idleAfterSummonInSeconds\": 7 # Default is 7 seconds.\n" +
-					"\n" +
-					"########################################\n" +
 					"# Settings for Dimensional Halo.\n" +
 					"########################################\n" +
 					"\"dimensionalHalo\":\n" +
