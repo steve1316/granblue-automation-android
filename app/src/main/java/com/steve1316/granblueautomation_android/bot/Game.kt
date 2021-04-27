@@ -543,7 +543,17 @@ class Game(private val myContext: Context) {
 			}
 			
 			itemAmountFarmed += amountGained
-			amountOfRuns += 1
+			
+			// Only increment number of runs for Proving Grounds when the bot acquires the Completion Rewards.
+			// Currently for Proving Grounds, completing 2 battles per difficulty nets you the Completion Rewards.
+			if (farmingMode == "Proving Grounds") {
+				if (itemAmountFarmed != 0 && itemAmountFarmed % 2 == 0) {
+					itemAmountFarmed = 0
+					amountOfRuns += 1
+				}
+			} else {
+				amountOfRuns += 1
+			}
 		}
 		
 		if (!isPendingBattle && !isEventNightmare) {
