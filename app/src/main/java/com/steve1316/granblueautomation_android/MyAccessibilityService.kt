@@ -109,8 +109,8 @@ class MyAccessibilityService : AccessibilityService() {
 		var newY: Int
 		
 		while (true) {
-			val newWidth: Int = (20..(width - 20)).random()
-			val newHeight: Int = (20..(height - 20)).random()
+			val newWidth: Int = ((width * 0.2).toInt()..(width * 0.8).toInt()).random()
+			val newHeight: Int = ((height * 0.2).toInt()..(height * 0.8).toInt()).random()
 			
 			newX = x0 + newWidth
 			newY = y0 + newHeight
