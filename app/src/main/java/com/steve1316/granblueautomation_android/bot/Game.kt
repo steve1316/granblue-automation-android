@@ -50,6 +50,7 @@ class Game(private val myContext: Context) {
 	private var partyNumber: Int = 0
 	
 	private var coopFirstRun: Boolean = true
+	private var provingGroundsFirstRun: Boolean = true
 	
 	/**
 	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
@@ -789,7 +790,7 @@ class Game(private val myContext: Context) {
 		}
 		
 		val eventQuests = arrayListOf("N Event Quest", "H Event Quest", "VH Event Quest", "EX Event Quest")
-		var startCheckFlag: Boolean
+		var startCheckFlag = false
 		var summonCheckFlag: Boolean
 		
 		printToLog("\n[INFO] Now selecting the Mission...")
@@ -810,32 +811,36 @@ class Game(private val myContext: Context) {
 				summonCheckFlag = selectSummon()
 				
 				// If the return came back as false, that means the Summons were reset.
-				if (!summonCheckFlag) {
-					if (farmingMode != "Raid") {
-						printToLog("[INFO] Selecting Mission again after resetting Summons.")
-						mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-					} else {
-						printToLog("[INFO] Joining Raids again after resetting Summons.")
-						mapSelection.joinRaid(missionName)
-					}
+				if (!summonCheckFlag && farmingMode != "Raid") {
+					printToLog("\n[INFO] Selecting Mission again after resetting Summons.")
+					mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+				} else if (!summonCheckFlag && farmingMode == "Raid") {
+					printToLog("\n[INFO] Joining Raids again after resetting Summons.")
+					mapSelection.joinRaid(missionName)
 				}
 			}
 			
-			// Perform Party Selection and then start the Mission. Do not perform Party Selection for Coop after the initial setup as starting the
-			// Coop Mission again reuses the same Party.
-			if (farmingMode != "Coop") {
+			// Perform Party Selection and then start the Mission. If Farming Mode is Coop, skip this as Coop reuses the same Party.
+			if (farmingMode != "Coop" && farmingMode != "Proving Grounds") {
 				startCheckFlag = selectPartyAndStartMission()
-			} else {
-				if (coopFirstRun) {
-					startCheckFlag = selectPartyAndStartMission()
-					coopFirstRun = false
-					
-					// Click the "Start" button to start the Coop Mission.
-					findAndClickButton("coop_start")
-				} else {
-					printToLog("\n[INFO] Starting Coop Mission.")
-					startCheckFlag = true
+			} else if (farmingMode == "Coop" && coopFirstRun) {
+				startCheckFlag = selectPartyAndStartMission()
+				coopFirstRun = false
+				
+				// Click the "Start" button to start the Coop Mission.
+				findAndClickButton("coop_start")
+			} else if (farmingMode == "Coop" && !coopFirstRun) {
+				printToLog("\n[INFO] Starting Coop Mission again.")
+				startCheckFlag = true
+			} else if (farmingMode == "Proving Grounds") {
+				// Parties are assumed to have already been formed by the player prior to starting. In addition, no need to select a Summon again as it is reused.
+				if (provingGroundsFirstRun) {
+					checkAP()
+					findAndClickButton("ok")
+					provingGroundsFirstRun = false
 				}
+				
+				startCheckFlag = true
 			}
 			
 			if (startCheckFlag && farmingMode != "Raid") {
@@ -843,27 +848,28 @@ class Game(private val myContext: Context) {
 				
 				// Check for "Items Picked Up" popup that appears after starting a Quest Mission.
 				if (farmingMode == "Quest" && imageUtils.confirmLocation("items_picked_up", tries = 1)) {
-					printToLog("[INFO] Detected \"Items Picked Up\" popup. Closing it now...")
 					findAndClickButton("ok")
 				}
 				
 				// Finally, start Combat Mode. If it ended successfully, detect loot and do it again if necessary.
 				if (combatMode.startCombatMode(combatScript)) {
+					// If it ended successfully, detect loot and repeat if acquired item amount has not been reached.
 					collectLoot()
 					
 					if (itemAmountFarmed < itemAmount) {
-						if (farmingMode != "Coop") {
-							if (!findAndClickButton("play_again")) {
-								// Clear away any Pending Battles.
-								mapSelection.checkPendingBattles(farmingMode)
-								
-								// Now that Pending Battles have been cleared away, select the Mission again.
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if (farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
-								// Select the Mission again if doing Event Quests since it does not have a "Play Again" button.
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							}
-						} else {
+						// Generate a resting period if the user enabled it.
+						delayBetweenRuns()
+						
+						if (farmingMode != "Coop" && farmingMode != "Proving Grounds" && !findAndClickButton("play_again")) {
+							// Clear away any Pending Battles.
+							mapSelection.checkPendingBattles(farmingMode)
+							
+							// Now that Pending Battles have been cleared away, select the Mission again.
+							mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+						} else if (farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
+							// Select the Mission again since Event Quests do not have "Play Again" functionality.
+							mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+						} else if (farmingMode == "Coop") {
 							// Head back to the Coop Room.
 							findAndClickButton("coop_room")
 							
@@ -878,7 +884,7 @@ class Game(private val myContext: Context) {
 							
 							// Now that the bot is back at the Coop Room, check if it is closed due to time running out.
 							if (imageUtils.confirmLocation("coop_room_closed", tries = 1)) {
-								printToLog("[INFO] Coop room has closed due to time running out.")
+								printToLog("\n[INFO] Coop room has closed due to time running out.")
 								break
 							}
 							
@@ -886,72 +892,61 @@ class Game(private val myContext: Context) {
 							findAndClickButton("coop_start")
 							
 							wait(1.0)
+						} else if (farmingMode == "Dread Barrage" && imageUtils.confirmLocation("dread_barrage_unparalleled_foes", tries = 1)) {
+							// Find the locations of the "AP 0" text underneath each Unparalleled Foe.
+							// val ap0Locations = imageUtils.findAll("ap_0")
 							
-							// Check for available AP.
-							checkAP()
+							// Start the Level 95 Unparalleled Foe.
+							
+							// Start the Level 175 Unparalleled Foe.
+							
+							// Close the popup if the user does not want to fight any of them.
+							
+							// Every other case will default to the Level 95 Unparalleled Foe.
+						} else if (farmingMode == "Proving Grounds") {
+							// Tap the "Next Battle" button if there are any battles left.
+							if (findAndClickButton("proving_grounds_next_battle", suppressError = true)) {
+								printToLog("\n[INFO] Moving onto the next battle for Proving Grounds...")
+								
+								// Then tap the "OK" button to play the next battle.
+								findAndClickButton("ok")
+							} else {
+								// Otherwise, all battles for the Mission has been completed. Collect the Completion Rewards at the end.
+								printToLog("\n[INFO] Proving Grounds Mission has been completed.")
+								findAndClickButton("event")
+								
+								wait(2.0)
+								
+								findAndClickButton("proving_grounds_open_chest", tries = 5)
+								
+								if (imageUtils.confirmLocation("proving_grounds_completion_loot")) {
+									printToLog("\n[INFO] Completion rewards has been acquired.")
+									
+									// Reset the First Time flag so the bot can select a Summon and select the Mission again.
+									if (itemAmountFarmed < itemAmount) {
+										printToLog("\\n[INFO] Starting Proving Grounds Mission again...")
+										provingGroundsFirstRun = true
+										findAndClickButton("play_again")
+									}
+								}
+							}
 						}
 						
-						// For every Farming Mode other than Coop, continuously close all popups until the bot reaches the Summon Selection screen.
-						while (farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
-							if (farmingMode == "Dread Barrage" && imageUtils.confirmLocation("dread_barrage_unparalleled_foe", tries = 1)) {
-								// Find all the locations of the "AP 0" texts underneath each Unparalleled Foe.
-								// val ap0Locations = imageUtils.findAll("ap_0")
-								
-								// Start the Unparalleled Foe that the user specified for in the Settings.
-								// TODO: Flesh out this section.
-							} else if (farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("proud_solo_quest", tries = 1)) {
-								// Scroll the screen down a little bit to see the "Close" button for the "Proud Solo Quest" popup for ROTB.
-								gestureUtils.swipe(500f, 1000f, 500f, 400f)
-							} else if (farmingMode == "Rise of the Beasts" && checkROTBExtremePlus()) {
-								// Make sure that the bot goes back to the Home screen when completing an Extreme+.
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if ((farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare()) {
-								// Make sure that the bot goes back to the Home screen when completing an Event Nightmare.
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if (farmingMode == "Event (Token Drawboxes)" && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
-								// Host a Very Hard Raid if the bot lacked the Treasures to host an Extreme/Impossible Raid.
-								printToLog("[INFO] Bot ran out of Treasures to host this Mission! Falling back to Very Hard Raid.")
-								findAndClickButton("ok")
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if (farmingMode == "Special" && itemName == "Angel Halo Weapons" && checkDimensionalHalo()) {
-								// Make sure that the bot goes back to the Home screen when completing an Dimensional Halo.
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else {
-								findAndClickButton("cancel", tries = 1, suppressError = true)
-								wait(1.0)
-								findAndClickButton("close", tries = 1, suppressError = true)
-							}
-							
-							wait(1.0)
-							
-							// If the bot tried to repeat a Extreme/Impossible/Nightmare difficulty Event Raid and it lacked the treasures to host
-							// it, go back to selectMap().
-							if ((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") and imageUtils.confirmLocation
-									("not_enough_treasure")
-							) {
-								findAndClickButton("ok")
-								
-								wait(1.0)
-								
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							}
-							
-							// Check for available AP.
+						// For every other Farming Mode other than Coop and Proving Grounds, handle all popups and perform AP check until the bot reaches the Summon Selection screen.
+						if (farmingMode != "Proving Grounds") {
+							checkForPopups()
 							checkAP()
-							
-							wait(1.0)
 						}
 					}
 				} else {
 					// Restart the Mission if the Party wiped or exited prematurely during Combat Mode.
-					printToLog("[INFO] Restarting the Mission due to retreating...")
+					printToLog("\n[INFO] Restarting the Mission due to retreating...")
 					mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 				}
 			} else if (startCheckFlag && farmingMode == "Raid") {
-				// Cover the occasional case where joining the Raid after selecting the Summon and Party led to the Quest Results screen with no
-				// loot to collect.
+				// Cover the occasional case where joining the Raid after selecting the Summon and Party led to the Quest Results screen with no loot to collect.
 				if (imageUtils.confirmLocation("no_loot", tries = 1)) {
-					printToLog("[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
+					printToLog("\n[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
 					goBackHome(confirmLocationCheck = true)
 				} else {
 					// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
@@ -959,19 +954,26 @@ class Game(private val myContext: Context) {
 						collectLoot()
 						
 						if (itemAmountFarmed < itemAmount) {
+							// Generate a resting period if the user enabled it.
+							delayBetweenRuns()
+							
 							// Clear away any Pending Battles.
 							mapSelection.checkPendingBattles(farmingMode)
 							
 							// Now join a new Raid.
 							mapSelection.joinRaid(missionName)
 						}
+					} else {
+						// Join a new Raid.
+						mapSelection.joinRaid(missionName)
 					}
 				}
 			} else if (!startCheckFlag && farmingMode == "Raid") {
-				// If the bot reaches here, that means that the Raid ended before the bot could start the Mission after selecting the Summon and
-				// Party.
-				printToLog("[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
+				// If the bot reaches here, that means that the Raid ended before the bot could start the Mission after selecting the Summon and Party.
+				printToLog("\n[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
 				mapSelection.joinRaid(missionName)
+			} else if (!startCheckFlag) {
+				throw Exception("Failed to arrive at the Summon Selection screen after selecting the Mission.")
 			}
 		}
 		
@@ -980,8 +982,6 @@ class Game(private val myContext: Context) {
 		printToLog("[INFO] Farming Mode has ended")
 		printToLog("********************************************************************************")
 		printToLog("********************************************************************************")
-		
-		// TODO: Update the bot's status to Not Running.
 		
 		return true
 	}
