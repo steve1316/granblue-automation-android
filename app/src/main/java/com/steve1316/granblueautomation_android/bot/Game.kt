@@ -617,6 +617,14 @@ class Game(private val myContext: Context) {
 	 */
 	fun startFarmingMode(context: Context): Boolean {
 		// Grab all necessary information from SharedPreferences.
+		
+		debugMode = SettingsFragment.getBooleanSharedPreference(context, "debugMode")
+		
+		enableDelayBetweenRuns = SettingsFragment.getBooleanSharedPreference(context, "enableDelayBetweenRuns")
+		delayBetweenRuns = SettingsFragment.getIntSharedPreference(context, "delayBetweenRuns")
+		enableRandomizedDelayBetweenRuns = SettingsFragment.getBooleanSharedPreference(context, "enableRandomizedDelayBetweenRuns")
+		randomizedDelayBetweenRuns = SettingsFragment.getIntSharedPreference(context, "randomizedDelayBetweenRuns")
+		
 		farmingMode = SettingsFragment.getStringSharedPreference(context, "farmingMode")
 		mapName = SettingsFragment.getStringSharedPreference(context, "mapName")
 		missionName = SettingsFragment.getStringSharedPreference(context, "missionName")
