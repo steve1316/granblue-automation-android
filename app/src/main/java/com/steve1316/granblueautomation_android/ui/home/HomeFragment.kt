@@ -20,6 +20,7 @@ import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
+import com.steve1316.granblueautomation_android.utils.MessageLog
 import java.io.File
 
 class HomeFragment : Fragment() {
@@ -211,6 +212,20 @@ class HomeFragment : Fragment() {
 		
 		// Setting this false here will ensure that stopping the MediaProjection Service outside of this application will update this button's text.
 		firstBoot = false
+		
+		// Now update the Message Log inside the ScrollView with the latest logging messages from the bot.
+		Log.d(TAG, "Now updating the Message Log TextView...")
+		val messageLogTextView = homeFragmentView.findViewById<TextView>(R.id.message_log)
+		messageLogTextView.text = ""
+		var index = 0
+		
+		// Get local copies of the message log.
+		val messageLog = MessageLog.messageLog
+		val messageLogSize = MessageLog.messageLog.size
+		while (index < messageLogSize) {
+			messageLogTextView.append("\n" + messageLog[index])
+			index += 1
+		}
 	}
 	
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
