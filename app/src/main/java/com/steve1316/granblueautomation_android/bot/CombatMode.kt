@@ -48,7 +48,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.wait(1.0)
 				game.findAndClickButton("retreat_confirmation")
 				retreatCheckFlag = true
-			} else if ((game.farmingMode == "Raid" || game.farmingMode == "Dread Barrage") && game.imageUtils.confirmLocation("salute_participants")) {
+			} else if ((game.farmingMode == "Raid" || game.farmingMode == "Dread Barrage")) {
 				game.printToLog("[WARNING] Party has wiped during Combat Mode. Backing out now without retreating...", MESSAGE_TAG = TAG)
 				
 				// Head back to the Home screen.
