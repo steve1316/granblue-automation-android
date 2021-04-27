@@ -63,10 +63,8 @@ class Game(private val myContext: Context) {
 		return String.format(
 			"%02d:%02d:%02d",
 			TimeUnit.MILLISECONDS.toHours(elapsedMillis),
-			TimeUnit.MILLISECONDS.toMinutes(elapsedMillis)
-					- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)),
-			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit
-				.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
+			TimeUnit.MILLISECONDS.toMinutes(elapsedMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)),
+			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
 		)
 	}
 	
@@ -103,12 +101,7 @@ class Game(private val myContext: Context) {
 			printToLog("[INFO] Bot is already at the Home screen.")
 		}
 		
-		if (displayInfoCheck) {
-			printToLog(
-				"Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, " +
-						"Screen DPI: ${MediaProjectionService.displayDPI}"
-			)
-		}
+		printToLog("\n[INFO] Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, Screen DPI: ${MediaProjectionService.displayDPI}")
 		
 		if (confirmLocationCheck) {
 			imageUtils.confirmLocation("home")
@@ -135,7 +128,10 @@ class Game(private val myContext: Context) {
 	 * @return True if the button was found and clicked. False otherwise.
 	 */
 	fun findAndClickButton(buttonName: String, tries: Int = 2, suppressError: Boolean = false): Boolean {
-		Log.d(TAG, "[DEBUG] Now attempting to find and click the ${buttonName.toUpperCase(Locale.ROOT)} button.")
+		if (debugMode) {
+			printToLog("[DEBUG] Now attempting to find and click the $buttonName button.")
+		}
+		
 		var tempLocation: Point?
 		var newButtonName = buttonName
 		
@@ -455,8 +451,7 @@ class Game(private val myContext: Context) {
 		var numberOfTries = tries
 		
 		while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) ||
-			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))
-		) {
+			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
 			if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 				if (!useFullElixir) {
 					printToLog("[INFO] AP ran out! Using Half Elixir...")
@@ -538,6 +533,7 @@ class Game(private val myContext: Context) {
 		
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
 		if (!isPendingBattle && !isEventNightmare) {
+			printToLog("\n[INFO] Detecting if any user-specified loot dropped this run...")
 			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
 				imageUtils.findFarmedItems(itemName)
 			} else {
@@ -550,7 +546,7 @@ class Game(private val myContext: Context) {
 		
 		if (!isPendingBattle && !isEventNightmare) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
-				printToLog("********************************************************************************")
+				printToLog("\n********************************************************************************")
 				printToLog("********************************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
 				printToLog("[INFO] Mission: $missionName")
@@ -561,7 +557,7 @@ class Game(private val myContext: Context) {
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
 			} else {
-				printToLog("********************************************************************************")
+				printToLog("\n********************************************************************************")
 				printToLog("********************************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
 				printToLog("[INFO] Mission: $missionName")
@@ -578,18 +574,8 @@ class Game(private val myContext: Context) {
 	 */
 	fun checkFriendRequest() {
 		if (imageUtils.confirmLocation("friend_request", tries = 1)) {
-			printToLog("[INFO] Detected \"Friend Request\" popup. Closing it now...")
 			findAndClickButton("cancel")
 		}
-	}
-	
-	/**
-	 * Checks for Extreme Plus during Rise of the Beasts and if it appeared and the user enabled it in settings, start it.
-	 *
-	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
-	 */
-	private fun checkROTBExtremePlus(): Boolean {
-		TODO("not yet implemented")
 	}
 	
 	/**
@@ -608,6 +594,19 @@ class Game(private val myContext: Context) {
 	 */
 	private fun checkDimensionalHalo(): Boolean {
 		TODO("not yet implemented")
+	}
+	
+	/**
+	 * Checks for Extreme Plus during Rise of the Beasts and if it appeared and the user enabled it in settings, start it.
+	 *
+	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
+	 */
+	private fun checkROTBExtremePlus(): Boolean {
+		TODO("not yet implemented")
+	}
+	
+	private fun advancedSetup() {
+	
 	}
 	
 	/**
@@ -636,14 +635,14 @@ class Game(private val myContext: Context) {
 		mapSelection = MapSelection(this, twitterRoomFinder)
 		
 		if (itemName != "EXP") {
-			printToLog("################################################################################")
+			printToLog("\n################################################################################")
 			printToLog("################################################################################")
 			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
 			printToLog("[FARM] Farming ${itemAmount}x $itemName at $missionName.")
 			printToLog("################################################################################")
 			printToLog("################################################################################")
 		} else {
-			printToLog("################################################################################")
+			printToLog("\n################################################################################")
 			printToLog("################################################################################")
 			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
 			printToLog("[FARM] Doing ${itemAmount}x runs for $itemName at $missionName.")
@@ -652,7 +651,6 @@ class Game(private val myContext: Context) {
 		}
 		
 		// Parse the difficulty for the chosen Mission.
-		var difficulty = ""
 		if (farmingMode == "Special" || farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)" || farmingMode == "Rise of the Beasts") {
 			when {
 				missionName.indexOf("N ") == 0 -> {
@@ -715,11 +713,12 @@ class Game(private val myContext: Context) {
 			}
 		}
 		
-		// TODO: Perform advanced settings setup for Dimensional Halo, Event Nightmare, ROTB Extreme+, and Dread Barrage Unparalleled Foes.
+		// Perform advanced setup for the special fights like Dimensional Halo, Event Nightmares, and Dread Barrage's Unparalleled Foes.
+		advancedSetup()
 		
 		// If the user did not select a combat script, use the default Full Auto combat script.
 		if (combatScript.isEmpty() || combatScript[0] == "") {
-			printToLog("[INFO] User did not provide their own combat script. Defaulting to Full Auto combat script.")
+			printToLog("\n[INFO] User did not provide their own combat script. Defaulting to Full Auto combat script.")
 			
 			combatScript = listOf(
 				"Turn 1:",
@@ -732,7 +731,7 @@ class Game(private val myContext: Context) {
 		var startCheckFlag: Boolean
 		var summonCheckFlag: Boolean
 		
-		printToLog("[INFO] Now selecting the Mission...")
+		printToLog("\n[INFO] Now selecting the Mission...")
 		
 		if (farmingMode != "Raid") {
 			mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
@@ -773,7 +772,7 @@ class Game(private val myContext: Context) {
 					// Click the "Start" button to start the Coop Mission.
 					findAndClickButton("coop_start")
 				} else {
-					printToLog("[INFO] Starting Coop Mission.")
+					printToLog("\n[INFO] Starting Coop Mission.")
 					startCheckFlag = true
 				}
 			}
@@ -915,7 +914,7 @@ class Game(private val myContext: Context) {
 			}
 		}
 		
-		printToLog("********************************************************************************")
+		printToLog("\n********************************************************************************")
 		printToLog("********************************************************************************")
 		printToLog("[INFO] Farming Mode has ended")
 		printToLog("********************************************************************************")
