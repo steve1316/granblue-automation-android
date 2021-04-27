@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.steve1316.granblueautomation_android.bot.Game
+import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -25,6 +26,8 @@ class ImageUtils(context: Context, private val game: Game) {
 	private val textRecognizer = TextRecognition.getClient()
 	
 	private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
+	
+	private var debugMode: Boolean = false
 	
 	companion object {
 		private var matchFilePath: String = ""
@@ -45,6 +48,9 @@ class ImageUtils(context: Context, private val game: Game) {
 		// Set the file path to the /files/temp/ folder.
 		val matchFilePath: String = myContext.getExternalFilesDir(null)?.absolutePath + "/temp"
 		updateMatchFilePath(matchFilePath)
+		
+		// Now determine if Debug Mode is turned on for more informational logging messages.
+		debugMode = SettingsFragment.getBooleanSharedPreference(myContext, "debugMode")
 	}
 	
 	/**
@@ -84,31 +90,35 @@ class ImageUtils(context: Context, private val game: Game) {
 		Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
 		val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 		
-		// Depending on which matching method was used, the algorithms determine which location was the best.
 		matchLocation = Point()
 		var matchCheck = false
+		
+		// Depending on which matching method was used, the algorithms determine which location was the best.
 		if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
-			//Log.d(TAG, "MATCH FOUND <= 0.2")
 			matchLocation = mmr.minLoc
-			//Log.d(TAG, "Point $matchLocation minVal: ${mmr.minVal}")
 			matchCheck = true
+			
+			if (debugMode) {
+				game.printToLog("[DEBUG] Match found with similarity <= 0.2 at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+			}
 		} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
-			//Log.d(TAG, "MATCH FOUND >= 0.8")
 			matchLocation = mmr.maxLoc
-			//Log.d(TAG, "Point $matchLocation maxVal: ${mmr.maxVal}")
 			matchCheck = true
+			
+			if (debugMode) {
+				game.printToLog("[DEBUG] Match found with similarity >= 0.8 at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+			}
 		} else {
-			//Log.d(TAG, "MATCH NOT FOUND")
+			if (debugMode) {
+				game.printToLog("[DEBUG] Match not found.", MESSAGE_TAG = TAG)
+			}
 		}
 		
 		if (matchCheck) {
 			// Draw a rectangle around the supposed best matching location and then save the match into a file in /files/temp/ directory. This is for
 			// debugging purposes to see if this algorithm found the match accurately or not.
 			if (matchFilePath != "") {
-				Imgproc.rectangle(
-					sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()),
-					Scalar(0.0, 128.0, 0.0), 5
-				)
+				Imgproc.rectangle(sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()), Scalar(0.0, 128.0, 0.0), 5)
 				Imgcodecs.imwrite("$matchFilePath/match.png", sourceMat)
 			}
 			
@@ -139,6 +149,10 @@ class ImageUtils(context: Context, private val game: Game) {
 		val resultRows: Int = sourceMat.rows() - templateMat.rows() + 1
 		val resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
 		
+		if (debugMode) {
+			game.printToLog("[DEBUG] Now beginning search for all matches...", MESSAGE_TAG = TAG)
+		}
+		
 		// Loop until all matches are found.
 		while (true) {
 			// Now perform the matching and localize the result.
@@ -146,17 +160,14 @@ class ImageUtils(context: Context, private val game: Game) {
 			val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 			
 			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
-				//Log.d(TAG, "MATCH FOUND <= 0.2")
 				val tempMatchLocation: Point = mmr.minLoc
-				//Log.d(TAG, "Point $tempMatchLocation minVal: ${mmr.minVal}")
+				
+				if (debugMode) {
+					game.printToLog("[DEBUG] Match found with similarity <= 0.2 at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+				}
 				
 				// Draw a rectangle around the match and then save it to the specified file.
-				Imgproc.rectangle(
-					sourceMat, tempMatchLocation, Point(
-						tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
-								templateMat.rows()
-					), Scalar(255.0, 255.0, 255.0), 5
-				)
+				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				
 				// Center the location coordinates and then save it to the arrayList.
@@ -164,17 +175,14 @@ class ImageUtils(context: Context, private val game: Game) {
 				tempMatchLocation.y += (templateMat.rows() / 2)
 				matchLocations.add(tempMatchLocation)
 			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
-				//Log.d(TAG, "MATCH FOUND >= 0.8")
 				val tempMatchLocation: Point = mmr.maxLoc
-				//Log.d(TAG, "Point $tempMatchLocation maxVal: ${mmr.maxVal}")
+				
+				if (debugMode) {
+					game.printToLog("[DEBUG] Match found with similarity >= 0.8 at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+				}
 				
 				// Draw a rectangle around the match and then save it to the specified file.
-				Imgproc.rectangle(
-					sourceMat, tempMatchLocation, Point(
-						tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y +
-								templateMat.rows()
-					), Scalar(255.0, 255.0, 255.0), 5
-				)
+				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				
 				// Center the location coordinates and then save it to the arrayList.
@@ -220,7 +228,10 @@ class ImageUtils(context: Context, private val game: Game) {
 		return if (templateBitmap != null) {
 			Pair(sourceBitmap, templateBitmap)
 		} else {
-			Log.e(TAG, "One or both of the Bitmaps are null.")
+			if (debugMode) {
+				game.printToLog("[ERROR] One or more of the Bitmaps are null.", MESSAGE_TAG = TAG, isError = true)
+			}
+			
 			Pair(sourceBitmap, templateBitmap)
 		}
 	}
@@ -246,10 +257,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					numberOfTries -= 1
 					if (numberOfTries <= 0) {
 						if (!suppressError) {
-							game.printToLog(
-								"[WARNING] Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button.",
-								MESSAGE_TAG = TAG
-							)
+							game.printToLog("[WARNING] Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button.", MESSAGE_TAG = TAG)
 						}
 						
 						return null
@@ -291,10 +299,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					
 					game.wait(1.0)
 				} else {
-					game.printToLog(
-						"[SUCCESS] Current location confirmed to be at ${templateName.toUpperCase(Locale.ROOT)}.",
-						MESSAGE_TAG = TAG
-					)
+					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.toUpperCase(Locale.ROOT)}.", MESSAGE_TAG = TAG)
 					return true
 				}
 			} else {
@@ -303,10 +308,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 		
 		if (!suppressError) {
-			game.printToLog(
-				"[WARNING] Failed to confirm the bot's location at ${templateName.toUpperCase(Locale.ROOT)}.",
-				MESSAGE_TAG = TAG
-			)
+			game.printToLog("[WARNING] Failed to confirm the bot's location at ${templateName.toUpperCase(Locale.ROOT)}.", MESSAGE_TAG = TAG)
 		}
 		
 		return false
@@ -323,15 +325,18 @@ class ImageUtils(context: Context, private val game: Game) {
 	fun findSummon(summonList: List<String>, summonElementList: List<String>, suppressError: Boolean = false): Point? {
 		val folderName = "summons"
 		
-		game.printToLog("[DEBUG] Received the following list of Summons to search for: $summonList", MESSAGE_TAG = TAG)
-		game.printToLog("[DEBUG] Received the following list of Summon Elements: $summonElementList", MESSAGE_TAG = TAG)
+		if (debugMode) {
+			game.printToLog("[DEBUG] Received the following list of Summons to search for: $summonList", MESSAGE_TAG = TAG)
+			game.printToLog("[DEBUG] Received the following list of Summon Elements: $summonElementList", MESSAGE_TAG = TAG)
+		}
 		
 		var summonIndex = 0
 		var summonLocation: Point? = null
 		
 		while (summonLocation == null && summonIndex <= summonList.size) {
-			// Select the Summon Element.
 			game.printToLog("[INFO] Now attempting to find ${summonList[summonIndex]}", MESSAGE_TAG = TAG)
+			
+			// Select the Summon Element.
 			val currentSummonElement = summonElementList[summonIndex]
 			game.findAndClickButton("summon_$currentSummonElement")
 			
@@ -416,7 +421,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	}
 	
 	/**
-	 * Finds all occurrences of the specified image in the buttons folder. Has an optional paramter to specify looking in the items folder instead.
+	 * Finds all occurrences of the specified image in the buttons folder. Has an optional parameter to specify looking in the items folder instead.
 	 *
 	 * @param templateName File name of the template image.
 	 * @param isItem Whether or not the user wants to search for items instead of buttons.
@@ -441,7 +446,9 @@ class ImageUtils(context: Context, private val game: Game) {
 		// Sort the match locations by ascending y coordinates.
 		matchLocations.sortBy { it.y }
 		
-		Log.d(TAG, "Found match locations for $templateName: $matchLocations.")
+		if (debugMode) {
+			game.printToLog("[DEBUG] Found match locations for $templateName: $matchLocations.", MESSAGE_TAG = TAG)
+		}
 		
 		return matchLocations
 	}
@@ -485,7 +492,10 @@ class ImageUtils(context: Context, private val game: Game) {
 						for (block in it.textBlocks) {
 							try {
 								val detectedAmount: Int = block.text.toInt()
-								game.printToLog("[DEBUG] Detected item amount: $detectedAmount", MESSAGE_TAG = TAG)
+								if (debugMode) {
+									game.printToLog("[DEBUG] Detected item amount: $detectedAmount", MESSAGE_TAG = TAG)
+								}
+								
 								totalItemAmount += detectedAmount
 							} catch (e: NumberFormatException) {
 							}
@@ -512,6 +522,8 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @return True if the specified image vanished from the screen. False otherwise.
 	 */
 	fun waitVanish(templateName: String, timeout: Int = 5, suppressError: Boolean = false): Boolean {
+		game.printToLog("[INFO] Now waiting for $templateName to vanish from the screen...", MESSAGE_TAG = TAG)
+		
 		var remaining = timeout
 		if (findButton(templateName, tries = 1, suppressError = suppressError) == null) {
 			return true
