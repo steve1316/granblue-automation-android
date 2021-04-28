@@ -1,6 +1,9 @@
 package com.steve1316.granblueautomation_android
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -24,6 +27,12 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
+        
+        val githubTextView: TextView = findViewById<TextView>(R.id.github_textView)
+        githubTextView.setOnClickListener {
+            val newIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/steve1316/granblue-automation-android"))
+            startActivity(newIntent)
+        }
         
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home, R.id.nav_settings), drawerLayout)
 
