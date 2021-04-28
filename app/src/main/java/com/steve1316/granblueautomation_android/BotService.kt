@@ -2,8 +2,10 @@ package com.steve1316.granblueautomation_android
 
 import android.annotation.SuppressLint
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.IBinder
 import android.util.Log
@@ -21,12 +23,21 @@ import kotlin.math.roundToInt
 
 /**
  * This Service will begin workflow automation based on the chosen preference settings.
+ *
+ * Source for being able to send custom Intents to BroadcastReceiver to notify users of bot state changes is from:
+ * https://www.tutorialspoint.com/in-android-how-to-register-a-custom-intent-filter-to-a-broadcast-receiver
  */
 class BotService : Service() {
 	private val TAG: String = "GAA_BotService"
 	private lateinit var myContext: Context
 	private lateinit var overlayView: View
 	private lateinit var overlayButton: ImageButton
+	
+	private val messageReceiver = object : BroadcastReceiver() {
+		override fun onReceive(context: Context?, intent: Intent?) {
+			NotificationUtils.createBotStateChangedNotification(context!!, "Bot State Changed", intent?.getStringExtra("EXCEPTION")!!)
+		}
+	}
 	
 	companion object {
 		private lateinit var thread: Thread
@@ -48,6 +59,11 @@ class BotService : Service() {
 		super.onCreate()
 		
 		myContext = this
+		
+		// Any Intents that wants to be received needs to have the following action attached to it to be recognized.
+		val filter = IntentFilter()
+		filter.addAction("CUSTOM_INTENT")
+		registerReceiver(messageReceiver, filter)
 		
 		overlayView = LayoutInflater.from(this).inflate(R.layout.bot_actions, null)
 		windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
@@ -91,10 +107,16 @@ class BotService : Service() {
 								try {
 									// Clear the Message Log.
 									MessageLog.messageLog.clear()
+									MessageLog.saveCheck = false
 									
 									game.startFarmingMode(myContext)
 								} catch (e: Exception) {
-									game.printToLog("Application encountered Exception: ${e.printStackTrace()}", MESSAGE_TAG = TAG, isError = true)
+									game.printToLog("GAA encountered an Exception: $e", MESSAGE_TAG = TAG, isError = true)
+									
+									val newIntent = Intent("CUSTOM_INTENT")
+									newIntent.putExtra("EXCEPTION", e.toString())
+									sendBroadcast(newIntent)
+									
 									MessageLog.saveLogToFile(myContext)
 								}
 							}
