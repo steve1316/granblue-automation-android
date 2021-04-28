@@ -215,12 +215,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				}
 				"delayBetweenRunsSwitch" -> {
 					val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
-					
-					// Disable the randomized delay between runs settings.
+					val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
 					val randomizedDelayBetweenRunsSwitch: SwitchPreference = findPreference("randomizedDelayBetweenRunsSwitch")!!
-					randomizedDelayBetweenRunsSwitch.isChecked = false
 					val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
-					randomizedDelayBetweenRunsSeekBar.isVisible = false
+					
+					if (delayBetweenRunsSwitch.isChecked) {
+						// Disable the randomized delay between runs settings.
+						randomizedDelayBetweenRunsSwitch.isChecked = false
+						randomizedDelayBetweenRunsSeekBar.isVisible = false
+						
+						delayBetweenRunsSeekBar.isEnabled = true
+					} else {
+						delayBetweenRunsSeekBar.isEnabled = false
+					}
 					
 					sharedPreferences.edit {
 						putBoolean("enableDelayBetweenRuns", delayBetweenRunsSwitch.isChecked)
@@ -233,16 +240,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					val randomizedDelayBetweenRunsSwitch: SwitchPreference = findPreference("randomizedDelayBetweenRunsSwitch")!!
 					val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
 					val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
-					randomizedDelayBetweenRunsSeekBar.isVisible = true
-					if (randomizedDelayBetweenRunsSeekBar.value < delayBetweenRunsSeekBar.value) {
-						// Makes sure that the value of the randomized SeekBar is not lower as it is the upper limit.
-						randomizedDelayBetweenRunsSeekBar.value = delayBetweenRunsSeekBar.value
-					}
-					randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
 					
-					// Disable the delay between runs settings.
-					val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
-					delayBetweenRunsSwitch.isChecked = false
+					if (randomizedDelayBetweenRunsSwitch.isChecked) {
+						randomizedDelayBetweenRunsSeekBar.isVisible = true
+						if (randomizedDelayBetweenRunsSeekBar.value < delayBetweenRunsSeekBar.value) {
+							// Makes sure that the value of the randomized SeekBar is not lower as it is the upper limit.
+							randomizedDelayBetweenRunsSeekBar.value = delayBetweenRunsSeekBar.value
+						}
+						randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
+						
+						// Disable the delay between runs settings.
+						val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
+						delayBetweenRunsSwitch.isChecked = false
+						
+						delayBetweenRunsSeekBar.isEnabled = true
+					} else {
+						delayBetweenRunsSeekBar.isEnabled = false
+					}
 					
 					sharedPreferences.edit {
 						putBoolean("enableDelayBetweenRuns", false)
@@ -252,6 +266,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				}
 				"delayBetweenRunsSeekBar" -> {
 					val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
+					val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
+					
+					if (randomizedDelayBetweenRunsSeekBar.value < delayBetweenRunsSeekBar.value) {
+						// Makes sure that the value of the randomized SeekBar is not lower as it is the upper limit.
+						randomizedDelayBetweenRunsSeekBar.value = delayBetweenRunsSeekBar.value
+					}
+					randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
 					
 					sharedPreferences.edit {
 						putInt("delayBetweenRuns", delayBetweenRunsSeekBar.value.toString().toInt())
@@ -437,9 +458,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		debugModeCheckBox.isChecked = debugModePreferences
 		
 		delayBetweenRunsSwitch.isChecked = enableDelayBetweenRunsPreferences
+		delayBetweenRunsSeekBar.isEnabled = delayBetweenRunsSwitch.isChecked
 		delayBetweenRunsSeekBar.value = delayBetweenRunsPreferences
 		
 		randomizedDelayBetweenRunsSwitch.isChecked = enableRandomizedDelayBetweenRunsPreferences
+		if (randomizedDelayBetweenRunsSwitch.isChecked) {
+			delayBetweenRunsSeekBar.isEnabled = true
+		}
+		randomizedDelayBetweenRunsSeekBar.isVisible = randomizedDelayBetweenRunsSwitch.isChecked
 		randomizedDelayBetweenRunsSeekBar.value = randomizedDelayBetweenRunsPreferences
 		randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
 		
