@@ -23,6 +23,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             applicationVariants.all { variant ->
+                // Allow layout XMLs to get a reference to the application's version number.
+                variant.resValue "string", "versionName", "v" + variant.versionName
+
+                // Auto-generate the file name.
                 variant.outputs.all { output ->
                     def versionName = defaultConfig.versionName
                     outputFileName = "v${versionName}-GAA-arm64-v8a.apk"
