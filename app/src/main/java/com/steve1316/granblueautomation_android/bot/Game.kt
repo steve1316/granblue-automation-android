@@ -480,29 +480,37 @@ class Game(private val myContext: Context) {
 	fun checkAP(useFullElixir: Boolean = false, tries: Int = 3) {
 		var numberOfTries = tries
 		
-		while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) ||
-			(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
-			if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
-				if (!useFullElixir) {
-					printToLog("[INFO] AP ran out! Using Half Elixir...")
-					val location = imageUtils.findButton("refill_half_elixir")!!
-					gestureUtils.tap(location.x, location.y + 370, "use")
+		wait(2.0)
+		
+		if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1)) {
+			while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_summon", tries = 1)) ||
+				(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
+				if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+					if (!useFullElixir) {
+						printToLog("[INFO] AP ran out! Using Half Elixir...")
+						val location = imageUtils.findButton("refill_half_elixir")!!
+						gestureUtils.tap(location.x, location.y + 370, "use")
+					} else {
+						printToLog("[INFO] AP ran out! Using Full Elixir...")
+						val location = imageUtils.findButton("refill_full_elixir")!!
+						gestureUtils.tap(location.x, location.y + 370, "use")
+					}
+					
+					wait(1.0)
+					
+					// Press the "OK" button to confirm the item usage.
+					findAndClickButton("ok")
+				} else if (farmingMode == "Coop" && !coopFirstRun && imageUtils.findButton("attack") != null) {
+					break
 				} else {
-					printToLog("[INFO] AP ran out! Using Full Elixir...")
-					val location = imageUtils.findButton("refill_full_elixir")!!
-					gestureUtils.tap(location.x, location.y + 370, "use")
+					numberOfTries -= 1
+					if (numberOfTries <= 0) {
+						break
+					}
 				}
-				
-				wait(1.0)
-				
-				// Press the "OK" button to confirm the item usage.
-				findAndClickButton("ok")
 			}
-			
-			numberOfTries -= 1
-			if (numberOfTries <= 0) {
-				break
-			}
+		} else {
+			findAndClickButton("ok")
 		}
 		
 		printToLog("[INFO] AP is available.")
@@ -517,28 +525,34 @@ class Game(private val myContext: Context) {
 	fun checkEP(useSoulBalm: Boolean = false, tries: Int = 3) {
 		var numberOfTries = tries
 		
-		while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
-			if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
-				if (!useSoulBalm) {
-					printToLog("[INFO] EP ran out! Using Soul Berry...")
-					val location = imageUtils.findButton("refill_soul_berry")!!
-					gestureUtils.tap(location.x, location.y + 370, "use")
-				} else {
-					printToLog("[INFO] EP ran out! Using Soul Balm...")
-					val location = imageUtils.findButton("refill_soul_balm")!!
-					gestureUtils.tap(location.x, location.y + 370, "use")
+		wait(2.0)
+		
+		if (!imageUtils.confirmLocation("auto_ep_recovered", tries = 1)) {
+			while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_summon", tries = 1)) {
+				if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
+					if (!useSoulBalm) {
+						printToLog("[INFO] EP ran out! Using Soul Berry...")
+						val location = imageUtils.findButton("refill_soul_berry")!!
+						gestureUtils.tap(location.x, location.y + 370, "use")
+					} else {
+						printToLog("[INFO] EP ran out! Using Soul Balm...")
+						val location = imageUtils.findButton("refill_soul_balm")!!
+						gestureUtils.tap(location.x, location.y + 370, "use")
+					}
+					
+					wait(1.0)
+					
+					// Press the "OK" button to confirm the item usage.
+					findAndClickButton("ok")
 				}
 				
-				wait(1.0)
-				
-				// Press the "OK" button to confirm the item usage.
-				findAndClickButton("ok")
+				numberOfTries -= 1
+				if (numberOfTries <= 0) {
+					break
+				}
 			}
-			
-			numberOfTries -= 1
-			if (numberOfTries <= 0) {
-				break
-			}
+		} else {
+			findAndClickButton("ok")
 		}
 		
 		printToLog("[INFO] EP is available.")
