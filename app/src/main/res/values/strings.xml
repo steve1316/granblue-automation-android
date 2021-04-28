@@ -21,12 +21,14 @@
     <string name="accessibility_service_action">Stop Bot</string>
 
     <string name="go_to_settings">Go to Settings</string>
+
     <string name="accessibility_disabled">Accessibility Service Currently Disabled</string>
     <string name="accessibility_disabled_message">This app requires its Accessibility Service to be turned on to allow the bot to navigate
         through the game.</string>
-    <string name="accessibility_uninitialized">Accessiblity Service Crashed</string>
-    <string name="accessibility_uninitialized_message">Please disable and then enable the app\'s Accessibility Service.</string>
+
     <string name="overlay_disabled">Missing Overlay Permission</string>
     <string name="overlay_disabled_message">This app requires that it is granted Overlay Permission to display the START/STOP Floating Action
     Button.</string>
+
+    <string name="go_to_github">Go to GitHub</string>
 </resources>
