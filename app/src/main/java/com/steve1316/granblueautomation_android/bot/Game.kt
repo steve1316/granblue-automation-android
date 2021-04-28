@@ -161,7 +161,7 @@ class Game(private val myContext: Context) {
 	 */
 	fun findAndClickButton(buttonName: String, tries: Int = 2, suppressError: Boolean = false): Boolean {
 		if (debugMode) {
-			printToLog("[DEBUG] Now attempting to find and click the $buttonName button.")
+			printToLog("[DEBUG] Now attempting to find and click the \"$buttonName\" button.")
 		}
 		
 		var tempLocation: Point?
@@ -665,7 +665,9 @@ class Game(private val myContext: Context) {
 	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
 	 */
 	private fun checkEventNightmare(): Boolean {
-		TODO("not yet implemented")
+		// TODO
+		Log.d(TAG, "Not implemented yet.")
+		return false
 	}
 	
 	/**
@@ -674,7 +676,9 @@ class Game(private val myContext: Context) {
 	 * @return True if Dimensional Halo was detected and successfully completed. False otherwise.
 	 */
 	private fun checkDimensionalHalo(): Boolean {
-		TODO("not yet implemented")
+		// TODO
+		Log.d(TAG, "Not implemented yet.")
+		return false
 	}
 	
 	/**
@@ -683,7 +687,9 @@ class Game(private val myContext: Context) {
 	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
 	 */
 	private fun checkROTBExtremePlus(): Boolean {
-		TODO("not yet implemented")
+		// TODO
+		Log.d(TAG, "Not implemented yet.")
+		return false
 	}
 	
 	private fun advancedSetup() {
