@@ -618,6 +618,10 @@ class Game(private val myContext: Context) {
 	 */
 	private fun checkForPopups() {
 		while (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+			if (imageUtils.confirmLocation("auto_ap_recovered", tries = 1)) {
+				break
+			}
+			
 			// Break out of the loop if the bot detected the "Not Enough AP" popup.
 			if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 				break
