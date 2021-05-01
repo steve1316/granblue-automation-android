@@ -11,6 +11,6 @@ class SummonData {
 		val windSummons: ArrayList<String> = arrayListOf("Tiamat Omega", "Grimnir", "Zephyrus")
 		val lightSummons: ArrayList<String> = arrayListOf("Luminiera Omega", "Lucifer", "Zeus")
 		val darkSummons: ArrayList<String> = arrayListOf("Celeste Omega", "Bahamut", "Hades")
-		val miscSummons: ArrayList<String> = arrayListOf("Huanglong", "Qilin", "Kaguya", "White Rabbit", "Black Rabbit")
+		val miscSummons: ArrayList<String> = arrayListOf("Huanglong", "Qilin", "Kaguya", "Nobiyo", "White Rabbit", "Black Rabbit")
 	}
 }
