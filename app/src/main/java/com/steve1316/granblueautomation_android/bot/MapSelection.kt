@@ -1180,7 +1180,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Check to see if the bot is at the Summon Selection screen.
 		if (farmingMode != "Coop") {
 			game.printToLog("[INFO] Now checking if the bot is currently at the Summon Selection screen...", MESSAGE_TAG = TAG)
-			return if (farmingMode != "Proving Grounds" && game.imageUtils.confirmLocation("select_summon", tries = 5)) {
+			return if (farmingMode != "Proving Grounds" && game.imageUtils.confirmLocation("select_a_summon", tries = 5)) {
 				game.printToLog("[SUCCESS] Bot arrived at the Summon Selection screen after selecting the mission.", MESSAGE_TAG = TAG)
 				true
 			} else if (farmingMode == "Proving Grounds" && game.imageUtils.confirmLocation("proving_grounds_summon_selection", tries = 5)) {
@@ -1298,7 +1298,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						game.printToLog("[SUCCESS] Joining {room_code} was successful.", MESSAGE_TAG = TAG)
 						numberOfRaidsJoined += 1
 						
-						return game.imageUtils.confirmLocation("select_summon")
+						return game.imageUtils.confirmLocation("select_a_summon")
 					} else {
 						// Clear the text box by reloading the page.
 						game.printToLog("[WARNING] $roomCode already ended or invalid.", MESSAGE_TAG = TAG)
