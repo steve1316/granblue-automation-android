@@ -176,16 +176,6 @@ class Game(private val myContext: Context) {
 				newButtonName = "quest_red"
 			}
 			
-			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_blue_strike_time", tries = 1, suppressError = suppressError)
-				newButtonName = "quest_blue_strike_time"
-			}
-			
-			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_red_strike_time", tries = 1, suppressError = suppressError)
-				newButtonName = "quest_red_strike_time"
-			}
-			
 		} else if (buttonName.toLowerCase(Locale.ROOT) == "raid") {
 			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
 			newButtonName = "raid_flat"
