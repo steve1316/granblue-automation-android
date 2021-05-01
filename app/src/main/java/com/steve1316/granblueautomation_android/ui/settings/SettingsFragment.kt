@@ -256,6 +256,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						delayBetweenRunsSeekBar.isEnabled = true
 					} else {
 						delayBetweenRunsSeekBar.isEnabled = false
+						randomizedDelayBetweenRunsSeekBar.isVisible = false
 					}
 					
 					sharedPreferences.edit {
