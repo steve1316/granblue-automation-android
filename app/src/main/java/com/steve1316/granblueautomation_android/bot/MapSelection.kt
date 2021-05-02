@@ -251,7 +251,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Once the bot has determined where it is, go to the Quest screen.
 		game.findAndClickButton("quest", suppressError = true)
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		// Check for the "You retreated from the raid battle" popup.
 		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
@@ -359,7 +359,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Quests screen.
 		game.findAndClickButton("quest", suppressError = true)
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		// Check for the "You retreated from the raid battle" popup.
 		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
@@ -369,6 +369,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		if (game.imageUtils.confirmLocation("quest")) {
 			// Go to the Special screen.
 			game.findAndClickButton("special")
+			
+			game.wait(3.0)
 			
 			// Remove the difficulty prefix from the mission name.
 			val formattedMissionName: String = if (difficulty == "Normal" || difficulty == "Hard") {
@@ -402,7 +404,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						missionLocation.y += 175
 						game.gestureUtils.tap(missionLocation.x, missionLocation.y, formattedMapName)
 						
-						game.wait(1.0)
+						game.wait(3.0)
 						
 						if (mapName == "Basic Treasure Quests") {
 							// Open up "Basic Treasure Quests" sub-missions popup.
@@ -549,13 +551,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.findAndClickButton("home_menu")
 		game.findAndClickButton("coop")
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		if (game.imageUtils.confirmLocation("coop")) {
 			// Scroll the screen down a little bit.
 			game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
 			
-			game.wait(1.0)
+			game.wait(2.0)
 			
 			// Find all occurrences of the "Host Quest" button.
 			val hostButtonLocations = game.imageUtils.findAll("coop_host_quest")
@@ -567,7 +569,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					game.findAndClickButton("coop_hard")
 				}
 				
-				game.wait(1.0)
+				game.wait(3.0)
 				
 				game.printToLog("[INFO] Hard difficulty for Coop is now selected.", MESSAGE_TAG = TAG)
 				
@@ -585,7 +587,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					game.findAndClickButton("coop_extra")
 				}
 				
-				game.wait(1.0)
+				game.wait(3.0)
 				
 				game.printToLog("[INFO] Extra difficulty for Coop is now selected.", MESSAGE_TAG = TAG)
 				
@@ -655,7 +657,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				}
 			}
 			
-			game.wait(1.0)
+			game.wait(3.0)
 			
 			// After selecting the mission, create a new Coop Room.
 			game.printToLog("\n[INFO] Now opening up a new Coop room...", MESSAGE_TAG = TAG)
@@ -665,7 +667,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			game.gestureUtils.scroll()
 			game.findAndClickButton("coop_ok")
 			
-			game.wait(1.0)
+			game.wait(3.0)
 			
 			// Just in case, check for the "You retreated from the raid battle" popup.
 			if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
@@ -697,7 +699,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		// Check if there is a "Daily Missions" popup and close it.
 		if (game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
@@ -740,7 +742,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 + nightmareIsAvailable].y, "select")
 				}
 				
-				game.wait(1.0)
+				game.wait(3.0)
 				
 				// Find the locations of all round "Play" buttons.
 				val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
@@ -760,7 +762,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				game.printToLog("[INFO] Now hosting Event Quest...", MESSAGE_TAG = TAG)
 				game.findAndClickButton("event_quests")
 				
-				game.wait(1.0)
+				game.wait(3.0)
 				
 				// Find the locations of all round "Play" buttons.
 				val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
@@ -825,7 +827,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 		game.findAndClickButton("dread_barrage")
 		
-		game.wait(2.0)
+		game.wait(3.0)
 		
 		if (game.imageUtils.confirmLocation("dread_barrage")) {
 			// Check if there is already a hosted Dread Barrage mission.
@@ -900,7 +902,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		if (game.imageUtils.confirmLocation("rotb")) {
 			// Remove the difficulty prefix from the mission name.
@@ -964,7 +966,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						}
 					}
 					
-					game.wait(1.0)
+					game.wait(3.0)
 					
 					// Find all the round "Play" buttons again.
 					roundPlayButtonLocations = game.imageUtils.findAll("play_round_button")
@@ -1003,13 +1005,13 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		if (game.imageUtils.confirmLocation("guild_wars")) {
 			// Scroll down the screen a bit.
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 			
-			game.wait(1.0)
+			game.wait(2.0)
 			
 			// Perform different navigation actions based on whether the user wants to farm meat or to farm Nightmares.
 			if (difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Extreme+") {
@@ -1116,7 +1118,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		// Select the difficulty.
 		if (game.imageUtils.confirmLocation("proving_grounds")) {
@@ -1170,7 +1172,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			navigateToProvingGrounds(difficulty)
 		}
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		// Check for available AP. Note that Proving Grounds has the AP check after you select your Summon.
 		if (farmingMode != "Proving Grounds") {
@@ -1214,7 +1216,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.goBackHome(confirmLocationCheck = true)
 		game.findAndClickButton("quest")
 		
-		game.wait(1.0)
+		game.wait(3.0)
 		
 		// Check for the "You retreated from the raid battle" popup.
 		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
@@ -1224,12 +1226,12 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		if (game.imageUtils.confirmLocation("quest")) {
 			checkPendingBattles("raid")
 			
-			game.wait(1.0)
+			game.wait(3.0)
 			
 			// Now go to the Backup Requests screen.
 			game.findAndClickButton("raid")
 			
-			game.wait(1.0)
+			game.wait(3.0)
 			
 			Log.d(TAG, "Looking for $missionName.")
 			
@@ -1305,7 +1307,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						game.findAndClickButton("reload")
 						firstRun = false
 						
-						game.wait(2.0)
+						game.wait(3.0)
 						game.findAndClickButton("enter_id")
 					}
 				}

@@ -617,7 +617,7 @@ class Game(private val myContext: Context) {
 	 * Detect any popups and attempt to close them all with the final destination being the Summon Selection screen.
 	 */
 	private fun checkForPopups() {
-		while (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+		while (!imageUtils.confirmLocation("select_a_summon", tries = 3)) {
 			if (imageUtils.confirmLocation("auto_ap_recovered", tries = 1)) {
 				break
 			}
