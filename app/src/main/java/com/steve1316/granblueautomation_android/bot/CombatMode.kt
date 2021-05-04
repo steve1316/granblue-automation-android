@@ -795,7 +795,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			}
 			
 			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 300 == 0) {
+			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
 				game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
 				game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
 				game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
@@ -817,7 +817,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			}
 			
 			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 300 == 0) {
+			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
 				game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
 				game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
 				game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
