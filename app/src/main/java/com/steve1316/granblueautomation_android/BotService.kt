@@ -35,7 +35,13 @@ class BotService : Service() {
 	
 	private val messageReceiver = object : BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
-			NotificationUtils.createBotStateChangedNotification(context!!, "Bot State Changed", intent?.getStringExtra("EXCEPTION")!!)
+			if (intent != null) {
+				if (intent.hasExtra("EXCEPTION")) {
+					NotificationUtils.createBotStateChangedNotification(context!!, "Bot State Changed", intent.getStringExtra("EXCEPTION")!!)
+				} else if (intent.hasExtra("SUCCESS")) {
+					NotificationUtils.createBotStateChangedNotification(context!!, "Bot State Changed", intent.getStringExtra("SUCCESS")!!)
+				}
+			}
 		}
 	}
 	
@@ -110,11 +116,20 @@ class BotService : Service() {
 									MessageLog.saveCheck = false
 									
 									game.startFarmingMode(myContext)
+									val newIntent = Intent("CUSTOM_INTENT")
+									newIntent.putExtra("SUCCESS", "Bot has completed successfully with no errors.")
+									sendBroadcast(newIntent)
+									
 								} catch (e: Exception) {
 									game.printToLog("GAA encountered an Exception: $e", MESSAGE_TAG = TAG, isError = true)
 									
 									val newIntent = Intent("CUSTOM_INTENT")
-									newIntent.putExtra("EXCEPTION", e.toString())
+									if (e.toString() == "java.lang.InterruptedException") {
+										newIntent.putExtra("EXCEPTION", "Bot stopped successfully.")
+									} else {
+										newIntent.putExtra("EXCEPTION", e.toString())
+									}
+									
 									sendBroadcast(newIntent)
 									
 									MessageLog.saveLogToFile(myContext)
