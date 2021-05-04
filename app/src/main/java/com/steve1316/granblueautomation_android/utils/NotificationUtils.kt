@@ -24,7 +24,7 @@ class NotificationUtils {
 		private lateinit var notificationManager: NotificationManager
 		private const val NOTIFICATION_ID: Int = 1
 		private const val CHANNEL_ID: String = "BOT_STATUS"
-		private const val CHANNEL_NAME: String = "Bot Status"
+		private const val CHANNEL_NAME: String = "Granblue Automation Android"
 		private const val CHANNEL_DESCRIPTION: String = "Displays status of GAA, whether it is running or not."
 		
 		/**
@@ -137,7 +137,7 @@ class NotificationUtils {
 		fun createBotStateChangedNotification(context: Context, contentTitle: String, contentText: String) {
 			val notificationID = 2
 			val channelID = "BOT_STATE_CHANGED"
-			val channelName = "Bot State Changed"
+			val channelName = "Granblue Automation Android"
 			
 			// Create the NotificationChannel.
 			val mChannel = NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH)
