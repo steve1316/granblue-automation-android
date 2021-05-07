@@ -120,6 +120,11 @@ class BotService : Service() {
 									newIntent.putExtra("SUCCESS", "Bot has completed successfully with no errors.")
 									sendBroadcast(newIntent)
 									
+									MessageLog.saveLogToFile(myContext)
+									Log.d(TAG, "Bot Service for GAA is now stopped.")
+									isRunning = false
+									NotificationUtils.updateNotification(myContext, isRunning)
+									overlayButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
 								} catch (e: Exception) {
 									game.printToLog("GAA encountered an Exception: $e", MESSAGE_TAG = TAG, isError = true)
 									
