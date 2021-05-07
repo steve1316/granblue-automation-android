@@ -28,7 +28,7 @@ By downloading this application, you consent to your account potentially getting
   - [x] Guild Wars
   - [ ] Dread Barrage
 - [x] Choose your own custom combat script.
-- [ ] Alert for when anti-bot CAPTCHA pops up.
+- [x] Alert for when anti-bot CAPTCHA pops up.
 - [x] Customizable settings such as Item/Summon selection and delays between each run.
 
 # Requirements
