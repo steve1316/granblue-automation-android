@@ -372,8 +372,14 @@ class Game(private val myContext: Context) {
 			
 			while ((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
 				// Keep swiping the screen down until the bot finds the specified button.
-				gestureUtils.swipe(500f, 1500f, 500f, 500f)
-				wait(1.0)
+				if (it == "gameplay_extras") {
+					gestureUtils.swipe(500f, 1500f, 500f, 1000f)
+				} else if (it == "trial_battles") {
+					findAndClickButton("gameplay_extras", tries = 1, suppressError = true)
+					gestureUtils.swipe(500f, 1500f, 500f, 1400f)
+				}
+				
+				wait(2.0)
 				imageLocation = imageUtils.findButton(it, tries = 1)
 			}
 			
@@ -383,7 +389,7 @@ class Game(private val myContext: Context) {
 				gestureUtils.tap(imageLocation.x, imageLocation.y, it)
 			}
 			
-			wait(1.0)
+			wait(2.0)
 		}
 	}
 	
