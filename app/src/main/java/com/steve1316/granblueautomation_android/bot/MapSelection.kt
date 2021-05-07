@@ -758,6 +758,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			// Scroll down the screen a little bit for this UI layout that has Token Drawboxes.
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 			
+			game.wait(1.0)
+			
 			if (formattedMissionName == "Event Quest") {
 				game.printToLog("[INFO] Now hosting Event Quest...", MESSAGE_TAG = TAG)
 				game.findAndClickButton("event_quests")
