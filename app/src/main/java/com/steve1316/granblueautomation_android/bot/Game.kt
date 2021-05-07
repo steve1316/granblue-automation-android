@@ -478,7 +478,7 @@ class Game(private val myContext: Context) {
 		
 		wait(2.0)
 		
-		if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1)) {
+		if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1) && !imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
 			while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
 				(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
 				if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
@@ -624,7 +624,7 @@ class Game(private val myContext: Context) {
 	 */
 	private fun checkForPopups() {
 		while (!imageUtils.confirmLocation("select_a_summon", tries = 3)) {
-			if (imageUtils.confirmLocation("auto_ap_recovered", tries = 1)) {
+			if (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
 				break
 			}
 			
