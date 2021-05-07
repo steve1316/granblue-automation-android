@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import androidx.core.app.NotificationCompat
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
@@ -19,8 +18,6 @@ import com.steve1316.granblueautomation_android.R
  */
 class NotificationUtils {
 	companion object {
-		private const val TAG: String = "GAA_NotificationUtils"
-		
 		private lateinit var notificationManager: NotificationManager
 		private const val NOTIFICATION_ID: Int = 1
 		private const val CHANNEL_ID: String = "BOT_STATUS"
