@@ -472,6 +472,21 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	}
 	
 	/**
+	 * Determine whether or not to reload after an Attack.
+	 */
+	private fun reloadAfterAttack() {
+		val rotbQuests = arrayListOf("VH Zhuque", "VH Xuanwu", "VH Baihu", "VH Qinglong")
+		val provingGroundsQuests = arrayListOf("Extreme", "Extreme+")
+		
+		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
+		if ((game.farmingMode != "Quest" && game.farmingMode != "Special") && (game.farmingMode != "Event" && game.missionName != "EX Event Quest") &&
+			(game.farmingMode != "Event (Token Drawboxes)" && game.missionName != "EX Event Quest") && (game.farmingMode != "Rise of the Beasts" && rotbQuests.contains(game.missionName)) &&
+			(game.farmingMode != "Proving Grounds" && provingGroundsQuests.contains(game.missionName)) && (game.farmingMode != "Xeno Clash" && game.missionName != "Xeno Clash Extreme")) {
+			game.findAndClickButton("reload")
+		}
+	}
+	
+	/**
 	 * Start Combat Mode with the provided combat script.
 	 *
 	 * @param combatScript ArrayList of all the lines in the text file.
@@ -538,11 +553,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 								}
 							}
 							
-							// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-							if (game.farmingMode != "Quest" && game.farmingMode != "Special") {
-								game.findAndClickButton("reload")
-							}
-							
+							reloadAfterAttack()
 							waitForAttack()
 							
 							game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
@@ -700,11 +711,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						}
 					}
 					
-					// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-					if (game.farmingMode != "Quest" && game.farmingMode != "Special") {
-						game.findAndClickButton("reload")
-					}
-					
+					reloadAfterAttack()
 					waitForAttack()
 					
 					game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
@@ -742,11 +749,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				}
 			}
 			
-			// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-			if (game.farmingMode != "Quest" && game.farmingMode != "Special") {
-				game.findAndClickButton("reload")
-			}
-			
+			reloadAfterAttack()
 			waitForAttack()
 			
 			game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
