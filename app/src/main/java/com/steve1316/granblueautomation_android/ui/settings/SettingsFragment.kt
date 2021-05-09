@@ -496,19 +496,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					putString("accessTokenSecret", config.twitter.accessTokenSecret)
 					
 					putBoolean("enableEventNightmare", config.event.enableEventNightmare)
-					putString("eventNightmareCombatScript", config.event.eventNightmareCombatScript)
 					putStringSet("eventNightmareSummonList", config.event.eventNightmareSummonList.toMutableSet())
 					putInt("eventNightmareGroupNumber", config.event.eventNightmareGroupNumber)
 					putInt("eventNightmarePartyNumber", config.event.eventNightmarePartyNumber)
 					
 					putBoolean("enableDimensionalHalo", config.dimensionalHalo.enableDimensionalHalo)
-					putString("dimensionalHaloCombatScript", config.dimensionalHalo.dimensionalHaloCombatScript)
 					putStringSet("dimensionalHaloSummonList", config.dimensionalHalo.dimensionalHaloSummonList.toMutableSet())
 					putInt("dimensionalHaloGroupNumber", config.dimensionalHalo.dimensionalHaloGroupNumber)
 					putInt("dimensionalHaloPartyNumber", config.dimensionalHalo.dimensionalHaloPartyNumber)
 					
 					putBoolean("enableROTBExtremePlus", config.rotb.enableROTBExtremePlus)
-					putString("rotbExtremePlusCombatScript", config.rotb.rotbExtremePlusCombatScript)
 					putStringSet("rotbExtremePlusSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
 					putInt("rotbExtremePlusGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
 					putInt("rotbExtremePlusPartyNumber", config.rotb.rotbExtremePlusPartyNumber)
@@ -516,7 +513,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					putBoolean("enableUnparalleledFoe", config.dreadBarrage.enableUnparalleledFoe)
 					putBoolean("enableUnparalleledFoeLevel95", config.dreadBarrage.enableUnparalleledFoeLevel95)
 					putBoolean("enableUnparalleledFoeLevel175", config.dreadBarrage.enableUnparalleledFoeLevel175)
-					putString("unparalleledFoeCombatScript", config.dreadBarrage.unparalleledFoeCombatScript)
 					putStringSet("unparalleledFoeSummonList", config.dreadBarrage.unparalleledFoeSummonList.toMutableSet())
 					putInt("unparalleledFoeGroupNumber", config.dreadBarrage.unparalleledFoeGroupNumber)
 					putInt("unparalleledFoePartyNumber", config.dreadBarrage.unparalleledFoePartyNumber)

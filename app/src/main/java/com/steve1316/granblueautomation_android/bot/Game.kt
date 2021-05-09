@@ -37,19 +37,16 @@ class Game(private val myContext: Context) {
 	private var randomizedDelayBetweenRuns: Int = 1
 	
 	private var enableDimensionalHalo: Boolean = false
-	private var dimensionalHaloCombatScript: List<String> = arrayListOf()
 	private var dimensionalHaloSummonList: List<String> = arrayListOf()
 	private var dimensionalHaloGroupNumber: Int = 0
 	private var dimensionalHaloPartyNumber: Int = 0
 	
 	private var enableEventNightmare: Boolean = false
-	private var eventNightmareCombatScript: List<String> = arrayListOf()
 	private var eventNightmareSummonList: List<String> = arrayListOf()
 	private var eventNightmareGroupNumber: Int = 0
 	private var eventNightmarePartyNumber: Int = 0
 	
 	private var enableROTBExtremePlus: Boolean = false
-	private var rotbExtremePlusCombatScript: List<String> = arrayListOf()
 	private var rotbExtremePlusSummonList: List<String> = arrayListOf()
 	private var rotbExtremePlusGroupNumber: Int = 0
 	private var rotbExtremePlusPartyNumber: Int = 0
@@ -57,7 +54,6 @@ class Game(private val myContext: Context) {
 	private var enableUnparalleledFoe: Boolean = false
 	private var enableUnparalleledFoeLevel95: Boolean = false
 	private var enableUnparalleledFoeLevel175: Boolean = false
-	private var unparalleledFoeCombatScript: List<String> = arrayListOf()
 	private var unparalleledFoeSummonList: List<String> = arrayListOf()
 	private var unparalleledFoeGroupNumber: Int = 0
 	private var unparalleledFoePartyNumber: Int = 0
@@ -716,19 +712,16 @@ class Game(private val myContext: Context) {
 	 */
 	private fun advancedSetup() {
 		enableDimensionalHalo = SettingsFragment.getBooleanSharedPreference(myContext, "enableDimensionalHalo")
-		dimensionalHaloCombatScript = SettingsFragment.getStringSetSharedPreference(myContext, "dimensionalHaloCombatScript").toList()
 		dimensionalHaloSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "dimensionalHaloSummonList").toList()
 		dimensionalHaloGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "dimensionalHaloGroupNumber")
 		dimensionalHaloPartyNumber = SettingsFragment.getIntSharedPreference(myContext, "dimensionalHaloPartyNumber")
 		
 		enableEventNightmare = SettingsFragment.getBooleanSharedPreference(myContext, "enableEventNightmare")
-		eventNightmareCombatScript = SettingsFragment.getStringSetSharedPreference(myContext, "eventNightmareCombatScript").toList()
 		eventNightmareSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "eventNightmareSummonList").toList()
 		eventNightmareGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "eventNightmareGroupNumber")
 		eventNightmarePartyNumber = SettingsFragment.getIntSharedPreference(myContext, "eventNightmarePartyNumber")
 		
 		enableROTBExtremePlus = SettingsFragment.getBooleanSharedPreference(myContext, "enableROTBExtremePlus")
-		rotbExtremePlusCombatScript = SettingsFragment.getStringSetSharedPreference(myContext, "rotbExtremePlusCombatScript").toList()
 		rotbExtremePlusSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "rotbExtremePlusSummonList").toList()
 		rotbExtremePlusGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "rotbExtremePlusGroupNumber")
 		rotbExtremePlusPartyNumber = SettingsFragment.getIntSharedPreference(myContext, "rotbExtremePlusPartyNumber")
@@ -736,7 +729,6 @@ class Game(private val myContext: Context) {
 		enableUnparalleledFoe = SettingsFragment.getBooleanSharedPreference(myContext, "enableUnparalleledFoe")
 		enableUnparalleledFoeLevel95 = SettingsFragment.getBooleanSharedPreference(myContext, "enableUnparalleledFoeLevel95")
 		enableUnparalleledFoeLevel175 = SettingsFragment.getBooleanSharedPreference(myContext, "enableUnparalleledFoeLevel175")
-		unparalleledFoeCombatScript = SettingsFragment.getStringSetSharedPreference(myContext, "unparalleledFoeCombatScript").toList()
 		unparalleledFoeSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "unparalleledFoeSummonList").toList()
 		unparalleledFoeGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "unparalleledFoeGroupNumber")
 		unparalleledFoePartyNumber = SettingsFragment.getIntSharedPreference(myContext, "unparalleledFoePartyNumber")
@@ -748,11 +740,6 @@ class Game(private val myContext: Context) {
 		
 		if (farmingMode == "Special" && missionName == "VH Angel Halo" && enableDimensionalHalo && (itemName == "EXP" || itemName == "Angel Halo Weapons")) {
 			printToLog("\n[INFO] Initializing settings for Dimensional Halo...")
-			
-			if (dimensionalHaloCombatScript.isEmpty()) {
-				printToLog("[INFO] Combat Script for Dimensional Halo will reuse the one for Farming Mode.")
-				dimensionalHaloCombatScript = combatScript
-			}
 			
 			if (dimensionalHaloSummonList.isEmpty()) {
 				printToLog("[INFO] Summons for Dimensional Halo will reuse the ones for Farming Mode.")
@@ -771,11 +758,6 @@ class Game(private val myContext: Context) {
 		} else if ((farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && itemName == "Repeated Runs" && enableEventNightmare) {
 			printToLog("\n[INFO] Initializing settings for Event Nightmare...")
 			
-			if (eventNightmareCombatScript.isEmpty()) {
-				printToLog("[INFO] Combat Script for Event Nightmare will reuse the one for Farming Mode.")
-				eventNightmareCombatScript = combatScript
-			}
-			
 			if (eventNightmareSummonList.isEmpty()) {
 				printToLog("[INFO] Summons for Event Nightmare will reuse the ones for Farming Mode.")
 				eventNightmareSummonList = summonList
@@ -793,11 +775,6 @@ class Game(private val myContext: Context) {
 		} else if (farmingMode == "Rise of the Beasts" && itemName == "Repeated Runs" && enableROTBExtremePlus) {
 			printToLog("\n[INFO] Initializing settings for Rise of the Beasts...")
 			
-			if (rotbExtremePlusCombatScript.isEmpty()) {
-				printToLog("[INFO] Combat Script for Rise of the Beasts will reuse the one for Farming Mode.")
-				rotbExtremePlusCombatScript = combatScript
-			}
-			
 			if (rotbExtremePlusSummonList.isEmpty()) {
 				printToLog("[INFO] Summons for Rise of the Beasts will reuse the ones for Farming Mode.")
 				rotbExtremePlusSummonList = summonList
@@ -814,11 +791,6 @@ class Game(private val myContext: Context) {
 			}
 		} else if (farmingMode == "Dread Barrage" && itemName == "Repeated Runs" && enableUnparalleledFoe) {
 			printToLog("\n[INFO] Initializing settings for Dread Barrage Unparalleled Foes...")
-			
-			if (unparalleledFoeCombatScript.isEmpty()) {
-				printToLog("[INFO] Combat Script for Dread Barrage Unparalleled Foes will reuse the one for Farming Mode.")
-				unparalleledFoeCombatScript = combatScript
-			}
 			
 			if (unparalleledFoeSummonList.isEmpty()) {
 				printToLog("[INFO] Summons for Dread Barrage Unparalleled Foes will reuse the ones for Farming Mode.")
