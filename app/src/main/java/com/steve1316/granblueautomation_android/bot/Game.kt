@@ -40,6 +40,7 @@ class Game(private val myContext: Context) {
 	private var dimensionalHaloSummonList: List<String> = arrayListOf()
 	private var dimensionalHaloGroupNumber: Int = 0
 	private var dimensionalHaloPartyNumber: Int = 0
+	private var dimensionalHaloAmount: Int = 0
 	
 	private var enableEventNightmare: Boolean = false
 	private var eventNightmareSummonList: List<String> = arrayListOf()
@@ -65,7 +66,7 @@ class Game(private val myContext: Context) {
 	
 	var farmingMode: String = ""
 	private var mapName: String = ""
-	private var missionName: String = ""
+	var missionName: String = ""
 	private var difficulty: String = ""
 	private var itemName: String = ""
 	private var itemAmount: Int = 0
@@ -278,12 +279,19 @@ class Game(private val myContext: Context) {
 	 * Find and select the specified Summon based on the current index on the Summon Selection screen. It will then check for CAPTCHA right
 	 * afterwards.
 	 *
+	 * @param optionalSummonList Overrides the Summon list used. Defaults to the ones selected for Farming Mode.
 	 * @return True if the Summon was found and selected. False otherwise.
 	 */
-	private fun selectSummon(): Boolean {
+	private fun selectSummon(optionalSummonList: List<String> = arrayListOf()): Boolean {
 		// Format the Summon strings.
 		val newSummonList = mutableListOf<String>()
-		summonList.forEach {
+		val unformattedSummonList = if (optionalSummonList.isNotEmpty()) {
+			optionalSummonList
+		} else {
+			summonList
+		}
+		
+		unformattedSummonList.forEach {
 			val newSummonName = it.toLowerCase(Locale.ROOT).replace(" ", "_")
 			Log.d(TAG, newSummonName)
 			newSummonList.add(newSummonName)
@@ -291,7 +299,7 @@ class Game(private val myContext: Context) {
 		
 		// Set up the list of Summon elements.
 		val summonElementList = arrayListOf<String>()
-		summonList.forEach {
+		unformattedSummonList.forEach {
 			when {
 				SummonData.fireSummons.contains(it) -> {
 					summonElementList.add("fire")
@@ -397,16 +405,30 @@ class Game(private val myContext: Context) {
 	/**
 	 * Selects the specified Group and Party. It will then start the mission.
 	 *
+	 * @param optionalGroupNumber Overrides the Group Number. Defaults to the one selected for Farming Mode.
+	 * @param optionalPartyNumber Overrides the Party Number. Defaults to the one selected for Farming Mode.
 	 * @param tries Number of tries to select a Set before failing. Defaults to 3.
 	 * @return True if the mission was successfully started. False otherwise.
 	 */
-	private fun selectPartyAndStartMission(tries: Int = 3): Boolean {
+	private fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
 		var setLocation: Point? = null
 		var numberOfTries = tries
 		
+		val selectedGroupNumber = if (optionalGroupNumber == 0) {
+			groupNumber
+		} else {
+			optionalGroupNumber
+		}
+		
+		val selectedPartyNumber = if (optionalPartyNumber == 0) {
+			partyNumber
+		} else {
+			optionalPartyNumber
+		}
+		
 		// Search for the location of the "Set" button based on the Group number.
 		while (setLocation == null) {
-			setLocation = if (groupNumber < 8) {
+			setLocation = if (selectedGroupNumber < 8) {
 				imageUtils.findButton("party_set_a", tries = 1)
 			} else {
 				imageUtils.findButton("party_set_b", tries = 1)
@@ -416,7 +438,7 @@ class Game(private val myContext: Context) {
 				numberOfTries -= 1
 				
 				if (numberOfTries <= 0) {
-					if (groupNumber < 8) {
+					if (selectedGroupNumber < 8) {
 						throw(Resources.NotFoundException("Could not find Set A."))
 					} else {
 						throw(Resources.NotFoundException("Could not find Set B."))
@@ -424,7 +446,7 @@ class Game(private val myContext: Context) {
 				}
 				
 				// Switch over and search for the other Set.
-				setLocation = if (groupNumber < 8) {
+				setLocation = if (selectedGroupNumber < 8) {
 					imageUtils.findButton("party_set_b", tries = 1)
 				} else {
 					imageUtils.findButton("party_set_a", tries = 1)
@@ -433,20 +455,20 @@ class Game(private val myContext: Context) {
 		}
 		
 		// Select the Group.
-		var equation: Double = if (groupNumber == 1) {
+		var equation: Double = if (selectedGroupNumber == 1) {
 			787.0
 		} else {
-			787.0 - (140 * (groupNumber - 1))
+			787.0 - (140 * (selectedGroupNumber - 1))
 		}
 		
 		gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
 		wait(1.0)
 		
 		// Select the Party.
-		equation = if (partyNumber == 1) {
+		equation = if (selectedPartyNumber == 1) {
 			690.0
 		} else {
-			690.0 - (130 * (partyNumber - 1))
+			690.0 - (130 * (selectedPartyNumber - 1))
 		}
 		
 		gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
@@ -642,7 +664,8 @@ class Game(private val myContext: Context) {
 			// Check for certain popups for certain Farming Modes.
 			if ((farmingMode == "Rise of the Beasts" && checkROTBExtremePlus()) ||
 				(farmingMode == "Special" && missionName == "VH Angel Halo" && itemName == "Angel Halo Weapons" && checkDimensionalHalo()) ||
-				(farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare()) {
+				(farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare() ||
+				(farmingMode == "Xeno Clash" && checkForXenoClashNightmare())) {
 				// Make sure the bot goes back to the Home screen so that the "Play Again" functionality comes back.
 				mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 				break
@@ -675,24 +698,106 @@ class Game(private val myContext: Context) {
 	}
 	
 	/**
-	 * Checks for Event Nightmare and if it appeared and the user enabled it in settings, start it.
-	 *
-	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
-	 */
-	private fun checkEventNightmare(): Boolean {
-		// TODO
-		Log.d(TAG, "Not implemented yet.")
-		return false
-	}
-	
-	/**
 	 * Checks for Dimensional Halo and if it appeared and the user enabled it in settings, start it.
 	 *
 	 * @return True if Dimensional Halo was detected and successfully completed. False otherwise.
 	 */
 	private fun checkDimensionalHalo(): Boolean {
-		// TODO
-		Log.d(TAG, "Not implemented yet.")
+		if (enableDimensionalHalo && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			printToLog("\n[D.HALO] Detected Dimensional Halo. Starting it now...")
+			dimensionalHaloAmount += 1
+			
+			printToLog("\n********************************************************************************")
+			printToLog("********************************************************************************")
+			printToLog("[D.HALO] Dimensional Halo")
+			printToLog("[D.HALO] Dimensional Halo Summons: $dimensionalHaloSummonList")
+			printToLog("[D.HALO] Dimensional Halo Group Number: $dimensionalHaloGroupNumber")
+			printToLog("[D.HALO] Dimensional Halo Party Number: $dimensionalHaloPartyNumber")
+			printToLog("[D.HALO] Amount of Dimensional Halos encountered: $dimensionalHaloAmount")
+			printToLog("********************************************************************************")
+			printToLog("\n********************************************************************************")
+			
+			// Tap the "Play Next" button to head to the Summon Selection screen.
+			findAndClickButton("play_next")
+			
+			wait(1.0)
+			
+			// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
+			if (imageUtils.confirmLocation("select_a_summon")) {
+				selectSummon(optionalSummonList = dimensionalHaloSummonList)
+				val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = dimensionalHaloGroupNumber, optionalPartyNumber = dimensionalHaloPartyNumber)
+				
+				// Once preparations are completed, start Combat Mode.
+				if (startCheck && combatMode.startCombatMode(combatScript)) {
+					collectLoot()
+					return true
+				}
+			}
+		} else if (!enableDimensionalHalo && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			printToLog("\n[D.HALO] Dimensional Halo detected but user opted to not run it. Moving on...")
+			findAndClickButton("close")
+		} else {
+			printToLog("\n[D.HALO] No Dimensional Halo detected. Moving on...")
+		}
+		
+		return false
+	}
+	
+	/**
+	 * Checks for Event Nightmare and if it appeared and the user enabled it in settings, start it.
+	 *
+	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
+	 */
+	private fun checkEventNightmare(): Boolean {
+		if (enableEventNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			// First check if the Nightmare is skippable.
+			if (findAndClickButton("event_claim_loot", tries = 1)) {
+				printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...")
+				collectLoot(isEventNightmare = true)
+				return true
+			} else {
+				printToLog("\n[EVENT] Detected Event Nightmare. Starting it now...")
+				
+				printToLog("\n********************************************************************************")
+				printToLog("********************************************************************************")
+				printToLog("[EVENT] Event Nightmare")
+				printToLog("[EVENT] Event Nightmare Summons: $eventNightmareSummonList")
+				printToLog("[EVENT] Event Nightmare Group Number: $eventNightmareGroupNumber")
+				printToLog("[EVENT] Event Nightmare Party Number: $eventNightmarePartyNumber")
+				printToLog("********************************************************************************")
+				printToLog("\n********************************************************************************")
+				
+				// Tap the "Play Next" button to head to the Summon Selection screen.
+				findAndClickButton("play_next")
+				
+				wait(1.0)
+				
+				// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
+				if (imageUtils.confirmLocation("select_a_summon")) {
+					selectSummon(optionalSummonList = eventNightmareSummonList)
+					val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = eventNightmareGroupNumber, optionalPartyNumber = eventNightmarePartyNumber)
+					
+					// Once preparations are completed, start Combat Mode.
+					if (startCheck && combatMode.startCombatMode(combatScript)) {
+						collectLoot()
+						return true
+					}
+				}
+			}
+		} else if (!enableEventNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			// First check if the Nightmare is skippable.
+			if (findAndClickButton("event_claim_loot", tries = 1)) {
+				printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...")
+				collectLoot(isEventNightmare = true)
+				return true
+			} else {
+				printToLog("\n[EVENT] Event Nightmare detected but user opted to not run it. Moving on...")
+				findAndClickButton("close")
+			}
+		} else {
+			printToLog("\n[EVENT] No Event Nightmare detected. Moving on...")
+		}
+		
 		return false
 	}
 	
@@ -702,8 +807,106 @@ class Game(private val myContext: Context) {
 	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
 	 */
 	private fun checkROTBExtremePlus(): Boolean {
-		// TODO
-		Log.d(TAG, "Not implemented yet.")
+		if (enableROTBExtremePlus && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			printToLog("\n[ROTB] Detected Extreme+. Starting it now...")
+			dimensionalHaloAmount += 1
+			
+			printToLog("\n********************************************************************************")
+			printToLog("********************************************************************************")
+			printToLog("[ROTB] Rise of the Beasts Extreme+")
+			printToLog("[ROTB] Rise of the Beasts Extreme+ Summons: $rotbExtremePlusSummonList")
+			printToLog("[ROTB] Rise of the Beasts Extreme+ Group Number: $rotbExtremePlusGroupNumber")
+			printToLog("[ROTB] Rise of the Beasts Extreme+ Party Number: $rotbExtremePlusPartyNumber")
+			printToLog("********************************************************************************")
+			printToLog("\n********************************************************************************")
+			
+			// Tap the "Play Next" button to head to the Summon Selection screen.
+			findAndClickButton("play_next")
+			
+			wait(1.0)
+			
+			// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
+			if (imageUtils.confirmLocation("select_a_summon")) {
+				selectSummon(optionalSummonList = rotbExtremePlusSummonList)
+				val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = rotbExtremePlusGroupNumber, optionalPartyNumber = rotbExtremePlusPartyNumber)
+				
+				// Once preparations are completed, start Combat Mode.
+				if (startCheck && combatMode.startCombatMode(combatScript)) {
+					collectLoot()
+					return true
+				}
+			}
+		} else if (!enableROTBExtremePlus && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			printToLog("\n[ROTB] Rise of the Beasts Extreme+ detected but user opted to not run it. Moving on...")
+			findAndClickButton("close")
+		} else {
+			printToLog("\n[ROTB] No Rise of the Beasts Extreme+ detected. Moving on...")
+		}
+		
+		return false
+	}
+	
+	/**
+	 * Checks for Xeno Clash Nightmare and if it appeared and the user enabled it in settings, start it.
+	 *
+	 * @return True if Xeno Clash Nightmare was detected and successfully completed. False otherwise.
+	 */
+	private fun checkForXenoClashNightmare(): Boolean {
+		if (enableXenoClashNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			// First check if the Nightmare is skippable.
+			if (findAndClickButton("event_claim_loot", tries = 1)) {
+				printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...")
+				collectLoot(isEventNightmare = true)
+				return true
+			} else {
+				printToLog("\n[XENO] Detected Event Nightmare. Starting it now...")
+				
+				printToLog("\n********************************************************************************")
+				printToLog("********************************************************************************")
+				printToLog("[XENO] Xeno Clash Nightmare")
+				printToLog("[XENO] Xeno Clash Nightmare Summons: $xenoClashNightmareSummonList")
+				printToLog("[XENO] Xeno Clash Nightmare Group Number: $xenoClashNightmareGroupNumber")
+				printToLog("[XENO] Xeno Clash Nightmare Party Number: $xenoClashNightmarePartyNumber")
+				printToLog("********************************************************************************")
+				printToLog("\n********************************************************************************")
+				
+				// Tap the "Play Next" button to head to the Summon Selection screen.
+				findAndClickButton("play_next")
+				
+				wait(1.0)
+				
+				// Select only the first Nightmare.
+				val playRoundButtons = imageUtils.findAll("play_round_buttons")
+				gestureUtils.tap(playRoundButtons[0].x, playRoundButtons[0].y, "play_round_buttons")
+				
+				wait(1.0)
+				
+				// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
+				if (imageUtils.confirmLocation("select_a_summon")) {
+					selectSummon(optionalSummonList = xenoClashNightmareSummonList)
+					val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = xenoClashNightmareGroupNumber, optionalPartyNumber = xenoClashNightmarePartyNumber)
+					
+					// Once preparations are completed, start Combat Mode.
+					if (startCheck && combatMode.startCombatMode(combatScript)) {
+						collectLoot()
+						return true
+					}
+				}
+			}
+		} else if (!enableXenoClashNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+			// First check if the Nightmare is skippable.
+			if (findAndClickButton("event_claim_loot", tries = 1)) {
+				printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...")
+				collectLoot(isEventNightmare = true)
+				return true
+			} else {
+				printToLog("\n[XENO] Xeno Clash Nightmare detected but user opted to not run it. Moving on...")
+				findAndClickButton("close")
+			}
+		} else {
+			printToLog("\n[XENO] No Xeno Clash Nightmare detected. Moving on...")
+		}
+		
 		return false
 	}
 	
