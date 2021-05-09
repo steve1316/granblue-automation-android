@@ -77,35 +77,47 @@ class HomeFragment : Fragment() {
 					"  \"fullElixir\": false\n" +
 					"  \"soulBalm\": false\n" +
 					"\n" +
+					"############################################################\n" +
+					"# The following settings below follow pretty much the same template provided. They default to the settings selected for Farming Mode if nothing is set.\n" +
+					"\n" +
+					"# Enables this fight or skip it if false.\n" +
+					"# enable___ =\n" +
+					"\n" +
+					"# Select what Summon(s) separated by commas to use in order from highest priority to least. Example: Shiva, Colossus Omega, Varuna, Agni\n" +
+					"# https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons\n" +
+					"# ___SummonList =\n" +
+					"\n" +
+					"# Set what Party to select and under what Group to run for the specified fight. Accepted values are: Group [1, 2, 3, 4, 5, 6, 7] and Party [1, 2, 3, 4, 5, 6].\n" +
+					"# ___GroupNumber =\n" +
+					"# ___PartyNumber =\n" +
+					"############################################################\n" +
+					"\n" +
 					"########################################\n" +
 					"# Settings for Dimensional Halo.\n" +
 					"########################################\n" +
 					"\"dimensionalHalo\":\n" +
 					"  \"enableDimensionalHalo\": false\n" +
-					"  \"dimensionalHaloCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"dimensionalHaloSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"dimensionalHaloGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
-					"  \"dimensionalHaloPartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+					"  \"dimensionalHaloSummonList\": []\n" +
+					"  \"dimensionalHaloGroupNumber\": 0\n" +
+					"  \"dimensionalHaloPartyNumber\": 0\n" +
 					"\n" +
 					"########################################\n" +
 					"# Settings for Event Nightmares.\n" +
 					"########################################\n" +
 					"\"event\":\n" +
 					"  \"enableEventNightmare\": false\n" +
-					"  \"eventNightmareCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"eventNightmareSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"eventNightmareGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
-					"  \"eventNightmarePartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+					"  \"eventNightmareSummonList\": []\n" +
+					"  \"eventNightmareGroupNumber\": 0\n" +
+					"  \"eventNightmarePartyNumber\": 0\n" +
 					"\n" +
 					"########################################\n" +
 					"# Settings for Rise of the Beasts Extreme+.\n" +
 					"########################################\n" +
 					"\"rotb\":\n" +
 					"  \"enableROTBExtremePlus\": false\n" +
-					"  \"rotbExtremePlusCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"rotbExtremePlusSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"rotbExtremePlusGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
-					"  \"rotbExtremePlusPartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
+					"  \"rotbExtremePlusSummonList\": []\n" +
+					"  \"rotbExtremePlusGroupNumber\": 0\n" +
+					"  \"rotbExtremePlusPartyNumber\": 0\n" +
 					"\n" +
 					"########################################\n" +
 					"# Settings for Dread Barrage Unparalleled Foes.\n" +
@@ -114,10 +126,18 @@ class HomeFragment : Fragment() {
 					"  \"enableUnparalleledFoe\": false\n" +
 					"  \"enableUnparalleledFoeLevel95\": false # You can only choose one. If you enable both, the bot will select Level 95. If none are selected, the bot will default to Level 95.\n" +
 					"  \"enableUnparalleledFoeLevel175\": false\n" +
-					"  \"unparalleledFoeCombatScript\":  # File name of the combat script text file in the same directory as this config.yaml file. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"unparalleledFoeSummonList\": [] # Summon(s) to use separated by commas in order from highest to lowest priority. Please visit https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons for selectable Summons. If nothing, defaults to the settings used by Farming Mode.\n" +
-					"  \"unparalleledFoeGroupNumber\": 0 # If 0, defaults to the settings used by Farming Mode.\n" +
-					"  \"unparalleledFoePartyNumber\": 0 # If 0, defaults to the settings used by Farming Mode."
+					"  \"unparalleledFoeSummonList\": []\n" +
+					"  \"unparalleledFoeGroupNumber\": 0\n" +
+					"  \"unparalleledFoePartyNumber\": 0\n" +
+					"\n" +
+					"########################################\n" +
+					"# Settings for Xeno Clash Nightmare.\n" +
+					"########################################\n" +
+					"\"xenoClash\":\n" +
+					"  \"enableXenoClashNightmare\": false\n" +
+					"  \"xenoClashNightmareSummonList\": []\n" +
+					"  \"xenoClashNightmareGroupNumber\": 0\n" +
+					"  \"xenoClashNightmarePartyNumber\": 0"
 			
 			file.writeText(content)
 			
