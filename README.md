@@ -7,6 +7,8 @@ This Android application written in Kotlin is designed for educational research 
 
 Screenshots are taken via the MediaProjection and OpenCV performs image processing. Gestures are performed by AccessibilityService in order to perform various actions such as tapping, swiping or scrolling the screen.
 
+<img src="app/src/main/assets/readme_assets/1.png" height="700px" />
+
 # Table of Contents
 - [Features](<#Features>)
 - [Requirements](<#Requirements>)
