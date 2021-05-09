@@ -1145,6 +1145,55 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 	}
 	
+	private fun navigateToXenoClash(missionName: String) {
+		// Go to the Home screen.
+		game.goBackHome(confirmLocationCheck = true)
+		
+		game.printToLog("\n[INFO] Now navigating to Xeno Clash...", MESSAGE_TAG = TAG)
+		
+		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
+		game.findAndClickButton("home_menu")
+		var bannerLocations = game.imageUtils.findAll("event_banner")
+		if (bannerLocations.size == 0) {
+			bannerLocations = game.imageUtils.findAll("event_banner_blue")
+		}
+		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
+		
+		game.wait(3.0)
+		
+		if (game.findAndClickButton("xeno_special")) {
+			game.wait(1.0)
+			
+			// Check if there is a Nightmare already available.
+			val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
+				1
+			} else {
+				0
+			}
+			
+			// Find the locations of all the "Select" buttons.
+			val selectButtonLocations = game.imageUtils.findAll("select")
+			
+			// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
+			if (missionName == "Xeno Clash Extreme") {
+				game.printToLog("[INFO] Now hosting Xeno Clash Extreme...", MESSAGE_TAG = TAG)
+				game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 + nightmareIsAvailable].y, "select")
+				
+				game.wait(1.0)
+				
+				val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
+				game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
+			} else if (missionName == "Xeno Clash Raid") {
+				game.printToLog("[INFO] Now hosting Xeno Clash Raid...", MESSAGE_TAG = TAG)
+				game.gestureUtils.tap(selectButtonLocations[2 + nightmareIsAvailable].x, selectButtonLocations[2 + nightmareIsAvailable].y, "select")
+				
+				game.wait(1.0)
+				
+				game.findAndClickButton("play")
+			}
+		}
+	}
+	
 	/**
 	 * Navigates the bot to the specified map and preps the bot for Summon/Party selection.
 	 *
@@ -1172,6 +1221,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			navigateToGuildWars(difficulty)
 		} else if (farmingMode == "Proving Grounds") {
 			navigateToProvingGrounds(difficulty)
+		} else if (farmingMode == "Xeno Clash") {
+			navigateToXenoClash(missionName)
 		}
 		
 		game.wait(3.0)

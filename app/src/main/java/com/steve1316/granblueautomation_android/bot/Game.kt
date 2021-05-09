@@ -62,6 +62,11 @@ class Game(private val myContext: Context) {
 	private var unparalleledFoeGroupNumber: Int = 0
 	private var unparalleledFoePartyNumber: Int = 0
 	
+	private var enableXenoClashNightmare: Boolean = false
+	private var xenoClashNightmareSummonList: List<String> = arrayListOf()
+	private var xenoClashNightmareGroupNumber: Int = 0
+	private var xenoClashNightmarePartyNumber: Int = 0
+	
 	var farmingMode: String = ""
 	private var mapName: String = ""
 	private var missionName: String = ""
@@ -736,6 +741,11 @@ class Game(private val myContext: Context) {
 		unparalleledFoeGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "unparalleledFoeGroupNumber")
 		unparalleledFoePartyNumber = SettingsFragment.getIntSharedPreference(myContext, "unparalleledFoePartyNumber")
 		
+		enableXenoClashNightmare = SettingsFragment.getBooleanSharedPreference(myContext, "enableXenoClashNightmare")
+		xenoClashNightmareSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "xenoClashNightmareSummonList").toList()
+		xenoClashNightmareGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "xenoClashNightmareGroupNumber")
+		xenoClashNightmarePartyNumber = SettingsFragment.getIntSharedPreference(myContext, "xenoClashNightmarePartyNumber")
+		
 		if (farmingMode == "Special" && missionName == "VH Angel Halo" && enableDimensionalHalo && (itemName == "EXP" || itemName == "Angel Halo Weapons")) {
 			printToLog("\n[INFO] Initializing settings for Dimensional Halo...")
 			
@@ -823,6 +833,23 @@ class Game(private val myContext: Context) {
 			if (unparalleledFoePartyNumber == 0) {
 				printToLog("[INFO] Party Number for Dread Barrage Unparalleled Foes will reuse the ones for Farming Mode.")
 				unparalleledFoePartyNumber = partyNumber
+			}
+		} else if (farmingMode == "Xeno Clash" && itemName == "Repeated Runs" && enableXenoClashNightmare) {
+			printToLog("\n[INFO] Initializing settings for Xeno Clash Nightmare...")
+			
+			if (xenoClashNightmareSummonList.isEmpty()) {
+				printToLog("[INFO] Summons for Xeno Clash Nightmare will reuse the ones for Farming Mode.")
+				xenoClashNightmareSummonList = summonList
+			}
+			
+			if (xenoClashNightmareGroupNumber == 0) {
+				printToLog("[INFO] Group Number for Xeno Clash Nightmare will reuse the ones for Farming Mode.")
+				xenoClashNightmareGroupNumber = groupNumber
+			}
+			
+			if (xenoClashNightmarePartyNumber == 0) {
+				printToLog("[INFO] Party Number for Xeno Clash Nightmare will reuse the ones for Farming Mode.")
+				xenoClashNightmarePartyNumber = partyNumber
 			}
 		}
 	}
