@@ -17,19 +17,22 @@ Screenshots are taken via the MediaProjection and OpenCV performs image processi
 By downloading this application, you consent to your account potentially getting flagged for excessive usage and banned by KMR. I hold no responsibility for how much you use this application for. I trust you have the self-control necessary to use this application in reasonable bursts of time and to give yourself breaks in between.
 
 # Features
-- [ ] Choose between various Farming Modes:
+- [x] Customize what skills to use during each turn in a user-created plan. Users can select which plan to use when starting the bot.
+- [x] GUI to keep track of bot logs, adjust settings, and select what combat script to use.
+- [x] Farm user-defined amounts of specified materials from the supported Farming Modes.
+- [x] Support for the following game modes:
   - [x] Quest
   - [x] Special
   - [x] Coop
   - [x] Raid
   - [x] Event
   - [x] Event (Token Drawboxes)
-  - [ ] Rise of the Beasts
+  - [x] Rise of the Beasts
   - [x] Guild Wars
-  - [ ] Dread Barrage
-- [x] Choose your own custom combat script.
+  - [x] Dread Barrage
+  - [x] Proving Grounds
+  - [x] Xeno Clash
 - [x] Alert for when anti-bot CAPTCHA pops up.
-- [x] Customizable settings such as Item/Summon selection and delays between each run.
 
 # Requirements
 1. [Android Device (API 29+ or Android 10+)](https://developer.android.com/about/versions)
