@@ -896,7 +896,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
-		// Go to the Guild Wars banner by tapping on the "Menu" button.
+		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		var bannerLocations = game.imageUtils.findAll("event_banner")
 		if (bannerLocations.size == 0) {
@@ -999,7 +999,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
-		// Go to the Guild Wars banner by tapping on the "Menu" button.
+		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		var bannerLocations = game.imageUtils.findAll("event_banner")
 		if (bannerLocations.size == 0) {
@@ -1112,7 +1112,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
-		// Go to the Proving Grounds banner by tapping on the "Menu" button.
+		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		var bannerLocations = game.imageUtils.findAll("event_banner")
 		if (bannerLocations.size == 0) {
