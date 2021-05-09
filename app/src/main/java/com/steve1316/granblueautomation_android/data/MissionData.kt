@@ -121,6 +121,10 @@ class MissionData {
 		val mapsForGuildWars = mapOf(
 			"Nightmare" to arrayListOf("NM90", "NM95", "NM100", "NM150"),
 			"Meat" to arrayListOf("Very Hard", "Extreme", "Extreme+")
+		
+		val mapsForXenoClash = mapOf(
+			"Xeno Clash Extreme" to arrayListOf("Xeno Clash Extreme"),
+			"Xeno Clash Raid" to arrayListOf("Xeno Clash Raid")
 		)
 	}
 }

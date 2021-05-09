@@ -264,5 +264,10 @@ class ItemData {
 			"NM100" to arrayListOf("Repeated Runs"),
 			"NM150" to arrayListOf("Repeated Runs")
 		)
+		
+		val itemsForXenoClash = mapOf(
+			"Xeno Clash Extreme" to arrayListOf("Repeated Runs"),
+			"Xeno Clash Raid" to arrayListOf("Repeated Runs")
+		)
 	}
 }

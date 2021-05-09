@@ -35,6 +35,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val missionsForEvent: Map<String, ArrayList<String>> = MissionData.mapsForEvent
 	private val missionsForEventTokenDrawboxes: Map<String, ArrayList<String>> = MissionData.mapsForEventTokenDrawboxes
 	private val missionsForGuildWars: Map<String, ArrayList<String>> = MissionData.mapsForGuildWars
+	private val missionsForXenoClash: Map<String, ArrayList<String>> = MissionData.mapsForXenoClash
 	
 	private val itemsForQuest: Map<String, ArrayList<String>> = ItemData.itemsForQuest
 	private val itemsForSpecial: Map<String, ArrayList<String>> = ItemData.itemsForSpecial
@@ -43,6 +44,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val itemsForEvent: Map<String, ArrayList<String>> = ItemData.itemsForEvent
 	private val itemsForEventTokenDrawboxes: Map<String, ArrayList<String>> = ItemData.itemsForEventTokenDrawboxes
 	private val itemsForGuildWars: Map<String, ArrayList<String>> = ItemData.itemsForGuildWars
+	private val itemsForXenoClash: Map<String, ArrayList<String>> = ItemData.itemsForXenoClash
 	
 	companion object {
 		/**
@@ -519,6 +521,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					putInt("unparalleledFoeGroupNumber", config.dreadBarrage.unparalleledFoeGroupNumber)
 					putInt("unparalleledFoePartyNumber", config.dreadBarrage.unparalleledFoePartyNumber)
 					
+					putBoolean("enableXenoClashNightmare", config.rotb.enableROTBExtremePlus)
+					putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
+					putInt("xenoClashNightmareGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
+					putInt("xenoClashNightmarePartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+					
 					commit()
 				}
 				
@@ -598,6 +605,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+			"Xeno Clash" -> {
+				missionsForXenoClash.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
 		}
 		
 		missionPicker.entries = newEntries.toTypedArray()
@@ -709,6 +723,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+			"Xeno Clash" -> {
+				itemsForXenoClash.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
 		}
 		
 		itemPicker.entries = newEntries.toTypedArray()
