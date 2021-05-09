@@ -556,7 +556,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						
 						// Check if the Battle has ended.
 						if (retreatCheckFlag || game.imageUtils.confirmLocation("exp_gained", tries = 1) || game.imageUtils.confirmLocation("no_loot", tries = 1) ||
-							game.imageUtils.confirmLocation("battle_concluded", tries = 1)) {
+							game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
+							game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
 							game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 							game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
@@ -583,7 +584,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							break
 						} else if (command == "exit") {
 							// End Combat Mode by heading back to the Home screen without retreating.
-							game.printToLog("[COMBAT] Leaving this Raid without retreating.", MESSAGE_TAG = TAG)
+							game.printToLog("\n[COMBAT] Leaving this Raid without retreating.", MESSAGE_TAG = TAG)
 							game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 							game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
@@ -625,7 +626,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							
 							if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
 								game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+								game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 								game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
 								game.printToLog("################################################################################", MESSAGE_TAG = TAG)
@@ -789,9 +790,14 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		while (!retreatCheckFlag && !fullAutoCheckFlag && semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
 			!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
 			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-				game.printToLog("[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-				game.findAndClickButton("ok")
-				break
+				game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
+				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.findAndClickButton("reload")
+				return true
 			}
 			
 			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
@@ -811,9 +817,14 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		while (!retreatCheckFlag && fullAutoCheckFlag && !semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
 			!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
 			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-				game.printToLog("[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-				game.findAndClickButton("ok")
-				break
+				game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
+				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.findAndClickButton("reload")
+				return true
 			}
 			
 			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
