@@ -34,7 +34,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val missionsForRaid: Map<String, ArrayList<String>> = MissionData.mapsForRaid
 	private val missionsForEvent: Map<String, ArrayList<String>> = MissionData.mapsForEvent
 	private val missionsForEventTokenDrawboxes: Map<String, ArrayList<String>> = MissionData.mapsForEventTokenDrawboxes
+	private val missionsForROTB: Map<String, ArrayList<String>> = MissionData.mapsForROTB
 	private val missionsForGuildWars: Map<String, ArrayList<String>> = MissionData.mapsForGuildWars
+	private val missionsForDreadBarrage: Map<String, ArrayList<String>> = MissionData.mapsForDreadBarrage
+	private val missionsForProvingGrounds: Map<String, ArrayList<String>> = MissionData.mapsForProvingGrounds
 	private val missionsForXenoClash: Map<String, ArrayList<String>> = MissionData.mapsForXenoClash
 	
 	private val itemsForQuest: Map<String, ArrayList<String>> = ItemData.itemsForQuest
@@ -43,7 +46,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val itemsForRaid: Map<String, ArrayList<String>> = ItemData.itemsForRaid
 	private val itemsForEvent: Map<String, ArrayList<String>> = ItemData.itemsForEvent
 	private val itemsForEventTokenDrawboxes: Map<String, ArrayList<String>> = ItemData.itemsForEventTokenDrawboxes
+	private val itemsForROTB: Map<String, ArrayList<String>> = ItemData.itemsForROTB
 	private val itemsForGuildWars: Map<String, ArrayList<String>> = ItemData.itemsForGuildWars
+	private val itemsForDreadBarrage: Map<String, ArrayList<String>> = ItemData.itemsForDreadBarrage
+	private val itemsForProvingGrounds: Map<String, ArrayList<String>> = ItemData.itemsForProvingGrounds
 	private val itemsForXenoClash: Map<String, ArrayList<String>> = ItemData.itemsForXenoClash
 	
 	companion object {
@@ -594,6 +600,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+			"Rise of the Beasts" -> {
+				missionsForROTB.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
             "Guild Wars" -> {
                 missionsForGuildWars.forEach { (_, value) ->
                     value.forEach {
@@ -601,6 +614,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+			"Dread Barrage" -> {
+				missionsForDreadBarrage.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
+			"Proving Grounds" -> {
+				missionsForProvingGrounds.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
 			"Xeno Clash" -> {
 				missionsForXenoClash.forEach { (_, value) ->
 					value.forEach {
@@ -710,6 +737,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+			"Rise of the Beasts" -> {
+				itemsForROTB.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
             "Guild Wars" -> {
                 itemsForGuildWars.forEach { (key, value) ->
                     if (key == missionName) {
@@ -719,6 +755,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+			"Dread Barrage" -> {
+				itemsForDreadBarrage.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
+			"Proving Grounds" -> {
+				itemsForProvingGrounds.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
 			"Xeno Clash" -> {
 				itemsForXenoClash.forEach { (key, value) ->
 					if (key == missionName) {

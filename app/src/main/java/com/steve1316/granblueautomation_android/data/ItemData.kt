@@ -251,6 +251,17 @@ class ItemData {
 			"IM Event Raid" to arrayListOf("Repeated Runs")
 		)
 		
+		val itemsForROTB = mapOf(
+			"VH Zhuque" to arrayListOf("Repeated Runs"),
+			"VH Xuanwu" to arrayListOf("Repeated Runs"),
+			"VH Baihu" to arrayListOf("Repeated Runs"),
+			"VH Qinglong" to arrayListOf("Repeated Runs"),
+			"EX Zhuque" to arrayListOf("Repeated Runs"),
+			"EX Xuanwu" to arrayListOf("Repeated Runs"),
+			"EX Baihu" to arrayListOf("Repeated Runs"),
+			"EX Qinglong" to arrayListOf("Repeated Runs")
+		)
+		
 		val itemsForGuildWars = mapOf(
 			"Very Hard" to arrayListOf("Repeated Runs"),
 			"Extreme" to arrayListOf("Repeated Runs"),
@@ -259,6 +270,19 @@ class ItemData {
 			"NM95" to arrayListOf("Repeated Runs"),
 			"NM100" to arrayListOf("Repeated Runs"),
 			"NM150" to arrayListOf("Repeated Runs")
+		)
+		
+		val itemsForDreadBarrage = mapOf(
+			"1 Star" to arrayListOf("Repeated Runs"),
+			"2 Star" to arrayListOf("Repeated Runs"),
+			"3 Star" to arrayListOf("Repeated Runs"),
+			"4 Star" to arrayListOf("Repeated Runs"),
+			"5 Star" to arrayListOf("Repeated Runs"),
+		)
+		
+		val itemsForProvingGrounds = mapOf(
+			"Extreme" to arrayListOf("Repeated Runs"),
+			"Extreme+" to arrayListOf("Repeated Runs"),
 		)
 		
 		val itemsForXenoClash = mapOf(

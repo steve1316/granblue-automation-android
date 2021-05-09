@@ -99,9 +99,22 @@ class MissionData {
 			"Event Raid" to arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
 		)
 		
+		val mapsForROTB = mapOf(
+			"Event Quest" to arrayListOf("VH Zhuque", "VH Xuanwu", "VH Baihu", "VH Qinglong"),
+			"Event Raid" to arrayListOf("EX Zhuque", "EX Xuanwu", "EX Baihu", "EX Qinglong")
+		)
+		
 		val mapsForGuildWars = mapOf(
 			"Nightmare" to arrayListOf("NM90", "NM95", "NM100", "NM150"),
 			"Meat" to arrayListOf("Extreme", "Extreme+")
+		)
+		
+		val mapsForDreadBarrage = mapOf(
+			"Dread Barrage Raid" to arrayListOf("1 Star", "2 Star", "3 Star", "4 Star", "5 Star")
+		)
+		
+		val mapsForProvingGrounds = mapOf(
+			"Proving Ground Missions" to arrayListOf("Extreme", "Extreme+")
 		)
 		
 		val mapsForXenoClash = mapOf(
