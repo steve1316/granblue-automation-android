@@ -239,16 +239,12 @@ class ItemData {
 		)
 		
 		val itemsForEvent = mapOf(
-			"VH Event Quest" to arrayListOf("Repeated Runs"),
 			"EX Event Quest" to arrayListOf("Repeated Runs"),
 			"VH Event Raid" to arrayListOf("Repeated Runs"),
 			"EX Event Raid" to arrayListOf("Repeated Runs")
 		)
 		
 		val itemsForEventTokenDrawboxes = mapOf(
-			"N Event Quest" to arrayListOf("Repeated Runs"),
-			"H Event Quest" to arrayListOf("Repeated Runs"),
-			"VH Event Quest" to arrayListOf("Repeated Runs"),
 			"EX Event Quest" to arrayListOf("Repeated Runs"),
 			"VH Event Raid" to arrayListOf("Repeated Runs"),
 			"EX Event Raid" to arrayListOf("Repeated Runs"),

@@ -26,26 +26,7 @@ class MissionData {
 			"Shiny Slime Search!" to arrayListOf("N Shiny Slime Search!", "H Shiny Slime Search!", "VH Shiny Slime Search!"),
 			"Six Dragon Trial" to arrayListOf("N Six Dragon Trial", "H Six Dragon Trial", "VH Six Dragon Trial"),
 			"Elemental Treasure Quests" to arrayListOf("The Hellfire Trial", "The Deluge Trial", "The Wasteland Trial", "The Typhoon Trial"),
-			"Showdowns" to arrayListOf(
-				"H Ifrit Showdown",
-				"VH Ifrit Showdown",
-				"EX Ifrit Showdown",
-				"H Cocytus Showdown",
-				"VH Cocytus Showdown",
-				"EX Cocytus Showdown",
-				"H Vohu Manah Showdown",
-				"VH Vohu Manah Showdown",
-				"EX Vohu Manah Showdown",
-				"H Sagittarius Showdown",
-				"VH Sagittarius Showdown",
-				"EX Sagittarius Showdown",
-				"H Corow Showdown",
-				"VH Corow Showdown",
-				"EX Corow Showdown",
-				"H Diablo Showdown",
-				"VH Diablo Showdown",
-				"EX Diablo Showdown"
-			),
+			"Showdowns" to arrayListOf("EX Ifrit Showdown", "EX Cocytus Showdown", "EX Vohu Manah Showdown", "EX Sagittarius Showdown", "EX Corow Showdown", "EX Diablo Showdown"),
 			"Angel Halo" to arrayListOf("N Angel Halo", "H Angel Halo", "VH Angel Halo"),
 			"Campaign-Exclusive Quest" to arrayListOf("Campaign-Exclusive Quest")
 		)
@@ -109,18 +90,19 @@ class MissionData {
 		)
 		
 		val mapsForEvent = mapOf(
-			"Event Quest" to arrayListOf("VH Event Quest", "EX Event Quest"),
+			"Event Quest" to arrayListOf("EX Event Quest"),
 			"Event Raid" to arrayListOf("VH Event Raid", "EX Event Raid")
 		)
 		
 		val mapsForEventTokenDrawboxes = mapOf(
-			"Event Quest" to arrayListOf("N Event Quest", "H Event Quest", "VH Event Quest", "EX Event Quest"),
+			"Event Quest" to arrayListOf("EX Event Quest"),
 			"Event Raid" to arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
 		)
 		
 		val mapsForGuildWars = mapOf(
 			"Nightmare" to arrayListOf("NM90", "NM95", "NM100", "NM150"),
-			"Meat" to arrayListOf("Very Hard", "Extreme", "Extreme+")
+			"Meat" to arrayListOf("Extreme", "Extreme+")
+		)
 		
 		val mapsForXenoClash = mapOf(
 			"Xeno Clash Extreme" to arrayListOf("Xeno Clash Extreme"),
