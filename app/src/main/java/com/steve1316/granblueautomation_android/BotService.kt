@@ -115,7 +115,9 @@ class BotService : Service() {
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
 									
+									// Start Farming Mode with the provided settings from SharedPreferences.
 									game.startFarmingMode(myContext)
+									
 									val newIntent = Intent("CUSTOM_INTENT")
 									newIntent.putExtra("SUCCESS", "Bot has completed successfully with no errors.")
 									sendBroadcast(newIntent)
