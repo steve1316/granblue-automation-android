@@ -295,8 +295,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * @param skillCommandList The commands to be executed.
 	 */
 	private fun useCharacterSkill(characterNumber: Int, skillCommandList: List<String>) {
-		while (skillCommandList.isNotEmpty()) {
-			val x = when (skillCommandList[0]) {
+		var tempSkillCommandList: List<String> = skillCommandList
+		
+		while (tempSkillCommandList.isNotEmpty()) {
+			val x = when (tempSkillCommandList[0]) {
 				"useskill(1)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", MESSAGE_TAG = TAG)
 					attackButtonLocation!!.x - 485.0
@@ -319,13 +321,13 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				}
 			}
 			
-			skillCommandList.drop(1)
+			tempSkillCommandList = tempSkillCommandList.drop(1)
 			
 			val y = attackButtonLocation!!.y + 395.0
 			
 			// Double tap the Skill to avoid any popups caused by other Raid participants.
-			game.gestureUtils.tap(x, y, "template_skill", ignoreWait = true)
-			game.gestureUtils.tap(x, y, "template_skill")
+			game.wait(0.5)
+			game.gestureUtils.tap(x, y, "template_skill", taps = 2)
 			
 			// Check if the Skill requires a target.
 			if (game.imageUtils.confirmLocation("use_skill", tries = 1, suppressError = true)) {
@@ -334,9 +336,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				if (selectCharacterLocation != null) {
 					game.printToLog("[COMBAT] Skill is awaiting a target.", MESSAGE_TAG = TAG)
 					
-					if (skillCommandList.isNotEmpty()) {
+					game.wait(0.5)
+					
+					if (tempSkillCommandList.isNotEmpty()) {
 						// Select the targeted Character.
-						when (skillCommandList[0]) {
+						when (tempSkillCommandList[0]) {
 							"target(1)" -> {
 								game.printToLog("[COMBAT] Targeting Character 1 for Skill.", MESSAGE_TAG = TAG)
 								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
@@ -367,7 +371,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							}
 						}
 						
-						skillCommandList.drop(1)
+						tempSkillCommandList = tempSkillCommandList.drop(1)
 					}
 				} else if (game.imageUtils.confirmLocation("skill_unusable", tries = 1)) {
 					game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", MESSAGE_TAG = TAG)
@@ -390,44 +394,56 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			if (summonCommand == "summon($j)") {
 				// Bring up the available Summons.
 				game.printToLog("[COMBAT] Invoking Summon $j.", MESSAGE_TAG = TAG)
-				game.findAndClickButton("summon")
+				game.findAndClickButton("summon", tries = 5)
 				
-				// Now tap on the specified Summon.
-				when (j) {
-					1 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0, "summon")
-					}
-					2 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0, "summon")
-					}
-					3 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0, "summon")
-					}
-					4 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0, "summon")
-					}
-					5 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0, "summon")
-					}
-					6 -> {
-						game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0, "summon")
-					}
-				}
+				game.wait(1.0)
 				
-				if (game.imageUtils.confirmLocation("summon_details")) {
-					val okButtonLocation = game.imageUtils.findButton("ok")
+				var tries = 2
+				while (tries > 0) {
+					// Now tap on the specified Summon.
+					when (j) {
+						1 -> {
+							game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0, "summon")
+						}
+						2 -> {
+							game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0, "summon")
+						}
+						3 -> {
+							game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0, "summon")
+						}
+						4 -> {
+							game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0, "summon")
+						}
+						5 -> {
+							game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0, "summon")
+						}
+						6 -> {
+							game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0, "summon")
+						}
+					}
 					
-					if (okButtonLocation != null) {
-						game.gestureUtils.tap(okButtonLocation.x, okButtonLocation.y, "ok")
+					game.wait(1.0)
+					
+					if (game.imageUtils.confirmLocation("summon_details")) {
+						val okButtonLocation = game.imageUtils.findButton("ok")
 						
-						// Now wait for the Summon animation to complete.
-						game.wait(7.0)
+						if (okButtonLocation != null) {
+							game.gestureUtils.tap(okButtonLocation.x, okButtonLocation.y, "ok")
+							
+							// Now wait for the Summon animation to complete.
+							game.wait(7.0)
+						} else {
+							game.printToLog("[COMBAT] Summon $j cannot be invoked due to current restrictions.", MESSAGE_TAG = TAG)
+							game.findAndClickButton("cancel")
+							
+							// Tap the "Back" button to return.
+							game.findAndClickButton("back")
+						}
+						
+						break
 					} else {
-						game.printToLog("[COMBAT] Summon $j cannot be invoked due to current restrictions.", MESSAGE_TAG = TAG)
-						game.findAndClickButton("cancel")
-						
-						// Tap the "Back" button to return.
-						game.findAndClickButton("back")
+						// Try to tap on the Summon again if a popup from the Raid absorbed the tap event.
+						tries -= 1
 					}
 				}
 			}
@@ -615,14 +631,25 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							}
 						}
 						
+						// Check if the Battle has ended.
+						if (retreatCheckFlag || game.imageUtils.confirmLocation("exp_gained", tries = 1) || game.imageUtils.confirmLocation("no_loot", tries = 1) ||
+							game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
+							game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
+							game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+							game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+							return false
+						}
+						
 						// Execute Skill commands here.
 						if (characterSelected != 0) {
 							// Select the specified Character.
 							selectCharacter(characterSelected)
 							
 							// Now execute each Skill command starting from left to right for this Character.
-							val skillCommandList: List<String> = command.split(".")
-							skillCommandList.drop(1)
+							val skillCommandList: List<String> = command.split(".").drop(1)
 							
 							useCharacterSkill(characterSelected, skillCommandList)
 							
