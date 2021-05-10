@@ -130,9 +130,10 @@ class MyAccessibilityService : AccessibilityService() {
 	 * @param buttonName The name of the image to tap.
 	 * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
 	 * @param longPress Whether or not to long press.
+	 * @param taps How many taps to execute.
 	 * @return True if the tap gesture was executed successfully. False otherwise.
 	 */
-	fun tap(x: Double, y: Double, buttonName: String, ignoreWait: Boolean = false, longPress: Boolean = false): Boolean {
+	fun tap(x: Double, y: Double, buttonName: String, ignoreWait: Boolean = false, longPress: Boolean = false, taps: Int = 1): Boolean {
 		// Randomize the tapping location.
 		val (newX, newY) = randomizeTapLocation(x, y, buttonName)
 		
@@ -151,6 +152,17 @@ class MyAccessibilityService : AccessibilityService() {
 		}
 		
 		val dispatchResult = dispatchGesture(gesture, null, null)
+		var tries = taps - 1
+		
+		while (tries > 0) {
+			dispatchGesture(gesture, null, null)
+			if (!ignoreWait) {
+				0.5.wait()
+			}
+			
+			tries -= 1
+		}
+		
 		if (!ignoreWait) {
 			0.5.wait()
 		}
