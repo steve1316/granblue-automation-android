@@ -15,9 +15,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
+import com.sksamuel.hoplite.ConfigLoader
 import com.steve1316.granblueautomation_android.MyAccessibilityService
 import com.steve1316.granblueautomation_android.R
+import com.steve1316.granblueautomation_android.data.ConfigData
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
 import com.steve1316.granblueautomation_android.utils.MessageLog
@@ -144,6 +148,69 @@ class HomeFragment : Fragment() {
 			Log.d(TAG, "Created config.yaml in internal storage.")
 		} else {
 			Log.d(TAG, "config.yaml already exists.")
+			
+			val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+			
+			// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.
+			try {
+				if (file.exists()) {
+					val config = ConfigLoader().loadConfigOrThrow<ConfigData>(file)
+					
+					if (config.twitter.apiKey != sharedPreferences.getString("apiKey", "")) {
+						sharedPreferences.edit {
+							putString("apiKey", config.twitter.apiKey)
+							putString("apiKeySecret", config.twitter.apiKeySecret)
+							putString("accessToken", config.twitter.accessToken)
+							putString("accessTokenSecret", config.twitter.accessTokenSecret)
+							commit()
+						}
+						
+						Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.")
+					}
+					
+					sharedPreferences.edit {
+						putBoolean("enableEventNightmare", config.event.enableEventNightmare)
+						putStringSet("eventNightmareSummonList", config.event.eventNightmareSummonList.toMutableSet())
+						putInt("eventNightmareGroupNumber", config.event.eventNightmareGroupNumber)
+						putInt("eventNightmarePartyNumber", config.event.eventNightmarePartyNumber)
+						
+						putBoolean("enableDimensionalHalo", config.dimensionalHalo.enableDimensionalHalo)
+						putStringSet("dimensionalHaloSummonList", config.dimensionalHalo.dimensionalHaloSummonList.toMutableSet())
+						putInt("dimensionalHaloGroupNumber", config.dimensionalHalo.dimensionalHaloGroupNumber)
+						putInt("dimensionalHaloPartyNumber", config.dimensionalHalo.dimensionalHaloPartyNumber)
+						
+						putBoolean("enableROTBExtremePlus", config.rotb.enableROTBExtremePlus)
+						putStringSet("rotbExtremePlusSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
+						putInt("rotbExtremePlusGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
+						putInt("rotbExtremePlusPartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+						
+						putBoolean("enableUnparalleledFoe", config.dreadBarrage.enableUnparalleledFoe)
+						putBoolean("enableUnparalleledFoeLevel95", config.dreadBarrage.enableUnparalleledFoeLevel95)
+						putBoolean("enableUnparalleledFoeLevel175", config.dreadBarrage.enableUnparalleledFoeLevel175)
+						putStringSet("unparalleledFoeSummonList", config.dreadBarrage.unparalleledFoeSummonList.toMutableSet())
+						putInt("unparalleledFoeGroupNumber", config.dreadBarrage.unparalleledFoeGroupNumber)
+						putInt("unparalleledFoePartyNumber", config.dreadBarrage.unparalleledFoePartyNumber)
+						
+						putBoolean("enableXenoClashNightmare", config.rotb.enableROTBExtremePlus)
+						putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
+						putInt("xenoClashNightmareGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
+						putInt("xenoClashNightmarePartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+					}
+					
+					Log.d(TAG, "Saved config.ini settings to SharedPreferences.")
+				}
+			} catch (e: Exception) {
+				Log.e(TAG, "Encountered error while saving Twitter API credentials to SharedPreferences from config: $e")
+				Log.e(TAG, "Clearing any existing Twitter API credentials from SharedPreferences...")
+				
+				sharedPreferences.edit {
+					remove("apiKey")
+					remove("apiKeySecret")
+					remove("accessToken")
+					remove("accessTokenSecret")
+					commit()
+				}
+			}
 		}
 		
 		// Update the TextView here based on the information of the SharedPreferences. Required preferences to check for are Farming Mode, Mission,

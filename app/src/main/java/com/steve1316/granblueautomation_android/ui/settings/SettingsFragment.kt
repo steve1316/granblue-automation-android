@@ -513,14 +513,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.
 		try {
 			val file = File(context?.getExternalFilesDir(null), "config.yaml")
-			if (file.exists() && !sharedPreferences.contains("apiKey")) {
+			if (file.exists()) {
 				val config = ConfigLoader().loadConfigOrThrow<ConfigData>(file)
-				sharedPreferences.edit {
-					putString("apiKey", config.twitter.apiKey)
-					putString("apiKeySecret", config.twitter.apiKeySecret)
-					putString("accessToken", config.twitter.accessToken)
-					putString("accessTokenSecret", config.twitter.accessTokenSecret)
+				
+				if (config.twitter.apiKey != sharedPreferences.getString("apiKey", "")) {
+					sharedPreferences.edit {
+						putString("apiKey", config.twitter.apiKey)
+						putString("apiKeySecret", config.twitter.apiKeySecret)
+						putString("accessToken", config.twitter.accessToken)
+						putString("accessTokenSecret", config.twitter.accessTokenSecret)
+						commit()
+					}
 					
+					Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.")
+				}
+				
+				sharedPreferences.edit {
 					putBoolean("enableEventNightmare", config.event.enableEventNightmare)
 					putStringSet("eventNightmareSummonList", config.event.eventNightmareSummonList.toMutableSet())
 					putInt("eventNightmareGroupNumber", config.event.eventNightmareGroupNumber)
@@ -547,11 +555,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
 					putInt("xenoClashNightmareGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
 					putInt("xenoClashNightmarePartyNumber", config.rotb.rotbExtremePlusPartyNumber)
-					
-					commit()
 				}
 				
-				Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.")
+				Log.d(TAG, "Saved config.ini settings to SharedPreferences.")
 			}
 		} catch (e: Exception) {
 			Log.e(TAG, "Encountered error while saving Twitter API credentials to SharedPreferences from config: $e")
