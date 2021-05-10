@@ -236,6 +236,13 @@ class ItemData {
 			"Lvl 200 Ewiyar" to arrayListOf("Ewiyar's Beak"),
 			"Lvl 200 Lu Woh" to arrayListOf("Lu Woh's Horn"),
 			"Lvl 200 Fediel" to arrayListOf("Fediel's Spine"),
+			
+			"Lvl 100 Xeno Ifrit" to arrayListOf("True Xeno Ifrit Anima", "Infernal Vajra"),
+			"Lvl 100 Xeno Cocytus" to arrayListOf("True Xeno Cocytus Anima", "Frozen Hellplume"),
+			"Lvl 100 Xeno Vohu Manah" to arrayListOf("True Xeno Vohu Manah Anima", "Sacrosanct Sutra"),
+			"Lvl 100 Xeno Sagittarius" to arrayListOf("True Xeno Sagittarius Anima", "Zodiac Arc"),
+			"Lvl 100 Xeno Corow" to arrayListOf("True Xeno Corow Anima", "Flame Fanner"),
+			"Lvl 100 Xeno Diablo" to arrayListOf("True Xeno Diablo Anima", "Wraithbind Fetter"),
 		)
 		
 		val itemsForEvent = mapOf(

@@ -86,7 +86,14 @@ class MissionData {
 			"Galleon" to arrayListOf("Lvl 200 Galleon"),
 			"Ewiyar" to arrayListOf("Lvl 200 Ewiyar"),
 			"Lu Woh" to arrayListOf("Lvl 200 Lu Woh"),
-			"Fediel" to arrayListOf("Lvl 200 Fediel")
+			"Fediel" to arrayListOf("Lvl 200 Fediel"),
+			
+			"Xeno Ifrit" to arrayListOf("Lvl 100 Xeno Ifrit"),
+			"Xeno Cocytus" to arrayListOf("Lvl 100 Xeno Cocytus"),
+			"Xeno Vohu Manah" to arrayListOf("Lvl 100 Xeno Vohu Manah"),
+			"Xeno Sagittarius" to arrayListOf("Lvl 100 Xeno Sagittarius"),
+			"Xeno Corow" to arrayListOf("Lvl 100 Xeno Corow"),
+			"Xeno Diablo" to arrayListOf("Lvl 100 Xeno Diablo"),
 		)
 		
 		val mapsForEvent = mapOf(
