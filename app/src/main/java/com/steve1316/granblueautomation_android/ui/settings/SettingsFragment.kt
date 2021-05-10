@@ -350,6 +350,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					// SharedPreferences.
 					val newCommandList = commandList.joinToString("|")
 					
+					Log.d(TAG, "Combat Script: $newCommandList")
+					
 					// Now save the ArrayList of combat script commands into SharedPreferences.
 					sharedPreferences.edit {
 						putString("combatScript", newCommandList)
@@ -363,8 +365,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						val name = path.substring(indexOfName + 1)
 						val filePicker: Preference = findPreference("filePicker")!!
 						filePicker.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
-								"\nIf none is selected, it will default to Full/Semi Auto.\n" +
-								"\nnCombat Script Selected: $name"
+								"\nCombat Script Selected: $name"
 						
 						// Now save the file name in the shared preferences.
 						sharedPreferences.edit {
@@ -375,6 +376,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						Log.d(TAG, "Combat Script loaded: $uri")
 					}
 				}
+			}
+		} else {
+			// Clear the saved combat script.
+			Log.d(TAG, "User canceled the file picker intent. Clearing saved combat script information now...")
+			
+			val filePicker: Preference = findPreference("filePicker")!!
+			filePicker.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
+					"\n\nIf none is selected, it will default to Full/Semi Auto.\n" +
+					"\n\nCombat Script Selected: none"
+			
+			sharedPreferences.edit {
+				remove("combatScript")
+				remove("combatScriptName")
 			}
 		}
 	}
@@ -403,6 +417,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val itemPreferences = sharedPreferences.getString("itemName", "")
 		val itemAmountPreferences = sharedPreferences.getInt("itemAmount", 1)
 		val summonPreferences = sharedPreferences.getString("summon", "")?.split("|")
+		val combatScriptName = sharedPreferences.getString("combatScriptName", "")
 		val groupPreferences = sharedPreferences.getInt("groupNumber", 1)
 		val partyPreferences = sharedPreferences.getInt("partyNumber", 1)
 		val debugModePreferences = sharedPreferences.getBoolean("debugMode", false)
@@ -474,6 +489,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		if (summonPreferences != null && summonPreferences.isNotEmpty() && summonPreferences[0] != "") {
 			groupPicker.value = "Group $groupPreferences"
 			partyPicker.value = "Party $partyPreferences"
+		}
+		
+		if (combatScriptName != "") {
+			filePicker?.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
+					"\nCombat Script Selected: $combatScriptName"
 		}
 		
 		debugModeCheckBox.isChecked = debugModePreferences
