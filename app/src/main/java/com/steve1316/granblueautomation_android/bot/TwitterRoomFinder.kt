@@ -155,10 +155,13 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 	 * @return ArrayList of the most recent room codes that match the query.
 	 */
 	fun findMostRecentRoomCodes(raidName: String, count: Int = 10): ArrayList<String> {
-		// Construct the queries.
+		// Construct the query for EN tweets.
 		val queryEN = Query("+(:Battle ID) AND +($raidName)")
 		queryEN.count = count / 2
-		val queryJP = Query("+(:参戦ID) AND +($raidName)")
+
+		// Grab the Japanese name of the Raid and construct the query for JP tweets.
+		val jpRaidName = listOfRaids[raidName]!!
+		val queryJP = Query("+(:参戦ID) AND +($jpRaidName)")
 		queryJP.count = count / 2
 		
 		// Retrieve tweets from both EN and JP players.
