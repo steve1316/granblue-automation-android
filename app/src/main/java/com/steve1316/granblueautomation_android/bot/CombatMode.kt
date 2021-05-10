@@ -75,15 +75,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	}
 	
 	/**
-	 * Find the total number of characters ready to Charge Attack.
-	 *
-	 * @return Total number of image matches found for charge attacks.
-	 */
-	private fun findChargeAttacks(): Int {
-		return game.imageUtils.findAll("full_charge").size
-	}
-	
-	/**
 	 * Checks if there are any dialog popups during Combat Mode from either Lyria or Vyrn and close them.
 	 */
 	private fun findCombatDialog() {
