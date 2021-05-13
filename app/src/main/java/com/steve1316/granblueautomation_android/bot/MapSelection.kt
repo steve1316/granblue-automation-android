@@ -945,6 +945,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				// Scroll the screen to make way for smaller screens.
 				game.gestureUtils.scroll()
 				
+				game.wait(1.0)
+				
 				// Find all instances of the "Select" button on the screen and tap on the first instance.
 				val selectButtonLocations = game.imageUtils.findAll("select")
 				game.gestureUtils.tap(selectButtonLocations[0].x, selectButtonLocations[0].y, "select")
