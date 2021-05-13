@@ -656,7 +656,7 @@ class Game(private val myContext: Context) {
 				break
 			}
 			
-			if (farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("proud_solo_quest", tries = 1)) {
+			if (farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("rotb_proud_solo_quest", tries = 1)) {
 				// Scroll down the screen a little bit because the popup itself is too long.
 				gestureUtils.scroll()
 			}
