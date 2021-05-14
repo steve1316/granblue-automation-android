@@ -19,7 +19,7 @@ import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.sksamuel.hoplite.ConfigLoader
-import com.steve1316.granblueautomation_android.MyAccessibilityService
+import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment

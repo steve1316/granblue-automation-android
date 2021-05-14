@@ -1,4 +1,4 @@
-package com.steve1316.granblueautomation_android
+package com.steve1316.granblueautomation_android.utils
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription

@@ -23,7 +23,6 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.steve1316.granblueautomation_android.BotService
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream

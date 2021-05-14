@@ -40,7 +40,7 @@
 
         <!--The Accessibility Service that controls gestures on the screen.-->
         <service
-            android:name="com.steve1316.granblueautomation_android.MyAccessibilityService"
+            android:name="com.steve1316.granblueautomation_android.utils.MyAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:label="@string/accessibility_service_label"
             android:foregroundServiceType="mediaProjection">
@@ -59,7 +59,7 @@
 
         <!--Bot Service that will automate the specified workflow.-->
         <service
-            android:name=".BotService" />
+            android:name=".utils.BotService" />
 
         <!--Receiver that will send the "STOP" Intent to MediaProjection Service when the action button on the Notification is tapped.-->
         <receiver

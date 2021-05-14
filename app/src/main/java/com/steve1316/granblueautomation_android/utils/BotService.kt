@@ -1,4 +1,4 @@
-package com.steve1316.granblueautomation_android
+package com.steve1316.granblueautomation_android.utils
 
 import android.annotation.SuppressLint
 import android.app.Service
@@ -15,14 +15,14 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
+import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
+import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.bot.Game
-import com.steve1316.granblueautomation_android.utils.MessageLog
-import com.steve1316.granblueautomation_android.utils.NotificationUtils
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
 /**
- * This Service will begin workflow automation based on the chosen preference settings.
+ * This Service will allow starting and stopping the automation workflow on a Thread based on the chosen preference settings.
  *
  * Source for being able to send custom Intents to BroadcastReceiver to notify users of bot state changes is from:
  * https://www.tutorialspoint.com/in-android-how-to-register-a-custom-intent-filter-to-a-broadcast-receiver
@@ -34,6 +34,7 @@ class BotService : Service() {
 	private lateinit var overlayButton: ImageButton
 	
 	private val messageReceiver = object : BroadcastReceiver() {
+		// This will receive any bot state changes issued from inside the Thread and will display a Notification that will contain the intent's message.
 		override fun onReceive(context: Context?, intent: Intent?) {
 			if (intent != null) {
 				if (intent.hasExtra("EXCEPTION")) {
@@ -48,6 +49,8 @@ class BotService : Service() {
 	companion object {
 		private lateinit var thread: Thread
 		private lateinit var windowManager: WindowManager
+		
+		// Create the LayoutParams for the floating overlay START/STOP button.
 		private val overlayLayoutParams = WindowManager.LayoutParams().apply {
 			type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 			flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
