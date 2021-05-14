@@ -807,7 +807,7 @@ class Game(private val myContext: Context) {
 	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
 	 */
 	private fun checkROTBExtremePlus(): Boolean {
-		if (enableROTBExtremePlus && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		if (enableROTBExtremePlus && imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
 			printToLog("\n[ROTB] Detected Extreme+. Starting it now...")
 			dimensionalHaloAmount += 1
 			
@@ -836,7 +836,7 @@ class Game(private val myContext: Context) {
 					return true
 				}
 			}
-		} else if (!enableROTBExtremePlus && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		} else if (!enableROTBExtremePlus && imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
 			printToLog("\n[ROTB] Rise of the Beasts Extreme+ detected but user opted to not run it. Moving on...")
 			findAndClickButton("close")
 		} else {
