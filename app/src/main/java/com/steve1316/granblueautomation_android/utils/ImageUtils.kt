@@ -16,7 +16,7 @@ import org.opencv.imgproc.Imgproc
 import java.util.*
 
 /**
- * Utility functions for image processing via OCR like OpenCV.
+ * Utility functions for image processing via CV like OpenCV.
  */
 class ImageUtils(context: Context, private val game: Game) {
 	private val TAG: String = "GAA_ImageUtils"
@@ -207,6 +207,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	private fun getBitmaps(templateName: String, templateFolderName: String): Pair<Bitmap?, Bitmap?> {
 		var sourceBitmap: Bitmap? = null
 		
+		// Keep swiping a little bit up and down to trigger a new image for ImageReader to grab.
 		while (sourceBitmap == null) {
 			sourceBitmap = MediaProjectionService.takeScreenshotNow()
 			
@@ -474,10 +475,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		if (sourceBitmap != null) {
 			for (itemLocation in itemLocations) {
 				// Crop the source bitmap to hold only the item amount.
-				val croppedItemAmountBitmap = Bitmap.createBitmap(
-					sourceBitmap, (itemLocation.x + 50).toInt(), (itemLocation.y).toInt() - 10,
-					35, 50
-				)
+				val croppedItemAmountBitmap = Bitmap.createBitmap(sourceBitmap, (itemLocation.x + 50).toInt(), (itemLocation.y).toInt() - 10, 35, 50)
 				
 				// Create a InputImage object for Google's ML OCR.
 				val inputImage = InputImage.fromBitmap(croppedItemAmountBitmap, 0)
@@ -485,8 +483,7 @@ class ImageUtils(context: Context, private val game: Game) {
 				// Start the asynchronous operation of text detection. Increment the total item amount whenever it detects a numerical amount.
 				textRecognizer.process(inputImage).addOnSuccessListener {
 					if (it.textBlocks.size == 0) {
-						// If no amount was detected in the cropped region, that means that the amount is 1 as only amounts greater than 1 appear
-						// in the cropped region.
+						// If no amount was detected in the cropped region, that means that the amount is 1 as only amounts greater than 1 appear in the cropped region.
 						totalItemAmount += 1
 					} else {
 						for (block in it.textBlocks) {
@@ -497,8 +494,7 @@ class ImageUtils(context: Context, private val game: Game) {
 								}
 								
 								totalItemAmount += detectedAmount
-							} catch (e: NumberFormatException) {
-							}
+							} catch (e: NumberFormatException) { }
 						}
 					}
 				}.addOnFailureListener {

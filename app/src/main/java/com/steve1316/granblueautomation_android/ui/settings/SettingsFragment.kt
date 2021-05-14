@@ -315,8 +315,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	override fun onResume() {
 		super.onResume()
 		
-		// Makes sure that OnSharedPreferenceChangeListener works properly and avoids the situation where the app suddenly stops triggering the
-		// listener.
+		// Makes sure that OnSharedPreferenceChangeListener works properly and avoids the situation where the app suddenly stops triggering the listener.
 		preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
 	}
 	
@@ -874,8 +873,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				// Join the elements together into a String with the "|" delimiter in order to keep its order when storing into SharedPreferences.
 				val newValues = values.joinToString("|")
 				
-				// Note: putStringSet does not support ordering or duplicate values. If you need ordering/duplicate values, either
-				// concatenate the values together as a String separated by a delimiter or think of another way.
+				// Note: putStringSet does not support ordering or duplicate values. If you need ordering/duplicate values, either concatenate the values together as a String separated by a
+				// delimiter or think of another way.
 				sharedPreferences.edit {
 					putString("summon", newValues)
 					apply()

@@ -976,20 +976,20 @@ class Game(private val myContext: Context) {
 				eventNightmarePartyNumber = partyNumber
 			}
 		} else if (farmingMode == "Rise of the Beasts" && itemName == "Repeated Runs" && enableROTBExtremePlus) {
-			printToLog("\n[INFO] Initializing settings for Rise of the Beasts...")
+			printToLog("\n[INFO] Initializing settings for Rise of the Beasts Extreme+...")
 			
 			if (rotbExtremePlusSummonList.isEmpty()) {
-				printToLog("[INFO] Summons for Rise of the Beasts will reuse the ones for Farming Mode.")
+				printToLog("[INFO] Summons for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.")
 				rotbExtremePlusSummonList = summonList
 			}
 			
 			if (rotbExtremePlusGroupNumber == 0) {
-				printToLog("[INFO] Group Number for Rise of the Beasts will reuse the ones for Farming Mode.")
+				printToLog("[INFO] Group Number for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.")
 				rotbExtremePlusGroupNumber = groupNumber
 			}
 			
 			if (rotbExtremePlusPartyNumber == 0) {
-				printToLog("[INFO] Party Number for Rise of the Beasts will reuse the ones for Farming Mode.")
+				printToLog("[INFO] Party Number for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.")
 				rotbExtremePlusPartyNumber = partyNumber
 			}
 		} else if (farmingMode == "Dread Barrage" && itemName == "Repeated Runs" && enableUnparalleledFoe) {

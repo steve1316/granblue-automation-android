@@ -22,6 +22,7 @@ class NotificationUtils {
 		private const val NOTIFICATION_ID: Int = 1
 		private const val CHANNEL_ID: String = "BOT_STATUS"
 		private const val CHANNEL_NAME: String = "Granblue Automation Android"
+		private const val CONTENT_TITLE: String = "Granblue Automation Android"
 		private const val CHANNEL_DESCRIPTION: String = "Displays status of GAA, whether it is running or not."
 		
 		/**
@@ -44,7 +45,7 @@ class NotificationUtils {
 		}
 		
 		/**
-		 * Create a new NotificationChannel for Granblue Automation.
+		 * Create a new NotificationChannel.
 		 *
 		 * https://developer.android.com/training/notify-user/channels
 		 *
@@ -79,7 +80,7 @@ class NotificationUtils {
 			
 			return NotificationCompat.Builder(context, CHANNEL_ID).apply {
 				setSmallIcon(R.drawable.ic_baseline_control_camera_24)
-				setContentTitle("Granblue Automation Android")
+				setContentTitle(CONTENT_TITLE)
 				setContentText("Bot process is currently inactive")
 				setContentIntent(contentPendingIntent)
 				addAction(R.drawable.ic_baseline_stop_circle_24, context.getString(R.string.accessibility_service_action), stopPendingIntent)
@@ -114,7 +115,7 @@ class NotificationUtils {
 			
 			val newNotification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
 				setSmallIcon(R.drawable.ic_baseline_control_camera_24)
-				setContentTitle("Granblue Automation Android")
+				setContentTitle(CONTENT_TITLE)
 				setContentText(contentText)
 				setContentIntent(contentPendingIntent)
 				addAction(R.drawable.ic_baseline_stop_circle_24, context.getString(R.string.accessibility_service_action), stopPendingIntent)
@@ -131,6 +132,12 @@ class NotificationUtils {
 			notificationManager.notify(NOTIFICATION_ID, newNotification)
 		}
 		
+		/**
+		 * Displays a separate Notification indicating the user of bot state changes, like Success or Exception.
+		 * @param context The application context.
+		 * @param contentTitle The title of the Notification.
+		 * @param contentText The text of the Notification.
+		 */
 		fun createBotStateChangedNotification(context: Context, contentTitle: String, contentText: String) {
 			val notificationID = 2
 			val channelID = "BOT_STATE_CHANGED"
