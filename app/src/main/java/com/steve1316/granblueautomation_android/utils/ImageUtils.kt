@@ -353,7 +353,8 @@ class ImageUtils(context: Context, private val game: Game) {
 					game.printToLog("[WARNING] Could not locate ${summonName.toUpperCase(Locale.ROOT)} Summon. Trying again...")
 					
 					// If it reached the bottom of the Summon Selection page, scroll all the way back up.
-					if (findButton("bottom_of_summon_selection", tries = 1) != null) {
+					if ((game.farmingMode == "Proving Grounds" && findButton("bottom_of_proving_grounds_summon_selection", tries = 1) != null) ||
+						findButton("bottom_of_summon_selection", tries = 1) != null || findButton("bottom_of_event_summon_selection", tries = 1) != null) {
 						game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
 						game.wait(0.5)
 						game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
