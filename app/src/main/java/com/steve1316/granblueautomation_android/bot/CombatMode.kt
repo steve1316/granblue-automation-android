@@ -297,6 +297,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	private fun useCharacterSkill(characterNumber: Int, skillCommandList: List<String>) {
 		var tempSkillCommandList: List<String> = skillCommandList
 		
+		// Drop the first element if its the Character command.
+		if (tempSkillCommandList[0].contains("character")) {
+			tempSkillCommandList = tempSkillCommandList.drop(1)
+		}
+		
 		while (tempSkillCommandList.isNotEmpty()) {
 			val x = when (tempSkillCommandList[0]) {
 				"useskill(1)" -> {
@@ -523,7 +528,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 		
 		// The following is the primary loop workflow for Combat Mode.
-		while (combatScript.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
+		while (combatScript.isNotEmpty() && commandList.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
 			// The commands are already preprocessed to remove all comments back in SettingsFragment.
 			var command = commandList.removeAt(0).toLowerCase(Locale.ROOT)
 			
