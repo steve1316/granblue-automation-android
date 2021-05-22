@@ -195,8 +195,11 @@ class ItemData {
 			
 			"Lvl 110 Rose Queen" to arrayListOf("Rose Petal"),
 			"Lvl 100 Grand Order" to arrayListOf("Azure Feather", "Heavenly Horn"),
+			"Lvl 200 Grand Order" to arrayListOf("Verdant Azurite"),
 			"Lvl 100 Proto Bahamut" to arrayListOf("Champion Merit", "Horn of Bahamut"),
 			"Lvl 150 Proto Bahamut" to arrayListOf("Primeval Horn"),
+			"Lvl 200 Akasha" to arrayListOf("Hollow Key"),
+			"Lvl 150 Lucilius" to arrayListOf("Dark Residue", "Shadow Substance"),
 			
 			"Lvl 100 Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),
 			"Lvl 120 Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),
