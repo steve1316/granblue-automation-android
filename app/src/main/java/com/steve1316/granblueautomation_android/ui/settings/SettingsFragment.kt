@@ -543,13 +543,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					putInt("rotbExtremePlusGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
 					putInt("rotbExtremePlusPartyNumber", config.rotb.rotbExtremePlusPartyNumber)
 					
-					putBoolean("enableUnparalleledFoe", config.dreadBarrage.enableUnparalleledFoe)
-					putBoolean("enableUnparalleledFoeLevel95", config.dreadBarrage.enableUnparalleledFoeLevel95)
-					putBoolean("enableUnparalleledFoeLevel175", config.dreadBarrage.enableUnparalleledFoeLevel175)
-					putStringSet("unparalleledFoeSummonList", config.dreadBarrage.unparalleledFoeSummonList.toMutableSet())
-					putInt("unparalleledFoeGroupNumber", config.dreadBarrage.unparalleledFoeGroupNumber)
-					putInt("unparalleledFoePartyNumber", config.dreadBarrage.unparalleledFoePartyNumber)
-					
 					putBoolean("enableXenoClashNightmare", config.rotb.enableROTBExtremePlus)
 					putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
 					putInt("xenoClashNightmareGroupNumber", config.rotb.rotbExtremePlusGroupNumber)

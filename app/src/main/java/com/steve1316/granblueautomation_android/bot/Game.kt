@@ -52,13 +52,6 @@ class Game(private val myContext: Context) {
 	private var rotbExtremePlusGroupNumber: Int = 0
 	private var rotbExtremePlusPartyNumber: Int = 0
 	
-	private var enableUnparalleledFoe: Boolean = false
-	private var enableUnparalleledFoeLevel95: Boolean = false
-	private var enableUnparalleledFoeLevel175: Boolean = false
-	private var unparalleledFoeSummonList: List<String> = arrayListOf()
-	private var unparalleledFoeGroupNumber: Int = 0
-	private var unparalleledFoePartyNumber: Int = 0
-	
 	private var enableXenoClashNightmare: Boolean = false
 	private var xenoClashNightmareSummonList: List<String> = arrayListOf()
 	private var xenoClashNightmareGroupNumber: Int = 0
@@ -929,13 +922,6 @@ class Game(private val myContext: Context) {
 		rotbExtremePlusGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "rotbExtremePlusGroupNumber")
 		rotbExtremePlusPartyNumber = SettingsFragment.getIntSharedPreference(myContext, "rotbExtremePlusPartyNumber")
 		
-		enableUnparalleledFoe = SettingsFragment.getBooleanSharedPreference(myContext, "enableUnparalleledFoe")
-		enableUnparalleledFoeLevel95 = SettingsFragment.getBooleanSharedPreference(myContext, "enableUnparalleledFoeLevel95")
-		enableUnparalleledFoeLevel175 = SettingsFragment.getBooleanSharedPreference(myContext, "enableUnparalleledFoeLevel175")
-		unparalleledFoeSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "unparalleledFoeSummonList").toList()
-		unparalleledFoeGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "unparalleledFoeGroupNumber")
-		unparalleledFoePartyNumber = SettingsFragment.getIntSharedPreference(myContext, "unparalleledFoePartyNumber")
-		
 		enableXenoClashNightmare = SettingsFragment.getBooleanSharedPreference(myContext, "enableXenoClashNightmare")
 		xenoClashNightmareSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "xenoClashNightmareSummonList").toList()
 		xenoClashNightmareGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "xenoClashNightmareGroupNumber")
@@ -991,23 +977,6 @@ class Game(private val myContext: Context) {
 			if (rotbExtremePlusPartyNumber == 0) {
 				printToLog("[INFO] Party Number for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.")
 				rotbExtremePlusPartyNumber = partyNumber
-			}
-		} else if (farmingMode == "Dread Barrage" && itemName == "Repeated Runs" && enableUnparalleledFoe) {
-			printToLog("\n[INFO] Initializing settings for Dread Barrage Unparalleled Foes...")
-			
-			if (unparalleledFoeSummonList.isEmpty()) {
-				printToLog("[INFO] Summons for Dread Barrage Unparalleled Foes will reuse the ones for Farming Mode.")
-				unparalleledFoeSummonList = summonList
-			}
-			
-			if (unparalleledFoeGroupNumber == 0) {
-				printToLog("[INFO] Group Number for Dread Barrage Unparalleled Foes will reuse the ones for Farming Mode.")
-				unparalleledFoeGroupNumber = groupNumber
-			}
-			
-			if (unparalleledFoePartyNumber == 0) {
-				printToLog("[INFO] Party Number for Dread Barrage Unparalleled Foes will reuse the ones for Farming Mode.")
-				unparalleledFoePartyNumber = partyNumber
 			}
 		} else if (farmingMode == "Xeno Clash" && itemName == "Repeated Runs" && enableXenoClashNightmare) {
 			printToLog("\n[INFO] Initializing settings for Xeno Clash Nightmare...")
@@ -1256,17 +1225,6 @@ class Game(private val myContext: Context) {
 							findAndClickButton("coop_start")
 							
 							wait(1.0)
-						} else if (farmingMode == "Dread Barrage" && imageUtils.confirmLocation("dread_barrage_unparalleled_foes", tries = 1)) {
-							// Find the locations of the "AP 0" text underneath each Unparalleled Foe.
-							// val ap0Locations = imageUtils.findAll("ap_0")
-							
-							// Start the Level 95 Unparalleled Foe.
-							
-							// Start the Level 175 Unparalleled Foe.
-							
-							// Close the popup if the user does not want to fight any of them.
-							
-							// Every other case will default to the Level 95 Unparalleled Foe.
 						} else if (farmingMode == "Proving Grounds") {
 							// Tap the "Next Battle" button if there are any battles left.
 							if (findAndClickButton("proving_grounds_next_battle", suppressError = true)) {

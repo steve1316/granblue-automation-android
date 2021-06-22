@@ -124,17 +124,6 @@ class HomeFragment : Fragment() {
 					"  \"rotbExtremePlusPartyNumber\": 0\n" +
 					"\n" +
 					"########################################\n" +
-					"# Settings for Dread Barrage Unparalleled Foes.\n" +
-					"########################################\n" +
-					"\"dreadBarrage\":\n" +
-					"  \"enableUnparalleledFoe\": false\n" +
-					"  \"enableUnparalleledFoeLevel95\": false # You can only choose one. If you enable both, the bot will select Level 95. If none are selected, the bot will default to Level 95.\n" +
-					"  \"enableUnparalleledFoeLevel175\": false\n" +
-					"  \"unparalleledFoeSummonList\": []\n" +
-					"  \"unparalleledFoeGroupNumber\": 0\n" +
-					"  \"unparalleledFoePartyNumber\": 0\n" +
-					"\n" +
-					"########################################\n" +
 					"# Settings for Xeno Clash Nightmare.\n" +
 					"########################################\n" +
 					"\"xenoClash\":\n" +
@@ -183,13 +172,6 @@ class HomeFragment : Fragment() {
 						putStringSet("rotbExtremePlusSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
 						putInt("rotbExtremePlusGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
 						putInt("rotbExtremePlusPartyNumber", config.rotb.rotbExtremePlusPartyNumber)
-						
-						putBoolean("enableUnparalleledFoe", config.dreadBarrage.enableUnparalleledFoe)
-						putBoolean("enableUnparalleledFoeLevel95", config.dreadBarrage.enableUnparalleledFoeLevel95)
-						putBoolean("enableUnparalleledFoeLevel175", config.dreadBarrage.enableUnparalleledFoeLevel175)
-						putStringSet("unparalleledFoeSummonList", config.dreadBarrage.unparalleledFoeSummonList.toMutableSet())
-						putInt("unparalleledFoeGroupNumber", config.dreadBarrage.unparalleledFoeGroupNumber)
-						putInt("unparalleledFoePartyNumber", config.dreadBarrage.unparalleledFoePartyNumber)
 						
 						putBoolean("enableXenoClashNightmare", config.rotb.enableROTBExtremePlus)
 						putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
