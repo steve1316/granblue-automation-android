@@ -50,12 +50,15 @@ class MissionData {
 			"Gabriel" to arrayListOf("Lvl 100 Gabriel"),
 			"Uriel" to arrayListOf("Lvl 100 Uriel"),
 			"Raphael" to arrayListOf("Lvl 100 Raphael"),
+			"The Four Primarchs" to arrayListOf("The Four Primarchs"),
 			
 			"Grand Order" to arrayListOf("Lvl 100 Grand Order", "Lvl 200 Grand Order"),
 			"Proto Bahamut" to arrayListOf("Lvl 100 Proto Bahamut", "Lvl 150 Proto Bahamut"),
+			"Ultimate Bahamut" to arrayListOf("Lvl 150 Ultimate Bahamut", "Lvl 200 Ultimate Bahamut"),
 			"Rose Queen" to arrayListOf("Lvl 110 Rose Queen"),
 			"Akasha" to arrayListOf("Lvl 200 Akasha"),
 			"Lucilius" to arrayListOf("Lvl 150 Lucilius"),
+			"Lindwurm" to arrayListOf("Lvl 200 Lindwurm"),
 			
 			"Twin Elements" to arrayListOf("Lvl 100 Twin Elements", "Lvl 120 Twin Elements"),
 			"Macula Marius" to arrayListOf("Lvl 100 Macula Marius", "Lvl 120 Macula Marius"),
