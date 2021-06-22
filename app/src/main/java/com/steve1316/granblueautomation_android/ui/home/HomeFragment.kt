@@ -228,8 +228,8 @@ class HomeFragment : Fragment() {
 		val groupNumber = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
 		val partyNumber = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
 		
-		startButton.isEnabled =
-			(farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() && summon[0] != "") || (farmingMode == "Coop" && summon.isNotEmpty() && summon[0] == "")))
+		startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() && summon[0] != "") ||
+				(farmingMode == "Coop" && summon.isNotEmpty() && summon[0] == "")))
 		
 		if (combatScriptName == "") {
 			combatScriptName = "None selected. Using default Semi/Full Auto script."

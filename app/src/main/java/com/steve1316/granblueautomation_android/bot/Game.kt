@@ -169,7 +169,7 @@ class Game(private val myContext: Context) {
 		var tempLocation: Point?
 		var newButtonName = buttonName
 		
-		if (buttonName.toLowerCase(Locale.ROOT) == "quest") {
+		if (buttonName.lowercase() == "quest") {
 			tempLocation = imageUtils.findButton("quest_blue", tries = 1, suppressError = suppressError)
 			newButtonName = "quest_blue"
 			
@@ -178,7 +178,7 @@ class Game(private val myContext: Context) {
 				newButtonName = "quest_red"
 			}
 			
-		} else if (buttonName.toLowerCase(Locale.ROOT) == "raid") {
+		} else if (buttonName.lowercase() == "raid") {
 			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
 			newButtonName = "raid_flat"
 			
@@ -187,7 +187,7 @@ class Game(private val myContext: Context) {
 				newButtonName = "raid_bouncing"
 			}
 			
-		} else if (buttonName.toLowerCase(Locale.ROOT) == "coop_start") {
+		} else if (buttonName.lowercase() == "coop_start") {
 			tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError)
 			newButtonName = "coop_start_flat"
 			
@@ -196,7 +196,7 @@ class Game(private val myContext: Context) {
 				newButtonName = "coop_start_faded"
 			}
 			
-		} else if (buttonName.toLowerCase(Locale.ROOT) == "event_special_quest") {
+		} else if (buttonName.lowercase() == "event_special_quest") {
 			tempLocation = imageUtils.findButton("event_special_quest_flat", tries = tries, suppressError = suppressError)
 			newButtonName = "event_special_quest_flat"
 			
@@ -205,7 +205,7 @@ class Game(private val myContext: Context) {
 				newButtonName = "event_special_quest_bouncing"
 			}
 			
-		} else if (buttonName.toLowerCase(Locale.ROOT) == "world") {
+		} else if (buttonName.lowercase() == "world") {
 			tempLocation = imageUtils.findButton("world", tries = tries, suppressError = suppressError)
 			newButtonName = "world"
 			
@@ -292,7 +292,7 @@ class Game(private val myContext: Context) {
 		}
 		
 		unformattedSummonList.forEach {
-			val newSummonName = it.toLowerCase(Locale.ROOT).replace(" ", "_")
+			val newSummonName = it.lowercase().replace(" ", "_")
 			Log.d(TAG, newSummonName)
 			newSummonList.add(newSummonName)
 		}

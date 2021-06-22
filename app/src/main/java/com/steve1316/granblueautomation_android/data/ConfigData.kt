@@ -8,8 +8,7 @@ data class ConfigData(
 	val refill: RefillData,
 	val dimensionalHalo: DimensionalHaloData,
 	val event: EventNightmareData,
-	val rotb: RiseOfTheBeastsData,
-	val dreadBarrage: DreadBarrageData
+	val rotb: RiseOfTheBeastsData
 )
 
 /**
@@ -53,17 +52,4 @@ data class RiseOfTheBeastsData(
 	val rotbExtremePlusSummonList: List<String> = listOf(),
 	val rotbExtremePlusGroupNumber: Int = 0,
 	val rotbExtremePlusPartyNumber: Int = 0
-)
-
-/**
- * Settings needed to do Dread Barrage Unparalleled Foes.
- */
-data class DreadBarrageData(
-	val enableUnparalleledFoe: Boolean = false,
-	val enableUnparalleledFoeLevel95: Boolean = false,
-	val enableUnparalleledFoeLevel175: Boolean = false,
-	val unparalleledFoeCombatScript: String = "",
-	val unparalleledFoeSummonList: List<String> = listOf(),
-	val unparalleledFoeGroupNumber: Int = 0,
-	val unparalleledFoePartyNumber: Int = 0
 )

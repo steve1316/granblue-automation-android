@@ -1,7 +1,6 @@
 package com.steve1316.granblueautomation_android.bot
 
 import org.opencv.core.Point
-import java.util.*
 
 /**
  * This class handles the Combat Mode and offers helper functions to assist it.
@@ -132,7 +131,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		game.findAndClickButton("heal")
 		
 		// Format the item name.
-		val formattedCommand = command.toLowerCase(Locale.ROOT).replace(" ", "_")
+		val formattedCommand = command.lowercase().replace(" ", "_")
 		
 		// Tap the specified item.
 		if (formattedCommand == "usebluepotion" || formattedCommand == "usesupportpotion") {
@@ -530,7 +529,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		// The following is the primary loop workflow for Combat Mode.
 		while (combatScript.isNotEmpty() && commandList.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
 			// The commands are already preprocessed to remove all comments back in SettingsFragment.
-			var command = commandList.removeAt(0).toLowerCase(Locale.ROOT)
+			var command = commandList.removeAt(0).lowercase()
 			
 			game.printToLog("[COMBAT] Reading command: $command", MESSAGE_TAG = TAG)
 			
@@ -599,7 +598,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					
 					// Proceed to process each command inside this Turn block until the "end" command is reached.
 					while (commandList.isNotEmpty() && command != "end" && command != "exit") {
-						command = commandList.removeAt(0).toLowerCase(Locale.ROOT)
+						command = commandList.removeAt(0).lowercase()
 						
 						game.printToLog("[COMBAT] Reading command: $command", MESSAGE_TAG = TAG)
 						

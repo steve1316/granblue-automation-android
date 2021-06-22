@@ -2,7 +2,6 @@ package com.steve1316.granblueautomation_android.bot
 
 import android.content.Context
 import android.os.StrictMode
-import android.util.Log
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import twitter4j.Query
 import twitter4j.Status
@@ -21,7 +20,7 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 	private val alreadyVisitedRoomCodes: ArrayList<String> = arrayListOf()
 	private val alreadyVisitedIDs: ArrayList<Long> = arrayListOf()
 	
-	val listOfRaids = mapOf(
+	private val listOfRaids = mapOf(
 		"Lvl 50 Tiamat Omega" to "Lv50 ティアマト・マグナ",
 		"Lvl 100 Tiamat Omega Ayr" to "Lv100 ティアマト・マグナ＝エア",
 		"Lvl 70 Colossus Omega" to "Lv70 コロッサス・マグナ",

@@ -142,7 +142,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			}
 			
 			// Use a manual way to tap on the correct island if image matching for the island name failed.
-			if (!game.findAndClickButton(mapName.toLowerCase(Locale.ROOT).replace(" ", "_").replace("-", "_"))) {
+			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
 				val arrowLocation = game.imageUtils.findButton("world_right_arrow") ?: throw Exception("Unable to find the location of the right arrow for the World.")
 				
 				when (mapName) {
@@ -175,7 +175,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			}
 			
 			// Use a manual way to tap on the correct island if image matching for the island name failed.
-			if (!game.findAndClickButton(mapName.toLowerCase(Locale.ROOT).replace(" ", "_").replace("-", "_"))) {
+			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
 				val arrowLocation = game.imageUtils.findButton("world_left_arrow") ?: throw Exception("Unable to find the location of the left arrow for the World.")
 				
 				when (mapName) {
@@ -214,7 +214,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.goBackHome(confirmLocationCheck = true)
 		
 		// Format the map name.
-		val formattedMapName = mapName.toLowerCase(Locale.ROOT).replace(" ", "_").replace("-", "_")
+		val formattedMapName = mapName.lowercase().replace(" ", "_").replace("-", "_")
 		
 		val checkLocation: Boolean
 		var currentLocation = ""
@@ -236,7 +236,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			var locationIndex = 0
 			while (locationIndex < locationList.size) {
 				val tempMapLocation = locationList[locationIndex]
-				val tempFormattedMapLocation = tempMapLocation.toLowerCase(Locale.ROOT).replace(" ", "_").replace("-", "_")
+				val tempFormattedMapLocation = tempMapLocation.lowercase().replace(" ", "_").replace("-", "_")
 				
 				if (game.imageUtils.confirmLocation("map_${tempFormattedMapLocation}", tries = 1)) {
 					game.printToLog("\n[INFO] Bot's current location is at ${tempFormattedMapLocation}. Now moving to ${mapName}...", MESSAGE_TAG = TAG)
@@ -327,7 +327,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			game.wait(2.0)
 			
 			// Now tap on the mission node to start.
-			val formattedMissionName = missionName.toLowerCase(Locale.ROOT).replace(" ", "_")
+			val formattedMissionName = missionName.lowercase().replace(" ", "_")
 			if (!game.findAndClickButton(formattedMissionName)) {
 				// If the bot failed to find and click on the mission node the first time, scroll down the screen again.
 				game.gestureUtils.scroll()
@@ -394,7 +394,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					
 					// Find the specified mission popup.
-					val formattedMapName = mapName.toLowerCase(Locale.ROOT).replace(" ", "_").replace("-", "_")
+					val formattedMapName = mapName.lowercase().replace(" ", "_").replace("-", "_")
 					val missionLocation = game.imageUtils.findButton(formattedMapName)
 					
 					if (missionLocation != null) {
