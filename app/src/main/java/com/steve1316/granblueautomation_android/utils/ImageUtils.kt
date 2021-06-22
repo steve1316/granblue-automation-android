@@ -59,6 +59,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param sourceBitmap Bitmap from the /files/temp/ folder.
 	 * @param templateBitmap Bitmap from the assets folder.
 	 * @param useCannyAlgorithm Check whether or not to use Canny edge detection algorithm. Defaults to false.
+	 * @return True if a match was found. False otherwise.
 	 */
 	private fun match(sourceBitmap: Bitmap, templateBitmap: Bitmap, useCannyAlgorithm: Boolean = false): Boolean {
 		// Create the Mats of both source and template images.
@@ -258,16 +259,16 @@ class ImageUtils(context: Context, private val game: Game) {
 					numberOfTries -= 1
 					if (numberOfTries <= 0) {
 						if (!suppressError) {
-							game.printToLog("[WARNING] Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button.", MESSAGE_TAG = TAG)
+							game.printToLog("[WARNING] Failed to find the ${templateName.uppercase()} button.", MESSAGE_TAG = TAG)
 						}
 						
 						return null
 					}
 					
-					Log.d(TAG, "Failed to find the ${templateName.toUpperCase(Locale.ROOT)} button. Trying again...")
+					Log.d(TAG, "Failed to find the ${templateName.uppercase()} button. Trying again...")
 					game.wait(1.0)
 				} else {
-					game.printToLog("[SUCCESS] Found the ${templateName.toUpperCase(Locale.ROOT)} at $matchLocation.", MESSAGE_TAG = TAG)
+					game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", MESSAGE_TAG = TAG)
 					return matchLocation
 				}
 			}
@@ -300,7 +301,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					
 					game.wait(1.0)
 				} else {
-					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.toUpperCase(Locale.ROOT)}.", MESSAGE_TAG = TAG)
+					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.uppercase()}.", MESSAGE_TAG = TAG)
 					return true
 				}
 			} else {
@@ -309,7 +310,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 		
 		if (!suppressError) {
-			game.printToLog("[WARNING] Failed to confirm the bot's location at ${templateName.toUpperCase(Locale.ROOT)}.", MESSAGE_TAG = TAG)
+			game.printToLog("[WARNING] Failed to confirm the bot's location at ${templateName.uppercase()}.", MESSAGE_TAG = TAG)
 		}
 		
 		return false
@@ -350,7 +351,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					summonLocation = matchLocation
 					break
 				} else {
-					game.printToLog("[WARNING] Could not locate ${summonName.toUpperCase(Locale.ROOT)} Summon. Trying again...")
+					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon. Trying again...")
 					
 					// If it reached the bottom of the Summon Selection page, scroll all the way back up.
 					if ((game.farmingMode == "Proving Grounds" && findButton("bottom_of_proving_grounds_summon_selection", tries = 1) != null) ||
@@ -378,7 +379,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 		}
 		
-		game.printToLog("[SUCCESS] Found ${summonList[summonIndex].toUpperCase(Locale.ROOT)} Summon at $matchLocation.")
+		game.printToLog("[SUCCESS] Found ${summonList[summonIndex].uppercase()} Summon at $matchLocation.")
 		return matchLocation
 	}
 	
@@ -408,12 +409,12 @@ class ImageUtils(context: Context, private val game: Game) {
 					}
 					
 					if (!suppressError) {
-						Log.d(TAG, "Failed to find the ${templateName.toUpperCase(Locale.ROOT)} dialog. Trying again...")
+						Log.d(TAG, "Failed to find the ${templateName.uppercase()} dialog. Trying again...")
 					}
 					
 					game.wait(1.0)
 				} else {
-					game.printToLog("[SUCCESS] Found the ${templateName.toUpperCase(Locale.ROOT)} at $matchLocation.", MESSAGE_TAG = TAG)
+					game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", MESSAGE_TAG = TAG)
 					return matchLocation
 				}
 			}

@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
         
-        val githubTextView: TextView = findViewById<TextView>(R.id.github_textView)
+        val githubTextView: TextView = findViewById(R.id.github_textView)
         githubTextView.setOnClickListener {
             val newIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/steve1316/granblue-automation-android"))
             startActivity(newIntent)
