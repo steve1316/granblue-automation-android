@@ -30,7 +30,7 @@
         <activity
             android:name="com.steve1316.granblueautomation_android.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.GranblueAutomation_Android.NoActionBar">
+            android:theme="@style/Theme.AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
