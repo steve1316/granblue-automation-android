@@ -148,6 +148,13 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 	}
 	
+	/**
+	 * Search through the whole source screenshot for all matches to the template image.
+	 *
+	 * @param sourceBitmap Bitmap from the /files/temp/ folder.
+	 * @param templateBitmap Bitmap from the assets folder.
+	 * @return ArrayList of Point objects that represents the matches found on the source screenshot.
+	 */
 	private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap): ArrayList<Point> {
 		// Create the Mats of both source and template images.
 		val sourceMat = Mat()
@@ -326,7 +333,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 		
 		if (!suppressError) {
-			game.printToLog("[WARNING] Failed to confirm the bot's location at ${templateName.uppercase()}.", MESSAGE_TAG = TAG)
+			game.printToLog("[WARNING] Failed to confirm the bot location at ${templateName.uppercase()}.", MESSAGE_TAG = TAG)
 		}
 		
 		return false
@@ -513,7 +520,8 @@ class ImageUtils(context: Context, private val game: Game) {
 								}
 								
 								totalItemAmount += detectedAmount
-							} catch (e: NumberFormatException) { }
+							} catch (e: NumberFormatException) {
+							}
 						}
 					}
 				}.addOnFailureListener {

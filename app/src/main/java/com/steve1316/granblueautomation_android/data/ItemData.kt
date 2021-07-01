@@ -199,7 +199,8 @@ class ItemData {
 			"Lvl 200 Grand Order" to arrayListOf("Verdant Azurite"),
 			"Lvl 100 Proto Bahamut" to arrayListOf("Champion Merit", "Horn of Bahamut"),
 			"Lvl 150 Proto Bahamut" to arrayListOf("Primeval Horn"),
-			"Lvl 150 Ultimate Bahamut" to arrayListOf("Michael Anima", "Gabriel Anima", "Uriel Anima", "Raphael Anima", "Meteorite Fragment", "Meteorite", "Silver Centrum", "Ultima Unit",
+			"Lvl 150 Ultimate Bahamut" to arrayListOf(
+				"Michael Anima", "Gabriel Anima", "Uriel Anima", "Raphael Anima", "Meteorite Fragment", "Meteorite", "Silver Centrum", "Ultima Unit",
 				"Athena Anima", "Athena Omega Anima", "Grani Anima", "Grani Omega Anima", "Baal Anima", "Baal Omega Anima", "Garuda Anima", "Garuda Omega Anima", "Odin Anima", "Odin Omega Anima",
 				"Lich Anima", "Lich Omega Anima"),
 			"Lvl 200 Ultimate Bahamut" to arrayListOf("Silver Centrum", "Ultima Unit"),

@@ -15,8 +15,7 @@ import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
 import com.steve1316.granblueautomation_android.data.ItemData
 import com.steve1316.granblueautomation_android.data.MissionData
-import java.io.*
-import kotlin.collections.ArrayList
+import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
 	private val TAG: String = "GAA_SettingsFragment"
@@ -106,126 +105,126 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
 		if (key != null) {
 			when (key) {
-                "farmingModePicker" -> {
-                    // Fill out the new entries and values for Missions based on the newly chosen Farming Mode.
-                    val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
-                    val missionPicker: ListPreference = findPreference("missionPicker")!!
-                    
-                    sharedPreferences.edit {
-                        putString("farmingMode", farmingModePicker.value)
-                        commit()
-                    }
-                    
-                    if (farmingModePicker.value == "Coop") {
-                        val summonPicker: Preference = findPreference("summonPicker")!!
-                        summonPicker.title = "Select Summon(s)"
-                        summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
-                        summonPicker.isEnabled = false
-                        
-                        // Go through every checked item and set them to false.
-                        if (this::summonListCheckedItems.isInitialized) {
-                            for (i in summonListCheckedItems.indices) {
-                                summonListCheckedItems[i] = false
-                            }
-                        }
-                        
-                        // After that, clear the list of user-selected summons and the one in SharedPreferences.
-                        userSelectedSummonList.clear()
-                        sharedPreferences.edit {
-                            remove("summon")
-                            commit()
-                        }
-                    } else {
-                        val summonPicker: Preference = findPreference("summonPicker")!!
-                        summonPicker.title = "Select Summon(s)*"
-                    }
-                    
-                    // Populate the Mission picker with the missions associated with the newly chosen Farming Mode.
-                    populateMissionListPreference()
-                    
-                    // Now reset the values of the Mission and Item pickers to indicate that a new Farming Mode means a new Mission which in turn will
-                    // affect what the user wants to choose next.
-                    resetMissionSharedPreference()
-                    resetItemSharedPreference()
-                    
-                    // Disable the following Preferences.
-                    val itemPicker: ListPreference = findPreference("itemPicker")!!
-                    val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
-                    val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
-                    itemPicker.isEnabled = false
-                    itemAmountPicker.isEnabled = false
-                    combatModePreferenceCategory.isEnabled = false
-                    
-                    // Finally, enable the Mission picker.
-                    missionPicker.isEnabled = true
-                }
-                "missionPicker" -> {
-                    val missionPicker: ListPreference = findPreference("missionPicker")!!
-                    val itemPicker: ListPreference = findPreference("itemPicker")!!
-                    
-                    sharedPreferences.edit {
-                        putString("missionName", missionPicker.value)
-                        commit()
-                    }
-                    
-                    // Populate the Item list based on the Mission selected. Save the Map for the Mission if possible.
-                    populateItemListPreference()
-                    
-                    // Now reset the value of the Item picker.
-                    resetItemSharedPreference()
-                    
-                    // Disable the following Preferences.
-                    val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
-                    combatModePreferenceCategory.isEnabled = false
-                    
-                    // Finally, enable the Item picker.
-                    itemPicker.isEnabled = true
-                }
-                "itemPicker" -> {
-                    val itemPicker: ListPreference = findPreference("itemPicker")!!
-                    
-                    sharedPreferences.edit {
-                        putString("itemName", itemPicker.value)
-                        commit()
-                    }
-                    
-                    // Enable the Item Amount picker.
-                    val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
-                    itemAmountPicker.isEnabled = true
-                    
-                    // Build the Summon Selection AlertDialog.
-                    val farmingMode = sharedPreferences.getString("farmingMode", "")
-                    if (farmingMode != "Coop") {
-                        val summonPicker: Preference = findPreference("summonPicker")!!
-                        summonPicker.isEnabled = true
-                        createSummonDialog()
-                    }
-                    
-                    // Finally, enable the Combat Mode PreferenceCategory.
-                    val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
-                    combatModePreferenceCategory.isEnabled = true
-                }
-                "itemAmountPicker" -> {
-                    val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
-                    sharedPreferences.edit {
-                        putInt("itemAmount", itemAmountPicker.value)
-                        commit()
-                    }
-                }
-                "groupPicker" -> {
-                    val groupPicker: ListPreference = findPreference("groupPicker")!!
-                    sharedPreferences.edit {
-                        putInt("groupNumber", groupPicker.value.last().toString().toInt())
-                        commit()
-                    }
-                }
-                "partyPicker" -> {
-                    val partyPicker: ListPreference = findPreference("partyPicker")!!
-                    sharedPreferences.edit {
-                        putInt("partyNumber", partyPicker.value.last().toString().toInt())
-                        commit()
-                    }
-                }
+				"farmingModePicker" -> {
+					// Fill out the new entries and values for Missions based on the newly chosen Farming Mode.
+					val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
+					val missionPicker: ListPreference = findPreference("missionPicker")!!
+					
+					sharedPreferences.edit {
+						putString("farmingMode", farmingModePicker.value)
+						commit()
+					}
+					
+					if (farmingModePicker.value == "Coop") {
+						val summonPicker: Preference = findPreference("summonPicker")!!
+						summonPicker.title = "Select Summon(s)"
+						summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+						summonPicker.isEnabled = false
+						
+						// Go through every checked item and set them to false.
+						if (this::summonListCheckedItems.isInitialized) {
+							for (i in summonListCheckedItems.indices) {
+								summonListCheckedItems[i] = false
+							}
+						}
+						
+						// After that, clear the list of user-selected summons and the one in SharedPreferences.
+						userSelectedSummonList.clear()
+						sharedPreferences.edit {
+							remove("summon")
+							commit()
+						}
+					} else {
+						val summonPicker: Preference = findPreference("summonPicker")!!
+						summonPicker.title = "Select Summon(s)*"
+					}
+					
+					// Populate the Mission picker with the missions associated with the newly chosen Farming Mode.
+					populateMissionListPreference()
+					
+					// Now reset the values of the Mission and Item pickers to indicate that a new Farming Mode means a new Mission which in turn will
+					// affect what the user wants to choose next.
+					resetMissionSharedPreference()
+					resetItemSharedPreference()
+					
+					// Disable the following Preferences.
+					val itemPicker: ListPreference = findPreference("itemPicker")!!
+					val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+					val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
+					itemPicker.isEnabled = false
+					itemAmountPicker.isEnabled = false
+					combatModePreferenceCategory.isEnabled = false
+					
+					// Finally, enable the Mission picker.
+					missionPicker.isEnabled = true
+				}
+				"missionPicker" -> {
+					val missionPicker: ListPreference = findPreference("missionPicker")!!
+					val itemPicker: ListPreference = findPreference("itemPicker")!!
+					
+					sharedPreferences.edit {
+						putString("missionName", missionPicker.value)
+						commit()
+					}
+					
+					// Populate the Item list based on the Mission selected. Save the Map for the Mission if possible.
+					populateItemListPreference()
+					
+					// Now reset the value of the Item picker.
+					resetItemSharedPreference()
+					
+					// Disable the following Preferences.
+					val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
+					combatModePreferenceCategory.isEnabled = false
+					
+					// Finally, enable the Item picker.
+					itemPicker.isEnabled = true
+				}
+				"itemPicker" -> {
+					val itemPicker: ListPreference = findPreference("itemPicker")!!
+					
+					sharedPreferences.edit {
+						putString("itemName", itemPicker.value)
+						commit()
+					}
+					
+					// Enable the Item Amount picker.
+					val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+					itemAmountPicker.isEnabled = true
+					
+					// Build the Summon Selection AlertDialog.
+					val farmingMode = sharedPreferences.getString("farmingMode", "")
+					if (farmingMode != "Coop") {
+						val summonPicker: Preference = findPreference("summonPicker")!!
+						summonPicker.isEnabled = true
+						createSummonDialog()
+					}
+					
+					// Finally, enable the Combat Mode PreferenceCategory.
+					val combatModePreferenceCategory: PreferenceCategory = findPreference("combatModeTitle")!!
+					combatModePreferenceCategory.isEnabled = true
+				}
+				"itemAmountPicker" -> {
+					val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
+					sharedPreferences.edit {
+						putInt("itemAmount", itemAmountPicker.value)
+						commit()
+					}
+				}
+				"groupPicker" -> {
+					val groupPicker: ListPreference = findPreference("groupPicker")!!
+					sharedPreferences.edit {
+						putInt("groupNumber", groupPicker.value.last().toString().toInt())
+						commit()
+					}
+				}
+				"partyPicker" -> {
+					val partyPicker: ListPreference = findPreference("partyPicker")!!
+					sharedPreferences.edit {
+						putInt("partyNumber", partyPicker.value.last().toString().toInt())
+						commit()
+					}
+				}
 				"debugModeCheckBox" -> {
 					val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 					sharedPreferences.edit {
@@ -578,46 +577,46 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		
 		// Get the item entries based on the selected Farming Mode.
 		when (farmingMode) {
-            "Quest" -> {
-                missionsForQuest.forEach { (_, value) ->
-                    value.forEach {
-                        newEntries.add(it)
-                    }
-                }
-            }
-            "Special" -> {
-                missionsForSpecial.forEach { (_, value) ->
-                    value.forEach {
-                        newEntries.add(it)
-                    }
-                }
-            }
-            "Coop" -> {
-                itemsForCoop.forEach { (key, _) ->
-                    newEntries.add(key)
-                }
-            }
-            "Raid" -> {
-                missionsForRaid.forEach { (_, value) ->
-                    value.forEach {
-                        newEntries.add(it)
-                    }
-                }
-            }
-            "Event" -> {
-                missionsForEvent.forEach { (_, value) ->
-                    value.forEach {
-                        newEntries.add(it)
-                    }
-                }
-            }
-            "Event (Token Drawboxes)" -> {
-                missionsForEventTokenDrawboxes.forEach { (_, value) ->
-                    value.forEach {
-                        newEntries.add(it)
-                    }
-                }
-            }
+			"Quest" -> {
+				missionsForQuest.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
+			"Special" -> {
+				missionsForSpecial.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
+			"Coop" -> {
+				itemsForCoop.forEach { (key, _) ->
+					newEntries.add(key)
+				}
+			}
+			"Raid" -> {
+				missionsForRaid.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
+			"Event" -> {
+				missionsForEvent.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
+			"Event (Token Drawboxes)" -> {
+				missionsForEventTokenDrawboxes.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
 			"Rise of the Beasts" -> {
 				missionsForROTB.forEach { (_, value) ->
 					value.forEach {
@@ -625,13 +624,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					}
 				}
 			}
-            "Guild Wars" -> {
-                missionsForGuildWars.forEach { (_, value) ->
-                    value.forEach {
-                        newEntries.add(it)
-                    }
-                }
-            }
+			"Guild Wars" -> {
+				missionsForGuildWars.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
 			"Dread Barrage" -> {
 				missionsForDreadBarrage.forEach { (_, value) ->
 					value.forEach {
@@ -671,90 +670,90 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		
 		// Get the item entries based on the selected Mission.
 		when (farmingModePicker.value) {
-            "Quest" -> {
-                missionsForQuest.forEach { (missionKey, missionValue) ->
-                    // Save the Map that the Mission takes place on.
-                    if (missionValue.contains(missionName)) {
-                        sharedPreferences.edit().apply {
-                            putString("mapName", missionKey)
-                            apply()
-                        }
-                    }
-                }
-                
-                itemsForQuest.forEach { (key, value) ->
-                    if (key == missionName) {
-                        value.forEach {
-                            newEntries.add(it)
-                        }
-                    }
-                }
-            }
-            "Special" -> {
-                missionsForSpecial.forEach { (missionKey, missionValue) ->
-                    // Save the Map that the Mission takes place on.
-                    if (missionValue.contains(missionName)) {
-                        sharedPreferences.edit().apply {
-                            putString("mapName", missionKey)
-                            apply()
-                        }
-                    }
-                }
-                
-                // Remove any detected difficulty prefix.
-                val formattedMissionName = if (missionName.startsWith("N ", true) || missionName.startsWith("H ", true) ||
-                    missionName.startsWith("VH ", true) || missionName.startsWith("EX ", true)
-                ) {
-                    val missionNameList = missionName.split(" ")
-                    missionNameList.subList(1, missionNameList.size).joinToString(" ")
-                } else {
-                    missionName
-                }
-                
-                itemsForSpecial.forEach { (key, value) ->
-                    if (key == formattedMissionName) {
-                        value.forEach {
-                            newEntries.add(it)
-                        }
-                    }
-                }
-            }
-            "Coop" -> {
-                itemsForCoop.forEach { (key, value) ->
-                    if (key == missionName) {
-                        value.forEach {
-                            newEntries.add(it)
-                        }
-                    }
-                }
-            }
-            "Raid" -> {
-                itemsForRaid.forEach { (key, value) ->
-                    if (key == missionName) {
-                        value.forEach {
-                            newEntries.add(it)
-                        }
-                    }
-                }
-            }
-            "Event" -> {
-                itemsForEvent.forEach { (key, value) ->
-                    if (key == missionName) {
-                        value.forEach {
-                            newEntries.add(it)
-                        }
-                    }
-                }
-            }
-            "Event (Token Drawboxes)" -> {
-                itemsForEventTokenDrawboxes.forEach { (key, value) ->
-                    if (key == missionName) {
-                        value.forEach {
-                            newEntries.add(it)
-                        }
-                    }
-                }
-            }
+			"Quest" -> {
+				missionsForQuest.forEach { (missionKey, missionValue) ->
+					// Save the Map that the Mission takes place on.
+					if (missionValue.contains(missionName)) {
+						sharedPreferences.edit().apply {
+							putString("mapName", missionKey)
+							apply()
+						}
+					}
+				}
+				
+				itemsForQuest.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
+			"Special" -> {
+				missionsForSpecial.forEach { (missionKey, missionValue) ->
+					// Save the Map that the Mission takes place on.
+					if (missionValue.contains(missionName)) {
+						sharedPreferences.edit().apply {
+							putString("mapName", missionKey)
+							apply()
+						}
+					}
+				}
+				
+				// Remove any detected difficulty prefix.
+				val formattedMissionName = if (missionName.startsWith("N ", true) || missionName.startsWith("H ", true) ||
+					missionName.startsWith("VH ", true) || missionName.startsWith("EX ", true)
+				) {
+					val missionNameList = missionName.split(" ")
+					missionNameList.subList(1, missionNameList.size).joinToString(" ")
+				} else {
+					missionName
+				}
+				
+				itemsForSpecial.forEach { (key, value) ->
+					if (key == formattedMissionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
+			"Coop" -> {
+				itemsForCoop.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
+			"Raid" -> {
+				itemsForRaid.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
+			"Event" -> {
+				itemsForEvent.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
+			"Event (Token Drawboxes)" -> {
+				itemsForEventTokenDrawboxes.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
 			"Rise of the Beasts" -> {
 				itemsForROTB.forEach { (key, value) ->
 					if (key == missionName) {
@@ -764,15 +763,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					}
 				}
 			}
-            "Guild Wars" -> {
-                itemsForGuildWars.forEach { (key, value) ->
-                    if (key == missionName) {
-                        value.forEach {
-                            newEntries.add(it)
-                        }
-                    }
-                }
-            }
+			"Guild Wars" -> {
+				itemsForGuildWars.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
 			"Dread Barrage" -> {
 				itemsForDreadBarrage.forEach { (key, value) ->
 					if (key == missionName) {

@@ -33,7 +33,7 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 		"Lvl 100 Luminiera Omega" to "Lv100 シュヴァリエ・マグナ",
 		"Lvl 75 Celeste Omega" to "Lv75 セレスト・マグナ",
 		"Lvl 100 Celeste Omega" to "Lv100 セレスト・マグナ",
-
+		
 		"Lvl 100 Twin Elements" to "Lv100 フラム＝グラス",
 		"Lvl 120 Twin Elements" to "Lv120 フラム＝グラス",
 		"Lvl 100 Macula Marius" to "Lv100 マキュラ・マリウス",
@@ -46,27 +46,27 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 		"Lvl 120 Apollo" to "Lv120 アポロン",
 		"Lvl 100 Dark Angel Olivia" to "Lv100 Dエンジェル・オリヴィエ",
 		"Lvl 120 Dark Angel Olivia" to "Lv120 Dエンジェル・オリヴィエ",
-
+		
 		"Lvl 100 Athena" to "Lv100 アテナ",
 		"Lvl 100 Grani" to "Lv100 グラニ",
 		"Lvl 100 Baal" to "Lv100 バアル",
 		"Lvl 100 Garuda" to "Lv100 ガルーダ",
 		"Lvl 100 Odin" to "Lv100 オーディン",
 		"Lvl 100 Lich" to "Lv100 リッチ",
-
+		
 		"Lvl 100 Michael" to "Lv100 ミカエル",
 		"Lvl 100 Gabriel" to "Lv100 ガブリエル",
 		"Lvl 100 Uriel" to "Lv100 ウリエル",
 		"Lvl 100 Raphael" to "Lv100 ラファエル",
 		"The Four Primarchs" to "四大天司ＨＬ",
-
+		
 		"Lvl 100 Proto Bahamut" to "Lv100 プロトバハムート",
 		"Lvl 150 Proto Bahamut" to "Lv150 プロトバハムート",
 		"Lvl 150 Ultimate Bahamut" to "Lv150 アルティメットバハムート",
 		"Lvl 200 Ultimate Bahamut" to "Lv200 アルティメットバハムート",
 		"Lvl 100 Grand Order" to "Lv100 ジ・オーダー・グランデ",
 		"Lvl 200 Grand Order" to "Lv200 ジ・オーダー・グランデ",
-
+		
 		"Lvl 60 Zhuque" to "Lv60 朱雀",
 		"Lvl 90 Agni" to "Lv90 アグニス",
 		"Lvl 60 Xuanwu" to "Lv60 玄武",
@@ -79,7 +79,7 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 		"Lvl 100 Qilin" to "Lv100 黒麒麟",
 		"Huanglong & Qilin (Impossible)" to "黄龍・黒麒麟HL",
 		"Lvl 100 Shenxian" to "Lv100 四象瑞神",
-
+		
 		"Lvl 110 Rose Queen" to "Lv110 ローズクイーン",
 		"Lvl 120 Shiva" to "Lv120 シヴァ",
 		"Lvl 120 Europa" to "Lv120 エウロペ",
@@ -96,12 +96,12 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 		"Lvl 200 Akasha" to "Lv200 アーカーシャ",
 		"Lvl 150 Lucilius" to "Lv150 ルシファー",
 		"Lvl 250 Lucilius" to "Lv250 ルシファー",
-
+		
 		"Lvl 150 Tiamat Malice" to "Lv150 ティアマト・マリス",
 		"Lvl 150 Leviathan Malice" to "Lv150 リヴァイアサン・マリス",
 		"Lvl 150 Phronesis" to "Lv150 フロネシス",
 		"Lvl 150 Luminiera Malice" to "Lv150 シュヴァリエ・マリス",
-
+		
 		"Lvl 200 Wilnas" to "Lv200 ウィルナス",
 		"Lvl 200 Wamdus" to "Lv200 ワムデュス",
 		"Lvl 200 Galleon" to "Lv200 ガレヲン",
@@ -109,7 +109,7 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 		"Lvl 200 Lu Woh" to "Lv200 ル・オー",
 		"Lvl 200 Fediel" to "Lv200 フェディエル",
 		"Lvl 250 Beelzebub" to "Lv250 ベルゼバブ",
-
+		
 		"Lvl 100 Xeno Ifrit" to "Lv100 ゼノ・イフリート",
 		"Lvl 100 Xeno Cocytus" to "Lv100 ゼノ・コキュートス",
 		"Lvl 100 Xeno Vohu Manah" to "Lv100 ゼノ・ウォフマナフ",
@@ -157,7 +157,7 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 		// Construct the query for EN tweets.
 		val queryEN = Query("+(:Battle ID) AND +($raidName)")
 		queryEN.count = count / 2
-
+		
 		// Grab the Japanese name of the Raid and construct the query for JP tweets.
 		val jpRaidName = listOfRaids[raidName]!!
 		val queryJP = Query("+(:参戦ID) AND +($jpRaidName)")

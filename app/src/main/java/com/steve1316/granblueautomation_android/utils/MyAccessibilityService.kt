@@ -86,6 +86,14 @@ class MyAccessibilityService : AccessibilityService() {
 		}
 	}
 	
+	/**
+	 * Randomizes the tap location to be within the dimensions of the specified image.
+	 *
+	 * @param x The original x location for the tap gesture.
+	 * @param y The original y location for the tap gesture.
+	 * @param buttonName The name of the image to acquire its dimensions for tap location randomization.
+	 * @return Pair of integers that represent the newly randomized tap location.
+	 */
 	private fun randomizeTapLocation(x: Double, y: Double, buttonName: String): Pair<Int, Int> {
 		// Get the Bitmap from the template image file inside the specified folder.
 		val templateBitmap: Bitmap
@@ -107,6 +115,7 @@ class MyAccessibilityService : AccessibilityService() {
 		var newY: Int
 		
 		while (true) {
+			// Start acquiring randomized coordinates at least 20% and at most 80% of the width and height until a valid set of coordinates has been acquired.
 			val newWidth: Int = ((width * 0.2).toInt()..(width * 0.8).toInt()).random()
 			val newHeight: Int = ((height * 0.2).toInt()..(height * 0.8).toInt()).random()
 			
@@ -137,11 +146,13 @@ class MyAccessibilityService : AccessibilityService() {
 		// Randomize the tapping location.
 		val (newX, newY) = randomizeTapLocation(x, y, buttonName)
 		
+		// Construct the tap gesture.
 		val tapPath = Path().apply {
 			moveTo(newX.toFloat(), newY.toFloat())
 		}
 		
 		val gesture: GestureDescription = if (longPress) {
+			// Long press for 1000ms.
 			GestureDescription.Builder().apply {
 				addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1000, true))
 			}.build()

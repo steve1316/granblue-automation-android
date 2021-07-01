@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory app:title="Farming Mode" app:summary="Options marked with * are required">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        app:summary="Options marked with * are required"
+        app:title="Farming Mode">
         <ListPreference
             app:entries="@array/farming_mode_list"
             app:entryValues="@array/farming_mode_list"
@@ -10,94 +12,100 @@
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
+            android:enabled="false"
             app:entries="@array/empty_list"
             app:entryValues="@array/empty_list"
             app:key="missionPicker"
-            android:enabled="false"
             app:title="Select Mission to farm from*"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
+            android:enabled="false"
             app:entries="@array/empty_list"
             app:entryValues="@array/empty_list"
             app:key="itemPicker"
-            android:enabled="false"
             app:title="Select Item to farm*"
             app:useSimpleSummaryProvider="true" />
 
         <SeekBarPreference
-            app:min="1"
-            android:max="100"
-            app:key="itemAmountPicker"
             android:enabled="false"
-            app:title="Item Amount to farm"
+            android:max="100"
+            app:defaultValue="1"
+            app:key="itemAmountPicker"
+            app:min="1"
             app:showSeekBarValue="true"
-            app:defaultValue="1" />
+            app:title="Item Amount to farm" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Combat Mode" app:key="combatModeTitle" app:summary="Options marked with * are required" android:enabled="false">
+    <PreferenceCategory
+        android:enabled="false"
+        app:key="combatModeTitle"
+        app:summary="Options marked with * are required"
+        app:title="Combat Mode">
         <Preference
             app:key="filePicker"
-            app:title="Select Combat Script"
             app:summary="Select the combat script in .txt format that will be used for Combat Mode.
             \n\nIf none is selected, it will default to Full/Semi Auto.
-            \n\nCombat Script Selected: none" />
+            \n\nCombat Script Selected: none"
+            app:title="Select Combat Script" />
 
         <Preference
             app:key="summonPicker"
-            app:title="Select Summon(s)*"
-            app:summary="Select the Summon(s) in order from highest to lowest priority for Combat Mode." />
+            app:summary="Select the Summon(s) in order from highest to lowest priority for Combat Mode."
+            app:title="Select Summon(s)*" />
 
         <ListPreference
+            app:defaultValue="Group 1"
             app:entries="@array/group_list"
             app:entryValues="@array/group_list"
-            app:defaultValue="Group 1"
             app:key="groupPicker"
             app:title="Select Group"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
+            app:defaultValue="Party 1"
             app:entries="@array/party_list"
             app:entryValues="@array/party_list"
-            app:defaultValue="Party 1"
             app:key="partyPicker"
             app:title="Select Party"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Misc" app:key="miscTitle">
+    <PreferenceCategory
+        app:key="miscTitle"
+        app:title="Misc">
         <CheckBoxPreference
             app:key="debugModeCheckBox"
-            app:title="Enable Debug Mode"
-            app:summary="Allows debugging messages to be shown in the log to reveal diagnostic information and potential errors." />
+            app:summary="Allows debugging messages to be shown in the log to reveal diagnostic information and potential errors."
+            app:title="Enable Debug Mode" />
 
         <SwitchPreference
             app:key="delayBetweenRunsSwitch"
-            app:title="Enable Singular Delay Between Runs"
-            app:summary="Allows a static delay in seconds after each completed run." />
+            app:summary="Allows a static delay in seconds after each completed run."
+            app:title="Enable Singular Delay Between Runs" />
 
         <SwitchPreference
             app:key="randomizedDelayBetweenRunsSwitch"
-            app:title="Enable randomized Delays Between Runs"
-            app:summary="Allows a randomized delay in seconds after each completed run using the provided lower and upper limits inclusive." />
+            app:summary="Allows a randomized delay in seconds after each completed run using the provided lower and upper limits inclusive."
+            app:title="Enable randomized Delays Between Runs" />
 
         <SeekBarPreference
             android:enabled="false"
-            app:key="delayBetweenRunsSeekBar"
-            app:title="Set Delay In Seconds"
-            app:min="1"
             android:max="60"
             app:defaultValue="1"
-            app:showSeekBarValue="true" />
+            app:key="delayBetweenRunsSeekBar"
+            app:min="1"
+            app:showSeekBarValue="true"
+            app:title="Set Delay In Seconds" />
 
         <SeekBarPreference
-            app:isPreferenceVisible="false"
-            app:key="randomizedDelayBetweenRunsSeekBar"
-            app:title="Set Upper Bound for Delay in Seconds"
-            app:min="1"
             android:max="60"
             app:defaultValue="1"
-            app:showSeekBarValue="true" />
+            app:isPreferenceVisible="false"
+            app:key="randomizedDelayBetweenRunsSeekBar"
+            app:min="1"
+            app:showSeekBarValue="true"
+            app:title="Set Upper Bound for Delay in Seconds" />
 
     </PreferenceCategory>
 </PreferenceScreen>

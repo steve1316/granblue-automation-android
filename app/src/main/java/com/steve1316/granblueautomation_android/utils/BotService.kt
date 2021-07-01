@@ -15,9 +15,9 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
-import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.bot.Game
+import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 

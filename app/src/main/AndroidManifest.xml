@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GranblueAutomation_Android"
-        tools:ignore="AllowBackup" >
+        tools:ignore="AllowBackup">
 
         <!--Application will automatically download the Machine Learning model to the device after the app is installed.-->
         <meta-data
@@ -41,9 +41,9 @@
         <!--The Accessibility Service that controls gestures on the screen.-->
         <service
             android:name="com.steve1316.granblueautomation_android.utils.MyAccessibilityService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:foregroundServiceType="mediaProjection"
             android:label="@string/accessibility_service_label"
-            android:foregroundServiceType="mediaProjection">
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
@@ -58,8 +58,7 @@
             android:foregroundServiceType="mediaProjection" />
 
         <!--Bot Service that will automate the specified workflow.-->
-        <service
-            android:name=".utils.BotService" />
+        <service android:name=".utils.BotService" />
 
         <!--Receiver that will send the "STOP" Intent to MediaProjection Service when the action button on the Notification is tapped.-->
         <receiver
