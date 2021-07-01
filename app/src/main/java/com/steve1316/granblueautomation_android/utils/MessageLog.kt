@@ -22,6 +22,8 @@ class MessageLog {
 		 * @param context The context for the application.
 		 */
 		fun saveLogToFile(context: Context) {
+			cleanLogsFolder(context)
+			
 			if (!saveCheck) {
 				Log.d(TAG, "Now beginning process to save current Message Log to internal storage...")
 				
@@ -49,6 +51,23 @@ class MessageLog {
 					}
 					
 					saveCheck = true
+				}
+			}
+		}
+		
+		/**
+		 * Clean up the logs folder if the amount of logs inside is greater than the specified amount.
+		 *
+		 * @param context The context for the application.
+		 */
+		private fun cleanLogsFolder(context: Context) {
+			val directory = File(context.getExternalFilesDir(null)?.absolutePath + "/logs/")
+			
+			// Delete all logs if the amount inside is greater than 50.
+			val files = directory.listFiles()
+			if (files != null && files.size > 50) {
+				files.forEach { file ->
+					file.delete()
 				}
 			}
 		}
