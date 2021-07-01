@@ -1,12 +1,13 @@
 package com.steve1316.granblueautomation_android.bot
 
+import com.steve1316.granblueautomation_android.MainActivity
 import org.opencv.core.Point
 
 /**
  * This class handles the Combat Mode and offers helper functions to assist it.
  */
 class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
-	private val TAG: String = "GAA_CombatMode"
+	private val TAG: String = "[${MainActivity.loggerTag}]CombatMode"
 	
 	private var healingItemCommands = listOf(
 		"usegreenpotion.target(1)",

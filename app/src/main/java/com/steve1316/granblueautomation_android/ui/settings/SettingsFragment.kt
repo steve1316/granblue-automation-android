@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.*
 import com.sksamuel.hoplite.ConfigLoader
+import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
 import com.steve1316.granblueautomation_android.data.ItemData
@@ -18,7 +19,7 @@ import com.steve1316.granblueautomation_android.data.MissionData
 import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
-	private val TAG: String = "GAA_SettingsFragment"
+	private val TAG: String = "[${MainActivity.loggerTag}]SettingsFragment"
 	private val OPEN_FILE_PERMISSION = 1001
 	
 	private lateinit var sharedPreferences: SharedPreferences

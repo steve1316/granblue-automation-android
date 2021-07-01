@@ -1,6 +1,7 @@
 package com.steve1316.granblueautomation_android.bot
 
 import android.util.Log
+import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.data.RoomCodeData
 import org.opencv.core.Point
 import java.util.*
@@ -9,7 +10,7 @@ import java.util.*
  * Provides the utility functions needed for perform navigation for Farming Mode throughout Granblue Fantasy.
  */
 class MapSelection(private val game: Game, private val twitterRoomFinder: TwitterRoomFinder?) {
-	private val TAG: String = "GAA_MapSelection"
+	private val TAG: String = "[${MainActivity.loggerTag}]MapSelection"
 	
 	private var numberOfRaidsJoined: Int = 0
 	
@@ -1288,8 +1289,6 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			
 			game.wait(3.0)
 			
-			Log.d(TAG, "Looking for $missionName.")
-			
 			// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
 			var firstRun = true
 			var tries = 10
@@ -1345,10 +1344,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Now tap the "Join Room" button.
 					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y, "join_a_room")
 					
-					if (!checkPendingBattles("raid") && !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
+					if (!checkPendingBattles("raid")
+						&& !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
 						&& !game.imageUtils.confirmLocation("already_taking_part", tries = 1)
-						&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)
-					) {
+						&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)) {
 						// Check for EP.
 						game.checkEP()
 						
@@ -1368,10 +1367,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				}
 				
 				tries -= 1
-				game.printToLog(
-					"[WARNING] Could not find any valid room codes. \nWaiting 60 seconds and then trying again with $tries " +
-							"tries left before exiting.", MESSAGE_TAG = TAG
-				)
+				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting 60 seconds and then trying again with $tries tries left before exiting.", MESSAGE_TAG = TAG)
 				game.wait(60.0)
 			}
 		}

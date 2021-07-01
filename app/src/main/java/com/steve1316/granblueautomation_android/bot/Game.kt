@@ -3,6 +3,7 @@ package com.steve1316.granblueautomation_android.bot
 import android.content.Context
 import android.content.res.Resources
 import android.util.Log
+import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.data.SummonData
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.ImageUtils
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
 class Game(private val myContext: Context) {
-	private val TAG: String = "GAA_Game"
+	private val TAG: String = "[${MainActivity.loggerTag}]Game"
 	
 	private var debugMode: Boolean = SettingsFragment.getBooleanSharedPreference(myContext, "debugMode")
 	
@@ -286,7 +287,6 @@ class Game(private val myContext: Context) {
 		
 		unformattedSummonList.forEach {
 			val newSummonName = it.lowercase().replace(" ", "_")
-			Log.d(TAG, newSummonName)
 			newSummonList.add(newSummonName)
 		}
 		

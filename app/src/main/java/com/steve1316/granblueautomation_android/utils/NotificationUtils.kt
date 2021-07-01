@@ -20,10 +20,7 @@ class NotificationUtils {
 	companion object {
 		private lateinit var notificationManager: NotificationManager
 		private const val NOTIFICATION_ID: Int = 1
-		private const val CHANNEL_ID: String = "BOT_STATUS"
-		private const val CHANNEL_NAME: String = "Granblue Automation Android"
-		private const val CONTENT_TITLE: String = "Granblue Automation Android"
-		private const val CHANNEL_DESCRIPTION: String = "Displays status of GAA, whether it is running or not."
+		private const val CHANNEL_ID: String = "STATUS"
 		
 		/**
 		 * Creates the NotificationChannel and the Notification object.
@@ -53,8 +50,9 @@ class NotificationUtils {
 		 */
 		private fun createNewNotificationChannel(context: Context) {
 			// Create the NotificationChannel.
-			val mChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
-			mChannel.description = CHANNEL_DESCRIPTION
+			val channelName = context.getString(R.string.app_name)
+			val mChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH)
+			mChannel.description = "Displays status of $channelName, whether it is running or not."
 			
 			// Register the channel with the system; you can't change the importance or other notification behaviors after this.
 			notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -68,6 +66,8 @@ class NotificationUtils {
 		 * @return A new Notification object.
 		 */
 		private fun createNewNotification(context: Context): Notification {
+			val contentTitle = context.getString(R.string.app_name)
+			
 			// Create a STOP Intent for the MediaProjection service.
 			val stopIntent = Intent(context, StopServiceReceiver::class.java)
 			
@@ -80,7 +80,7 @@ class NotificationUtils {
 			
 			return NotificationCompat.Builder(context, CHANNEL_ID).apply {
 				setSmallIcon(R.drawable.ic_baseline_control_camera_24)
-				setContentTitle(CONTENT_TITLE)
+				setContentTitle(contentTitle)
 				setContentText("Bot process is currently inactive")
 				setContentIntent(contentPendingIntent)
 				addAction(R.drawable.ic_baseline_stop_circle_24, context.getString(R.string.accessibility_service_action), stopPendingIntent)
@@ -98,6 +98,8 @@ class NotificationUtils {
 		 * @param isRunning Boolean for whether or not the bot process is currently running.
 		 */
 		fun updateNotification(context: Context, isRunning: Boolean) {
+			val contentTitle = context.getString(R.string.app_name)
+			
 			var contentText = "Bot process is currently inactive"
 			if (isRunning) {
 				contentText = "Bot process is running"
@@ -115,7 +117,7 @@ class NotificationUtils {
 			
 			val newNotification = NotificationCompat.Builder(context, CHANNEL_ID).apply {
 				setSmallIcon(R.drawable.ic_baseline_control_camera_24)
-				setContentTitle(CONTENT_TITLE)
+				setContentTitle(contentTitle)
 				setContentText(contentText)
 				setContentIntent(contentPendingIntent)
 				addAction(R.drawable.ic_baseline_stop_circle_24, context.getString(R.string.accessibility_service_action), stopPendingIntent)
@@ -140,8 +142,8 @@ class NotificationUtils {
 		 */
 		fun createBotStateChangedNotification(context: Context, contentTitle: String, contentText: String) {
 			val notificationID = 2
-			val channelID = "BOT_STATE_CHANGED"
-			val channelName = "Granblue Automation Android"
+			val channelID = "STATE_CHANGED"
+			val channelName = context.getString(R.string.app_name)
 			
 			// Create the NotificationChannel.
 			val mChannel = NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH)

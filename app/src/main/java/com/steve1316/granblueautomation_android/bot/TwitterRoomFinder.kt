@@ -13,7 +13,8 @@ import twitter4j.conf.ConfigurationBuilder
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
 class TwitterRoomFinder(myContext: Context, game: Game) {
-	private val TAG: String = "GAA_TwitterRoomFinder"
+	private val loggerTAG: String = "GAA"
+	private val TAG: String = "[$loggerTAG]TwitterRoomFinder"
 	
 	private lateinit var twitter: Twitter
 	
