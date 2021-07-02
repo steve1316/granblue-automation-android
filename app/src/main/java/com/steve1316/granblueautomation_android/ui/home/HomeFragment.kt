@@ -183,7 +183,7 @@ class HomeFragment : Fragment() {
 					Log.d(TAG, "Saved config.ini settings to SharedPreferences.")
 				}
 			} catch (e: Exception) {
-				Log.e(TAG, "Encountered error while saving Twitter API credentials to SharedPreferences from config: $e")
+				Log.e(TAG, "Encountered error while saving Twitter API credentials to SharedPreferences from config: ${e.stackTraceToString()}")
 				Log.e(TAG, "Clearing any existing Twitter API credentials from SharedPreferences...")
 				
 				sharedPreferences.edit {

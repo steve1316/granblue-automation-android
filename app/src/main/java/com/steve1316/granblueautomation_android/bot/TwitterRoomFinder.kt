@@ -143,7 +143,7 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 			
 			game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", MESSAGE_TAG = TAG)
 		} catch (e: Exception) {
-			game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.printStackTrace()}", MESSAGE_TAG = TAG, isError = true)
+			game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
 		}
 	}
 	
