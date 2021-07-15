@@ -1,0 +1,11 @@
+<AppUpdater>
+  <update>
+    <latestVersion>2.0.1</latestVersion>
+    <url>https://github.com/steve1316/granblue-automation-android/releases</url>
+    <releaseNotes>
+v2.0.1 - Changelog
+
+- Fixed bug with selecting 3-star difficulty missions for Dread Barrage.
+    </releaseNotes>
+  </update>
+</AppUpdater>
