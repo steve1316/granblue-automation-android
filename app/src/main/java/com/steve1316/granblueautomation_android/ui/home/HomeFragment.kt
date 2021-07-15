@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Bundle
@@ -204,6 +205,8 @@ class HomeFragment : Fragment() {
 		// user, set it for them to be Full/Semi Auto by default.
 		val settingsStatusTextView: TextView = homeFragmentView.findViewById(R.id.settings_status)
 		
+		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+		
 		var combatScriptName = SettingsFragment.getStringSharedPreference(myContext, "combatScriptName")
 		var farmingMode = SettingsFragment.getStringSharedPreference(myContext, "farmingMode")
 		val mapName = SettingsFragment.getStringSharedPreference(myContext, "mapName")
@@ -213,6 +216,11 @@ class HomeFragment : Fragment() {
 		var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
 		val groupNumber = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
 		val partyNumber = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
+		val debugModePreferences = sharedPreferences.getBoolean("debugMode", false)
+		val enableDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
+		val enableRandomizedDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
+		val delayBetweenRunsPreferences = sharedPreferences.getInt("delayBetweenRuns", 1)
+		val randomizedDelayBetweenRunsPreferences = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		
 		startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() && summon[0] != "") ||
 				(farmingMode == "Coop" && summon.isNotEmpty() && summon[0] == "")))
@@ -223,6 +231,12 @@ class HomeFragment : Fragment() {
 		
 		if (farmingMode == "") {
 			farmingMode = "Missing"
+		}
+		
+		val mapString: String = if (mapName != "") {
+			"Map: $mapName"
+		} else {
+			""
 		}
 		
 		if (missionName == "") {
@@ -237,15 +251,41 @@ class HomeFragment : Fragment() {
 			summon = listOf("Requires at least 1 Summon")
 		}
 		
-		settingsStatusTextView.text = "Farming Mode: $farmingMode\n" +
-				"\nMap: $mapName\n" +
-				"\nMission: $missionName\n" +
-				"\nItem: $itemName\n" +
-				"\nItem Amount: $itemAmount\n" +
-				"\nCombat Script: $combatScriptName\n" +
-				"\nSummon: $summon\n" +
-				"\nGroup: $groupNumber\n" +
-				"\nParty: $partyNumber"
+		val enableDebugModeString: String = if (debugModePreferences) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+		
+		val enableDelayBetweenRunsString: String = if (enableDelayBetweenRunsPreferences) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+		
+		val enableRandomizedDelayBetweenRunsString: String = if (enableRandomizedDelayBetweenRunsPreferences) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+		
+		settingsStatusTextView.setTextColor(Color.WHITE)
+		settingsStatusTextView.text = "---------- Farming Mode Settings ----------\n" +
+				"Mode: $farmingMode\n" +
+				mapString +
+				"Mission: $missionName\n" +
+				"Item: x$itemAmount $itemName\n" +
+				"---------- Combat Mode Settings ----------\n" +
+				"Combat Script: $combatScriptName\n" +
+				"Summon: $summon\n" +
+				"Group: $groupNumber\n" +
+				"Party: $partyNumber\n" +
+				"---------- Misc Settings ----------\n" +
+				"Debug Mode: $enableDebugModeString\n" +
+				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
+				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +
+				"Delay Between Runs Lower Bound: $delayBetweenRunsPreferences seconds\n" +
+				"Delay Between Runs Upper Bound: $randomizedDelayBetweenRunsPreferences seconds"
 		
 		return homeFragmentView
 	}
