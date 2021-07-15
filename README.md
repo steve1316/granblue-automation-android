@@ -69,3 +69,4 @@ By downloading this application, you consent to your account potentially getting
 4. [Google Firebase ML Kit - Used for text detection](https://developers.google.com/ml-kit/vision/text-recognition/android)
 5. [Hoplite - Used to read config.yaml for customized user settings](https://github.com/sksamuel/hoplite)
 6. [Twitter4j - Used to connect to Twitter API to fetch room codes](https://github.com/Twitter4J/Twitter4J)
+7. [AppUpdater 2.7 - For automatically checking and notifying the user for new app updates](https://github.com/javiersantos/AppUpdater)
