@@ -1,11 +1,13 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.0.1</latestVersion>
+    <latestVersion>2.0.2</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.0.1 - Changelog
+v2.0.2 - Changelog
 
-- Fixed bug with selecting 3-star difficulty missions for Dread Barrage.
+- The application will now automatically check for new updates online from this GitHub repository.
+- Updated the display of the status on the Home screen.
+- Changed color of overlay button to distinctly show when the bot is running or not.
     </releaseNotes>
   </update>
 </AppUpdater>
