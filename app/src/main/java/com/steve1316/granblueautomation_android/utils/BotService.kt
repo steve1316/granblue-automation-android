@@ -111,7 +111,7 @@ class BotService : Service() {
 							Toast.makeText(myContext, "Bot Service for $appName is now running.", Toast.LENGTH_SHORT).show()
 							isRunning = true
 							NotificationUtils.updateNotification(myContext, isRunning)
-							overlayButton.setImageResource(R.drawable.ic_baseline_stop_circle_24)
+							overlayButton.setImageResource(R.drawable.stop_circle_filled)
 							
 							val game = Game(myContext)
 							
@@ -204,6 +204,6 @@ class BotService : Service() {
 		NotificationUtils.updateNotification(myContext, isRunning)
 		
 		// Reset the overlay button's image.
-		overlayButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
+		overlayButton.setImageResource(R.drawable.play_circle_filled)
 	}
 }

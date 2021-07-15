@@ -13,7 +13,7 @@
         android:minWidth="0sp"
         android:minHeight="0sp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_baseline_play_circle_outline_24"
+        android:src="@drawable/play_circle_filled"
         tools:ignore="ContentDescription" />
 
 </LinearLayout>
