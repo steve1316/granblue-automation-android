@@ -18,6 +18,8 @@ import android.widget.TextView
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.github.javiersantos.appupdater.AppUpdater
+import com.github.javiersantos.appupdater.enums.UpdateFrom
 import com.sksamuel.hoplite.ConfigLoader
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
@@ -275,6 +277,12 @@ class HomeFragment : Fragment() {
 			messageLogTextView.append("\n" + messageLog[index])
 			index += 1
 		}
+		
+		// Set up the app updater to check for the latest update from GitHub.
+		AppUpdater(myContext)
+			.setUpdateFrom(UpdateFrom.XML)
+			.setUpdateXML("https://raw.githubusercontent.com/steve1316/granblue-automation-android/main/app/update.xml")
+			.start()
 	}
 	
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
