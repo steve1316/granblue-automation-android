@@ -180,6 +180,7 @@ class HomeFragment : Fragment() {
 						putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
 						putInt("xenoClashNightmareGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
 						putInt("xenoClashNightmarePartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+						commit()
 					}
 					
 					Log.d(TAG, "Saved config.ini settings to SharedPreferences.")
