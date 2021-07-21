@@ -4,12 +4,18 @@ package com.steve1316.granblueautomation_android.data
  * This is structured in such a way that Hoplite can parse the config.yaml file and create the following data classes from it.
  */
 data class ConfigData(
+	val discord: DiscordData,
 	val twitter: TwitterData,
 	val refill: RefillData,
 	val dimensionalHalo: DimensionalHaloData,
 	val event: EventNightmareData,
 	val rotb: RiseOfTheBeastsData
 )
+
+/**
+ * Token and user ID for use with the Discord API.
+ */
+data class DiscordData(val discordToken: String = "", val userID: String = "")
 
 /**
  * Consumer keys and access tokens required to use the Twitter API.

@@ -69,6 +69,12 @@ class HomeFragment : Fragment() {
 			file.createNewFile()
 			
 			val content = "---\n" +
+					"############################################################\n" +
+					"# Read the instructions on the GitHub repository README.md on how to setup Discord notifications.\n" +
+					"############################################################\n" +
+					"\"discord\":\n" +
+					"  \"discordToken\": \n" +
+					"  \"userID\": 0\n" +
 					"########################################\n" +
 					"# Read the instructions on the GitHub repository README.md on how to get these keys in order to allow the bot to farm Raids via Twitter.\n" +
 					"########################################\n" +
@@ -162,6 +168,9 @@ class HomeFragment : Fragment() {
 					}
 					
 					sharedPreferences.edit {
+						putString("discordToken", config.discord.discordToken)
+						putString("userID", config.discord.userID)
+						
 						putBoolean("enableEventNightmare", config.event.enableEventNightmare)
 						putStringSet("eventNightmareSummonList", config.event.eventNightmareSummonList.toMutableSet())
 						putInt("eventNightmareGroupNumber", config.event.eventNightmareGroupNumber)
