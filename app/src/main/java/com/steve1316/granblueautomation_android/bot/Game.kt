@@ -1021,10 +1021,9 @@ class Game(private val myContext: Context) {
 	/**
 	 * Start Farming Mode with the provided parameters from the user's choices in the settings.
 	 *
-	 * @param context: The context for the application.
 	 * @return True if Farming Mode completed successfully. False otherwise.
 	 */
-	fun startFarmingMode(context: Context): Boolean {
+	fun startFarmingMode(): Boolean {
 		// Grab all necessary information from SharedPreferences.
 		
 		enableDelayBetweenRuns = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
