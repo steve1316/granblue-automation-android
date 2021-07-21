@@ -18,6 +18,9 @@ import android.widget.Toast
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.bot.Game
+import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
@@ -121,6 +124,13 @@ class BotService : Service() {
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
 									
+									val discordUtils = DiscordUtils(myContext)
+									thread {
+										runBlocking {
+											discordUtils.main()
+										}
+									}
+									
 									// Start Farming Mode with the provided settings from SharedPreferences.
 									game.startFarmingMode(myContext)
 									
@@ -194,6 +204,11 @@ class BotService : Service() {
 	 * Perform cleanup upon app completion or encountering an Exception.
 	 */
 	private fun performCleanUp() {
+		val now = LocalDateTime.now()
+		val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+		val formatted = now.format(formatter)
+		DiscordUtils.queue.add("--------------------\n[${formatted}] Disconnected from Discord API for Granblue Automation Android.")
+		
 		// Save the message log.
 		MessageLog.saveLogToFile(myContext)
 		

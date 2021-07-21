@@ -6,13 +6,12 @@ import android.util.Log
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.data.SummonData
 import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
-import com.steve1316.granblueautomation_android.utils.ImageUtils
-import com.steve1316.granblueautomation_android.utils.MediaProjectionService
-import com.steve1316.granblueautomation_android.utils.MessageLog
-import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
+import com.steve1316.granblueautomation_android.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -622,15 +621,28 @@ class Game(private val myContext: Context) {
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
+				
+				if (amountGained > 0) {
+					val now = LocalDateTime.now()
+					val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+					val formatted = now.format(formatter)
+					DiscordUtils.queue.add(
+						"--------------------\n[$formatted] Amount of $itemName gained this run: $amountGained.\nAmount of $itemName gained in total: $itemAmountFarmed / $itemAmount")
+				}
 			} else {
 				printToLog("\n********************************************************************************")
 				printToLog("********************************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
 				printToLog("[INFO] Mission: $missionName")
 				printToLog("[INFO] Summons: $summonList")
-				printToLog("[INFO] # of runs completed: $amountOfRuns")
+				printToLog("[INFO] # of runs completed: $amountOfRuns / $itemAmount")
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
+				
+				val now = LocalDateTime.now()
+				val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+				val formatted = now.format(formatter)
+				DiscordUtils.queue.add("--------------------\n[$formatted] Runs completed for $missionName: [${amountOfRuns - 1} / $itemAmount] -> [$amountOfRuns / $itemAmount]")
 			}
 		}
 	}
