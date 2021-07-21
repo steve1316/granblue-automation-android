@@ -35,6 +35,7 @@ By downloading this application, you consent to your account potentially getting
   - [x] Proving Grounds
   - [x] Xeno Clash
 - [x] Alert for when anti-bot CAPTCHA pops up.
+- [x] Discord integration for informing you of status updates like loot drops via private DMs.
 
 # Requirements
 1. [Android Device (API 29+ or Android 10+)](https://developer.android.com/about/versions)
@@ -59,8 +60,11 @@ By downloading this application, you consent to your account potentially getting
 ## If you want to farm Raids, follow the instructions below:
 1. Make sure to run the application at least once. Check the application's ```files``` folder located inside internal storage's ```Android/data/com.steve1316.granblueautomation_android/``` directory.
 2. Locate the file named ```config.yaml``` file. For ease of use, send it to your computer.
-3. Now follow the instructions under the ```Instructions for the Raid component of this application (optional, only if you want to farm Raids)``` section of ```https://github.com/steve1316/granblue-automation-pyautogui``` to obtain your own consumer keys and tokens to connect to the Twitter API.
+3. Now follow the instructions in [this wiki page](https://github.com/steve1316/granblue-automation-pyautogui) to obtain your own consumer keys and tokens to connect to the Twitter API.
 4. Once you have them, copy them into the respective fields inside ```config.yaml``` using your preferred text editor. After that, move the file back to where it belonged on your Android device.
+
+## Instructions to set up Discord integration
+- Visit [this wiki page](https://github.com/steve1316/granblue-automation-pyautogui/wiki/Instructions-for-Discord-integration) for instructions on setting up Discord integration.
 
 # Technologies Used
 1. [MediaProjection - Used to obtain full screenshots](https://developer.android.com/reference/android/media/projection/MediaProjection)
