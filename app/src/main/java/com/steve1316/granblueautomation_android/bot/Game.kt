@@ -1,15 +1,13 @@
 package com.steve1316.granblueautomation_android.bot
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.data.SummonData
-import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
-import com.steve1316.granblueautomation_android.utils.ImageUtils
-import com.steve1316.granblueautomation_android.utils.MediaProjectionService
-import com.steve1316.granblueautomation_android.utils.MessageLog
-import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
+import com.steve1316.granblueautomation_android.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
@@ -22,7 +20,9 @@ import java.util.concurrent.TimeUnit
 class Game(private val myContext: Context) {
 	private val TAG: String = "[${MainActivity.loggerTag}]Game"
 	
-	private var debugMode: Boolean = SettingsFragment.getBooleanSharedPreference(myContext, "debugMode")
+	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
+	
+	private var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 	
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
@@ -622,15 +622,35 @@ class Game(private val myContext: Context) {
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
+				
+				// Construct the message for the Discord private DM.
+				if (amountGained > 0) {
+					val discordString = if (itemAmountFarmed >= itemAmount) {
+						"> ${amountGained}x __${itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]** :white_check_mark:"
+					} else {
+						"> ${amountGained}x __${itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]**"
+					}
+					
+					DiscordUtils.queue.add(discordString)
+				}
 			} else {
 				printToLog("\n********************************************************************************")
 				printToLog("********************************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
 				printToLog("[INFO] Mission: $missionName")
 				printToLog("[INFO] Summons: $summonList")
-				printToLog("[INFO] # of runs completed: $amountOfRuns")
+				printToLog("[INFO] # of runs completed: $amountOfRuns / $itemAmount")
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
+				
+				// Construct the message for the Discord private DM.
+				val discordString = if (amountOfRuns >= itemAmount) {
+					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]** :white_check_mark:"
+				} else {
+					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]**"
+				}
+				
+				DiscordUtils.queue.add(discordString)
 			}
 		}
 	}
@@ -907,25 +927,25 @@ class Game(private val myContext: Context) {
 	 * Performs additional setup for special fights outlined in config.ini like Dimensional Halo and Event Nightmares.
 	 */
 	private fun advancedSetup() {
-		enableDimensionalHalo = SettingsFragment.getBooleanSharedPreference(myContext, "enableDimensionalHalo")
-		dimensionalHaloSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "dimensionalHaloSummonList").toList()
-		dimensionalHaloGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "dimensionalHaloGroupNumber")
-		dimensionalHaloPartyNumber = SettingsFragment.getIntSharedPreference(myContext, "dimensionalHaloPartyNumber")
+		enableDimensionalHalo = sharedPreferences.getBoolean("enableDimensionalHalo", false)
+		dimensionalHaloSummonList = sharedPreferences.getStringSet("dimensionalHaloSummonList", setOf<String>())!!.toList()
+		dimensionalHaloGroupNumber = sharedPreferences.getInt("dimensionalHaloGroupNumber", 0)
+		dimensionalHaloPartyNumber = sharedPreferences.getInt("dimensionalHaloPartyNumber", 0)
 		
-		enableEventNightmare = SettingsFragment.getBooleanSharedPreference(myContext, "enableEventNightmare")
-		eventNightmareSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "eventNightmareSummonList").toList()
-		eventNightmareGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "eventNightmareGroupNumber")
-		eventNightmarePartyNumber = SettingsFragment.getIntSharedPreference(myContext, "eventNightmarePartyNumber")
+		enableEventNightmare = sharedPreferences.getBoolean("enableEventNightmare", false)
+		eventNightmareSummonList = sharedPreferences.getStringSet("eventNightmareSummonList", setOf<String>())!!.toList()
+		eventNightmareGroupNumber = sharedPreferences.getInt("eventNightmareGroupNumber", 0)
+		eventNightmarePartyNumber = sharedPreferences.getInt("eventNightmarePartyNumber", 0)
 		
-		enableROTBExtremePlus = SettingsFragment.getBooleanSharedPreference(myContext, "enableROTBExtremePlus")
-		rotbExtremePlusSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "rotbExtremePlusSummonList").toList()
-		rotbExtremePlusGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "rotbExtremePlusGroupNumber")
-		rotbExtremePlusPartyNumber = SettingsFragment.getIntSharedPreference(myContext, "rotbExtremePlusPartyNumber")
+		enableROTBExtremePlus = sharedPreferences.getBoolean("enableROTBExtremePlus", false)
+		rotbExtremePlusSummonList = sharedPreferences.getStringSet("rotbExtremePlusSummonList", setOf<String>())!!.toList()
+		rotbExtremePlusGroupNumber = sharedPreferences.getInt("rotbExtremePlusGroupNumber", 0)
+		rotbExtremePlusPartyNumber = sharedPreferences.getInt("rotbExtremePlusPartyNumber", 0)
 		
-		enableXenoClashNightmare = SettingsFragment.getBooleanSharedPreference(myContext, "enableXenoClashNightmare")
-		xenoClashNightmareSummonList = SettingsFragment.getStringSetSharedPreference(myContext, "xenoClashNightmareSummonList").toList()
-		xenoClashNightmareGroupNumber = SettingsFragment.getIntSharedPreference(myContext, "xenoClashNightmareGroupNumber")
-		xenoClashNightmarePartyNumber = SettingsFragment.getIntSharedPreference(myContext, "xenoClashNightmarePartyNumber")
+		enableXenoClashNightmare = sharedPreferences.getBoolean("enableXenoClashNightmare", false)
+		xenoClashNightmareSummonList = sharedPreferences.getStringSet("xenoClashNightmareSummonList", setOf<String>())!!.toList()
+		xenoClashNightmareGroupNumber = sharedPreferences.getInt("xenoClashNightmareGroupNumber", 0)
+		xenoClashNightmarePartyNumber = sharedPreferences.getInt("xenoClashNightmarePartyNumber", 0)
 		
 		if (farmingMode == "Special" && missionName == "VH Angel Halo" && enableDimensionalHalo && (itemName == "EXP" || itemName == "Angel Halo Weapons")) {
 			printToLog("\n[INFO] Initializing settings for Dimensional Halo...")
@@ -1001,27 +1021,26 @@ class Game(private val myContext: Context) {
 	/**
 	 * Start Farming Mode with the provided parameters from the user's choices in the settings.
 	 *
-	 * @param context: The context for the application.
 	 * @return True if Farming Mode completed successfully. False otherwise.
 	 */
-	fun startFarmingMode(context: Context): Boolean {
+	fun startFarmingMode(): Boolean {
 		// Grab all necessary information from SharedPreferences.
 		
-		enableDelayBetweenRuns = SettingsFragment.getBooleanSharedPreference(context, "enableDelayBetweenRuns")
-		delayBetweenRuns = SettingsFragment.getIntSharedPreference(context, "delayBetweenRuns")
-		enableRandomizedDelayBetweenRuns = SettingsFragment.getBooleanSharedPreference(context, "enableRandomizedDelayBetweenRuns")
-		randomizedDelayBetweenRuns = SettingsFragment.getIntSharedPreference(context, "randomizedDelayBetweenRuns")
+		enableDelayBetweenRuns = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
+		delayBetweenRuns = sharedPreferences.getInt("delayBetweenRuns", 1)
+		enableRandomizedDelayBetweenRuns = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
+		randomizedDelayBetweenRuns = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		
-		farmingMode = SettingsFragment.getStringSharedPreference(context, "farmingMode")
-		mapName = SettingsFragment.getStringSharedPreference(context, "mapName")
-		missionName = SettingsFragment.getStringSharedPreference(context, "missionName")
-		itemName = SettingsFragment.getStringSharedPreference(context, "itemName")
-		itemAmount = SettingsFragment.getIntSharedPreference(context, "itemAmount")
-		combatScriptName = SettingsFragment.getStringSharedPreference(context, "combatScriptName")
-		combatScript = SettingsFragment.getStringSharedPreference(context, "combatScript").split("|")
-		summonList = SettingsFragment.getStringSharedPreference(context, "summon").split("|")
-		groupNumber = SettingsFragment.getIntSharedPreference(context, "groupNumber")
-		partyNumber = SettingsFragment.getIntSharedPreference(context, "partyNumber")
+		farmingMode = sharedPreferences.getString("farmingMode", "")!!
+		mapName = sharedPreferences.getString("mapName", "")!!
+		missionName = sharedPreferences.getString("missionName", "")!!
+		itemName = sharedPreferences.getString("itemName", "")!!
+		itemAmount = sharedPreferences.getInt("itemAmount", 1)
+		combatScriptName = sharedPreferences.getString("combatScriptName", "")!!
+		combatScript = sharedPreferences.getString("combatScript", "")!!.split("|")
+		summonList = sharedPreferences.getString("summon", "")!!.split("|")
+		groupNumber = sharedPreferences.getInt("groupNumber", 1)
+		partyNumber = sharedPreferences.getInt("partyNumber", 1)
 		
 		if (farmingMode == "Raid") {
 			twitterRoomFinder = TwitterRoomFinder(myContext, this)

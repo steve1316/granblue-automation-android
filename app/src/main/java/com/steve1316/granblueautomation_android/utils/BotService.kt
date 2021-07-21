@@ -2,10 +2,7 @@ package com.steve1316.granblueautomation_android.utils
 
 import android.annotation.SuppressLint
 import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.PixelFormat
 import android.os.IBinder
 import android.util.Log
@@ -15,9 +12,11 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.bot.Game
+import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
@@ -121,8 +120,19 @@ class BotService : Service() {
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
 									
+									// Run the Discord process on a new Thread.
+									if (PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("enableDiscord", false)) {
+										val discordUtils = DiscordUtils(myContext)
+										thread {
+											runBlocking {
+												DiscordUtils.queue.clear()
+												discordUtils.main()
+											}
+										}
+									}
+									
 									// Start Farming Mode with the provided settings from SharedPreferences.
-									game.startFarmingMode(myContext)
+									game.startFarmingMode()
 									
 									val newIntent = Intent("CUSTOM_INTENT")
 									newIntent.putExtra("SUCCESS", "Bot has completed successfully with no errors.")
@@ -130,19 +140,17 @@ class BotService : Service() {
 									
 									performCleanUp()
 								} catch (e: Exception) {
-									game.printToLog("GAA encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
-									
-									val newIntent = Intent("CUSTOM_INTENT")
-									if (e.toString() == "java.lang.InterruptedException") {
-										newIntent.putExtra("EXCEPTION", "Bot stopped successfully.")
-									} else {
+									if (e.toString() != "java.lang.InterruptedException") {
+										game.printToLog("GAA encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
+										
+										val newIntent = Intent("CUSTOM_INTENT")
 										newIntent.putExtra("EXCEPTION", "Encountered an Exception: $e.\nTap me to see more details.")
+										
+										// Send a Broadcast with information on whether the bot stopped successfully or not.
+										sendBroadcast(newIntent)
+										
+										performCleanUp()
 									}
-									
-									// Send a Broadcast with information on whether the bot stopped successfully or not.
-									sendBroadcast(newIntent)
-									
-									performCleanUp()
 								}
 							}
 						} else {
@@ -194,6 +202,8 @@ class BotService : Service() {
 	 * Perform cleanup upon app completion or encountering an Exception.
 	 */
 	private fun performCleanUp() {
+		DiscordUtils.queue.add("```diff\n- Terminated connection to Discord API for Granblue Automation Android\n```")
+		
 		// Save the message log.
 		MessageLog.saveLogToFile(myContext)
 		

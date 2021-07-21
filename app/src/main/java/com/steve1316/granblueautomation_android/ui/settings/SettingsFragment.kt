@@ -2,7 +2,6 @@ package com.steve1316.granblueautomation_android.ui.settings
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -51,56 +50,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val itemsForDreadBarrage: Map<String, ArrayList<String>> = ItemData.itemsForDreadBarrage
 	private val itemsForProvingGrounds: Map<String, ArrayList<String>> = ItemData.itemsForProvingGrounds
 	private val itemsForXenoClash: Map<String, ArrayList<String>> = ItemData.itemsForXenoClash
-	
-	companion object {
-		/**
-		 * Get a String value from the SharedPreferences using the provided key.
-		 *
-		 * @param context The context for the application.
-		 * @param key The name of the preference to retrieve.
-		 * @return The value that is associated with the key.
-		 */
-		fun getStringSharedPreference(context: Context, key: String): String {
-			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-			return sharedPreferences.getString(key, "")!!
-		}
-		
-		/**
-		 * Get a Set<String> value from the SharedPreferences using the provided key.
-		 *
-		 * @param context The context for the application.
-		 * @param key The name of the preference to retrieve.
-		 * @return The value that is associated with the key.
-		 */
-		fun getStringSetSharedPreference(context: Context, key: String): Set<String> {
-			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-			return sharedPreferences.getStringSet(key, setOf())!!
-		}
-		
-		/**
-		 * Get a Int value from the SharedPreferences using the provided key.
-		 *
-		 * @param context The context for the application.
-		 * @param key The name of the preference to retrieve.
-		 * @return The value that is associated with the key.
-		 */
-		fun getIntSharedPreference(context: Context, key: String): Int {
-			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-			return sharedPreferences.getInt(key, 1)
-		}
-		
-		/**
-		 * Get a Boolean value from the SharedPreferences using the provided key.
-		 *
-		 * @param context The context for the application.
-		 * @param key The name of the preference to retrieve.
-		 * @return The value that is associated with the key.
-		 */
-		fun getBooleanSharedPreference(context: Context, key: String): Boolean {
-			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-			return sharedPreferences.getBoolean(key, false)
-		}
-	}
 	
 	// This listener is triggered whenever the user changes a Preference setting in the Settings Page.
 	private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
@@ -223,6 +172,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					val partyPicker: ListPreference = findPreference("partyPicker")!!
 					sharedPreferences.edit {
 						putInt("partyNumber", partyPicker.value.last().toString().toInt())
+						commit()
+					}
+				}
+				"enableDiscord" -> {
+					val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
+					sharedPreferences.edit {
+						putBoolean("enableDiscord", enableDiscordCheckBox.isChecked)
 						commit()
 					}
 				}
@@ -411,19 +367,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 		
 		// Grab the saved preferences from the previous time the user used the app.
-		val farmingModePreferences = sharedPreferences.getString("farmingMode", "")
-		val missionPreferences = sharedPreferences.getString("missionName", "")
-		val itemPreferences = sharedPreferences.getString("itemName", "")
-		val itemAmountPreferences = sharedPreferences.getInt("itemAmount", 1)
-		val summonPreferences = sharedPreferences.getString("summon", "")?.split("|")
-		val combatScriptName = sharedPreferences.getString("combatScriptName", "")
-		val groupPreferences = sharedPreferences.getInt("groupNumber", 1)
-		val partyPreferences = sharedPreferences.getInt("partyNumber", 1)
-		val debugModePreferences = sharedPreferences.getBoolean("debugMode", false)
-		val enableDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
-		val enableRandomizedDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
-		val delayBetweenRunsPreferences = sharedPreferences.getInt("delayBetweenRuns", 1)
-		val randomizedDelayBetweenRunsPreferences = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
+		val farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
+		val missionName: String = sharedPreferences.getString("missionName", "")!!
+		val itemName: String = sharedPreferences.getString("itemName", "")!!
+		val itemAmount: Int = sharedPreferences.getInt("itemAmount", 1)
+		val summon: List<String> = sharedPreferences.getString("summon", "")!!.split("|")
+		val combatScriptName: String = sharedPreferences.getString("combatScriptName", "")!!
+		val groupNumber: Int = sharedPreferences.getInt("groupNumber", 1)
+		val partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
+		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
+		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+		val enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
+		val enableRandomizedDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
+		val delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
+		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		
 		// Get references to the Preference components.
 		val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
@@ -432,6 +389,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
 		val groupPicker: ListPreference = findPreference("groupPicker")!!
 		val partyPicker: ListPreference = findPreference("partyPicker")!!
+		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 		val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
 		val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
@@ -441,11 +399,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		// Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones enabled to direct user's attention as they go through the settings
 		// down the page.
 		
-		if (farmingModePreferences != null && farmingModePreferences.isNotEmpty()) {
-			farmingModePicker.value = farmingModePreferences
+		if (farmingMode.isNotEmpty()) {
+			farmingModePicker.value = farmingMode
 			
 			// Build the AlertDialog for Summons or disable it if its Coop.
-			if (farmingModePreferences != "Coop") {
+			if (farmingMode != "Coop") {
 				createSummonDialog()
 			} else {
 				val summonPicker: Preference = findPreference("summonPicker")!!
@@ -459,10 +417,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			missionPicker.isEnabled = true
 		}
 		
-		if (missionPreferences != null && missionPreferences.isNotEmpty()) {
+		if (missionName.isNotEmpty()) {
 			// Populate the Mission picker.
 			populateMissionListPreference()
-			missionPicker.value = missionPreferences
+			missionPicker.value = missionName
 			missionPicker.isEnabled = true
 			
 			// Populate and enable the Item picker as the next step for the user.
@@ -470,14 +428,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			itemPicker.isEnabled = true
 		}
 		
-		if (itemPreferences != null && itemPreferences.isNotEmpty()) {
+		if (itemName.isNotEmpty()) {
 			// Populate the Item picker.
 			populateItemListPreference()
-			itemPicker.value = itemPreferences
+			itemPicker.value = itemName
 			itemPicker.isEnabled = true
 			
 			// Set the value for the Item Amount picker and enable it.
-			itemAmountPicker.value = itemAmountPreferences
+			itemAmountPicker.value = itemAmount
 			itemAmountPicker.isEnabled = true
 			
 			// Now reveal the Combat Mode PreferenceCategory that houses the Combat Script, Summons, and Group/Party Preference pickers.
@@ -485,9 +443,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			combatModePreferenceCategory.isEnabled = true
 		}
 		
-		if (summonPreferences != null && summonPreferences.isNotEmpty() && summonPreferences[0] != "") {
-			groupPicker.value = "Group $groupPreferences"
-			partyPicker.value = "Party $partyPreferences"
+		if (summon.isNotEmpty() && summon[0] != "") {
+			groupPicker.value = "Group $groupNumber"
+			partyPicker.value = "Party $partyNumber"
 		}
 		
 		if (combatScriptName != "") {
@@ -495,18 +453,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					"\nCombat Script Selected: $combatScriptName"
 		}
 		
-		debugModeCheckBox.isChecked = debugModePreferences
+		enableDiscordCheckBox.isChecked = enableDiscord
 		
-		delayBetweenRunsSwitch.isChecked = enableDelayBetweenRunsPreferences
+		debugModeCheckBox.isChecked = debugMode
+		
+		delayBetweenRunsSwitch.isChecked = enableDelayBetweenRuns
 		delayBetweenRunsSeekBar.isEnabled = delayBetweenRunsSwitch.isChecked
-		delayBetweenRunsSeekBar.value = delayBetweenRunsPreferences
+		delayBetweenRunsSeekBar.value = delayBetweenRuns
 		
-		randomizedDelayBetweenRunsSwitch.isChecked = enableRandomizedDelayBetweenRunsPreferences
+		randomizedDelayBetweenRunsSwitch.isChecked = enableRandomizedDelayBetweenRuns
 		if (randomizedDelayBetweenRunsSwitch.isChecked) {
 			delayBetweenRunsSeekBar.isEnabled = true
 		}
 		randomizedDelayBetweenRunsSeekBar.isVisible = randomizedDelayBetweenRunsSwitch.isChecked
-		randomizedDelayBetweenRunsSeekBar.value = randomizedDelayBetweenRunsPreferences
+		randomizedDelayBetweenRunsSeekBar.value = randomizedDelayBetweenRuns
 		randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
 		
 		// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.

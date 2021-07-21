@@ -84,4 +84,7 @@ dependencies {
 
     // AppUpdater for notifying users when there is a new update available.
     implementation 'com.github.javiersantos:AppUpdater:2.7'
+
+    // Kord for Discord integration.
+    implementation("dev.kord:kord-core:0.7.4")
 }

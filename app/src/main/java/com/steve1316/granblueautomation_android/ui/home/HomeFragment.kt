@@ -25,7 +25,6 @@ import com.sksamuel.hoplite.ConfigLoader
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
-import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
 import com.steve1316.granblueautomation_android.utils.MessageLog
 import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
@@ -69,6 +68,12 @@ class HomeFragment : Fragment() {
 			file.createNewFile()
 			
 			val content = "---\n" +
+					"############################################################\n" +
+					"# Read the instructions on the GitHub repository README.md on how to setup Discord notifications.\n" +
+					"############################################################\n" +
+					"\"discord\":\n" +
+					"  \"discordToken\": \n" +
+					"  \"userID\": 0\n" +
 					"########################################\n" +
 					"# Read the instructions on the GitHub repository README.md on how to get these keys in order to allow the bot to farm Raids via Twitter.\n" +
 					"########################################\n" +
@@ -162,6 +167,9 @@ class HomeFragment : Fragment() {
 					}
 					
 					sharedPreferences.edit {
+						putString("discordToken", config.discord.discordToken)
+						putString("userID", config.discord.userID)
+						
 						putBoolean("enableEventNightmare", config.event.enableEventNightmare)
 						putStringSet("eventNightmareSummonList", config.event.eventNightmareSummonList.toMutableSet())
 						putInt("eventNightmareGroupNumber", config.event.eventNightmareGroupNumber)
@@ -207,20 +215,21 @@ class HomeFragment : Fragment() {
 		
 		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 		
-		var combatScriptName = SettingsFragment.getStringSharedPreference(myContext, "combatScriptName")
-		var farmingMode = SettingsFragment.getStringSharedPreference(myContext, "farmingMode")
-		val mapName = SettingsFragment.getStringSharedPreference(myContext, "mapName")
-		var missionName = SettingsFragment.getStringSharedPreference(myContext, "missionName")
-		var itemName = SettingsFragment.getStringSharedPreference(myContext, "itemName")
-		val itemAmount = SettingsFragment.getIntSharedPreference(myContext, "itemAmount")
-		var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
-		val groupNumber = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
-		val partyNumber = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
-		val debugModePreferences = sharedPreferences.getBoolean("debugMode", false)
-		val enableDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
-		val enableRandomizedDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
-		val delayBetweenRunsPreferences = sharedPreferences.getInt("delayBetweenRuns", 1)
-		val randomizedDelayBetweenRunsPreferences = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
+		var combatScriptName: String = sharedPreferences.getString("combatScriptName", "")!!
+		var farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
+		val mapName: String = sharedPreferences.getString("mapName", "")!!
+		var missionName: String = sharedPreferences.getString("missionName", "")!!
+		var itemName: String = sharedPreferences.getString("itemName", "")!!
+		val itemAmount: Int = sharedPreferences.getInt("itemAmount", 1)
+		var summon = sharedPreferences.getString("summon", "")!!.split("|")
+		val groupNumber: Int = sharedPreferences.getInt("groupNumber", 1)
+		val partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
+		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
+		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+		val enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
+		val enableRandomizedDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
+		val delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
+		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		
 		startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() && summon[0] != "") ||
 				(farmingMode == "Coop" && summon.isNotEmpty() && summon[0] == "")))
@@ -251,19 +260,25 @@ class HomeFragment : Fragment() {
 			summon = listOf("Requires at least 1 Summon")
 		}
 		
-		val enableDebugModeString: String = if (debugModePreferences) {
+		val enableDiscordString: String = if (enableDiscord) {
 			"Enabled"
 		} else {
 			"Disabled"
 		}
 		
-		val enableDelayBetweenRunsString: String = if (enableDelayBetweenRunsPreferences) {
+		val enableDebugModeString: String = if (debugMode) {
 			"Enabled"
 		} else {
 			"Disabled"
 		}
 		
-		val enableRandomizedDelayBetweenRunsString: String = if (enableRandomizedDelayBetweenRunsPreferences) {
+		val enableDelayBetweenRunsString: String = if (enableDelayBetweenRuns) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+		
+		val enableRandomizedDelayBetweenRunsString: String = if (enableRandomizedDelayBetweenRuns) {
 			"Enabled"
 		} else {
 			"Disabled"
@@ -281,11 +296,12 @@ class HomeFragment : Fragment() {
 				"Group: $groupNumber\n" +
 				"Party: $partyNumber\n" +
 				"---------- Misc Settings ----------\n" +
+				"Discord Notifications: $enableDiscordString\n" +
 				"Debug Mode: $enableDebugModeString\n" +
 				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
 				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +
-				"Delay Between Runs Lower Bound: $delayBetweenRunsPreferences seconds\n" +
-				"Delay Between Runs Upper Bound: $randomizedDelayBetweenRunsPreferences seconds"
+				"Delay Between Runs Lower Bound: $delayBetweenRuns seconds\n" +
+				"Delay Between Runs Upper Bound: $randomizedDelayBetweenRuns seconds"
 		
 		return homeFragmentView
 	}

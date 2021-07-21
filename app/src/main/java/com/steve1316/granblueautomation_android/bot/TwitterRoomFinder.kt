@@ -1,8 +1,9 @@
 package com.steve1316.granblueautomation_android.bot
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.StrictMode
-import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
+import androidx.preference.PreferenceManager
 import twitter4j.Query
 import twitter4j.Status
 import twitter4j.Twitter
@@ -124,11 +125,12 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 			game.printToLog("\n[INFO] Connecting to Twitter API...", MESSAGE_TAG = TAG)
 			
 			// Initialize the Twitter object.
+			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 			val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
-				.setOAuthConsumerKey(SettingsFragment.getStringSharedPreference(myContext, "apiKey"))
-				.setOAuthConsumerSecret(SettingsFragment.getStringSharedPreference(myContext, "apiKeySecret"))
-				.setOAuthAccessToken(SettingsFragment.getStringSharedPreference(myContext, "accessToken"))
-				.setOAuthAccessTokenSecret(SettingsFragment.getStringSharedPreference(myContext, "accessTokenSecret"))
+				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
+				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
+				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
+				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
 			
 			twitter = TwitterFactory(configurationBuilder.build()).instance
 			

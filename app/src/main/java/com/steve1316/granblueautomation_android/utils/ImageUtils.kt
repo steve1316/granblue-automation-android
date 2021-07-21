@@ -5,10 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.steve1316.granblueautomation_android.bot.Game
-import com.steve1316.granblueautomation_android.ui.settings.SettingsFragment
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -50,7 +50,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		updateMatchFilePath(matchFilePath)
 		
 		// Now determine if Debug Mode is turned on for more informational logging messages.
-		debugMode = SettingsFragment.getBooleanSharedPreference(myContext, "debugMode")
+		debugMode = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("debugMode", false)
 	}
 	
 	/**
