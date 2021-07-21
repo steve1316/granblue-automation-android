@@ -202,7 +202,7 @@ class BotService : Service() {
 	 * Perform cleanup upon app completion or encountering an Exception.
 	 */
 	private fun performCleanUp() {
-		val now = LocalDateTime.now()
+		DiscordUtils.queue.add("```diff\n- Terminated connection to Discord API for Granblue Automation Android\n```")
 		val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 		val formatted = now.format(formatter)
 		DiscordUtils.queue.add("--------------------\n[${formatted}] Disconnected from Discord API for Granblue Automation Android.")

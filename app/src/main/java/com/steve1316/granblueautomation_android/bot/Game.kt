@@ -10,8 +10,6 @@ import com.steve1316.granblueautomation_android.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -622,12 +620,15 @@ class Game(private val myContext: Context) {
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
 				
+				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
-					val now = LocalDateTime.now()
-					val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-					val formatted = now.format(formatter)
-					DiscordUtils.queue.add(
-						"--------------------\n[$formatted] Amount of $itemName gained this run: $amountGained.\nAmount of $itemName gained in total: $itemAmountFarmed / $itemAmount")
+					val discordString = if (itemAmountFarmed >= itemAmount) {
+						"> ${amountGained}x __${itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]** :white_check_mark:"
+					} else {
+						"> ${amountGained}x __${itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]**"
+					}
+					
+					DiscordUtils.queue.add(discordString)
 				}
 			} else {
 				printToLog("\n********************************************************************************")
@@ -639,10 +640,14 @@ class Game(private val myContext: Context) {
 				printToLog("********************************************************************************")
 				printToLog("********************************************************************************")
 				
-				val now = LocalDateTime.now()
-				val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-				val formatted = now.format(formatter)
-				DiscordUtils.queue.add("--------------------\n[$formatted] Runs completed for $missionName: [${amountOfRuns - 1} / $itemAmount] -> [$amountOfRuns / $itemAmount]")
+				// Construct the message for the Discord private DM.
+				val discordString = if (amountOfRuns >= itemAmount) {
+					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]** :white_check_mark:"
+				} else {
+					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]**"
+				}
+				
+				DiscordUtils.queue.add(discordString)
 			}
 		}
 	}

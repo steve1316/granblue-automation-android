@@ -9,9 +9,6 @@ import dev.kord.core.Kord
 import dev.kord.core.event.gateway.ReadyEvent
 import dev.kord.core.on
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DiscordUtils(myContext: Context) {
@@ -33,10 +30,7 @@ class DiscordUtils(myContext: Context) {
 			val dmChannel = client.getUser(snowflake)?.getDmChannelOrNull()!!
 			
 			val now = LocalDateTime.now()
-			val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-			val formatted = now.format(formatter)
-			Log.d(TAG, "Connection to Discord API successful for Granblue Automation Android!")
-			queue.add("--------------------\n[${formatted}] Mobile connection to Discord API successful Granblue Automation Android!")
+			queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
 			
 			while (true) {
 				if (queue.isNotEmpty()) {
