@@ -75,6 +75,11 @@
         app:key="miscTitle"
         app:title="Misc">
         <CheckBoxPreference
+            app:key="enableDiscord"
+            app:summary="Enable Discord notifications to inform you of status updates like loot drops.\n\nPlease be sure to update your config.yaml in your Internal Storage with the necessary Discord information for this to work."
+            app:title="Enable Discord notifications" />
+
+        <CheckBoxPreference
             app:key="debugModeCheckBox"
             app:summary="Allows debugging messages to be shown in the log to reveal diagnostic information and potential errors."
             app:title="Enable Debug Mode" />

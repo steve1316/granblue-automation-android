@@ -226,6 +226,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						commit()
 					}
 				}
+				"enableDiscord" -> {
+					val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
+					sharedPreferences.edit {
+						putBoolean("enableDiscord", enableDiscordCheckBox.isChecked)
+						commit()
+					}
+				}
 				"debugModeCheckBox" -> {
 					val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 					sharedPreferences.edit {
@@ -419,7 +426,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val combatScriptName = sharedPreferences.getString("combatScriptName", "")
 		val groupPreferences = sharedPreferences.getInt("groupNumber", 1)
 		val partyPreferences = sharedPreferences.getInt("partyNumber", 1)
-		val debugModePreferences = sharedPreferences.getBoolean("debugMode", false)
+		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
 		val enableRandomizedDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
 		val delayBetweenRunsPreferences = sharedPreferences.getInt("delayBetweenRuns", 1)
@@ -432,6 +439,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
 		val groupPicker: ListPreference = findPreference("groupPicker")!!
 		val partyPicker: ListPreference = findPreference("partyPicker")!!
+		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 		val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
 		val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
@@ -495,7 +503,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					"\nCombat Script Selected: $combatScriptName"
 		}
 		
-		debugModeCheckBox.isChecked = debugModePreferences
+		enableDiscordCheckBox.isChecked = enableDiscord
 		
 		delayBetweenRunsSwitch.isChecked = enableDelayBetweenRunsPreferences
 		delayBetweenRunsSeekBar.isEnabled = delayBetweenRunsSwitch.isChecked

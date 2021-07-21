@@ -225,7 +225,7 @@ class HomeFragment : Fragment() {
 		var summon = SettingsFragment.getStringSharedPreference(myContext, "summon").split("|")
 		val groupNumber = SettingsFragment.getIntSharedPreference(myContext, "groupNumber")
 		val partyNumber = SettingsFragment.getIntSharedPreference(myContext, "partyNumber")
-		val debugModePreferences = sharedPreferences.getBoolean("debugMode", false)
+		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
 		val enableRandomizedDelayBetweenRunsPreferences = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
 		val delayBetweenRunsPreferences = sharedPreferences.getInt("delayBetweenRuns", 1)
@@ -260,7 +260,11 @@ class HomeFragment : Fragment() {
 			summon = listOf("Requires at least 1 Summon")
 		}
 		
-		val enableDebugModeString: String = if (debugModePreferences) {
+		val enableDiscordString: String = if (enableDiscord) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
 			"Enabled"
 		} else {
 			"Disabled"
@@ -290,6 +294,7 @@ class HomeFragment : Fragment() {
 				"Group: $groupNumber\n" +
 				"Party: $partyNumber\n" +
 				"---------- Misc Settings ----------\n" +
+				"Discord Notifications: $enableDiscordString\n" +
 				"Debug Mode: $enableDebugModeString\n" +
 				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
 				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +
