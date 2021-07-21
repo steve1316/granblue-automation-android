@@ -1,13 +1,11 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.0.2</latestVersion>
+    <latestVersion>2.1.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.0.2 - Changelog
-
-- The application will now automatically check for new updates online from this GitHub repository.
-- Updated the display of the status on the Home screen.
-- Changed color of overlay button to distinctly show when the bot is running or not.
+v2.1.0 - Changelog
+This update requires that a brand new config.yaml is generated, either by uninstalling the application or deleting the config.yaml inside internal storage and restarting the application to regenerate it.
+- Added new setting to enable Discord notifications so you can be notified of status updates like loot drops.
     </releaseNotes>
   </update>
 </AppUpdater>
