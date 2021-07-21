@@ -124,10 +124,14 @@ class BotService : Service() {
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
 									
-									val discordUtils = DiscordUtils(myContext)
-									thread {
-										runBlocking {
-											discordUtils.main()
+									// Run the Discord process on a new Thread.
+									if (PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("enableDiscord", false)) {
+										val discordUtils = DiscordUtils(myContext)
+										thread {
+											runBlocking {
+												DiscordUtils.queue.clear()
+												discordUtils.main()
+											}
 										}
 									}
 									
