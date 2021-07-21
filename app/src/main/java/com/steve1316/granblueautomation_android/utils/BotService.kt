@@ -140,19 +140,17 @@ class BotService : Service() {
 									
 									performCleanUp()
 								} catch (e: Exception) {
-									game.printToLog("GAA encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
-									
-									val newIntent = Intent("CUSTOM_INTENT")
-									if (e.toString() == "java.lang.InterruptedException") {
-										newIntent.putExtra("EXCEPTION", "Bot stopped successfully.")
-									} else {
+									if (e.toString() != "java.lang.InterruptedException") {
+										game.printToLog("GAA encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
+										
+										val newIntent = Intent("CUSTOM_INTENT")
 										newIntent.putExtra("EXCEPTION", "Encountered an Exception: $e.\nTap me to see more details.")
+										
+										// Send a Broadcast with information on whether the bot stopped successfully or not.
+										sendBroadcast(newIntent)
+										
+										performCleanUp()
 									}
-									
-									// Send a Broadcast with information on whether the bot stopped successfully or not.
-									sendBroadcast(newIntent)
-									
-									performCleanUp()
 								}
 							}
 						} else {
