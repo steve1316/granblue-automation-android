@@ -2,10 +2,7 @@ package com.steve1316.granblueautomation_android.utils
 
 import android.annotation.SuppressLint
 import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.PixelFormat
 import android.os.IBinder
 import android.util.Log
@@ -15,12 +12,11 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.bot.Game
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
@@ -207,9 +203,6 @@ class BotService : Service() {
 	 */
 	private fun performCleanUp() {
 		DiscordUtils.queue.add("```diff\n- Terminated connection to Discord API for Granblue Automation Android\n```")
-		val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-		val formatted = now.format(formatter)
-		DiscordUtils.queue.add("--------------------\n[${formatted}] Disconnected from Discord API for Granblue Automation Android.")
 		
 		// Save the message log.
 		MessageLog.saveLogToFile(myContext)

@@ -11,6 +11,9 @@ import dev.kord.core.on
 import kotlinx.coroutines.coroutineScope
 import java.util.*
 
+/**
+ * This class takes care of notifying users of status updates via Discord private DMs.
+ */
 class DiscordUtils(myContext: Context) {
 	private val TAG: String = "GAA_DiscordUtils"
 	
@@ -23,32 +26,35 @@ class DiscordUtils(myContext: Context) {
 	}
 	
 	suspend fun main(): Unit = coroutineScope {
+		// Initialize the client with the Bot Account's token.
 		val client = Kord(discordToken)
 		
+		// This listener gets fired when the client is connected to the Discord API.
 		client.on<ReadyEvent> {
+			// Get the user's private DM channel via their Snowflake.
 			val snowflake = Snowflake(userID)
 			val dmChannel = client.getUser(snowflake)?.getDmChannelOrNull()!!
 			
-			val now = LocalDateTime.now()
+			Log.d(TAG, "Successful connection to Discord API.")
 			queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
 			
+			// Loop and send any messages inside the Queue.
 			while (true) {
 				if (queue.isNotEmpty()) {
 					val message = queue.remove()
 					dmChannel.createMessage(message)
 					
-					if (message.contains("Disconnected from Discord API")) {
+					if (message.contains("Terminated connection to Discord API")) {
 						break
 					}
 				}
-				
-				delay(1000L)
 			}
 			
-			Log.d(TAG, "Shutting down Discord API connection for Granblue Automation Android...")
+			Log.d(TAG, "Terminated connection to Discord API.")
 			client.logout()
 		}
 		
+		// Login to the Discord API. This will block this Thread but will allow the onReadyEvent listener to continue running.
 		client.login()
 	}
 }
