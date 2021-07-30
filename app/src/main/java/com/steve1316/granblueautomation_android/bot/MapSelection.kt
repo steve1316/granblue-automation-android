@@ -1344,10 +1344,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Now tap the "Join Room" button.
 					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y, "join_a_room")
 					
-					if (!checkPendingBattles("raid")
-						&& !game.imageUtils.confirmLocation("raid_already_ended", tries = 1)
-						&& !game.imageUtils.confirmLocation("already_taking_part", tries = 1)
-						&& !game.imageUtils.confirmLocation("invalid_code", tries = 1)) {
+					if (!checkPendingBattles("raid") && game.imageUtils.findButton("ok", tries = 1) == null) {
 						// Check for EP.
 						game.checkEP()
 						
