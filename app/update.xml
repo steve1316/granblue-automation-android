@@ -1,11 +1,15 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.1.0</latestVersion>
+    <latestVersion>2.2.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.1.0 - Changelog
-This update requires that a brand new config.yaml is generated, either by uninstalling the application or deleting the config.yaml inside internal storage and restarting the application to regenerate it.
-- Added new setting to enable Discord notifications so you can be notified of status updates like loot drops.
+v2.2.0 - Changelog
+
+- Overhauled segmented Notification system to be centralized into one.
+- Bot will take a screenshot of its current position when it encounters an error and shuts itself down.
+- Fixed bug where bot got stuck on the No Loot screen when farming Raids.
+- Fixed bug where bot got stuck checking room codes when farming Raids.
+- Fixed bug where bot crashed due to Point objects being reset each run when farming Raids.
     </releaseNotes>
   </update>
 </AppUpdater>
