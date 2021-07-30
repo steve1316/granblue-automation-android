@@ -1292,6 +1292,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
 			var firstRun = true
 			var tries = 10
+			var joinRoomButtonLocation: Point? = Point()
+			var roomCodeTextBoxLocation: Point? = Point()
 			while (tries > 0) {
 				// Check for any joined Raids.
 				checkJoinedRaids()
@@ -1315,8 +1317,6 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				game.findAndClickButton("enter_id")
 				
 				// Save the locations of the "Join Room" button and the "Room Code" text box.
-				var joinRoomButtonLocation: Point? = Point()
-				var roomCodeTextBoxLocation: Point? = Point()
 				if (firstRun) {
 					joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
 					roomCodeTextBoxLocation = Point(joinRoomButtonLocation.x - 410.0, joinRoomButtonLocation.y)
