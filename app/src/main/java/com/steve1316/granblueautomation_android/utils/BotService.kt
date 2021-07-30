@@ -2,7 +2,8 @@ package com.steve1316.granblueautomation_android.utils
 
 import android.annotation.SuppressLint
 import android.app.Service
-import android.content.*
+import android.content.Context
+import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.IBinder
 import android.util.Log
@@ -33,19 +34,6 @@ class BotService : Service() {
 	private lateinit var overlayView: View
 	private lateinit var overlayButton: ImageButton
 	
-	private val messageReceiver = object : BroadcastReceiver() {
-		// This will receive any bot state changes issued from inside the Thread and will display a Notification that will contain the intent's message.
-		override fun onReceive(context: Context?, intent: Intent?) {
-			if (intent != null) {
-				if (intent.hasExtra("EXCEPTION")) {
-					NotificationUtils.createBotStateChangedNotification(context!!, "Bot State Changed", intent.getStringExtra("EXCEPTION")!!)
-				} else if (intent.hasExtra("SUCCESS")) {
-					NotificationUtils.createBotStateChangedNotification(context!!, "Bot State Changed", intent.getStringExtra("SUCCESS")!!)
-				}
-			}
-		}
-	}
-	
 	companion object {
 		private lateinit var thread: Thread
 		private lateinit var windowManager: WindowManager
@@ -69,11 +57,6 @@ class BotService : Service() {
 		
 		myContext = this
 		appName = myContext.getString(R.string.app_name)
-		
-		// Any Intents that wants to be received needs to have the following action attached to it to be recognized.
-		val filter = IntentFilter()
-		filter.addAction("CUSTOM_INTENT")
-		registerReceiver(messageReceiver, filter)
 		
 		// Display the overlay view layout on the screen.
 		overlayView = LayoutInflater.from(this).inflate(R.layout.bot_actions, null)
@@ -134,23 +117,20 @@ class BotService : Service() {
 									// Start Farming Mode with the provided settings from SharedPreferences.
 									game.startFarmingMode()
 									
-									val newIntent = Intent("CUSTOM_INTENT")
-									newIntent.putExtra("SUCCESS", "Bot has completed successfully with no errors.")
-									sendBroadcast(newIntent)
+									NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
 									
 									performCleanUp()
 								} catch (e: Exception) {
-									if (e.toString() != "java.lang.InterruptedException") {
-										game.printToLog("GAA encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
-										
-										val newIntent = Intent("CUSTOM_INTENT")
-										newIntent.putExtra("EXCEPTION", "Encountered an Exception: $e.\nTap me to see more details.")
-										
-										// Send a Broadcast with information on whether the bot stopped successfully or not.
-										sendBroadcast(newIntent)
-										
-										performCleanUp()
+									if (e.toString() == "java.lang.InterruptedException") {
+										NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
+									} else {
+										NotificationUtils.updateNotification(myContext, false, "Encountered an Exception: $e.\nTap me to see more details.")
+										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
 									}
+									
+									performCleanUp(isException = true)
+									
+									performCleanUp()
 								}
 							}
 						} else {
@@ -200,8 +180,10 @@ class BotService : Service() {
 	
 	/**
 	 * Perform cleanup upon app completion or encountering an Exception.
+	 *
+	 * @param isException Prevents updating the Notification again if the bot stopped due to an Exception.
 	 */
-	private fun performCleanUp() {
+	private fun performCleanUp(isException: Boolean = false) {
 		DiscordUtils.queue.add("```diff\n- Terminated connection to Discord API for Granblue Automation Android\n```")
 		
 		// Save the message log.
@@ -211,7 +193,9 @@ class BotService : Service() {
 		isRunning = false
 		
 		// Update the app's notification with the status.
-		NotificationUtils.updateNotification(myContext, isRunning)
+		if (!isException) {
+			NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
+		}
 		
 		// Reset the overlay button's image.
 		overlayButton.setImageResource(R.drawable.play_circle_filled)
