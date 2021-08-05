@@ -790,6 +790,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				game.printToLog("[INFO] Now hosting Event Raid...", MESSAGE_TAG = TAG)
 				game.findAndClickButton("event_raid_battle")
 				game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+				game.wait(0.5)
 				
 				// Now select the chosen difficulty.
 				when (difficulty) {
