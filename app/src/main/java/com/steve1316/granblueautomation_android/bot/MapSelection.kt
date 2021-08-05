@@ -90,8 +90,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						game.checkFriendRequest()
 						game.wait(1.0)
 					} else {
-						// When there are no more Pending Battles, go back to the Quests screen.
-						game.findAndClickButton("quests", suppressError = true)
+						// When there are no more Pending Battles, go back to the Home screen.
+						game.findAndClickButton("home")
 						
 						if (game.imageUtils.confirmLocation("skyscope")) {
 							game.findAndClickButton("close")
@@ -1279,7 +1279,9 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		}
 		
 		if (game.imageUtils.confirmLocation("quest")) {
-			checkPendingBattles("raid")
+			if (checkPendingBattles("raid")) {
+				game.findAndClickButton("quest")
+			}
 			
 			game.wait(3.0)
 			
