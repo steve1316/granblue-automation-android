@@ -17,6 +17,7 @@ import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.bot.Game
+import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
@@ -117,20 +118,17 @@ class BotService : Service() {
 									// Start Farming Mode with the provided settings from SharedPreferences.
 									game.startFarmingMode()
 									
-									NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
-									
 									performCleanUp()
 								} catch (e: Exception) {
 									if (e.toString() == "java.lang.InterruptedException") {
 										NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
 									} else {
-										NotificationUtils.updateNotification(myContext, false, "Encountered an Exception: $e.\nTap me to see more details.")
+										NotificationUtils.updateNotification(myContext, false, "Encountered Exception: ${e}. Tap me to see more details.")
 										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
+										DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n${e.message}")
 									}
 									
 									performCleanUp(isException = true)
-									
-									performCleanUp()
 								}
 							}
 						} else {
