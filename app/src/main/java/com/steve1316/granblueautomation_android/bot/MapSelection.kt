@@ -1301,16 +1301,20 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				
 				// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
 				while (numberOfRaidsJoined >= 3) {
-					game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 60 seconds to see if any finish.", MESSAGE_TAG = TAG)
+					game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", MESSAGE_TAG = TAG)
+					game.wait(30.0)
+					
 					game.goBackHome(confirmLocationCheck = true)
-					
-					game.wait(60.0)
-					
 					game.findAndClickButton("quest")
-					game.wait(1.0)
-					game.findAndClickButton("raid")
 					
-					checkPendingBattles("Raid")
+					game.wait(1.0)
+					
+					if (checkPendingBattles("Raid")) {
+						game.findAndClickButton("quest")
+					}
+					
+					game.findAndClickButton("raid")
+					checkJoinedRaids()
 				}
 				
 				// Move to the "Enter ID" section of the Backup Requests screen.
