@@ -65,14 +65,12 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
-		if ((farmingMode == "Raid" && game.imageUtils.confirmLocation("check_your_pending_battles", tries = 1, suppressError = true)) ||
-			(farmingMode != "Raid" && (game.imageUtils.findButton("quest_results_pending_battles", tries = 1, suppressError = true)) != null)) {
+		if (game.imageUtils.confirmLocation("check_your_pending_battles", tries = 1, suppressError = true) ||
+			(game.imageUtils.findButton("quest_results_pending_battles", tries = 1)) != null) {
 			game.printToLog("\n[INFO] Found Pending Battles that need collecting from.", MESSAGE_TAG = TAG)
 			
-			if (farmingMode == "Raid") {
-				game.findAndClickButton("ok")
-			} else {
-				game.findAndClickButton("quest_results_pending_battles")
+			if (!game.findAndClickButton("quest_results_pending_battles", tries = 1)) {
+				game.findAndClickButton("ok", tries = 1)
 			}
 			
 			game.wait(1.0)
