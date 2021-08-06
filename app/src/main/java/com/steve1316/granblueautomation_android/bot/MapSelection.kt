@@ -47,6 +47,9 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					numberOfRaidsJoined -= 1
 				}
 				
+				game.findAndClickButton("close", tries = 1, suppressError = true)
+				game.findAndClickButton("ok", tries = 1, suppressError = true)
+				
 				return true
 			}
 		}
