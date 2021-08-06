@@ -60,7 +60,7 @@ By downloading this application, you consent to your account potentially getting
 ## If you want to farm Raids, follow the instructions below:
 1. Make sure to run the application at least once. Check the application's ```files``` folder located inside internal storage's ```Android/data/com.steve1316.granblueautomation_android/``` directory.
 2. Locate the file named ```config.yaml``` file. For ease of use, send it to your computer.
-3. Now follow the instructions in [this wiki page](https://github.com/steve1316/granblue-automation-pyautogui) to obtain your own consumer keys and tokens to connect to the Twitter API.
+3. Now follow the instructions in [this wiki page](https://github.com/steve1316/granblue-automation-pyautogui/wiki/Instructions-for-Farming-Raids) to obtain your own consumer keys and tokens to connect to the Twitter API.
 4. Once you have them, copy them into the respective fields inside ```config.yaml``` using your preferred text editor. After that, move the file back to where it belonged on your Android device.
 
 ## Instructions to set up Discord integration
