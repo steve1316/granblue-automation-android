@@ -284,6 +284,18 @@ class HomeFragment : Fragment() {
 			"Disabled"
 		}
 		
+		val delayString: String = when {
+			enableDelayBetweenRuns -> {
+				"Delay Between Runs: $delayBetweenRuns seconds"
+			}
+			enableRandomizedDelayBetweenRuns -> {
+				"Delay Between Runs Lower Bound: $delayBetweenRuns seconds\nDelay Between Runs Upper Bound: $randomizedDelayBetweenRuns seconds"
+			}
+			else -> {
+				""
+			}
+		}
+		
 		settingsStatusTextView.setTextColor(Color.WHITE)
 		settingsStatusTextView.text = "---------- Farming Mode Settings ----------\n" +
 				"Mode: $farmingMode\n" +
@@ -300,8 +312,7 @@ class HomeFragment : Fragment() {
 				"Debug Mode: $enableDebugModeString\n" +
 				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
 				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +
-				"Delay Between Runs Lower Bound: $delayBetweenRuns seconds\n" +
-				"Delay Between Runs Upper Bound: $randomizedDelayBetweenRuns seconds"
+				delayString
 		
 		return homeFragmentView
 	}

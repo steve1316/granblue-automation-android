@@ -200,9 +200,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						randomizedDelayBetweenRunsSwitch.isChecked = false
 						randomizedDelayBetweenRunsSeekBar.isVisible = false
 						
-						delayBetweenRunsSeekBar.isEnabled = true
+						delayBetweenRunsSeekBar.title = if (randomizedDelayBetweenRunsSeekBar.isVisible) {
+							"Set Lower Bound for Delay in Seconds"
+						} else {
+							"Set Delay In Seconds"
+						}
+						
+						delayBetweenRunsSeekBar.isVisible = true
 					} else {
-						delayBetweenRunsSeekBar.isEnabled = false
+						delayBetweenRunsSeekBar.isVisible = false
 					}
 					
 					sharedPreferences.edit {
@@ -228,10 +234,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						// Disable the delay between runs settings.
 						val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
 						delayBetweenRunsSwitch.isChecked = false
+						delayBetweenRunsSeekBar.title = if (randomizedDelayBetweenRunsSeekBar.isVisible) {
+							"Set Lower Bound for Delay in Seconds"
+						} else {
+							"Set Delay In Seconds"
+						}
 						
-						delayBetweenRunsSeekBar.isEnabled = true
+						delayBetweenRunsSeekBar.isVisible = true
 					} else {
-						delayBetweenRunsSeekBar.isEnabled = false
+						delayBetweenRunsSeekBar.isVisible = false
 						randomizedDelayBetweenRunsSeekBar.isVisible = false
 					}
 					
@@ -399,6 +410,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		// Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones enabled to direct user's attention as they go through the settings
 		// down the page.
 		
+		////////////////////
+		// Farming Mode Settings
+		////////////////////
 		if (farmingMode.isNotEmpty()) {
 			farmingModePicker.value = farmingMode
 			
@@ -443,31 +457,40 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			combatModePreferenceCategory.isEnabled = true
 		}
 		
+		////////////////////
+		// Combat Mode Settings
+		////////////////////
+		if (combatScriptName != "") {
+			filePicker?.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n\nCombat Script Selected: $combatScriptName"
+		}
+		
 		if (summon.isNotEmpty() && summon[0] != "") {
 			groupPicker.value = "Group $groupNumber"
 			partyPicker.value = "Party $partyNumber"
 		}
 		
-		if (combatScriptName != "") {
-			filePicker?.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
-					"\nCombat Script Selected: $combatScriptName"
-		}
-		
-		enableDiscordCheckBox.isChecked = enableDiscord
-		
-		debugModeCheckBox.isChecked = debugMode
-		
+		////////////////////
+		// Delay Settings
+		////////////////////
 		delayBetweenRunsSwitch.isChecked = enableDelayBetweenRuns
-		delayBetweenRunsSeekBar.isEnabled = delayBetweenRunsSwitch.isChecked
+		delayBetweenRunsSeekBar.isVisible = delayBetweenRunsSwitch.isChecked
 		delayBetweenRunsSeekBar.value = delayBetweenRuns
 		
 		randomizedDelayBetweenRunsSwitch.isChecked = enableRandomizedDelayBetweenRuns
-		if (randomizedDelayBetweenRunsSwitch.isChecked) {
-			delayBetweenRunsSeekBar.isEnabled = true
-		}
 		randomizedDelayBetweenRunsSeekBar.isVisible = randomizedDelayBetweenRunsSwitch.isChecked
 		randomizedDelayBetweenRunsSeekBar.value = randomizedDelayBetweenRuns
 		randomizedDelayBetweenRunsSeekBar.min = delayBetweenRunsSeekBar.value
+		delayBetweenRunsSeekBar.title = if (randomizedDelayBetweenRunsSeekBar.isVisible) {
+			"Set Lower Bound for Delay in Seconds"
+		} else {
+			"Set Delay In Seconds"
+		}
+		
+		////////////////////
+		// Misc Settings
+		////////////////////
+		enableDiscordCheckBox.isChecked = enableDiscord
+		debugModeCheckBox.isChecked = debugMode
 		
 		// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.
 		try {
