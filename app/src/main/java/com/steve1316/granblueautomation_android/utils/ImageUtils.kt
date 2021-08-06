@@ -167,10 +167,8 @@ class ImageUtils(context: Context, private val game: Game) {
 			// Update the orientation if on Tablet to determine the scales for either Portrait or Landscape mode.
 			updateOrientation()
 			val tabletScales: MutableList<Double> = if (isLandscape) {
-				Log.d(TAG, "Using landscape")
 				mutableListOf(0.56, 0.58, 0.60)
 			} else {
-				Log.d(TAG, "Using portrait")
 				mutableListOf(0.72, 0.74, 0.76)
 			}
 			
