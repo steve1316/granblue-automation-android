@@ -194,6 +194,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * Request backup during Combat mode for this Raid.
 	 */
 	private fun requestBackup() {
+		game.updateOrientation()
+		
 		game.printToLog("\n[COMBAT] Now requesting Backup for this Raid.", MESSAGE_TAG = TAG)
 		
 		// Scroll the screen down a little bit to have the "Request Backup" button visible on all screen sizes. Then tap the button.
@@ -206,7 +208,15 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		// taps the button no matter the appearance of the "Request Backup" button, which changes frequently.
 		val cancelButtonLocation = game.imageUtils.findButton("cancel")
 		if (cancelButtonLocation != null) {
-			game.gestureUtils.tap(cancelButtonLocation.x + 500, cancelButtonLocation.y, "cancel")
+			if (!game.isTablet) {
+				game.gestureUtils.tap(cancelButtonLocation.x + 500, cancelButtonLocation.y, "cancel")
+			} else {
+				if (!game.isLandscape) {
+					game.gestureUtils.tap(cancelButtonLocation.x + 370, cancelButtonLocation.y, "cancel")
+				} else {
+					game.gestureUtils.tap(cancelButtonLocation.x + 285, cancelButtonLocation.y, "cancel")
+				}
+			}
 		}
 		
 		game.wait(1.0)
@@ -262,26 +272,39 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * @param characterNumber The character that needs to be selected.
 	 */
 	private fun selectCharacter(characterNumber: Int) {
-		val x = when (characterNumber) {
-			1 -> {
+		game.updateOrientation()
+		
+		val x = if (!game.isTablet) {
+			if (characterNumber == 1) {
 				attackButtonLocation!!.x - 715.0
+			} else {
+				attackButtonLocation!!.x - (715.0 - (characterNumber - 1))
 			}
-			2 -> {
-				attackButtonLocation!!.x - 545.0
-			}
-			3 -> {
-				attackButtonLocation!!.x - 375.0
-			}
-			4 -> {
-				attackButtonLocation!!.x - 205.0
-			}
-			else -> {
-				game.printToLog("[WARNING] Invalid command received for selectCharacter()", MESSAGE_TAG = TAG)
-				return
+		} else {
+			if (!game.isLandscape) {
+				if (characterNumber == 1) {
+					attackButtonLocation!!.x - 530.0
+				} else {
+					attackButtonLocation!!.x - (530.0 - (characterNumber - 1))
+				}
+			} else {
+				if (characterNumber == 1) {
+					attackButtonLocation!!.x - 415.0
+				} else {
+					attackButtonLocation!!.x - (415.0 - (characterNumber - 1))
+				}
 			}
 		}
 		
-		val y = attackButtonLocation!!.y + 290.0
+		val y = if (!game.isTablet) {
+			attackButtonLocation!!.y + 290.0
+		} else {
+			if (!game.isLandscape) {
+				attackButtonLocation!!.y + 220.0
+			} else {
+				attackButtonLocation!!.y + 170.0
+			}
+		}
 		
 		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
 		game.gestureUtils.tap(x, y, "template_character", ignoreWait = true)
@@ -295,6 +318,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * @param skillCommandList The commands to be executed.
 	 */
 	private fun useCharacterSkill(characterNumber: Int, skillCommandList: List<String>) {
+		game.updateOrientation()
+		
 		var tempSkillCommandList: List<String> = skillCommandList
 		
 		// Drop the first element if its the Character command.
@@ -306,19 +331,51 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			val x = when (tempSkillCommandList[0]) {
 				"useskill(1)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", MESSAGE_TAG = TAG)
-					attackButtonLocation!!.x - 485.0
+					if (!game.isTablet) {
+						attackButtonLocation!!.x - 485.0
+					} else {
+						if (!game.isLandscape) {
+							attackButtonLocation!!.x - 356.0
+						} else {
+							attackButtonLocation!!.x - 275.0
+						}
+					}
 				}
 				"useskill(2)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", MESSAGE_TAG = TAG)
-					attackButtonLocation!!.x - 295.0
+					if (!game.isTablet) {
+						attackButtonLocation!!.x - 295.0
+					} else {
+						if (!game.isLandscape) {
+							attackButtonLocation!!.x - 216.0
+						} else {
+							attackButtonLocation!!.x - 170.0
+						}
+					}
 				}
 				"useskill(3)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", MESSAGE_TAG = TAG)
-					attackButtonLocation!!.x - 105.0
+					if (!game.isTablet) {
+						attackButtonLocation!!.x - 105.0
+					} else {
+						if (!game.isLandscape) {
+							attackButtonLocation!!.x - 77.0
+						} else {
+							attackButtonLocation!!.x - 60.0
+						}
+					}
 				}
 				"useskill(4)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", MESSAGE_TAG = TAG)
-					attackButtonLocation!!.x + 85.0
+					if (!game.isTablet) {
+						attackButtonLocation!!.x + 85.0
+					} else {
+						if (!game.isLandscape) {
+							attackButtonLocation!!.x + 65.0
+						} else {
+							attackButtonLocation!!.x - 45.0
+						}
+					}
 				}
 				else -> {
 					game.printToLog("[WARNING] Invalid command received for using the Character's Skill.", MESSAGE_TAG = TAG)
@@ -328,7 +385,15 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			
 			tempSkillCommandList = tempSkillCommandList.drop(1)
 			
-			val y = attackButtonLocation!!.y + 395.0
+			val y = if (!game.isTablet) {
+				attackButtonLocation!!.y + 395.0
+			} else {
+				if (!game.isLandscape) {
+					attackButtonLocation!!.y + 287.0
+				} else {
+					attackButtonLocation!!.y + 230.0
+				}
+			}
 			
 			// Double tap the Skill to avoid any popups caused by other Raid participants.
 			game.wait(0.5)
@@ -348,27 +413,76 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						when (tempSkillCommandList[0]) {
 							"target(1)" -> {
 								game.printToLog("[COMBAT] Targeting Character 1 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
+								if (!game.isTablet) {
+									game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
+								} else {
+									if (!game.isLandscape) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 135.0, "template_target")
+									} else {
+										// 390, 485
+										game.gestureUtils.tap(selectCharacterLocation.x - 115.0, selectCharacterLocation.y + 115.0, "template_target")
+									}
+								}
 							}
 							"target(2)" -> {
 								game.printToLog("[COMBAT] Targeting Character 2 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0, "template_target")
+								if (!game.isTablet) {
+									game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0, "template_target")
+								} else {
+									if (!game.isLandscape) {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 135.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 115.0, "template_target")
+									}
+								}
 							}
 							"target(3)" -> {
 								game.printToLog("[COMBAT] Targeting Character 3 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
+								if (!game.isTablet) {
+									game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
+								} else {
+									if (!game.isLandscape) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 135.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 115.0, "template_target")
+									}
+								}
 							}
 							"target(4)" -> {
 								game.printToLog("[COMBAT] Targeting Character 4 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0, "template_target")
+								if (!game.isTablet) {
+									game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0, "template_target")
+								} else {
+									if (!game.isLandscape) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 415.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x - 115.0, selectCharacterLocation.y + 315.0, "template_target")
+									}
+								}
 							}
 							"target(5)" -> {
 								game.printToLog("[COMBAT] Targeting Character 5 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0, "template_target")
+								if (!game.isTablet) {
+									game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0, "template_target")
+								} else {
+									if (!game.isLandscape) {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 415.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 315.0, "template_target")
+									}
+								}
 							}
 							"target(6)" -> {
 								game.printToLog("[COMBAT] Targeting Character 6 for Skill.", MESSAGE_TAG = TAG)
-								game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
+								if (!game.isTablet) {
+									game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
+								} else {
+									if (!game.isLandscape) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 415.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 315.0, "template_target")
+									}
+								}
 							}
 							else -> {
 								game.printToLog("[WARNING] Invalid command received for Skill targeting.", MESSAGE_TAG = TAG)
@@ -395,6 +509,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * @param summonCommand The command to be executed.
 	 */
 	private fun useSummon(summonCommand: String) {
+		game.updateOrientation()
+		
 		for (j in 1..6) {
 			if (summonCommand == "summon($j)") {
 				// Bring up the available Summons.
@@ -408,22 +524,71 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					// Now tap on the specified Summon.
 					when (j) {
 						1 -> {
-							game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0, "summon")
+							if (!game.isTablet) {
+								game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0, "summon")
+							} else {
+								if (!game.isLandscape) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 528.0, attackButtonLocation!!.y + 220.0, "summon")
+								} else {
+									// 560, 730
+									game.gestureUtils.tap(attackButtonLocation!!.x - 420.0, attackButtonLocation!!.y + 170.0, "summon")
+								}
+							}
 						}
 						2 -> {
-							game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0, "summon")
+							if (!game.isTablet) {
+								game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0, "summon")
+							} else {
+								if (!game.isLandscape) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 407.0, attackButtonLocation!!.y + 220.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 315.0, attackButtonLocation!!.y + 170.0, "summon")
+								}
+							}
 						}
 						3 -> {
-							game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0, "summon")
+							if (!game.isTablet) {
+								game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0, "summon")
+							} else {
+								if (!game.isLandscape) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 274.0, attackButtonLocation!!.y + 220.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 215.0, attackButtonLocation!!.y + 170.0, "summon")
+								}
+							}
 						}
 						4 -> {
-							game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0, "summon")
+							if (!game.isTablet) {
+								game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0, "summon")
+							} else {
+								if (!game.isLandscape) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 144.0, attackButtonLocation!!.y + 220.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 110.0, attackButtonLocation!!.y + 170.0, "summon")
+								}
+							}
 						}
 						5 -> {
-							game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0, "summon")
+							if (!game.isTablet) {
+								game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0, "summon")
+							} else {
+								if (!game.isLandscape) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 20.0, attackButtonLocation!!.y + 220.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 15.0, attackButtonLocation!!.y + 170.0, "summon")
+								}
+							}
 						}
 						6 -> {
-							game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0, "summon")
+							if (!game.isTablet) {
+								game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0, "summon")
+							} else {
+								if (!game.isLandscape) {
+									game.gestureUtils.tap(attackButtonLocation!!.x + 105.0, attackButtonLocation!!.y + 220.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x + 85.0, attackButtonLocation!!.y + 170.0, "summon")
+								}
+							}
 						}
 					}
 					

@@ -20,6 +20,11 @@ import java.util.concurrent.TimeUnit
 class Game(private val myContext: Context) {
 	private val TAG: String = "[${MainActivity.loggerTag}]Game"
 	
+	var displayWidth: Int = MediaProjectionService.displayWidth
+	var displayHeight: Int = MediaProjectionService.displayHeight
+	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560)
+	var isLandscape: Boolean = false
+	
 	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 	
 	private var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
@@ -91,6 +96,15 @@ class Game(private val myContext: Context) {
 			TimeUnit.MILLISECONDS.toMinutes(elapsedMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)),
 			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
 		)
+	}
+	
+	/**
+	 * Update the display width and height if the device's orientation changed from Portrait to Landscape and vice-versa.
+	 */
+	fun updateOrientation() {
+		displayWidth = MediaProjectionService.displayWidth
+		displayHeight = MediaProjectionService.displayHeight
+		isLandscape = (displayWidth != 1600)
 	}
 	
 	/**
@@ -404,6 +418,8 @@ class Game(private val myContext: Context) {
 	 * @return True if the mission was successfully started. False otherwise.
 	 */
 	private fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
+		updateOrientation()
+		
 		var setLocation: Point? = null
 		var numberOfTries = tries
 		
@@ -448,23 +464,73 @@ class Game(private val myContext: Context) {
 		}
 		
 		// Select the Group.
-		var equation: Double = if (selectedGroupNumber == 1) {
-			787.0
+		var equation: Double = if (!isTablet) {
+			if (selectedGroupNumber == 1) {
+				787.0
+			} else {
+				787.0 - (140 * (selectedGroupNumber - 1))
+			}
 		} else {
-			787.0 - (140 * (selectedGroupNumber - 1))
+			if (!isLandscape) {
+				if (selectedGroupNumber == 1) {
+					588.0
+				} else {
+					588.0 - (100 * (selectedGroupNumber - 1))
+				}
+			} else {
+				if (selectedGroupNumber == 1) {
+					467.0
+				} else {
+					467.0 - (80 * (selectedGroupNumber - 1))
+				}
+			}
 		}
 		
-		gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
+		if (!isTablet) {
+			gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
+		} else {
+			if (!isLandscape) {
+				gestureUtils.tap(setLocation.x - equation, setLocation.y + 90.0, "template_group")
+			} else {
+				gestureUtils.tap(setLocation.x - equation, setLocation.y + 70.0, "template_group")
+			}
+		}
+		
 		wait(1.0)
 		
 		// Select the Party.
-		equation = if (selectedPartyNumber == 1) {
-			690.0
+		equation = if (!isTablet) {
+			if (selectedPartyNumber == 1) {
+				690.0
+			} else {
+				690.0 - (130 * (selectedPartyNumber - 1))
+			}
 		} else {
-			690.0 - (130 * (selectedPartyNumber - 1))
+			if (!isLandscape) {
+				if (selectedPartyNumber == 1) {
+					516.0
+				} else {
+					516.0 - (100 * (selectedPartyNumber - 1))
+				}
+			} else {
+				if (selectedPartyNumber == 1) {
+					408.0
+				} else {
+					408.0 - (75 * (selectedPartyNumber - 1))
+				}
+			}
 		}
 		
-		gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
+		if (!isTablet) {
+			gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
+		} else {
+			if (!isLandscape) {
+				gestureUtils.tap(setLocation.x - equation, setLocation.y + 540.0, "template_party")
+			} else {
+				gestureUtils.tap(setLocation.x - equation, setLocation.y + 425.0, "template_party")
+			}
+		}
+		
 		wait(1.0)
 		
 		printToLog("[SUCCESS] Selected Group and Party successfully.")
@@ -498,14 +564,13 @@ class Game(private val myContext: Context) {
 			while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
 				(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
 				if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+					val useLocations = imageUtils.findAll("use")
 					if (!useFullElixir) {
 						printToLog("[INFO] AP ran out! Using Half Elixir...")
-						val location = imageUtils.findButton("refill_half_elixir")!!
-						gestureUtils.tap(location.x, location.y + 370, "use")
+						gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
 					} else {
 						printToLog("[INFO] AP ran out! Using Full Elixir...")
-						val location = imageUtils.findButton("refill_full_elixir")!!
-						gestureUtils.tap(location.x, location.y + 370, "use")
+						gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
 					}
 					
 					wait(1.0)
@@ -542,14 +607,13 @@ class Game(private val myContext: Context) {
 		if (!imageUtils.confirmLocation("auto_ep_recovered", tries = 1)) {
 			while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
 				if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
+					val useLocations = imageUtils.findAll("use")
 					if (!useSoulBalm) {
 						printToLog("[INFO] EP ran out! Using Soul Berry...")
-						val location = imageUtils.findButton("refill_soul_berry")!!
-						gestureUtils.tap(location.x, location.y + 370, "use")
+						gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
 					} else {
 						printToLog("[INFO] EP ran out! Using Soul Balm...")
-						val location = imageUtils.findButton("refill_soul_balm")!!
-						gestureUtils.tap(location.x, location.y + 370, "use")
+						gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
 					}
 					
 					wait(1.0)

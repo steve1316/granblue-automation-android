@@ -194,9 +194,25 @@ class MyAccessibilityService : AccessibilityService() {
 		
 		// Get certain portions of the screen's dimensions.
 		val displayMetrics = Resources.getSystem().displayMetrics
-		val top: Float = (displayMetrics.heightPixels * 0.75).toFloat()
-		val middle: Float = (displayMetrics.widthPixels / 2).toFloat()
-		val bottom: Float = (displayMetrics.heightPixels * 0.25).toFloat()
+		
+		// Set different scroll paths for different screen sizes.
+		val top: Float
+		val middle: Float
+		val bottom: Float
+		if (displayMetrics.widthPixels == 1600) {
+			top = (displayMetrics.heightPixels * 0.75).toFloat()
+			middle = (displayMetrics.widthPixels * 0.20).toFloat()
+			bottom = (displayMetrics.heightPixels * 0.25).toFloat()
+		} else if (displayMetrics.widthPixels == 2650) {
+			top = (displayMetrics.heightPixels * 0.60).toFloat()
+			middle = (displayMetrics.widthPixels * 0.20).toFloat()
+			bottom = (displayMetrics.heightPixels * 0.40).toFloat()
+		}
+		else {
+			top = (displayMetrics.heightPixels * 0.75).toFloat()
+			middle = (displayMetrics.widthPixels / 2).toFloat()
+			bottom = (displayMetrics.heightPixels * 0.25).toFloat()
+		}
 		
 		when (action) {
 			AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP -> {
