@@ -695,13 +695,17 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * Determine whether or not to reload after an Attack.
 	 */
 	private fun reloadAfterAttack() {
-		val rotbQuests = arrayListOf("VH Zhuque", "VH Xuanwu", "VH Baihu", "VH Qinglong")
-		val provingGroundsQuests = arrayListOf("Extreme", "Extreme+")
+		val eventRaids = arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
+		val rotbRaids = arrayListOf("EX Zhuque", "EX Xuanwu", "EX Baihu", "EX Qinglong", "Lvl 100 Shenxian")
+		val dreadBarrageRaids = arrayListOf("1 Star", "2 Star", "3 Star", "4 Star", "5 Star")
+		val provingGroundsRaids = arrayListOf("Extreme", "Extreme+")
+		val guildWarsRaids = arrayListOf("Very Hard", "Extreme", "Extreme+", "NM90", "NM95", "NM100", "NM150")
+		val xenoClashRaids = arrayListOf("Xeno Clash Raid")
 		
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-		if ((game.farmingMode != "Quest" && game.farmingMode != "Special") && (game.farmingMode != "Event" && game.missionName != "EX Event Quest") &&
-			(game.farmingMode != "Event (Token Drawboxes)" && game.missionName != "EX Event Quest") && (game.farmingMode != "Rise of the Beasts" && rotbQuests.contains(game.missionName)) &&
-			(game.farmingMode != "Proving Grounds" && provingGroundsQuests.contains(game.missionName)) && (game.farmingMode != "Xeno Clash" && game.missionName != "Xeno Clash Extreme")) {
+		if (game.farmingMode == "Raid" || eventRaids.contains(game.missionName) || rotbRaids.contains(game.missionName) || dreadBarrageRaids.contains(game.difficulty) || provingGroundsRaids
+				.contains(game.difficulty) || guildWarsRaids.contains(game.difficulty) || xenoClashRaids.contains(game.missionName)) {
+			game.printToLog("[COMBAT] Reloading now.", MESSAGE_TAG = TAG)
 			game.findAndClickButton("reload")
 		}
 	}

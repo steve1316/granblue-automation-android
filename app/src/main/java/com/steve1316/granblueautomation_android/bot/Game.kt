@@ -66,7 +66,7 @@ class Game(val myContext: Context) {
 	var farmingMode: String = ""
 	private var mapName: String = ""
 	var missionName: String = ""
-	private var difficulty: String = ""
+	var difficulty: String = ""
 	private var itemName: String = ""
 	private var itemAmount: Int = 0
 	private var itemAmountFarmed: Int = 0
