@@ -319,6 +319,42 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	}
 	
 	/**
+	 * Selects the targeted enemy.
+	 *
+	 * @param command The command to be executed.
+	 */
+	private fun selectEnemyTarget(command: String) {
+		for (target in 1..3) {
+			if (command == "targetenemy(${target})") {
+				// 832, 1097 // 606, 871 // 560, 734
+				val x: Double = if (!game.isTablet) {
+					626.0
+				} else {
+					if (!game.isLandscape) {
+						458.0
+					} else {
+						360.0
+					}
+				}
+				
+				val y: Double = if (!game.isTablet) {
+					645.0
+				} else {
+					if (!game.isLandscape) {
+						478.0
+					} else {
+						378.0
+					}
+				}
+				
+				game.gestureUtils.tap(x, y, "template_enemy_target")
+				game.findAndClickButton("set_target")
+				game.printToLog("[COMBAT] Targeted Enemy #${target}.", MESSAGE_TAG = TAG)
+			}
+		}
+	}
+	
+	/**
 	 * Activate the specified Skill for the already selected Character.
 	 *
 	 * @param characterNumber The Character whose Skill needs to be used.
@@ -787,6 +823,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 							game.goBackHome(confirmLocationCheck = true)
 							return false
+						}
+						
+						// Select enemy target.
+						if (command.contains("targetenemy")) {
+							selectEnemyTarget(command)
 						}
 						
 						// Determine which Character to take action.
