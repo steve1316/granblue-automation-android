@@ -890,6 +890,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
+		game.wait(0.5)
+		
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		var bannerLocations = game.imageUtils.findAll("event_banner")
