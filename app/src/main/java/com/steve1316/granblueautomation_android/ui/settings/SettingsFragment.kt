@@ -175,6 +175,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						commit()
 					}
 				}
+				"enableAutoExitCombat" -> {
+					val enableAutoExitCombat: CheckBoxPreference = findPreference("enableAutoExitCombat")!!
+					val autoExitCombatMinutes: SeekBarPreference = findPreference("autoExitCombatMinutes")!!
+					autoExitCombatMinutes.isVisible = enableAutoExitCombat.isChecked
+					sharedPreferences.edit {
+						putBoolean("enableAutoExitCombat", enableAutoExitCombat.isChecked)
+					}
+				}
+				"autoExitCombatMinutes" -> {
+					val autoExitCombatMinutes: SeekBarPreference = findPreference("autoExitCombatMinutes")!!
+					sharedPreferences.edit {
+						putInt("autoExitCombatMinutes", autoExitCombatMinutes.value)
+					}
+				}
 				"enableDiscord" -> {
 					val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 					sharedPreferences.edit {
@@ -386,6 +400,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val combatScriptName: String = sharedPreferences.getString("combatScriptName", "")!!
 		val groupNumber: Int = sharedPreferences.getInt("groupNumber", 1)
 		val partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
+		val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
+		val autoExitCombatMinutes: Int = sharedPreferences.getInt("autoExitCombatMinutes", 5)
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		val enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
@@ -400,6 +416,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
 		val groupPicker: ListPreference = findPreference("groupPicker")!!
 		val partyPicker: ListPreference = findPreference("partyPicker")!!
+		val enableAutoExitCombatPreference: CheckBoxPreference = findPreference("enableAutoExitCombat")!!
+		val autoExitCombatMinutesPreference: SeekBarPreference = findPreference("autoExitCombatMinutes")!!
 		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 		val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
@@ -469,11 +487,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			partyPicker.value = "Party $partyNumber"
 		}
 		
+		enableAutoExitCombatPreference.isChecked = enableAutoExitCombat
+		autoExitCombatMinutesPreference.isVisible = enableAutoExitCombat
+		autoExitCombatMinutesPreference.value = autoExitCombatMinutes
+		
 		////////////////////
 		// Delay Settings
 		////////////////////
 		delayBetweenRunsSwitch.isChecked = enableDelayBetweenRuns
-		delayBetweenRunsSeekBar.isVisible = delayBetweenRunsSwitch.isChecked
+		delayBetweenRunsSeekBar.isVisible = (delayBetweenRunsSwitch.isChecked || randomizedDelayBetweenRunsSwitch.isChecked)
 		delayBetweenRunsSeekBar.value = delayBetweenRuns
 		
 		randomizedDelayBetweenRunsSwitch.isChecked = enableRandomizedDelayBetweenRuns

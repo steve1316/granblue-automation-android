@@ -224,6 +224,8 @@ class HomeFragment : Fragment() {
 		var summon = sharedPreferences.getString("summon", "")!!.split("|")
 		val groupNumber: Int = sharedPreferences.getInt("groupNumber", 1)
 		val partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
+		val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
+		val autoExitCombatMinutes: Int = sharedPreferences.getInt("autoExitCombatMinutes", 5)
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		val enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
@@ -258,6 +260,12 @@ class HomeFragment : Fragment() {
 		
 		if (summon[0] == "" && farmingMode != "Coop") {
 			summon = listOf("Requires at least 1 Summon")
+		}
+		
+		val autoExitCombatString: String = if (enableAutoExitCombat) {
+			"Auto Exit Combat: Enabled\nAuto Exit Maximum Time: $autoExitCombatMinutes minutes\n"
+		} else {
+			"Auto Exit Combat: Disabled\n"
 		}
 		
 		val enableDiscordString: String = if (enableDiscord) {
@@ -307,6 +315,7 @@ class HomeFragment : Fragment() {
 				"Summon: $summon\n" +
 				"Group: $groupNumber\n" +
 				"Party: $partyNumber\n" +
+				autoExitCombatString +
 				"---------- Misc Settings ----------\n" +
 				"Discord Notifications: $enableDiscordString\n" +
 				"Debug Mode: $enableDebugModeString\n" +

@@ -69,6 +69,22 @@
             app:key="partyPicker"
             app:title="Select Party"
             app:useSimpleSummaryProvider="true" />
+
+        <CheckBoxPreference
+            android:summary="Automatically backs out of the Raid without retreating while under Semi/Full Auto after a certain period of time has passed for the purposes of farming more Raids."
+            android:title="Enable Automatic Exiting Raids"
+            app:key="enableAutoExitCombat" />
+
+        <SeekBarPreference
+            android:max="30"
+            android:title="Set Time Allowed for Semi/Full Auto"
+            app:defaultValue="5"
+            app:isPreferenceVisible="true"
+            app:key="autoExitCombatMinutes"
+            app:min="1"
+            app:showSeekBarValue="true"
+            app:summary="Set the maximum minutes that the bot is allowed to be in Semi/Full Auto before moving on to the next Raid." />
+
     </PreferenceCategory>
 
     <PreferenceCategory
