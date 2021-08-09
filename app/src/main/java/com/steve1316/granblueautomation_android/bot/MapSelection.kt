@@ -228,7 +228,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						} else {
 							if (!game.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 270, arrowLocation.y + 200, "world_left_arrow")
-							}else {
+							} else {
 								game.gestureUtils.tap(arrowLocation.x + 210, arrowLocation.y + 175, "world_left_arrow")
 							}
 						}
@@ -239,7 +239,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						} else {
 							if (!game.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 526, arrowLocation.y + 146, "world_left_arrow")
-							}else {
+							} else {
 								game.gestureUtils.tap(arrowLocation.x + 460, arrowLocation.y + 125, "world_left_arrow")
 							}
 						}
@@ -250,7 +250,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						} else {
 							if (!game.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 220, arrowLocation.y + 11, "world_left_arrow")
-							}else {
+							} else {
 								game.gestureUtils.tap(arrowLocation.x + 170, arrowLocation.y + 5, "world_left_arrow")
 							}
 						}
@@ -261,7 +261,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						} else {
 							if (!game.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 595, arrowLocation.y - 67, "world_left_arrow")
-							}else {
+							} else {
 								game.gestureUtils.tap(arrowLocation.x + 460, arrowLocation.y - 50, "world_left_arrow")
 							}
 						}
@@ -272,7 +272,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						} else {
 							if (!game.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 320, arrowLocation.y - 226, "world_left_arrow")
-							}else {
+							} else {
 								game.gestureUtils.tap(arrowLocation.x + 250, arrowLocation.y - 175, "world_left_arrow")
 							}
 						}
