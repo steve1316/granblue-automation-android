@@ -253,6 +253,12 @@ class ItemData {
 			"Lvl 100 Xeno Sagittarius" to arrayListOf("True Xeno Sagittarius Anima", "Zodiac Arc"),
 			"Lvl 100 Xeno Corow" to arrayListOf("True Xeno Corow Anima", "Flame Fanner"),
 			"Lvl 100 Xeno Diablo" to arrayListOf("True Xeno Diablo Anima", "Wraithbind Fetter"),
+			
+			"Lvl 100 Shenxian" to arrayListOf("Shenxian Badge"),
+			"Lvl 90 Agni" to arrayListOf("Zhuque Badge"),
+			"Lvl 90 Neptune" to arrayListOf("Xuanwu Badge"),
+			"Lvl 90 Titan" to arrayListOf("Baihu Badge"),
+			"Lvl 90 Zephyrus" to arrayListOf("Qinglong Badge")
 		)
 		
 		val itemsForEvent = mapOf(
@@ -276,7 +282,8 @@ class ItemData {
 			"EX Zhuque" to arrayListOf("Repeated Runs"),
 			"EX Xuanwu" to arrayListOf("Repeated Runs"),
 			"EX Baihu" to arrayListOf("Repeated Runs"),
-			"EX Qinglong" to arrayListOf("Repeated Runs")
+			"EX Qinglong" to arrayListOf("Repeated Runs"),
+			"Lvl 100 Shenxian" to arrayListOf("Repeated Runs")
 		)
 		
 		val itemsForGuildWars = mapOf(

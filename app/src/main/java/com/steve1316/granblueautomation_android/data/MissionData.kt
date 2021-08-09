@@ -99,6 +99,12 @@ class MissionData {
 			"Xeno Sagittarius" to arrayListOf("Lvl 100 Xeno Sagittarius"),
 			"Xeno Corow" to arrayListOf("Lvl 100 Xeno Corow"),
 			"Xeno Diablo" to arrayListOf("Lvl 100 Xeno Diablo"),
+			
+			"Shenxian" to arrayListOf("Lvl 100 Shenxian"),
+			"Agni" to arrayListOf("Lvl 90 Agni"),
+			"Neptune" to arrayListOf("Lvl 90 Neptune"),
+			"Titan" to arrayListOf("Lvl 90 Titan"),
+			"Zephyrus" to arrayListOf("Lvl 90 Zephyrus")
 		)
 		
 		val mapsForEvent = mapOf(
@@ -113,7 +119,7 @@ class MissionData {
 		
 		val mapsForROTB = mapOf(
 			"Event Quest" to arrayListOf("VH Zhuque", "VH Xuanwu", "VH Baihu", "VH Qinglong"),
-			"Event Raid" to arrayListOf("EX Zhuque", "EX Xuanwu", "EX Baihu", "EX Qinglong")
+			"Event Raid" to arrayListOf("EX Zhuque", "EX Xuanwu", "EX Baihu", "EX Qinglong", "Lvl 100 Shenxian")
 		)
 		
 		val mapsForGuildWars = mapOf(

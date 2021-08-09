@@ -4,6 +4,7 @@ import android.util.Log
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.data.RoomCodeData
 import org.opencv.core.Point
+import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -1098,6 +1099,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
+		game.printToLog("\n[INFO] Now navigating to Rise of the Beasts...", MESSAGE_TAG = TAG)
+		
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		var bannerLocations = game.imageUtils.findAll("event_banner")
@@ -1120,6 +1123,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			
 			// Only Raids are marked with Extreme difficulty.
 			if (difficulty == "Extreme") {
+				game.printToLog("[INFO] Now hosting $formattedMissionName Raid...", MESSAGE_TAG = TAG)
+				
 				// Tap on the Raid banner.
 				game.findAndClickButton("rotb_extreme")
 				
@@ -1143,7 +1148,18 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						}
 					}
 				}
+			} else if (missionName == "Lvl 100 Shenxian") {
+				// Tap on Shenxian to host.
+				game.printToLog("[INFO] Now hosting Shenxian Raid...", MESSAGE_TAG = TAG)
+				game.findAndClickButton("rotb_shenxian_host")
+				
+				if (!game.imageUtils.waitVanish("rotb_shenxian_host", timeout = 10)) {
+					game.printToLog("[INFO] There are no more Shenxian hosts left. Alerting user...", MESSAGE_TAG = TAG)
+					throw(IllegalStateException("There are no more Shenxian hosts left."))
+				}
 			} else {
+				game.printToLog("[INFO] Now hosting $formattedMissionName Quest...", MESSAGE_TAG = TAG)
+				
 				// Scroll the screen to make way for smaller screens.
 				game.gestureUtils.scroll()
 				
