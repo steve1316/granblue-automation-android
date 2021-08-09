@@ -644,11 +644,17 @@ class Game(private val myContext: Context) {
 		var amountGained = 0
 		
 		// Close all popups until the bot reaches the Loot Collected screen.
+		var tries = 5
 		while (!imageUtils.confirmLocation("loot_collected", tries = 1)) {
 			findAndClickButton("close", tries = 1, suppressError = true)
 			findAndClickButton("cancel", tries = 1, suppressError = true)
 			findAndClickButton("ok", tries = 1, suppressError = true)
 			findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
+			
+			tries -= 1
+			if (tries <= 0) {
+				break
+			}
 		}
 		
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
