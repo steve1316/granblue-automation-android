@@ -326,10 +326,8 @@ class ImageUtils(context: Context, private val game: Game) {
 			
 			updateOrientation()
 			val tabletScales: MutableList<Double> = if (isLandscape) {
-				Log.d(TAG, "Using landscape")
 				mutableListOf(0.56, 0.58, 0.60)
 			} else {
-				Log.d(TAG, "Using portrait")
 				mutableListOf(0.72, 0.74, 0.76)
 			}
 			
@@ -754,7 +752,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		if (findButton(templateName, tries = 1, region = region, suppressError = suppressError) == null) {
 			return true
 		} else {
-			while (findButton(templateName, tries = 1, region = region, suppressError = suppressError) == null) {
+			while (findButton(templateName, tries = 1, region = region, suppressError = suppressError) != null) {
 				game.wait(1.0)
 				remaining -= 1
 				if (remaining <= 0) {

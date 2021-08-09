@@ -102,9 +102,9 @@
             app:title="Enable randomized Delays Between Runs" />
 
         <SeekBarPreference
-            app:isPreferenceVisible="false"
             android:max="60"
             app:defaultValue="1"
+            app:isPreferenceVisible="false"
             app:key="delayBetweenRunsSeekBar"
             app:min="1"
             app:showSeekBarValue="true"
