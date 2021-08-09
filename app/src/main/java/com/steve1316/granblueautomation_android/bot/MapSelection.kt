@@ -1008,10 +1008,10 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				// If the user does not have enough Treasures to host a Extreme or Impossible Raid, host a Very Hard Raid instead.
 				if (difficulty == "Extreme" && !game.imageUtils.waitVanish("event_raid_extreme", timeout = 3)) {
 					game.printToLog("[INFO] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...", MESSAGE_TAG = TAG)
-					game.findAndClickButton("event_very_hard_raid")
+					game.findAndClickButton("event_raid_very_hard")
 				} else if (difficulty == "Impossible" && !game.imageUtils.waitVanish("event_raid_impossible", timeout = 3)) {
 					game.printToLog("[INFO] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...", MESSAGE_TAG = TAG)
-					game.findAndClickButton("event_very_hard_raid")
+					game.findAndClickButton("event_raid_very_hard")
 				}
 			}
 		}
