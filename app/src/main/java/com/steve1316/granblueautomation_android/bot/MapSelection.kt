@@ -1473,7 +1473,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.goBackHome(confirmLocationCheck = true)
 		game.findAndClickButton("quest")
 		
-		game.wait(3.0)
+		game.wait(1.0)
 		
 		// Check for the "You retreated from the raid battle" popup.
 		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
@@ -1483,14 +1483,16 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		if (game.imageUtils.confirmLocation("quest")) {
 			if (checkPendingBattles("raid")) {
 				game.findAndClickButton("quest")
+				game.wait(1.0)
 			}
-			
-			game.wait(3.0)
 			
 			// Now go to the Backup Requests screen.
 			game.findAndClickButton("raid")
 			
-			game.wait(3.0)
+			game.wait(2.0)
+			
+			// Check for any joined Raids.
+			checkJoinedRaids()
 			
 			// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
 			var firstRun = true
@@ -1498,9 +1500,6 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			var joinRoomButtonLocation: Point? = Point()
 			var roomCodeTextBoxLocation: Point? = Point()
 			while (tries > 0) {
-				// Check for any joined Raids.
-				checkJoinedRaids()
-				
 				// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
 				while (numberOfRaidsJoined >= 3) {
 					game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", MESSAGE_TAG = TAG)
@@ -1513,6 +1512,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					
 					if (checkPendingBattles("Raid")) {
 						game.findAndClickButton("quest")
+						game.wait(1.0)
 					}
 					
 					game.findAndClickButton("raid")
@@ -1521,12 +1521,21 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				
 				// Move to the "Enter ID" section of the Backup Requests screen.
 				game.printToLog("[INFO] Moving to the \"Enter ID\" section of the Backup Requests screen...", MESSAGE_TAG = TAG)
+				game.wait(0.5)
 				game.findAndClickButton("enter_id")
 				
 				// Save the locations of the "Join Room" button and the "Room Code" text box.
 				if (firstRun) {
 					joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
-					roomCodeTextBoxLocation = Point(joinRoomButtonLocation.x - 410.0, joinRoomButtonLocation.y)
+					roomCodeTextBoxLocation = if (!game.isTablet) {
+						Point(joinRoomButtonLocation.x - 400.0, joinRoomButtonLocation.y)
+					} else {
+						if (!game.isLandscape) {
+							Point(joinRoomButtonLocation.x - 300.0, joinRoomButtonLocation.y)
+						} else {
+							Point(joinRoomButtonLocation.x - 250.0, joinRoomButtonLocation.y)
+						}
+					}
 				}
 				
 				var roomCodes: ArrayList<String> = arrayListOf()
@@ -1551,28 +1560,36 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					// Now tap the "Join Room" button.
 					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y, "join_a_room")
 					
-					if (!checkPendingBattles("raid") && game.imageUtils.findButton("ok", tries = 1) == null) {
+					if (!game.findAndClickButton("ok")) {
 						// Check for EP.
 						game.checkEP()
 						
-						game.printToLog("[SUCCESS] Joining {room_code} was successful.", MESSAGE_TAG = TAG)
+						game.printToLog("[SUCCESS] Joining $roomCode was successful.", MESSAGE_TAG = TAG)
 						numberOfRaidsJoined += 1
 						
 						return game.imageUtils.confirmLocation("select_a_summon")
 					} else {
-						// Clear the text box by reloading the page.
-						game.printToLog("[WARNING] $roomCode already ended or invalid.", MESSAGE_TAG = TAG)
-						game.findAndClickButton("reload")
-						firstRun = false
+						if (!checkPendingBattles("raid")) {
+							// Clear the text box by reloading the page.
+							game.printToLog("[WARNING] $roomCode already ended or invalid.", MESSAGE_TAG = TAG)
+							game.findAndClickButton("reload")
+							firstRun = false
+						} else {
+							// Move from the Home screen back to the Backup Requests screen after clearing out all the Pending Battles.
+							game.findAndClickButton("quest")
+							game.findAndClickButton("raid")
+							game.findAndClickButton("enter_id")
+						}
 						
-						game.wait(3.0)
+						game.wait(2.0)
+						checkJoinedRaids()
 						game.findAndClickButton("enter_id")
 					}
 				}
 				
 				tries -= 1
-				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting 60 seconds and then trying again with $tries tries left before exiting.", MESSAGE_TAG = TAG)
-				game.wait(60.0)
+				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting 30 seconds and then trying again with $tries tries left before exiting.", MESSAGE_TAG = TAG)
+				game.wait(30.0)
 			}
 		}
 		
