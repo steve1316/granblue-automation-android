@@ -1,5 +1,6 @@
 package com.steve1316.granblueautomation_android.bot
 
+import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
 import org.opencv.core.Point
 
@@ -8,6 +9,12 @@ import org.opencv.core.Point
  */
 class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
 	private val TAG: String = "[${MainActivity.loggerTag}]CombatMode"
+	
+	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
+	private val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
+	private val autoExitCombatMinutes: Long = sharedPreferences.getInt("autoExitCombatMinutes", 5).toLong() * 60L * 1000L
+	private var autoExitStartTime: Long = 0L
+	private var autoExitEndTime: Long = 0L
 	
 	private var healingItemCommands = listOf(
 		"usegreenpotion.target(1)",
@@ -977,6 +984,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		var sleepPreventionTimer = 0
 		
+		if ((semiAutoCheckFlag || fullAutoCheckFlag) && enableAutoExitCombat) {
+			autoExitStartTime = System.currentTimeMillis()
+		}
+		
 		// Primary loop workflow for Semi Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
 		while (!retreatCheckFlag && !fullAutoCheckFlag && semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
 			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
@@ -990,6 +1001,17 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				return true
 			} else if (game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
 				game.printToLog("\n[COMBAT] Battle ended with no loot", MESSAGE_TAG = TAG)
+				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				return false
+			}
+			
+			autoExitEndTime = System.currentTimeMillis()
+			if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
+				game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
 				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
@@ -1024,6 +1046,17 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				return true
 			} else if (game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
 				game.printToLog("\n[COMBAT] Battle ended with no loot", MESSAGE_TAG = TAG)
+				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+				return false
+			}
+			
+			autoExitEndTime = System.currentTimeMillis()
+			if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
+				game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
 				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
 				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)

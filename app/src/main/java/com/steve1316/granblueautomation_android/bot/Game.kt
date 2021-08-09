@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
-class Game(private val myContext: Context) {
+class Game(val myContext: Context) {
 	private val TAG: String = "[${MainActivity.loggerTag}]Game"
 	
 	var displayWidth: Int = MediaProjectionService.displayWidth
@@ -1375,6 +1375,8 @@ class Game(private val myContext: Context) {
 							mapSelection.joinRaid(missionName)
 						}
 					} else {
+						delayBetweenRuns()
+						
 						// Join a new Raid.
 						mapSelection.joinRaid(missionName)
 					}
