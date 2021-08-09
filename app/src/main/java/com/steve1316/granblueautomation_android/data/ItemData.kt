@@ -207,6 +207,7 @@ class ItemData {
 			"Lvl 200 Akasha" to arrayListOf("Hollow Key"),
 			"Lvl 150 Lucilius" to arrayListOf("Dark Residue", "Shadow Substance"),
 			"Lvl 200 Lindwurm" to arrayListOf("Golden Scale", "Lineage Fragment"),
+			"Huanglong & Qilin (Impossible)" to arrayListOf("Huanglong Anima", "Qilin Anima", "Golden Talisman", "Obsidian Talisman"),
 			
 			"Lvl 100 Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),
 			"Lvl 120 Twin Elements" to arrayListOf("Twin Elements Anima", "Twin Elements Omega Anima", "Ancient Ecke Sachs", "Ecke Sachs"),

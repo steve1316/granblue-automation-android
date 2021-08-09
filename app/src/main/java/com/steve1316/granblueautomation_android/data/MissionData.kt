@@ -59,6 +59,7 @@ class MissionData {
 			"Akasha" to arrayListOf("Lvl 200 Akasha"),
 			"Lucilius" to arrayListOf("Lvl 150 Lucilius"),
 			"Lindwurm" to arrayListOf("Lvl 200 Lindwurm"),
+			"Huanglong & Qilin" to arrayListOf("Huanglong & Qilin (Impossible)"),
 			
 			"Twin Elements" to arrayListOf("Lvl 100 Twin Elements", "Lvl 120 Twin Elements"),
 			"Macula Marius" to arrayListOf("Lvl 100 Macula Marius", "Lvl 120 Macula Marius"),
