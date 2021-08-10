@@ -20,11 +20,6 @@ import java.util.concurrent.TimeUnit
 class Game(val myContext: Context) {
 	private val TAG: String = "[${MainActivity.loggerTag}]Game"
 	
-	var displayWidth: Int = MediaProjectionService.displayWidth
-	var displayHeight: Int = MediaProjectionService.displayHeight
-	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560)
-	var isLandscape: Boolean = false
-	
 	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 	
 	private var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
@@ -96,15 +91,6 @@ class Game(val myContext: Context) {
 			TimeUnit.MILLISECONDS.toMinutes(elapsedMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)),
 			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
 		)
-	}
-	
-	/**
-	 * Update the display width and height if the device's orientation changed from Portrait to Landscape and vice-versa.
-	 */
-	fun updateOrientation() {
-		displayWidth = MediaProjectionService.displayWidth
-		displayHeight = MediaProjectionService.displayHeight
-		isLandscape = (displayWidth != 1600)
 	}
 	
 	/**
@@ -418,8 +404,6 @@ class Game(val myContext: Context) {
 	 * @return True if the mission was successfully started. False otherwise.
 	 */
 	private fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
-		updateOrientation()
-		
 		var setLocation: Point? = null
 		var numberOfTries = tries
 		
@@ -464,14 +448,14 @@ class Game(val myContext: Context) {
 		}
 		
 		// Select the Group.
-		var equation: Double = if (!isTablet) {
+		var equation: Double = if (!imageUtils.isTablet) {
 			if (selectedGroupNumber == 1) {
 				787.0
 			} else {
 				787.0 - (140 * (selectedGroupNumber - 1))
 			}
 		} else {
-			if (!isLandscape) {
+			if (!imageUtils.isLandscape) {
 				if (selectedGroupNumber == 1) {
 					588.0
 				} else {
@@ -486,10 +470,10 @@ class Game(val myContext: Context) {
 			}
 		}
 		
-		if (!isTablet) {
+		if (!imageUtils.isTablet) {
 			gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
 		} else {
-			if (!isLandscape) {
+			if (!imageUtils.isLandscape) {
 				gestureUtils.tap(setLocation.x - equation, setLocation.y + 90.0, "template_group")
 			} else {
 				gestureUtils.tap(setLocation.x - equation, setLocation.y + 70.0, "template_group")
@@ -499,14 +483,14 @@ class Game(val myContext: Context) {
 		wait(1.0)
 		
 		// Select the Party.
-		equation = if (!isTablet) {
+		equation = if (!imageUtils.isTablet) {
 			if (selectedPartyNumber == 1) {
 				690.0
 			} else {
 				690.0 - (130 * (selectedPartyNumber - 1))
 			}
 		} else {
-			if (!isLandscape) {
+			if (!imageUtils.isLandscape) {
 				if (selectedPartyNumber == 1) {
 					516.0
 				} else {
@@ -521,10 +505,10 @@ class Game(val myContext: Context) {
 			}
 		}
 		
-		if (!isTablet) {
+		if (!imageUtils.isTablet) {
 			gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
 		} else {
-			if (!isLandscape) {
+			if (!imageUtils.isLandscape) {
 				gestureUtils.tap(setLocation.x - equation, setLocation.y + 540.0, "template_party")
 			} else {
 				gestureUtils.tap(setLocation.x - equation, setLocation.y + 425.0, "template_party")

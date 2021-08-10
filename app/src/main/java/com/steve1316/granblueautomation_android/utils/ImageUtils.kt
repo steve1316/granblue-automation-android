@@ -22,10 +22,16 @@ class ImageUtils(context: Context, private val game: Game) {
 	private val TAG: String = "GAA_ImageUtils"
 	private var myContext = context
 	
-	private var displayWidth: Int = MediaProjectionService.displayWidth
-	private var displayHeight: Int = MediaProjectionService.displayHeight
-	private val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560)
-	private var isLandscape: Boolean = false
+	private val displayWidth: Int = MediaProjectionService.displayWidth
+	private val displayHeight: Int = MediaProjectionService.displayHeight
+	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560)
+	val isLandscape: Boolean = (displayHeight == 1600 && displayWidth == 2560)
+	
+	private val tabletScales: MutableList<Double> = if (isLandscape) {
+		mutableListOf(0.56, 0.58, 0.60)
+	} else {
+		mutableListOf(0.72, 0.74, 0.76)
+	}
 	
 	// Initialize Google's ML OCR.
 	private val textRecognizer = TextRecognition.getClient()
@@ -56,15 +62,6 @@ class ImageUtils(context: Context, private val game: Game) {
 		
 		// Now determine if Debug Mode is turned on for more informational logging messages.
 		debugMode = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("debugMode", false)
-	}
-	
-	/**
-	 * Update the display width and height if the device's orientation changed from Portrait to Landscape and vice-versa.
-	 */
-	private fun updateOrientation() {
-		displayWidth = MediaProjectionService.displayWidth
-		displayHeight = MediaProjectionService.displayHeight
-		isLandscape = (displayWidth != 1600)
 	}
 	
 	/**
@@ -163,14 +160,6 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 		} else {
 			var matchCheck = false
-			
-			// Update the orientation if on Tablet to determine the scales for either Portrait or Landscape mode.
-			updateOrientation()
-			val tabletScales: MutableList<Double> = if (isLandscape) {
-				mutableListOf(0.56, 0.58, 0.60)
-			} else {
-				mutableListOf(0.72, 0.74, 0.76)
-			}
 			
 			while (!matchCheck && tabletScales.isNotEmpty()) {
 				val newScale: Double = tabletScales.removeFirst()
@@ -323,13 +312,6 @@ class ImageUtils(context: Context, private val game: Game) {
 			val sourceMat = Mat()
 			val templateMat = Mat()
 			var resultMat = Mat()
-			
-			updateOrientation()
-			val tabletScales: MutableList<Double> = if (isLandscape) {
-				mutableListOf(0.56, 0.58, 0.60)
-			} else {
-				mutableListOf(0.72, 0.74, 0.76)
-			}
 			
 			while (!matchCheck && tabletScales.isNotEmpty()) {
 				newScale = tabletScales.removeFirst()
