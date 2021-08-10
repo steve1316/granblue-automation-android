@@ -125,7 +125,18 @@ class BotService : Service() {
 									} else {
 										NotificationUtils.updateNotification(myContext, false, "Encountered Exception: ${e}. Tap me to see more details.")
 										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
-										DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n${e.message}")
+										
+										if (e.stackTraceToString().length >= 2500) {
+											Log.d(TAG, "Splitting Discord message.")
+											val halfLength: Int = e.stackTraceToString().length / 2
+											val message1: String = e.stackTraceToString().substring(0, halfLength)
+											val message2: String = e.stackTraceToString().substring(halfLength)
+											
+											DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n$message1")
+											DiscordUtils.queue.add("> $message2")
+										} else {
+											DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n${e.stackTraceToString()}")
+										}
 									}
 									
 									performCleanUp(isException = true)
