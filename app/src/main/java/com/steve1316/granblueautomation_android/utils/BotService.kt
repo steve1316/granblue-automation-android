@@ -136,6 +136,12 @@ class BotService : Service() {
 										} else {
 											DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n${e.stackTraceToString()}")
 										}
+										
+										thread {
+											runBlocking {
+												DiscordUtils.disconnectClient()
+											}
+										}
 									}
 									
 									performCleanUp(isException = true)

@@ -23,11 +23,17 @@ class DiscordUtils(myContext: Context) {
 	
 	companion object {
 		val queue: Queue<String> = LinkedList()
+		
+		lateinit var client: Kord
+		
+		suspend fun disconnectClient() {
+			client.logout()
+		}
 	}
 	
 	suspend fun main(): Unit = coroutineScope {
 		// Initialize the client with the Bot Account's token.
-		val client = Kord(discordToken)
+		client = Kord(discordToken)
 		
 		// This listener gets fired when the client is connected to the Discord API.
 		client.on<ReadyEvent> {
