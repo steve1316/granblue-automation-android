@@ -40,6 +40,7 @@ By downloading this application, you consent to your account potentially getting
 # Requirements
 1. [Android Device (API 29+ or Android 10+)](https://developer.android.com/about/versions)
    1. APK available to download is for devices that support arm64-v8a ABI. For devices that use a different ABI, follow the instructions below on how to build your own APK.
+   2. (Experimental) Tablets supported with minimum 1600 pixel width like the Galaxy Tab S7. If oriented portrait, Chrome needs to have Desktop Mode turned off and situated on the left half of the tablet. If landscape, Chrome needs to have Desktop Mode turned on and situated on the left half of the tablet.
 2. [Granblue Fantasy account](http://game.granbluefantasy.jp/)
 3. [Twitter Developer account (optional, needed to farm Raids)](https://developer.twitter.com/en)
 
