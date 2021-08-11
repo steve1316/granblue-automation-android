@@ -33,6 +33,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	
 	private var retreatCheckFlag = false
 	private var attackButtonLocation: Point? = null
+	private var expGainedLocationCheck = false
 	
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
@@ -689,12 +690,15 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		while ((!retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null) ||
 			(!retreatCheckFlag && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null)) {
+			if (game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
+				expGainedLocationCheck = true
+				break
+			}
+			
 			// Stagger the checks for dialog popups during Combat Mode.
 			if (tries % 2 == 0) {
 				findCombatDialog()
 			}
-			
-			game.wait(1.0)
 			
 			tries -= 1
 			if (tries <= 0 || game.imageUtils.findButton("attack", tries = 1, suppressError = true) != null ||
@@ -704,8 +708,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			
 			// Check if the Party wiped after attacking.
 			partyWipeCheck()
-			
-			game.wait(1.0)
 		}
 	}
 	
@@ -986,159 +988,162 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		// When the bot arrives here, all the commands in the combat script has been processed.
 		game.printToLog("[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.", MESSAGE_TAG = TAG)
 		
-		// Until the bot reaches the Quest Results screen, keep pressing the "Attack" and "Next" buttons if not Semi Auto or Full Auto.
-		while (!retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
-			!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
-			// Clear any detected dialog popups that might obstruct the "Attack" button.
-			findCombatDialog()
-			
-			// Tap the "Attack" button once every command inside the Turn Block has been processed.
-			game.printToLog("[COMBAT] Ending Turn $turnNumber")
-			game.findAndClickButton("attack", tries = 10)
-			
-			// Wait until the "Cancel" button vanishes from the screen.
-			if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
-				while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
-					if (debugMode) {
-						game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", MESSAGE_TAG = TAG)
+		// Skip this entire section if combat already ended as dictated in the waitForAttack() function.
+		if (!expGainedLocationCheck) {
+			// Until the bot reaches the Quest Results screen, keep pressing the "Attack" and "Next" buttons if not Semi Auto or Full Auto.
+			while (!retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
+				!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
+				// Clear any detected dialog popups that might obstruct the "Attack" button.
+				findCombatDialog()
+				
+				// Tap the "Attack" button once every command inside the Turn Block has been processed.
+				game.printToLog("[COMBAT] Ending Turn $turnNumber")
+				game.findAndClickButton("attack", tries = 10)
+				
+				// Wait until the "Cancel" button vanishes from the screen.
+				if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
+					while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
+						if (debugMode) {
+							game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", MESSAGE_TAG = TAG)
+						}
+						
+						game.wait(1.0)
 					}
-					
-					game.wait(1.0)
+				}
+				
+				reloadAfterAttack()
+				waitForAttack()
+				
+				game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
+				
+				turnNumber += 1
+				
+				if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+					game.wait(3.0)
 				}
 			}
 			
-			reloadAfterAttack()
-			waitForAttack()
-			
-			game.printToLog("[COMBAT] Turn $turnNumber has ended.", MESSAGE_TAG = TAG)
-			
-			turnNumber += 1
-			
-			if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-				game.wait(3.0)
-			}
-		}
-		
-		// Double check to see if Semi Auto is turned on. Note that the "Semi Auto" button only appears while the Party is attacking.
-		if (!retreatCheckFlag && semiAutoCheckFlag && !fullAutoCheckFlag) {
-			game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", MESSAGE_TAG = TAG)
-			
-			val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
-			if (enabledSemiAutoButtonLocation == null) {
-				// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
-				game.findAndClickButton("attack")
+			// Double check to see if Semi Auto is turned on. Note that the "Semi Auto" button only appears while the Party is attacking.
+			if (!retreatCheckFlag && semiAutoCheckFlag && !fullAutoCheckFlag) {
+				game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", MESSAGE_TAG = TAG)
 				
-				game.wait(2.0)
-				
-				semiAutoCheckFlag = game.findAndClickButton("semi_auto", tries = 5)
-				
-				// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the screen instead.
-				if (!semiAutoCheckFlag) {
-					game.printToLog("[COMBAT] Failed to enable Semi Auto. Falling back to Full Auto.", MESSAGE_TAG = TAG)
-					fullAutoCheckFlag = true
+				val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
+				if (enabledSemiAutoButtonLocation == null) {
+					// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
+					game.findAndClickButton("attack")
 					
-					// Enable Full Auto.
-					game.findAndClickButton("full_auto")
-				} else {
-					game.printToLog("[COMBAT] Semi Auto is now enabled.", MESSAGE_TAG = TAG)
+					game.wait(2.0)
+					
+					semiAutoCheckFlag = game.findAndClickButton("semi_auto", tries = 5)
+					
+					// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the screen instead.
+					if (!semiAutoCheckFlag) {
+						game.printToLog("[COMBAT] Failed to enable Semi Auto. Falling back to Full Auto.", MESSAGE_TAG = TAG)
+						fullAutoCheckFlag = true
+						
+						// Enable Full Auto.
+						game.findAndClickButton("full_auto")
+					} else {
+						game.printToLog("[COMBAT] Semi Auto is now enabled.", MESSAGE_TAG = TAG)
+					}
 				}
 			}
-		}
-		
-		var sleepPreventionTimer = 0
-		
-		if ((semiAutoCheckFlag || fullAutoCheckFlag) && enableAutoExitCombat) {
-			autoExitStartTime = System.currentTimeMillis()
-		}
-		
-		// Primary loop workflow for Semi Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
-		while (!retreatCheckFlag && !fullAutoCheckFlag && semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
-			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-				game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.findAndClickButton("reload")
-				return true
-			} else if (game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
-				game.printToLog("\n[COMBAT] Battle ended with no loot", MESSAGE_TAG = TAG)
-				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				return false
+			
+			var sleepPreventionTimer = 0
+			
+			if ((semiAutoCheckFlag || fullAutoCheckFlag) && enableAutoExitCombat) {
+				autoExitStartTime = System.currentTimeMillis()
 			}
 			
-			autoExitEndTime = System.currentTimeMillis()
-			if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
-				game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
-				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				return false
+			// Primary loop workflow for Semi Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
+			while (!retreatCheckFlag && !fullAutoCheckFlag && semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
+				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
+					game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
+					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.findAndClickButton("reload")
+					return true
+				} else if (game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
+					game.printToLog("\n[COMBAT] Battle ended with no loot", MESSAGE_TAG = TAG)
+					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					return false
+				}
+				
+				autoExitEndTime = System.currentTimeMillis()
+				if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
+					game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
+					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					return false
+				}
+				
+				// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
+				if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
+					game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
+					game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
+					game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+				}
+				
+				partyWipeCheck()
+				game.wait(1.0)
+				
+				sleepPreventionTimer += 1
 			}
 			
-			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
-				game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
-				game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
-				game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+			// Primary loop workflow for Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
+			while (!retreatCheckFlag && fullAutoCheckFlag && !semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
+				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
+					game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
+					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.findAndClickButton("reload")
+					return true
+				} else if (game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
+					game.printToLog("\n[COMBAT] Battle ended with no loot", MESSAGE_TAG = TAG)
+					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					return false
+				}
+				
+				autoExitEndTime = System.currentTimeMillis()
+				if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
+					game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
+					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
+					return false
+				}
+				
+				// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
+				if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
+					game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
+					game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
+					game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+				}
+				
+				partyWipeCheck()
+				game.wait(1.0)
+				
+				sleepPreventionTimer += 1
 			}
-			
-			partyWipeCheck()
-			game.wait(1.0)
-			
-			sleepPreventionTimer += 1
-		}
-		
-		// Primary loop workflow for Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
-		while (!retreatCheckFlag && fullAutoCheckFlag && !semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
-			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-				game.printToLog("\n[COMBAT] Battle concluded suddenly.", MESSAGE_TAG = TAG)
-				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.findAndClickButton("reload")
-				return true
-			} else if (game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)) {
-				game.printToLog("\n[COMBAT] Battle ended with no loot", MESSAGE_TAG = TAG)
-				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				return false
-			}
-			
-			autoExitEndTime = System.currentTimeMillis()
-			if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
-				game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
-				game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("[COMBAT] Ending Combat Mode.", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				game.printToLog("################################################################################", MESSAGE_TAG = TAG)
-				return false
-			}
-			
-			// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-			if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
-				game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", MESSAGE_TAG = TAG)
-				game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
-				game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
-			}
-			
-			partyWipeCheck()
-			game.wait(1.0)
-			
-			sleepPreventionTimer += 1
 		}
 		
 		game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)

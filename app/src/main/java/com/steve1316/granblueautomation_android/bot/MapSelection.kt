@@ -1441,14 +1441,17 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		game.wait(3.0)
 		
 		// Check for available AP. Note that Proving Grounds has the AP check after you select your Summon.
-		if (farmingMode != "Proving Grounds") {
+		val summonLocationCheck = if (!game.imageUtils.confirmLocation("select_a_summon", tries = 1) && farmingMode != "Proving Grounds") {
 			game.checkAP()
+			false
+		} else {
+			true
 		}
 		
 		// Check to see if the bot is at the Summon Selection screen.
 		if (farmingMode != "Coop") {
 			game.printToLog("[INFO] Now checking if the bot is currently at the Summon Selection screen...", MESSAGE_TAG = TAG)
-			return if (farmingMode != "Proving Grounds" && game.imageUtils.confirmLocation("select_a_summon", tries = 5)) {
+			return if (farmingMode != "Proving Grounds" && (summonLocationCheck || game.imageUtils.confirmLocation("select_a_summon", tries = 5))) {
 				game.printToLog("[SUCCESS] Bot arrived at the Summon Selection screen after selecting the mission.", MESSAGE_TAG = TAG)
 				true
 			} else if (farmingMode == "Proving Grounds" && game.imageUtils.confirmLocation("proving_grounds_summon_selection", tries = 5)) {
@@ -1461,7 +1464,7 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		} else {
 			// If its Coop, check to see if the bot is at the Party Selection screen.
 			game.printToLog("[INFO] Now checking if the bot is currently at the Coop Party Selection screen...", MESSAGE_TAG = TAG)
-			return if (game.imageUtils.confirmLocation("coop_without_support_summon")) {
+			return if (game.imageUtils.confirmLocation("coop_without_support_summon", tries = 5)) {
 				game.printToLog("[SUCCESS] Bot arrived at the Party Selection screen after selecting the Coop mission.", MESSAGE_TAG = TAG)
 				true
 			} else {
@@ -1481,8 +1484,6 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Go to the Home screen and then to the Quests screen.
 		game.goBackHome(confirmLocationCheck = true)
 		game.findAndClickButton("quest")
-		
-		game.wait(1.0)
 		
 		// Check for the "You retreated from the raid battle" popup.
 		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {

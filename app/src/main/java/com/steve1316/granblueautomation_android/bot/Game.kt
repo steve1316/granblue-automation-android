@@ -713,7 +713,7 @@ class Game(val myContext: Context) {
 	 * Detect any popups and attempt to close them all with the final destination being the Summon Selection screen.
 	 */
 	private fun checkForPopups() {
-		while (!imageUtils.confirmLocation("select_a_summon", tries = 3)) {
+		while (!imageUtils.confirmLocation("select_a_summon")) {
 			if (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
 				break
 			}
@@ -1330,7 +1330,10 @@ class Game(val myContext: Context) {
 						// For every other Farming Mode other than Coop and Proving Grounds, handle all popups and perform AP check until the bot reaches the Summon Selection screen.
 						if (farmingMode != "Proving Grounds") {
 							checkForPopups()
-							checkAP()
+							
+							if (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+								checkAP()
+							}
 						}
 					}
 				} else {
