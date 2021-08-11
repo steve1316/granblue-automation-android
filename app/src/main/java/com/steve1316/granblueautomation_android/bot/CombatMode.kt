@@ -322,18 +322,47 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	private fun selectEnemyTarget(command: String) {
 		for (target in 1..3) {
 			if (command == "targetenemy(${target})") {
-				val x: Double = if (!game.imageUtils.isTablet) {
-					626.0
-				} else {
-					if (!game.imageUtils.isLandscape) {
-						458.0
-					} else {
-						360.0
+				val x: Double
+				
+				// Select the enemy target on the screen.
+				when (target) {
+					1 -> {
+						x = if (!game.imageUtils.isTablet) {
+							626.0
+						} else {
+							if (!game.imageUtils.isLandscape) {
+								458.0
+							} else {
+								360.0
+							}
+						}
+					}
+					2 -> {
+						x = if (!game.imageUtils.isTablet) {
+							253.0
+						} else {
+							if (!game.imageUtils.isLandscape) {
+								183.0
+							} else {
+								150.0
+							}
+						}
+					}
+					else -> {
+						x = if (!game.imageUtils.isTablet) {
+							-85.0
+						} else {
+							if (!game.imageUtils.isLandscape) {
+								-67.0
+							} else {
+								-52.0
+							}
+						}
 					}
 				}
 				
 				val y: Double = if (!game.imageUtils.isTablet) {
-					645.0
+					667.0
 				} else {
 					if (!game.imageUtils.isLandscape) {
 						478.0
@@ -342,7 +371,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					}
 				}
 				
-				game.gestureUtils.tap(x, y, "template_enemy_target")
+				game.gestureUtils.tap(attackButtonLocation!!.x - x, attackButtonLocation!!.y - y, "template_enemy_target")
 				game.findAndClickButton("set_target")
 				game.printToLog("[COMBAT] Targeted Enemy #${target}.", MESSAGE_TAG = TAG)
 			}
