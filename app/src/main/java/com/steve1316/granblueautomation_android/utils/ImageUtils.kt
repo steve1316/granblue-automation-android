@@ -445,12 +445,12 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * Finds the location of the specified image from the /images/ folder inside assets.
 	 *
 	 * @param templateName File name of the template image.
-	 * @param tries Number of tries before failing. Defaults to 3.
+	 * @param tries Number of tries before failing. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
 	 * @return Point object containing the location of the match or null if not found.
 	 */
-	fun findButton(templateName: String, tries: Int = 3, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Point? {
+	fun findButton(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Point? {
 		val folderName = "buttons"
 		var numberOfTries = tries
 		
@@ -470,7 +470,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					}
 					
 					Log.d(TAG, "Failed to find the ${templateName.uppercase()} button. Trying again...")
-					game.wait(1.0)
+					game.wait(0.5)
 				} else {
 					game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", MESSAGE_TAG = TAG)
 					return matchLocation
@@ -485,12 +485,12 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * Confirms whether or not the bot is at the specified location from the /headers/ folder inside assets.
 	 *
 	 * @param templateName File name of the template image.
-	 * @param tries Number of tries before failing. Defaults to 3.
+	 * @param tries Number of tries before failing. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log.
 	 * @return True if the current location is at the specified location. False otherwise.
 	 */
-	fun confirmLocation(templateName: String, tries: Int = 3, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Boolean {
+	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Boolean {
 		val folderName = "headers"
 		var numberOfTries = tries
 		while (numberOfTries > 0) {
@@ -504,7 +504,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						break
 					}
 					
-					game.wait(1.0)
+					game.wait(0.5)
 				} else {
 					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.uppercase()}.", MESSAGE_TAG = TAG)
 					return true
