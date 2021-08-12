@@ -145,6 +145,7 @@ class MyAccessibilityService : AccessibilityService() {
 	fun tap(x: Double, y: Double, buttonName: String, ignoreWait: Boolean = false, longPress: Boolean = false, taps: Int = 1): Boolean {
 		// Randomize the tapping location.
 		val (newX, newY) = randomizeTapLocation(x, y, buttonName)
+		Log.d(TAG, "Tapping $newX, $newY")
 		
 		// Construct the tap gesture.
 		val tapPath = Path().apply {
