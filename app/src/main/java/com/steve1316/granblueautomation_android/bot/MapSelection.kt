@@ -1490,117 +1490,115 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			game.findAndClickButton("ok")
 		}
 		
-		if (game.imageUtils.confirmLocation("quest")) {
-			if (checkPendingBattles("raid")) {
+		if (checkPendingBattles("raid")) {
+			game.findAndClickButton("quest")
+			game.wait(1.0)
+		}
+		
+		// Now go to the Backup Requests screen.
+		game.findAndClickButton("raid")
+		
+		game.wait(2.0)
+		
+		// Check for any joined Raids.
+		checkJoinedRaids()
+		
+		// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
+		var firstRun = true
+		var tries = 10
+		var joinRoomButtonLocation: Point? = Point()
+		var roomCodeTextBoxLocation: Point? = Point()
+		while (tries > 0) {
+			// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
+			while (numberOfRaidsJoined >= 3) {
+				game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", MESSAGE_TAG = TAG)
+				game.wait(30.0)
+				
+				game.goBackHome(confirmLocationCheck = true)
 				game.findAndClickButton("quest")
+				
 				game.wait(1.0)
+				
+				if (checkPendingBattles("Raid")) {
+					game.findAndClickButton("quest")
+					game.wait(1.0)
+				}
+				
+				game.findAndClickButton("raid")
+				checkJoinedRaids()
 			}
 			
-			// Now go to the Backup Requests screen.
-			game.findAndClickButton("raid")
+			// Move to the "Enter ID" section of the Backup Requests screen.
+			game.printToLog("[INFO] Moving to the \"Enter ID\" section of the Backup Requests screen...", MESSAGE_TAG = TAG)
+			game.wait(0.5)
+			game.findAndClickButton("enter_id")
 			
-			game.wait(2.0)
+			// Save the locations of the "Join Room" button and the "Room Code" text box.
+			if (firstRun) {
+				joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
+				roomCodeTextBoxLocation = if (!game.imageUtils.isTablet) {
+					Point(joinRoomButtonLocation.x - 400.0, joinRoomButtonLocation.y)
+				} else {
+					if (!game.imageUtils.isLandscape) {
+						Point(joinRoomButtonLocation.x - 300.0, joinRoomButtonLocation.y)
+					} else {
+						Point(joinRoomButtonLocation.x - 250.0, joinRoomButtonLocation.y)
+					}
+				}
+			}
 			
-			// Check for any joined Raids.
-			checkJoinedRaids()
+			var roomCodes: ArrayList<String> = arrayListOf()
+			// Get recent room codes for the specified Raid.
+			if (twitterRoomFinder != null) {
+				roomCodes = twitterRoomFinder.findMostRecentRoomCodes(missionName)
+			}
 			
-			// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait 60 seconds before trying again.
-			var firstRun = true
-			var tries = 10
-			var joinRoomButtonLocation: Point? = Point()
-			var roomCodeTextBoxLocation: Point? = Point()
-			while (tries > 0) {
-				// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
-				while (numberOfRaidsJoined >= 3) {
-					game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", MESSAGE_TAG = TAG)
-					game.wait(30.0)
+			roomCodes.forEach { roomCode ->
+				Log.d(TAG, "Room code: $roomCode")
+				
+				// Set the room code.
+				RoomCodeData.roomCode = roomCode
+				
+				// Select the "Room Code" text box. The AccessibilityService should pick up that the textbox is a EditText and will paste the
+				// room code into it.
+				game.gestureUtils.tap(roomCodeTextBoxLocation?.x!!, roomCodeTextBoxLocation.y, "template_room_code_textbox", longPress = true)
+				
+				// Wait several seconds to allow enough time for MyAccessibilityService to paste the code.
+				game.wait(3.0)
+				
+				// Now tap the "Join Room" button.
+				game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y, "join_a_room")
+				
+				if (!game.findAndClickButton("ok")) {
+					// Check for EP.
+					game.checkEP()
 					
-					game.goBackHome(confirmLocationCheck = true)
-					game.findAndClickButton("quest")
+					game.printToLog("[SUCCESS] Joining $roomCode was successful.", MESSAGE_TAG = TAG)
+					numberOfRaidsJoined += 1
 					
-					game.wait(1.0)
-					
-					if (checkPendingBattles("Raid")) {
+					return game.imageUtils.confirmLocation("select_a_summon")
+				} else {
+					if (!checkPendingBattles("raid")) {
+						// Clear the text box by reloading the page.
+						game.printToLog("[WARNING] $roomCode already ended or invalid.", MESSAGE_TAG = TAG)
+						game.findAndClickButton("reload")
+						firstRun = false
+					} else {
+						// Move from the Home screen back to the Backup Requests screen after clearing out all the Pending Battles.
 						game.findAndClickButton("quest")
-						game.wait(1.0)
-					}
-					
-					game.findAndClickButton("raid")
-					checkJoinedRaids()
-				}
-				
-				// Move to the "Enter ID" section of the Backup Requests screen.
-				game.printToLog("[INFO] Moving to the \"Enter ID\" section of the Backup Requests screen...", MESSAGE_TAG = TAG)
-				game.wait(0.5)
-				game.findAndClickButton("enter_id")
-				
-				// Save the locations of the "Join Room" button and the "Room Code" text box.
-				if (firstRun) {
-					joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
-					roomCodeTextBoxLocation = if (!game.imageUtils.isTablet) {
-						Point(joinRoomButtonLocation.x - 400.0, joinRoomButtonLocation.y)
-					} else {
-						if (!game.imageUtils.isLandscape) {
-							Point(joinRoomButtonLocation.x - 300.0, joinRoomButtonLocation.y)
-						} else {
-							Point(joinRoomButtonLocation.x - 250.0, joinRoomButtonLocation.y)
-						}
-					}
-				}
-				
-				var roomCodes: ArrayList<String> = arrayListOf()
-				// Get recent room codes for the specified Raid.
-				if (twitterRoomFinder != null) {
-					roomCodes = twitterRoomFinder.findMostRecentRoomCodes(missionName)
-				}
-				
-				roomCodes.forEach { roomCode ->
-					Log.d(TAG, "Room code: $roomCode")
-					
-					// Set the room code.
-					RoomCodeData.roomCode = roomCode
-					
-					// Select the "Room Code" text box. The AccessibilityService should pick up that the textbox is a EditText and will paste the
-					// room code into it.
-					game.gestureUtils.tap(roomCodeTextBoxLocation?.x!!, roomCodeTextBoxLocation.y, "template_room_code_textbox", longPress = true)
-					
-					// Wait several seconds to allow enough time for MyAccessibilityService to paste the code.
-					game.wait(3.0)
-					
-					// Now tap the "Join Room" button.
-					game.gestureUtils.tap(joinRoomButtonLocation?.x!!, joinRoomButtonLocation.y, "join_a_room")
-					
-					if (!game.findAndClickButton("ok")) {
-						// Check for EP.
-						game.checkEP()
-						
-						game.printToLog("[SUCCESS] Joining $roomCode was successful.", MESSAGE_TAG = TAG)
-						numberOfRaidsJoined += 1
-						
-						return game.imageUtils.confirmLocation("select_a_summon")
-					} else {
-						if (!checkPendingBattles("raid")) {
-							// Clear the text box by reloading the page.
-							game.printToLog("[WARNING] $roomCode already ended or invalid.", MESSAGE_TAG = TAG)
-							game.findAndClickButton("reload")
-							firstRun = false
-						} else {
-							// Move from the Home screen back to the Backup Requests screen after clearing out all the Pending Battles.
-							game.findAndClickButton("quest")
-							game.findAndClickButton("raid")
-							game.findAndClickButton("enter_id")
-						}
-						
-						game.wait(2.0)
-						checkJoinedRaids()
+						game.findAndClickButton("raid")
 						game.findAndClickButton("enter_id")
 					}
+					
+					game.wait(2.0)
+					checkJoinedRaids()
+					game.findAndClickButton("enter_id")
 				}
-				
-				tries -= 1
-				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting 30 seconds and then trying again with $tries tries left before exiting.", MESSAGE_TAG = TAG)
-				game.wait(30.0)
 			}
+			
+			tries -= 1
+			game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting 30 seconds and then trying again with $tries tries left before exiting.", MESSAGE_TAG = TAG)
+			game.wait(30.0)
 		}
 		
 		return false
