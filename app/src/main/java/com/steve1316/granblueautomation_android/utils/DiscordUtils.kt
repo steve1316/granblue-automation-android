@@ -9,6 +9,7 @@ import dev.kord.core.Kord
 import dev.kord.core.event.gateway.ReadyEvent
 import dev.kord.core.on
 import kotlinx.coroutines.coroutineScope
+import java.lang.Exception
 import java.util.*
 
 /**
@@ -32,35 +33,40 @@ class DiscordUtils(myContext: Context) {
 	}
 	
 	suspend fun main(): Unit = coroutineScope {
-		// Initialize the client with the Bot Account's token.
-		client = Kord(discordToken)
-		
-		// This listener gets fired when the client is connected to the Discord API.
-		client.on<ReadyEvent> {
-			// Get the user's private DM channel via their Snowflake.
-			val snowflake = Snowflake(userID)
-			val dmChannel = client.getUser(snowflake)?.getDmChannelOrNull()!!
+		try {
+			// Initialize the client with the Bot Account's token.
+			client = Kord(discordToken)
 			
-			Log.d(TAG, "Successful connection to Discord API.")
-			queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
-			
-			// Loop and send any messages inside the Queue.
-			while (true) {
-				if (queue.isNotEmpty()) {
-					val message = queue.remove()
-					dmChannel.createMessage(message)
-					
-					if (message.contains("Terminated connection to Discord API")) {
-						break
+			// This listener gets fired when the client is connected to the Discord API.
+			client.on<ReadyEvent> {
+				// Get the user's private DM channel via their Snowflake.
+				val snowflake = Snowflake(userID)
+				val dmChannel = client.getUser(snowflake)?.getDmChannelOrNull()!!
+				
+				Log.d(TAG, "Successful connection to Discord API.")
+				queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
+				
+				// Loop and send any messages inside the Queue.
+				while (true) {
+					if (queue.isNotEmpty()) {
+						val message = queue.remove()
+						dmChannel.createMessage(message)
+						
+						if (message.contains("Terminated connection to Discord API")) {
+							break
+						}
 					}
 				}
+				
+				Log.d(TAG, "Terminated connection to Discord API.")
+				client.logout()
 			}
 			
-			Log.d(TAG, "Terminated connection to Discord API.")
-			client.logout()
+			// Login to the Discord API. This will block this Thread but will allow the onReadyEvent listener to continue running.
+			client.login()
+		} catch (e: Exception) {
+			Log.d(TAG, "Failed to initialize Kord client: ${e.stackTraceToString()}")
+			disconnectClient()
 		}
-		
-		// Login to the Discord API. This will block this Thread but will allow the onReadyEvent listener to continue running.
-		client.login()
 	}
 }
