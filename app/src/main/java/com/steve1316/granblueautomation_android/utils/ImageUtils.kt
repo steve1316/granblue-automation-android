@@ -27,12 +27,6 @@ class ImageUtils(context: Context, private val game: Game) {
 	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560)
 	val isLandscape: Boolean = (displayHeight == 1600 && displayWidth == 2560)
 	
-	private val tabletScales: MutableList<Double> = if (isLandscape) {
-		mutableListOf(0.56, 0.58, 0.60)
-	} else {
-		mutableListOf(0.72, 0.74, 0.76)
-	}
-	
 	// Initialize Google's ML OCR.
 	private val textRecognizer = TextRecognition.getClient()
 	
@@ -160,6 +154,12 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 		} else {
 			var matchCheck = false
+			
+			val tabletScales: MutableList<Double> = if (isLandscape) {
+				mutableListOf(0.56, 0.58, 0.60)
+			} else {
+				mutableListOf(0.72, 0.74, 0.76)
+			}
 			
 			while (!matchCheck && tabletScales.isNotEmpty()) {
 				val newScale: Double = tabletScales.removeFirst()
@@ -312,6 +312,12 @@ class ImageUtils(context: Context, private val game: Game) {
 			val sourceMat = Mat()
 			val templateMat = Mat()
 			var resultMat = Mat()
+			
+			val tabletScales: MutableList<Double> = if (isLandscape) {
+				mutableListOf(0.56, 0.58, 0.60)
+			} else {
+				mutableListOf(0.72, 0.74, 0.76)
+			}
 			
 			while (!matchCheck && tabletScales.isNotEmpty()) {
 				newScale = tabletScales.removeFirst()
