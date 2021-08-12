@@ -115,9 +115,9 @@ class MyAccessibilityService : AccessibilityService() {
 		var newY: Int
 		
 		while (true) {
-			// Start acquiring randomized coordinates at least 20% and at most 80% of the width and height until a valid set of coordinates has been acquired.
-			val newWidth: Int = ((width * 0.2).toInt()..(width * 0.8).toInt()).random()
-			val newHeight: Int = ((height * 0.2).toInt()..(height * 0.8).toInt()).random()
+			// Start acquiring randomized coordinates at least 30% and at most 60% of the width and height until a valid set of coordinates has been acquired.
+			val newWidth: Int = ((width * 0.3).toInt()..(width * 0.6).toInt()).random()
+			val newHeight: Int = ((height * 0.3).toInt()..(height * 0.6).toInt()).random()
 			
 			newX = x0 + newWidth
 			newY = y0 + newHeight
