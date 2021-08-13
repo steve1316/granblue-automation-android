@@ -279,23 +279,51 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun selectCharacter(characterNumber: Int) {
 		val x = if (!game.imageUtils.isTablet) {
-			if (characterNumber == 1) {
-				attackButtonLocation!!.x - 715.0
-			} else {
-				attackButtonLocation!!.x - (715.0 - (characterNumber - 1))
+			when (characterNumber) {
+				1 -> {
+					attackButtonLocation!!.x - 715.0
+				}
+				2 -> {
+					attackButtonLocation!!.x - 540.0
+				}
+				3 -> {
+					attackButtonLocation!!.x - 350.0
+				}
+				else -> {
+					attackButtonLocation!!.x - 180.0
+				}
 			}
 		} else {
 			if (!game.imageUtils.isLandscape) {
-				if (characterNumber == 1) {
-					attackButtonLocation!!.x - 530.0
-				} else {
-					attackButtonLocation!!.x - (530.0 - (characterNumber - 1))
+				when (characterNumber) {
+					1 -> {
+						attackButtonLocation!!.x - 530.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 400.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 265.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 130.0
+					}
 				}
 			} else {
-				if (characterNumber == 1) {
-					attackButtonLocation!!.x - 415.0
-				} else {
-					attackButtonLocation!!.x - (415.0 - (characterNumber - 1))
+				// 563, 730
+				when (characterNumber) {
+					1 -> {
+						attackButtonLocation!!.x - 415.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 315.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 200.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 100.0
+					}
 				}
 			}
 		}
