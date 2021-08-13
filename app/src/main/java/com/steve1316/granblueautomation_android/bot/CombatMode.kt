@@ -1077,7 +1077,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				}
 				
 				autoExitEndTime = System.currentTimeMillis()
-				if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
+				if (enableAutoExitCombat && (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes)) {
 					game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
 					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
@@ -1122,7 +1122,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				}
 				
 				autoExitEndTime = System.currentTimeMillis()
-				if (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes) {
+				if (enableAutoExitCombat && (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes)) {
 					game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", MESSAGE_TAG = TAG)
 					game.printToLog("\n################################################################################", MESSAGE_TAG = TAG)
 					game.printToLog("################################################################################", MESSAGE_TAG = TAG)
