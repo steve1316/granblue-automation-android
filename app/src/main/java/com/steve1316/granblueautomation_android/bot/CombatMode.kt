@@ -791,6 +791,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		while (combatScript.isNotEmpty() && commandList.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
 			// The commands are already preprocessed to remove all comments back in SettingsFragment.
 			var command = commandList.removeAt(0).lowercase()
+			var backFlag = false
 			
 			game.printToLog("[COMBAT] Reading command: $command", MESSAGE_TAG = TAG)
 			
@@ -877,11 +878,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							return false
 						}
 						
-						// Select enemy target.
-						if (command.contains("targetenemy")) {
-							selectEnemyTarget(command)
-						}
-						
 						// Determine which Character to take action.
 						val characterSelected = when {
 							command.contains("character1") -> {
@@ -959,6 +955,16 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							}
 							
 							break
+						} else if (command.contains("targetenemy")) {
+							// Select enemy target.
+							selectEnemyTarget(command)
+						} else if (command.contains("back") && game.findAndClickButton("home_back", tries = 1)) {
+							game.printToLog("[COMBAT] Tapped the Back button.", MESSAGE_TAG = TAG)
+							waitForAttack()
+							backFlag = true
+							
+							// Advance the Turn number by 1.
+							turnNumber += 1
 						}
 						
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
@@ -983,7 +989,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					}
 					
 					break
-				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end") {
+				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end" && !backFlag) {
 					// Tap the "Attack" button once every command inside the Turn Block has been processed.
 					game.printToLog("[COMBAT] Ending Turn $turnNumber")
 					game.findAndClickButton("attack", tries = 10)
