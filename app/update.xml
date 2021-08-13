@@ -1,21 +1,18 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.3.1</latestVersion>
+    <latestVersion>2.3.2</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.3.1 - Changelog
+v2.3.2 - Changelog
 
-Changed
+New
 ---
-- Made the entire process of Combat Mode and general navigation faster than before by reorganizing code.
-- Adjusted range of randomized area of tap location.
+- Added a new command, "back", to facilitate faster slime farming.
 
 Fixes
 ---
-- Fixed bug where targetting enemies was not accurate on screen.
-- Fixed several bugs where farming Raids would eventually get the bot stuck.
-- Fixed bug where bot crashed due to Kord being rate-limited.
-- Fixed bug where image scales for supported tablets were changed accidentally.
+- Fixed bug the flag for auto exiting Semi/Full Auto was always turned on.
+- Fixed bug where targeting characters was not accurate.
     </releaseNotes>
   </update>
 </AppUpdater>
