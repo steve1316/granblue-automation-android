@@ -1,28 +1,21 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.3.0</latestVersion>
+    <latestVersion>2.3.1</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.3.0 - Changelog
-
-New
----
-- Added a new setting to set a time limit for Semi/Full Auto.
-- Added new command, "targetEnemy(#)".
-- Added support for Shenxian and ROTB EX+ Raids.
-- Added support for Huanglong and Qilin (Impossible) Raid.
-- (Experimental) Added support for tablets of 1600 width minimum, portrait and landscape included. GBF on Chrome needs to be set in splitscreen mode with Desktop mode turned off for portrait and turned on for landscape.
+v2.3.1 - Changelog
 
 Changed
 ---
-- Users are properly notified of Exceptions if Discord notifications are enabled.
-- Made various optimizations to collecting Pending Battles.
-- Made various optimizations to Event (Token Drawboxes) and Raid navigation.
+- Made the entire process of Combat Mode and general navigation faster than before by reorganizing code.
+- Adjusted range of randomized area of tap location.
 
 Fixes
 ---
-- Fixed bug where bot got stuck when 3 Raids were already joined.
-- Fixed bug where Combat Mode was not reloading after attacks for various Raids like ROTB.
+- Fixed bug where targetting enemies was not accurate on screen.
+- Fixed several bugs where farming Raids would eventually get the bot stuck.
+- Fixed bug where bot crashed due to Kord being rate-limited.
+- Fixed bug where image scales for supported tablets were changed accidentally.
     </releaseNotes>
   </update>
 </AppUpdater>
