@@ -73,7 +73,7 @@ dependencies {
     implementation project(path: ':opencv')
 
     // Google's Firebase Machine Learning OCR for Text Detection.
-    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:16.3.0'
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.0'
 
     // Hoplite to read config.yaml file.
     implementation 'com.sksamuel.hoplite:hoplite-yaml:1.4.0'
