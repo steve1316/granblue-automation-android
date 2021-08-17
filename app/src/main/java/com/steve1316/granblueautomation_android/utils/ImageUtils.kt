@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.steve1316.granblueautomation_android.bot.Game
 import org.opencv.android.Utils
 import org.opencv.core.*
@@ -28,7 +29,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	val isLandscape: Boolean = (displayHeight == 1600 && displayWidth == 2560)
 	
 	// Initialize Google's ML OCR.
-	private val textRecognizer = TextRecognition.getClient()
+	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 	
 	private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
 	
