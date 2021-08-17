@@ -245,7 +245,7 @@ class HomeFragment : Fragment() {
 		}
 		
 		val mapString: String = if (mapName != "") {
-			"Map: $mapName"
+			"Map: $mapName\n"
 		} else {
 			""
 		}
