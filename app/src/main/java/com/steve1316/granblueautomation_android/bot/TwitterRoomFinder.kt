@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.StrictMode
 import androidx.preference.PreferenceManager
+import com.steve1316.granblueautomation_android.MainActivity
 import twitter4j.Query
 import twitter4j.Status
 import twitter4j.Twitter
@@ -14,8 +15,7 @@ import twitter4j.conf.ConfigurationBuilder
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
 class TwitterRoomFinder(myContext: Context, game: Game) {
-	private val loggerTAG: String = "GAA"
-	private val TAG: String = "[$loggerTAG]TwitterRoomFinder"
+	private val TAG: String = "${MainActivity.loggerTag}_TwitterRoomFinder"
 	
 	private lateinit var twitter: Twitter
 	

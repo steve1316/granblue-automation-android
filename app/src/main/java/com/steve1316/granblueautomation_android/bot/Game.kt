@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
 class Game(val myContext: Context) {
-	private val TAG: String = "[${MainActivity.loggerTag}]Game"
+	private val TAG: String = "${MainActivity.loggerTag}_Game"
 	
 	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 	

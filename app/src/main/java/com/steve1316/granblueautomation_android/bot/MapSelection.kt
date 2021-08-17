@@ -10,7 +10,7 @@ import java.util.*
  * Provides the utility functions needed for perform navigation for Farming Mode throughout Granblue Fantasy.
  */
 class MapSelection(private val game: Game, private val twitterRoomFinder: TwitterRoomFinder?) {
-	private val TAG: String = "[${MainActivity.loggerTag}]MapSelection"
+	private val TAG: String = "${MainActivity.loggerTag}_MapSelection"
 	
 	private var numberOfRaidsJoined: Int = 0
 	

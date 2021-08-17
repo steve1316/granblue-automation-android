@@ -2,6 +2,7 @@ package com.steve1316.granblueautomation_android.utils
 
 import android.content.Context
 import android.util.Log
+import com.steve1316.granblueautomation_android.MainActivity
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -11,7 +12,7 @@ import java.time.format.DateTimeFormatter
  */
 class MessageLog {
 	companion object {
-		private const val TAG: String = "GAA_MessageLog"
+		private const val TAG: String = "${MainActivity.loggerTag}_MessageLog"
 		var messageLog = arrayListOf<String>()
 		
 		var saveCheck = false

@@ -23,6 +23,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import kotlinx.coroutines.*
 import java.io.File
@@ -37,8 +38,7 @@ import java.util.*
  * added to suit this application's purposes.
  */
 class MediaProjectionService : Service() {
-	private val loggerTag = "GAA"
-	private val TAG: String = "[$loggerTag]MediaProjectionService"
+	private val TAG: String = "${MainActivity.loggerTag}_MediaProjectionService"
 	
 	private lateinit var myContext: Context
 	private var appName = ""
@@ -244,7 +244,7 @@ class MediaProjectionService : Service() {
 	}
 	
 	private inner class OrientationChangeCallback(context: Context) : OrientationEventListener(context) {
-		private val TAG_OrientationChangeCallback: String = "[$loggerTag]_OrientationChangeCallback"
+		private val TAG_OrientationChangeCallback: String = "${MainActivity.loggerTag}_OrientationChangeCallback"
 		
 		override fun onOrientationChanged(orientation: Int) {
 			val newRotation: Int = (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
@@ -271,7 +271,7 @@ class MediaProjectionService : Service() {
 	 * Custom Callback for when it is necessary to stop the MediaProjection.
 	 */
 	private inner class MediaProjectionStopCallback : MediaProjection.Callback() {
-		private val TAG_MediaProjectionStopCallback = "[$loggerTag]_MediaProjectionStopCallback"
+		private val TAG_MediaProjectionStopCallback = "${MainActivity.loggerTag}_MediaProjectionStopCallback"
 		
 		override fun onStop() {
 			threadHandler.post {

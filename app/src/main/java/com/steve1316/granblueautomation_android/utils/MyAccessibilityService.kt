@@ -14,6 +14,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.EditText
 import android.widget.Toast
+import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.data.RoomCodeData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -22,7 +23,7 @@ import kotlinx.coroutines.runBlocking
  * Contains the Accessibility service that will allow the bot to programmatically perform gestures on the screen.
  */
 class MyAccessibilityService : AccessibilityService() {
-	private val TAG: String = "GAA_MyAccessibilityService"
+	private val TAG: String = "${MainActivity.loggerTag}_MyAccessibilityService"
 	private lateinit var myContext: Context
 	
 	companion object {

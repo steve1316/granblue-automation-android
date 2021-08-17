@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.preference.PreferenceManager
+import com.steve1316.granblueautomation_android.MainActivity
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.event.gateway.ReadyEvent
@@ -16,7 +17,7 @@ import java.util.*
  * This class takes care of notifying users of status updates via Discord private DMs.
  */
 class DiscordUtils(myContext: Context) {
-	private val TAG: String = "GAA_DiscordUtils"
+	private val TAG: String = "${MainActivity.loggerTag}_DiscordUtils"
 	
 	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 	private val discordToken: String = sharedPreferences.getString("discordToken", "")!!

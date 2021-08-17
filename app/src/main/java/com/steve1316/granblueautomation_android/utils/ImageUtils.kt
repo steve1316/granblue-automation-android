@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.bot.Game
 import org.opencv.android.Utils
 import org.opencv.core.*
@@ -20,7 +21,7 @@ import java.util.*
  * Utility functions for image processing via CV like OpenCV.
  */
 class ImageUtils(context: Context, private val game: Game) {
-	private val TAG: String = "GAA_ImageUtils"
+	private val TAG: String = "${MainActivity.loggerTag}_ImageUtils"
 	private var myContext = context
 	
 	private val displayWidth: Int = MediaProjectionService.displayWidth
