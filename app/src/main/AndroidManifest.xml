@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.GranblueAutomation_Android"
+        android:theme="@style/Theme.AppTheme"
         tools:ignore="AllowBackup">
 
         <!--Application will automatically download the Machine Learning model to the device after the app is installed.-->
