@@ -38,6 +38,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val missionsForDreadBarrage: Map<String, ArrayList<String>> = MissionData.mapsForDreadBarrage
 	private val missionsForProvingGrounds: Map<String, ArrayList<String>> = MissionData.mapsForProvingGrounds
 	private val missionsForXenoClash: Map<String, ArrayList<String>> = MissionData.mapsForXenoClash
+	private val missionsForArcarum: Map<String, ArrayList<String>> = MissionData.mapsForArcarum
 	
 	private val itemsForQuest: Map<String, ArrayList<String>> = ItemData.itemsForQuest
 	private val itemsForSpecial: Map<String, ArrayList<String>> = ItemData.itemsForSpecial
@@ -50,6 +51,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private val itemsForDreadBarrage: Map<String, ArrayList<String>> = ItemData.itemsForDreadBarrage
 	private val itemsForProvingGrounds: Map<String, ArrayList<String>> = ItemData.itemsForProvingGrounds
 	private val itemsForXenoClash: Map<String, ArrayList<String>> = ItemData.itemsForXenoClash
+	private val itemsForArcarum: Map<String, ArrayList<String>> = ItemData.itemsForArcarum
 	
 	// This listener is triggered whenever the user changes a Preference setting in the Settings Page.
 	private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
@@ -65,7 +67,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						commit()
 					}
 					
-					if (farmingModePicker.value == "Coop") {
+					if (farmingModePicker.value == "Coop" && farmingModePicker.value == "Arcarum") {
 						val summonPicker: Preference = findPreference("summonPicker")!!
 						summonPicker.title = "Select Summon(s)"
 						summonPicker.summary = "Select the Summon(s) in order from highest to lowest priority for Combat Mode."
@@ -193,6 +195,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 					sharedPreferences.edit {
 						putBoolean("enableDiscord", enableDiscordCheckBox.isChecked)
+						commit()
+					}
+				}
+				"enableSkipAutoRestore" -> {
+					val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
+					sharedPreferences.edit {
+						putBoolean("enableSkipAutoRestore", enableSkipAutoRestoreCheckBox.isChecked)
 						commit()
 					}
 				}
@@ -402,12 +411,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
 		val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
 		val autoExitCombatMinutes: Int = sharedPreferences.getInt("autoExitCombatMinutes", 5)
-		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
-		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		val enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
 		val enableRandomizedDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
 		val delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
 		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
+		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
+		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
+		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		
 		// Get references to the Preference components.
 		val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
@@ -418,12 +428,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val partyPicker: ListPreference = findPreference("partyPicker")!!
 		val enableAutoExitCombatPreference: CheckBoxPreference = findPreference("enableAutoExitCombat")!!
 		val autoExitCombatMinutesPreference: SeekBarPreference = findPreference("autoExitCombatMinutes")!!
-		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
-		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 		val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
 		val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
 		val randomizedDelayBetweenRunsSwitch: SwitchPreference = findPreference("randomizedDelayBetweenRunsSwitch")!!
 		val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
+		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
+		val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
+		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 		
 		// Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones enabled to direct user's attention as they go through the settings
 		// down the page.
@@ -435,7 +446,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			farmingModePicker.value = farmingMode
 			
 			// Build the AlertDialog for Summons or disable it if its Coop.
-			if (farmingMode != "Coop") {
+			if (farmingMode != "Coop" && farmingMode != "Arcarum") {
 				createSummonDialog()
 			} else {
 				val summonPicker: Preference = findPreference("summonPicker")!!
@@ -512,6 +523,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		// Misc Settings
 		////////////////////
 		enableDiscordCheckBox.isChecked = enableDiscord
+		enableSkipAutoRestoreCheckBox.isChecked = enableSkipAutoRestore
 		debugModeCheckBox.isChecked = debugMode
 		
 		// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.
@@ -658,6 +670,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					}
 				}
 			}
+			"Arcarum" -> {
+				missionsForArcarum.forEach { (_, value) ->
+					value.forEach {
+						newEntries.add(it)
+					}
+				}
+			}
 		}
 		
 		missionPicker.entries = newEntries.toTypedArray()
@@ -680,7 +699,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				missionsForQuest.forEach { (missionKey, missionValue) ->
 					// Save the Map that the Mission takes place on.
 					if (missionValue.contains(missionName)) {
-						sharedPreferences.edit().apply {
+						sharedPreferences.edit {
 							putString("mapName", missionKey)
 							apply()
 						}
@@ -699,7 +718,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				missionsForSpecial.forEach { (missionKey, missionValue) ->
 					// Save the Map that the Mission takes place on.
 					if (missionValue.contains(missionName)) {
-						sharedPreferences.edit().apply {
+						sharedPreferences.edit {
 							putString("mapName", missionKey)
 							apply()
 						}
@@ -798,6 +817,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			}
 			"Xeno Clash" -> {
 				itemsForXenoClash.forEach { (key, value) ->
+					if (key == missionName) {
+						value.forEach {
+							newEntries.add(it)
+						}
+					}
+				}
+			}
+			"Arcarum" -> {
+				itemsForArcarum.forEach { (key, value) ->
 					if (key == missionName) {
 						value.forEach {
 							newEntries.add(it)

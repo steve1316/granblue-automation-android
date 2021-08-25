@@ -314,5 +314,11 @@ class ItemData {
 			"Xeno Clash Extreme" to arrayListOf("Repeated Runs"),
 			"Xeno Clash Raid" to arrayListOf("Repeated Runs")
 		)
+		
+		val itemsForArcarum = mapOf(
+			"Point Aquila" to arrayListOf("Repeated Runs"),
+			"Point Bellator" to arrayListOf("Repeated Runs"),
+			"Point Celsus" to arrayListOf("Repeated Runs")
+		)
 	}
 }

@@ -130,6 +130,12 @@
             app:title="Enable Discord notifications" />
 
         <CheckBoxPreference
+            app:key="enableSkipAutoRestore"
+            app:summary="Enable skipping checks for AP/EP if you already enabled auto-restoring and enabled hiding the auto-restore notification in-game."
+            android:defaultValue="true"
+            app:title="Enable Skipping AP/EP checks" />
+
+        <CheckBoxPreference
             app:key="debugModeCheckBox"
             app:summary="Allows debugging messages to be shown in the log to reveal diagnostic information and potential errors."
             app:title="Enable Debug Mode" />

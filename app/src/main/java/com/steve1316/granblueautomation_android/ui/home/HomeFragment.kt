@@ -226,15 +226,16 @@ class HomeFragment : Fragment() {
 		val partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
 		val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
 		val autoExitCombatMinutes: Int = sharedPreferences.getInt("autoExitCombatMinutes", 5)
-		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
-		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		val enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
 		val enableRandomizedDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
 		val delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
 		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
+		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
+		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
+		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		
 		startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() && summon[0] != "") ||
-				(farmingMode == "Coop" && summon.isNotEmpty() && summon[0] == "")))
+				((farmingMode == "Coop" || farmingMode == "Arcarum") && summon.isNotEmpty() && summon[0] == "")))
 		
 		if (combatScriptName == "") {
 			combatScriptName = "None selected. Using default Semi/Full Auto script."
@@ -269,6 +270,12 @@ class HomeFragment : Fragment() {
 		}
 		
 		val enableDiscordString: String = if (enableDiscord) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+
+		val enableSkipAutoRestoreString: String = if (enableSkipAutoRestore) {
 			"Enabled"
 		} else {
 			"Disabled"
@@ -318,6 +325,7 @@ class HomeFragment : Fragment() {
 				autoExitCombatString +
 				"---------- Misc Settings ----------\n" +
 				"Discord Notifications: $enableDiscordString\n" +
+				"Enable Skip checks for AP/EP: $enableSkipAutoRestoreString\n" +
 				"Debug Mode: $enableDebugModeString\n" +
 				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
 				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +

@@ -140,5 +140,9 @@ class MissionData {
 			"Xeno Clash Extreme" to arrayListOf("Xeno Clash Extreme"),
 			"Xeno Clash Raid" to arrayListOf("Xeno Clash Raid")
 		)
+		
+		val mapsForArcarum = mapOf(
+			"Arcarum Expeditions" to arrayListOf("Point Aquila", "Point Bellator", "Point Celsus")
+		)
 	}
 }

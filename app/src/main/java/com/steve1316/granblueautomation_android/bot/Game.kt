@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
+import com.steve1316.granblueautomation_android.bot.game_modes.Arcarum
 import com.steve1316.granblueautomation_android.data.SummonData
 import com.steve1316.granblueautomation_android.utils.*
 import kotlinx.coroutines.delay
@@ -28,7 +29,7 @@ class Game(val myContext: Context) {
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	private var twitterRoomFinder: TwitterRoomFinder? = null
 	private lateinit var mapSelection: MapSelection
-	private val combatMode: CombatMode = CombatMode(this, debugMode)
+	val combatMode: CombatMode = CombatMode(this, debugMode)
 	
 	private val startTime: Long = System.currentTimeMillis()
 	
@@ -677,7 +678,7 @@ class Game(val myContext: Context) {
 			}
 		}
 		
-		if (!isPendingBattle && !isEventNightmare) {
+		if (!isPendingBattle && !isEventNightmare && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
 				printToLog("\n********************************************************************************")
 				printToLog("********************************************************************************")
@@ -718,6 +719,31 @@ class Game(val myContext: Context) {
 				}
 				
 				DiscordUtils.queue.add(discordString)
+			}
+		} else if (isPendingBattle && amountGained > 0 && !skipInfo) {
+			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+				printToLog("\n********************************************************************************")
+				printToLog("********************************************************************************")
+				printToLog("[INFO] Farming Mode: $farmingMode")
+				printToLog("[INFO] Mission: $missionName")
+				printToLog("[INFO] Summons: $summonList")
+				printToLog("[INFO] # of $itemName gained from this Pending Battle: $amountGained")
+				printToLog("[INFO] # of $itemName gained in total: $itemAmountFarmed/$itemAmount")
+				printToLog("[INFO] # of runs completed: $amountOfRuns")
+				printToLog("********************************************************************************")
+				printToLog("********************************************************************************")
+				
+				// Construct the message for the Discord private DM.
+				if (amountGained > 0) {
+					val discordString = if (itemAmountFarmed >= itemAmount) {
+						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]** " +
+								":white_check_mark:"
+					} else {
+						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]**"
+					}
+					
+					DiscordUtils.queue.add(discordString)
+				}
 			}
 		}
 	}
@@ -1214,181 +1240,188 @@ class Game(val myContext: Context) {
 		
 		printToLog("\n[INFO] Now selecting the Mission...")
 		
-		if (farmingMode != "Raid") {
-			mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+		if (farmingMode == "Arcarum") {
+			val arcarum = Arcarum(this, missionName, groupNumber, partyNumber, itemAmount, combatScript)
+			arcarum.start()
 		} else {
-			mapSelection.joinRaid(missionName)
-		}
-		
-		// Primary workflow loop for Farming Mode.
-		while (itemAmountFarmed < itemAmount) {
-			// Reset the Summon Selection flag.
-			summonCheckFlag = false
-			
-			// Loop and attempt to select a Summon. Reset Summons if necessary.
-			while (!summonCheckFlag && farmingMode != "Coop") {
-				summonCheckFlag = selectSummon()
-				
-				// If the return came back as false, that means the Summons were reset.
-				if (!summonCheckFlag && farmingMode != "Raid") {
-					printToLog("\n[INFO] Selecting Mission again after resetting Summons.")
-					mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-				} else if (!summonCheckFlag && farmingMode == "Raid") {
-					printToLog("\n[INFO] Joining Raids again after resetting Summons.")
-					mapSelection.joinRaid(missionName)
-				}
+			if (farmingMode != "Raid") {
+				mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+			} else {
+				mapSelection.joinRaid(missionName)
 			}
 			
-			// Perform Party Selection and then start the Mission. If Farming Mode is Coop, skip this as Coop reuses the same Party.
-			if (farmingMode != "Coop" && farmingMode != "Proving Grounds") {
-				startCheckFlag = selectPartyAndStartMission()
-			} else if (farmingMode == "Coop" && coopFirstRun) {
-				startCheckFlag = selectPartyAndStartMission()
-				coopFirstRun = false
+			// Primary workflow loop for Farming Mode.
+			while (itemAmountFarmed < itemAmount) {
+				// Reset the Summon Selection flag.
+				summonCheckFlag = false
 				
-				// Click the "Start" button to start the Coop Mission.
-				findAndClickButton("coop_start")
-			} else if (farmingMode == "Coop" && !coopFirstRun) {
-				printToLog("\n[INFO] Starting Coop Mission again.")
-				startCheckFlag = true
-			} else if (farmingMode == "Proving Grounds") {
-				// Parties are assumed to have already been formed by the player prior to starting. In addition, no need to select a Summon again as it is reused.
-				if (provingGroundsFirstRun) {
-					checkAP()
-					findAndClickButton("ok")
-					provingGroundsFirstRun = false
-				}
-				
-				startCheckFlag = true
-			}
-			
-			if (startCheckFlag && farmingMode != "Raid") {
-				wait(3.0)
-				
-				// Check for "Items Picked Up" popup that appears after starting a Quest Mission.
-				if (farmingMode == "Quest" && imageUtils.confirmLocation("items_picked_up", tries = 1)) {
-					findAndClickButton("ok")
-				}
-				
-				// Finally, start Combat Mode. If it ended successfully, detect loot and do it again if necessary.
-				if (combatMode.startCombatMode(combatScript)) {
-					// If it ended successfully, detect loot and repeat if acquired item amount has not been reached.
-					collectLoot()
+				// Loop and attempt to select a Summon. Reset Summons if necessary.
+				while (!summonCheckFlag && farmingMode != "Coop") {
+					summonCheckFlag = selectSummon()
 					
-					if (itemAmountFarmed < itemAmount) {
-						// Generate a resting period if the user enabled it.
-						delayBetweenRuns()
-						
-						if (farmingMode != "Coop" && farmingMode != "Proving Grounds" && !findAndClickButton("play_again")) {
-							// Clear away any Pending Battles.
-							mapSelection.checkPendingBattles(farmingMode)
-							
-							// Now that Pending Battles have been cleared away, select the Mission again.
-							mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-						} else if (farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
-							// Select the Mission again since Event Quests do not have "Play Again" functionality.
-							mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-						} else if (farmingMode == "Coop") {
-							// Head back to the Coop Room.
-							findAndClickButton("coop_room")
-							
-							wait(1.0)
-							
-							// Check for "Daily Missions" popup for Coop.
-							if (imageUtils.confirmLocation("coop_daily_missions", tries = 1)) {
-								findAndClickButton("close")
-							}
-							
-							wait(1.0)
-							
-							// Now that the bot is back at the Coop Room, check if it is closed due to time running out.
-							if (imageUtils.confirmLocation("coop_room_closed", tries = 1)) {
-								printToLog("\n[INFO] Coop room has closed due to time running out.")
-								break
-							}
-							
-							// Now start the Coop Mission again.
-							findAndClickButton("coop_start")
-							
-							wait(1.0)
-						} else if (farmingMode == "Proving Grounds") {
-							// Tap the "Next Battle" button if there are any battles left.
-							if (findAndClickButton("proving_grounds_next_battle", suppressError = true)) {
-								printToLog("\n[INFO] Moving onto the next battle for Proving Grounds...")
-								
-								// Then tap the "OK" button to play the next battle.
-								findAndClickButton("ok")
-							} else {
-								// Otherwise, all battles for the Mission has been completed. Collect the Completion Rewards at the end.
-								printToLog("\n[INFO] Proving Grounds Mission has been completed.")
-								findAndClickButton("event")
-								
-								wait(2.0)
-								
-								findAndClickButton("proving_grounds_open_chest", tries = 5)
-								
-								if (imageUtils.confirmLocation("proving_grounds_completion_loot")) {
-									printToLog("\n[INFO] Completion rewards has been acquired.")
-									
-									// Reset the First Time flag so the bot can select a Summon and select the Mission again.
-									if (itemAmountFarmed < itemAmount) {
-										printToLog("\\n[INFO] Starting Proving Grounds Mission again...")
-										provingGroundsFirstRun = true
-										findAndClickButton("play_again")
-									}
-								}
-							}
-						}
-						
-						// For every other Farming Mode other than Coop and Proving Grounds, handle all popups and perform AP check until the bot reaches the Summon Selection screen.
-						if (farmingMode != "Proving Grounds") {
-							checkForPopups()
-							
-							if (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
-								checkAP()
-							}
-						}
+					// If the return came back as false, that means the Summons were reset.
+					if (!summonCheckFlag && farmingMode != "Raid") {
+						printToLog("\n[INFO] Selecting Mission again after resetting Summons.")
+						mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+					} else if (!summonCheckFlag && farmingMode == "Raid") {
+						printToLog("\n[INFO] Joining Raids again after resetting Summons.")
+						mapSelection.joinRaid(missionName)
 					}
-				} else {
-					// Restart the Mission if the Party wiped or exited prematurely during Combat Mode.
-					printToLog("\n[INFO] Restarting the Mission due to retreating...")
-					mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 				}
-			} else if (startCheckFlag && farmingMode == "Raid") {
-				// Cover the occasional case where joining the Raid after selecting the Summon and Party led to the Quest Results screen with no loot to collect.
-				if (imageUtils.confirmLocation("no_loot", tries = 1)) {
-					printToLog("\n[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
-					goBackHome(confirmLocationCheck = true)
-				} else {
-					// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
+				
+				// Perform Party Selection and then start the Mission. If Farming Mode is Coop, skip this as Coop reuses the same Party.
+				if (farmingMode != "Coop" && farmingMode != "Proving Grounds") {
+					startCheckFlag = selectPartyAndStartMission()
+				} else if (farmingMode == "Coop" && coopFirstRun) {
+					startCheckFlag = selectPartyAndStartMission()
+					coopFirstRun = false
+					
+					// Click the "Start" button to start the Coop Mission.
+					findAndClickButton("coop_start")
+				} else if (farmingMode == "Coop" && !coopFirstRun) {
+					printToLog("\n[INFO] Starting Coop Mission again.")
+					startCheckFlag = true
+				} else if (farmingMode == "Proving Grounds") {
+					// Parties are assumed to have already been formed by the player prior to starting. In addition, no need to select a Summon again as it is reused.
+					if (provingGroundsFirstRun) {
+						checkAP()
+						findAndClickButton("ok")
+						provingGroundsFirstRun = false
+					}
+					
+					startCheckFlag = true
+				}
+				
+				if (startCheckFlag && farmingMode != "Raid") {
+					wait(3.0)
+					
+					// Check for "Items Picked Up" popup that appears after starting a Quest Mission.
+					if (farmingMode == "Quest" && imageUtils.confirmLocation("items_picked_up", tries = 1)) {
+						findAndClickButton("ok")
+					}
+					
+					// Finally, start Combat Mode. If it ended successfully, detect loot and do it again if necessary.
 					if (combatMode.startCombatMode(combatScript)) {
+						// If it ended successfully, detect loot and repeat if acquired item amount has not been reached.
 						collectLoot()
 						
 						if (itemAmountFarmed < itemAmount) {
 							// Generate a resting period if the user enabled it.
 							delayBetweenRuns()
 							
-							// Clear away any Pending Battles.
-							mapSelection.checkPendingBattles(farmingMode)
+							if (farmingMode != "Coop" && farmingMode != "Proving Grounds" && !findAndClickButton("play_again")) {
+								// Clear away any Pending Battles.
+								mapSelection.checkPendingBattles(farmingMode)
+								
+								// Now that Pending Battles have been cleared away, select the Mission again.
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							} else if (farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
+								// Select the Mission again since Event Quests do not have "Play Again" functionality.
+								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
+							} else if (farmingMode == "Coop") {
+								// Head back to the Coop Room.
+								findAndClickButton("coop_room")
+								
+								wait(1.0)
+								
+								// Check for "Daily Missions" popup for Coop.
+								if (imageUtils.confirmLocation("coop_daily_missions", tries = 1)) {
+									findAndClickButton("close")
+								}
+								
+								wait(1.0)
+								
+								// Now that the bot is back at the Coop Room, check if it is closed due to time running out.
+								if (imageUtils.confirmLocation("coop_room_closed", tries = 1)) {
+									printToLog("\n[INFO] Coop room has closed due to time running out.")
+									break
+								}
+								
+								// Now start the Coop Mission again.
+								findAndClickButton("coop_start")
+								
+								wait(1.0)
+							} else if (farmingMode == "Proving Grounds") {
+								// Tap the "Next Battle" button if there are any battles left.
+								if (findAndClickButton("proving_grounds_next_battle", suppressError = true)) {
+									printToLog("\n[INFO] Moving onto the next battle for Proving Grounds...")
+									
+									// Then tap the "OK" button to play the next battle.
+									findAndClickButton("ok")
+								} else {
+									// Otherwise, all battles for the Mission has been completed. Collect the Completion Rewards at the end.
+									printToLog("\n[INFO] Proving Grounds Mission has been completed.")
+									findAndClickButton("event")
+									
+									wait(2.0)
+									
+									findAndClickButton("proving_grounds_open_chest", tries = 5)
+									
+									if (imageUtils.confirmLocation("proving_grounds_completion_loot")) {
+										printToLog("\n[INFO] Completion rewards has been acquired.")
+										
+										// Reset the First Time flag so the bot can select a Summon and select the Mission again.
+										if (itemAmountFarmed < itemAmount) {
+											printToLog("\\n[INFO] Starting Proving Grounds Mission again...")
+											provingGroundsFirstRun = true
+											findAndClickButton("play_again")
+										}
+									}
+								}
+							}
 							
-							// Now join a new Raid.
-							mapSelection.joinRaid(missionName)
+							// For every other Farming Mode other than Coop and Proving Grounds, handle all popups and perform AP check until the bot reaches the Summon Selection screen.
+							if (farmingMode != "Proving Grounds") {
+								checkForPopups()
+								
+								if (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+									checkAP()
+								}
+							}
 						}
 					} else {
-						delayBetweenRuns()
-						
-						// Join a new Raid.
-						mapSelection.joinRaid(missionName)
+						// Restart the Mission if the Party wiped or exited prematurely during Combat Mode.
+						printToLog("\n[INFO] Restarting the Mission due to retreating...")
+						mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
 					}
+				} else if (startCheckFlag && farmingMode == "Raid") {
+					// Cover the occasional case where joining the Raid after selecting the Summon and Party led to the Quest Results screen with no loot to collect.
+					if (imageUtils.confirmLocation("no_loot", tries = 1)) {
+						printToLog("\n[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
+						mapSelection.joinRaid(missionName)
+					} else {
+						// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
+						if (combatMode.startCombatMode(combatScript)) {
+							collectLoot()
+							
+							if (itemAmountFarmed < itemAmount) {
+								// Generate a resting period if the user enabled it.
+								delayBetweenRuns()
+								
+								// Clear away any Pending Battles.
+								mapSelection.checkPendingBattles(farmingMode)
+								
+								// Now join a new Raid.
+								mapSelection.joinRaid(missionName)
+							}
+						} else {
+							delayBetweenRuns()
+							
+							// Join a new Raid.
+							mapSelection.joinRaid(missionName)
+						}
+					}
+				} else if (!startCheckFlag && farmingMode == "Raid") {
+					// If the bot reaches here, that means that the Raid ended before the bot could start the Mission after selecting the Summon and Party.
+					printToLog("\n[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
+					mapSelection.joinRaid(missionName)
+				} else if (!startCheckFlag) {
+					throw Exception("Failed to arrive at the Summon Selection screen after selecting the Mission.")
 				}
-			} else if (!startCheckFlag && farmingMode == "Raid") {
-				// If the bot reaches here, that means that the Raid ended before the bot could start the Mission after selecting the Summon and Party.
-				printToLog("\n[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
-				mapSelection.joinRaid(missionName)
-			} else if (!startCheckFlag) {
-				throw Exception("Failed to arrive at the Summon Selection screen after selecting the Mission.")
 			}
 		}
+		
+		
 		
 		printToLog("\n********************************************************************************")
 		printToLog("********************************************************************************")
