@@ -74,6 +74,8 @@ class Game(val myContext: Context) {
 	
 	private var coopFirstRun: Boolean = true
 	private var provingGroundsFirstRun: Boolean = true
+	private var enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enabledSkipAutoRestore", true)
+	private var partySelectionFirstRun: Boolean = true
 	
 	/**
 	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
@@ -222,10 +224,8 @@ class Game(val myContext: Context) {
 	/**
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
-	private fun checkForCAPTCHA() {
-		wait(2.0)
-		
-		if (imageUtils.confirmLocation("captcha", tries = 1)) {
+	fun checkForCAPTCHA() {
+		if (imageUtils.confirmLocation("captcha", tries = 2)) {
 			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Stopping the bot now."))
 		} else {
 			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
@@ -403,119 +403,123 @@ class Game(val myContext: Context) {
 	 * @param tries Number of tries to select a Set before failing. Defaults to 3.
 	 * @return True if the mission was successfully started. False otherwise.
 	 */
-	private fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
-		var setLocation: Point? = null
-		var numberOfTries = tries
-		
-		val selectedGroupNumber = if (optionalGroupNumber == 0) {
-			groupNumber
-		} else {
-			optionalGroupNumber
-		}
-		
-		val selectedPartyNumber = if (optionalPartyNumber == 0) {
-			partyNumber
-		} else {
-			optionalPartyNumber
-		}
-		
-		// Search for the location of the "Set" button based on the Group number.
-		while (setLocation == null) {
-			setLocation = if (selectedGroupNumber < 8) {
-				imageUtils.findButton("party_set_a", tries = 1)
+	fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
+		if (partySelectionFirstRun) {
+			var setLocation: Point? = null
+			var numberOfTries = tries
+			
+			val selectedGroupNumber = if (optionalGroupNumber == 0) {
+				groupNumber
 			} else {
-				imageUtils.findButton("party_set_b", tries = 1)
+				optionalGroupNumber
 			}
 			
-			if (setLocation == null) {
-				numberOfTries -= 1
+			val selectedPartyNumber = if (optionalPartyNumber == 0) {
+				partyNumber
+			} else {
+				optionalPartyNumber
+			}
+			
+			// Search for the location of the "Set" button based on the Group number.
+			while (setLocation == null) {
+				setLocation = if (selectedGroupNumber < 8) {
+					imageUtils.findButton("party_set_a", tries = 1)
+				} else {
+					imageUtils.findButton("party_set_b", tries = 1)
+				}
 				
-				if (numberOfTries <= 0) {
-					if (selectedGroupNumber < 8) {
-						throw(Resources.NotFoundException("Could not find Set A."))
+				if (setLocation == null) {
+					numberOfTries -= 1
+					
+					if (numberOfTries <= 0) {
+						if (selectedGroupNumber < 8) {
+							throw(Resources.NotFoundException("Could not find Set A."))
+						} else {
+							throw(Resources.NotFoundException("Could not find Set B."))
+						}
+					}
+					
+					// Switch over and search for the other Set.
+					setLocation = if (selectedGroupNumber < 8) {
+						imageUtils.findButton("party_set_b", tries = 1)
 					} else {
-						throw(Resources.NotFoundException("Could not find Set B."))
+						imageUtils.findButton("party_set_a", tries = 1)
 					}
 				}
-				
-				// Switch over and search for the other Set.
-				setLocation = if (selectedGroupNumber < 8) {
-					imageUtils.findButton("party_set_b", tries = 1)
-				} else {
-					imageUtils.findButton("party_set_a", tries = 1)
-				}
 			}
-		}
-		
-		// Select the Group.
-		var equation: Double = if (!imageUtils.isTablet) {
-			if (selectedGroupNumber == 1) {
-				787.0
-			} else {
-				787.0 - (140 * (selectedGroupNumber - 1))
-			}
-		} else {
-			if (!imageUtils.isLandscape) {
+			
+			// Select the Group.
+			var equation: Double = if (!imageUtils.isTablet) {
 				if (selectedGroupNumber == 1) {
-					588.0
+					787.0
 				} else {
-					588.0 - (100 * (selectedGroupNumber - 1))
+					787.0 - (140 * (selectedGroupNumber - 1))
 				}
 			} else {
-				if (selectedGroupNumber == 1) {
-					467.0
+				if (!imageUtils.isLandscape) {
+					if (selectedGroupNumber == 1) {
+						588.0
+					} else {
+						588.0 - (100 * (selectedGroupNumber - 1))
+					}
 				} else {
-					467.0 - (80 * (selectedGroupNumber - 1))
+					if (selectedGroupNumber == 1) {
+						467.0
+					} else {
+						467.0 - (80 * (selectedGroupNumber - 1))
+					}
 				}
 			}
-		}
-		
-		if (!imageUtils.isTablet) {
-			gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
-		} else {
-			if (!imageUtils.isLandscape) {
-				gestureUtils.tap(setLocation.x - equation, setLocation.y + 90.0, "template_group")
+			
+			if (!imageUtils.isTablet) {
+				gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
 			} else {
-				gestureUtils.tap(setLocation.x - equation, setLocation.y + 70.0, "template_group")
+				if (!imageUtils.isLandscape) {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 90.0, "template_group")
+				} else {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 70.0, "template_group")
+				}
 			}
-		}
-		
-		wait(1.0)
-		
-		// Select the Party.
-		equation = if (!imageUtils.isTablet) {
-			if (selectedPartyNumber == 1) {
-				690.0
-			} else {
-				690.0 - (130 * (selectedPartyNumber - 1))
-			}
-		} else {
-			if (!imageUtils.isLandscape) {
+			
+			wait(1.0)
+			
+			// Select the Party.
+			equation = if (!imageUtils.isTablet) {
 				if (selectedPartyNumber == 1) {
-					516.0
+					690.0
 				} else {
-					516.0 - (100 * (selectedPartyNumber - 1))
+					690.0 - (130 * (selectedPartyNumber - 1))
 				}
 			} else {
-				if (selectedPartyNumber == 1) {
-					408.0
+				if (!imageUtils.isLandscape) {
+					if (selectedPartyNumber == 1) {
+						516.0
+					} else {
+						516.0 - (100 * (selectedPartyNumber - 1))
+					}
 				} else {
-					408.0 - (75 * (selectedPartyNumber - 1))
+					if (selectedPartyNumber == 1) {
+						408.0
+					} else {
+						408.0 - (75 * (selectedPartyNumber - 1))
+					}
 				}
 			}
-		}
-		
-		if (!imageUtils.isTablet) {
-			gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
-		} else {
-			if (!imageUtils.isLandscape) {
-				gestureUtils.tap(setLocation.x - equation, setLocation.y + 540.0, "template_party")
+			
+			if (!imageUtils.isTablet) {
+				gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
 			} else {
-				gestureUtils.tap(setLocation.x - equation, setLocation.y + 425.0, "template_party")
+				if (!imageUtils.isLandscape) {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 540.0, "template_party")
+				} else {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 425.0, "template_party")
+				}
 			}
+			
+			wait(1.0)
+			
+			partySelectionFirstRun = false
 		}
-		
-		wait(1.0)
 		
 		printToLog("[SUCCESS] Selected Group and Party successfully.")
 		
@@ -540,41 +544,45 @@ class Game(val myContext: Context) {
 	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
 	fun checkAP(useFullElixir: Boolean = false, tries: Int = 3) {
-		var numberOfTries = tries
-		
-		wait(2.0)
-		
-		if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1) && !imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
-			while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
-				(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
-				if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
-					val useLocations = imageUtils.findAll("use")
-					if (!useFullElixir) {
-						printToLog("[INFO] AP ran out! Using Half Elixir...")
-						gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
-					} else {
-						printToLog("[INFO] AP ran out! Using Full Elixir...")
-						gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
-					}
-					
-					wait(1.0)
-					
-					// Press the "OK" button to confirm the item usage.
-					findAndClickButton("ok")
-				} else if (farmingMode == "Coop" && !coopFirstRun && imageUtils.findButton("attack") != null) {
-					break
-				} else {
-					numberOfTries -= 1
-					if (numberOfTries <= 0) {
+		if (!enableSkipAutoRestore) {
+			var numberOfTries = tries
+			
+			wait(2.0)
+			
+			if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1) && !imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
+				while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
+					(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
+					if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+						val useLocations = imageUtils.findAll("use")
+						if (!useFullElixir) {
+							printToLog("[INFO] AP ran out! Using Half Elixir...")
+							gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
+						} else {
+							printToLog("[INFO] AP ran out! Using Full Elixir...")
+							gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
+						}
+						
+						wait(1.0)
+						
+						// Press the "OK" button to confirm the item usage.
+						findAndClickButton("ok")
+					} else if (farmingMode == "Coop" && !coopFirstRun && imageUtils.findButton("attack") != null) {
 						break
+					} else {
+						numberOfTries -= 1
+						if (numberOfTries <= 0) {
+							break
+						}
 					}
 				}
+			} else {
+				findAndClickButton("ok")
 			}
-		} else {
-			findAndClickButton("ok")
+			
+			printToLog("[INFO] AP is available.")
 		}
 		
-		printToLog("[INFO] AP is available.")
+		printToLog("[INFO] AP was auto-restored.")
 	}
 	
 	/**
@@ -584,38 +592,42 @@ class Game(val myContext: Context) {
 	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
 	fun checkEP(useSoulBalm: Boolean = false, tries: Int = 3) {
-		var numberOfTries = tries
-		
-		wait(2.0)
-		
-		if (!imageUtils.confirmLocation("auto_ep_recovered", tries = 1)) {
-			while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
-				if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
-					val useLocations = imageUtils.findAll("use")
-					if (!useSoulBalm) {
-						printToLog("[INFO] EP ran out! Using Soul Berry...")
-						gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
-					} else {
-						printToLog("[INFO] EP ran out! Using Soul Balm...")
-						gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
+		if (!enableSkipAutoRestore) {
+			var numberOfTries = tries
+			
+			wait(2.0)
+			
+			if (!imageUtils.confirmLocation("auto_ep_recovered", tries = 1)) {
+				while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+					if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
+						val useLocations = imageUtils.findAll("use")
+						if (!useSoulBalm) {
+							printToLog("[INFO] EP ran out! Using Soul Berry...")
+							gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
+						} else {
+							printToLog("[INFO] EP ran out! Using Soul Balm...")
+							gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
+						}
+						
+						wait(1.0)
+						
+						// Press the "OK" button to confirm the item usage.
+						findAndClickButton("ok")
 					}
 					
-					wait(1.0)
-					
-					// Press the "OK" button to confirm the item usage.
-					findAndClickButton("ok")
+					numberOfTries -= 1
+					if (numberOfTries <= 0) {
+						break
+					}
 				}
-				
-				numberOfTries -= 1
-				if (numberOfTries <= 0) {
-					break
-				}
+			} else {
+				findAndClickButton("ok")
 			}
-		} else {
-			findAndClickButton("ok")
+			
+			printToLog("[INFO] EP is available.")
 		}
 		
-		printToLog("[INFO] EP is available.")
+		printToLog("[INFO] EP was auto-restored.")
 	}
 	
 	/**
@@ -623,8 +635,9 @@ class Game(val myContext: Context) {
 	 *
 	 * @param isPendingBattle Skip the incrementation of runs attempted if this was a Pending Battle. Defaults to false.
 	 * @param isEventNightmare Skip the incrementation of runs attempted if this was a Event Nightmare. Defaults to false.
+	 * @param skipInfo Skip printing the information of the run. Defaults to False.
 	 */
-	fun collectLoot(isPendingBattle: Boolean = false, isEventNightmare: Boolean = false) {
+	fun collectLoot(isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false) {
 		var amountGained = 0
 		
 		// Close all popups until the bot reaches the Loot Collected screen.

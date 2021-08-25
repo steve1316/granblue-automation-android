@@ -36,6 +36,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	
 	private var debugMode: Boolean = false
 	
+	// Used for skipping selecting the Summon Element every time on repeated runs.
+	private var summonSelectionFirstRun: Boolean = true
+	private var summonSelectionSameElement: Boolean = true
+	
 	companion object {
 		private var matchFilePath: String = ""
 		private lateinit var matchLocation: Point
@@ -545,17 +549,40 @@ class ImageUtils(context: Context, private val game: Game) {
 			game.printToLog("[DEBUG] Received the following list of Summon Elements: $summonElementList", MESSAGE_TAG = TAG)
 		}
 		
+		var lastSummonElement = ""
 		var summonIndex = 0
 		var summonLocation: Point? = null
 		
-		while (summonLocation == null && summonIndex <= summonList.size) {
-			game.printToLog("[INFO] Now attempting to find ${summonList[summonIndex]}", MESSAGE_TAG = TAG)
+		// Make sure that the bot is at the Summon Selection screen.
+		var tries = 3
+		while (!confirmLocation("select_a_summon")) {
+			game.findAndClickButton("reload")
+			tries -= 1
+			if (tries <= 0 && !confirmLocation("select_a_summon", tries = 1)) {
+				throw(Exception("Could not reach the Summon Selection screen."))
+			}
+		}
+		
+		// Determine if all the summon elements are the same or not. This will influence whether or not the bot needs to change elements in repeated runs.
+		for (element in summonElementList) {
+			if (element != summonElementList[0]) {
+				summonSelectionSameElement = false
+			}
+		}
+		
+		while (summonLocation == null) {
+			if (summonSelectionFirstRun || !summonSelectionSameElement) {
+				val currentSummonElement = summonElementList[summonIndex]
+				if (currentSummonElement != lastSummonElement) {
+					game.findAndClickButton("summon_$currentSummonElement")
+					lastSummonElement = currentSummonElement
+				}
+				
+				summonSelectionFirstRun = false
+			}
 			
-			// Select the Summon Element.
-			val currentSummonElement = summonElementList[summonIndex]
-			game.findAndClickButton("summon_$currentSummonElement")
-			
-			while (summonLocation == null && summonIndex <= summonList.size) {
+			summonIndex = 0
+			while (summonIndex <= summonList.size) {
 				// Go through each Summon detected on the Summon Selection screen and see if they match with the selected Summon.
 				val summonName = summonList[summonIndex]
 				val (sourceBitmap, templateBitmap) = getBitmaps(summonName, folderName)
@@ -564,7 +591,13 @@ class ImageUtils(context: Context, private val game: Game) {
 					summonLocation = matchLocation
 					break
 				} else {
-					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon. Trying again...")
+					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon.")
+					
+					if (summonIndex + 1 >= summonList.size) {
+						break
+					} else {
+						summonIndex += 1
+					}
 					
 					// If it reached the bottom of the Summon Selection page, scroll all the way back up.
 					if (findButton("bottom_of_summon_selection", tries = 1) != null) {
@@ -575,14 +608,6 @@ class ImageUtils(context: Context, private val game: Game) {
 					game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
 					game.wait(1.0)
 				}
-			}
-			
-			if (summonLocation == null && (summonIndex + 1) > summonList.size) {
-				if (!suppressError) {
-					game.printToLog("[WARNING] Failed to find any of the specified Summons.", MESSAGE_TAG = TAG)
-				}
-				
-				return null
 			}
 		}
 		
