@@ -3,7 +3,6 @@
     <option name="RIGHT_MARGIN" value="150" />
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
     <JetCodeStyleSettings>
-      <option name="IF_RPAREN_ON_NEW_LINE" value="false" />
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
     <codeStyleSettings language="XML">
@@ -121,15 +120,6 @@
     </codeStyleSettings>
     <codeStyleSettings language="kotlin">
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
-      <option name="RIGHT_MARGIN" value="200" />
-      <option name="CALL_PARAMETERS_WRAP" value="0" />
-      <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="false" />
-      <option name="METHOD_CALL_CHAIN_WRAP" value="5" />
-      <indentOptions>
-        <option name="USE_TAB_CHARACTER" value="true" />
-        <option name="SMART_TABS" value="true" />
-        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
-      </indentOptions>
     </codeStyleSettings>
   </code_scheme>
 </component>
