@@ -567,15 +567,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon. Trying again...")
 					
 					// If it reached the bottom of the Summon Selection page, scroll all the way back up.
-					if ((game.farmingMode == "Proving Grounds" && findButton("bottom_of_proving_grounds_summon_selection", tries = 1) != null) ||
-						findButton("bottom_of_summon_selection", tries = 1) != null || findButton("bottom_of_event_summon_selection", tries = 1) != null) {
-						game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
-						game.wait(0.5)
-						game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
-						game.wait(0.5)
-						game.gestureUtils.scroll(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
-						summonIndex += 1
-						break
+					if (findButton("bottom_of_summon_selection", tries = 1) != null) {
+						game.printToLog("[WARNING] Bot has reached the bottom of the page and found no suitable Summons. Resetting Summons now...", MESSAGE_TAG = TAG)
+						return null
 					}
 					
 					game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
