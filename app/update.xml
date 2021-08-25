@@ -1,18 +1,19 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.3.2</latestVersion>
+    <latestVersion>2.4.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.3.2 - Changelog
+v2.4.0 - Changelog
 
 New
 ---
-- Added a new command, "back", to facilitate faster slime farming.
+- Added support for Arcarum farming (no Replicard support).
 
-Fixes
+Changed
 ---
-- Fixed bug where the flag for auto exiting Semi/Full Auto was always turned on.
-- Fixed bug where targeting characters was not accurate.
+- Generalized detection of bottom of Summon Selection page.
+- Implemented various time-saving logic from Python version for Party and Summon selection.
+- Adjusted logic of swiping the screen to generate new images for ImageReader.
     </releaseNotes>
   </update>
 </AppUpdater>
