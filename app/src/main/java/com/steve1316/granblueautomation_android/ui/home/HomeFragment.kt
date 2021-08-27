@@ -19,21 +19,26 @@ import android.widget.TextView
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.beust.klaxon.JsonReader
 import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.UpdateFrom
 import com.sksamuel.hoplite.ConfigLoader
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
+import com.steve1316.granblueautomation_android.data.ItemData
+import com.steve1316.granblueautomation_android.data.MissionData
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
 import com.steve1316.granblueautomation_android.utils.MessageLog
 import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
 import java.io.File
+import java.io.StringReader
 
 class HomeFragment : Fragment() {
 	private val TAG: String = "${MainActivity.loggerTag}_HomeFragment"
 	private val SCREENSHOT_PERMISSION_REQUEST_CODE: Int = 100
 	private var firstBoot = false
+	private var firstRun = true
 	
 	private lateinit var myContext: Context
 	private lateinit var homeFragmentView: View
@@ -274,7 +279,7 @@ class HomeFragment : Fragment() {
 		} else {
 			"Disabled"
 		}
-
+		
 		val enableSkipAutoRestoreString: String = if (enableSkipAutoRestore) {
 			"Enabled"
 		} else {
@@ -330,6 +335,12 @@ class HomeFragment : Fragment() {
 				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
 				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +
 				delayString
+		
+		// Now construct the data files if this is the first time.
+		if (firstRun) {
+			constructDataClasses()
+			firstRun = false
+		}
 		
 		return homeFragmentView
 	}
@@ -468,5 +479,51 @@ class HomeFragment : Fragment() {
 		}
 		
 		return false
+	}
+	
+	/**
+	 * Construct the data classes associated with the provided JSON data files.
+	 */
+	private fun constructDataClasses() {
+		// Construct the data class for items and missions.
+		val fileList = arrayListOf("items.json", "missions.json")
+		while (fileList.size > 0) {
+			val fileName = fileList[0]
+			fileList.removeAt(0)
+			val objectString = myContext.assets.open("data/$fileName").bufferedReader().use { it.readText() }
+			
+			JsonReader(StringReader(objectString)).use { reader ->
+				reader.beginObject {
+					while (reader.hasNext()) {
+						// Grab the name.
+						val name = reader.nextName()
+						
+						val contents = mutableMapOf<String, ArrayList<String>>()
+						reader.beginObject {
+							while (reader.hasNext()) {
+								// Grab the event name.
+								val eventName = reader.nextName()
+								contents.putIfAbsent(eventName, arrayListOf())
+								
+								reader.beginArray {
+									// Grab all of the event option rewards for this event and add them to the map.
+									while (reader.hasNext()) {
+										val optionReward = reader.nextString()
+										contents[eventName]?.add(optionReward)
+									}
+								}
+							}
+						}
+						
+						// Finally, put into the MutableMap the key value pair depending on the current category.
+						if (fileName == "items.json") {
+							ItemData.items[name] = contents
+						} else {
+							MissionData.missions[name] = contents
+						}
+					}
+				}
+			}
+		}
 	}
 }

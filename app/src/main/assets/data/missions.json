@@ -1,0 +1,367 @@
+{
+  "Quest": {
+    "Port Breeze Archipelago": [
+      "Scattered Cargo"
+    ],
+    "Valtz Duchy": [
+      "Lucky Charm Hunt",
+      "Special Op's Request"
+    ],
+    "Auguste Isles": [
+      "Threat to the Fisheries"
+    ],
+    "Lumacie Archipelago": [
+      "The Fruit of Lumacie",
+      "Whiff of Danger"
+    ],
+    "Albion Citadel": [
+      "I Challenge You!"
+    ],
+    "Mist-Shrouded Isle": [
+      "For Whom the Bell Tolls"
+    ],
+    "Golonzo Island": [
+      "Golonzo's Battles of Old"
+    ],
+    "Amalthea Island": [
+      "The Dungeon Diet"
+    ],
+    "Former Capital Mephorash": [
+      "Trust Busting Dustup",
+      "Erste Kingdom Episode 4"
+    ],
+    "Agastia": [
+      "Imperial Wanderer's Soul"
+    ]
+  },
+  "Special": {
+    "Basic Treasure Quests": [
+      "N Scarlet Trial",
+      "H Scarlet Trial",
+      "VH Scarlet Trial",
+      "N Cerulean Trial",
+      "H Cerulean Trial",
+      "VH Cerulean Trial",
+      "N Violet Trial",
+      "H Violet Trial",
+      "VH Violet Trial"
+    ],
+    "Shiny Slime Search!": [
+      "N Shiny Slime Search!",
+      "H Shiny Slime Search!",
+      "VH Shiny Slime Search!"
+    ],
+    "Six Dragon Trial": [
+      "N Six Dragon Trial",
+      "H Six Dragon Trial",
+      "VH Six Dragon Trial"
+    ],
+    "Elemental Treasure Quests": [
+      "The Hellfire Trial",
+      "The Deluge Trial",
+      "The Wasteland Trial",
+      "The Typhoon Trial"
+    ],
+    "Showdowns": [
+      "EX Ifrit Showdown",
+      "EX Cocytus Showdown",
+      "EX Vohu Manah Showdown",
+      "EX Sagittarius Showdown",
+      "EX Corow Showdown",
+      "EX Diablo Showdown"
+    ],
+    "Angel Halo": [
+      "N Angel Halo",
+      "H Angel Halo",
+      "VH Angel Halo"
+    ],
+    "Campaign-Exclusive Quest": [
+      "Campaign-Exclusive Quest"
+    ]
+  },
+  "Raid": {
+    "Tiamat Omega": [
+      "Lvl 50 Tiamat Omega",
+      "Lvl 100 Tiamat Omega Ayr"
+    ],
+    "Colossus Omega": [
+      "Lvl 70 Colossus Omega",
+      "Lvl 100 Colossus Omega"
+    ],
+    "Leviathan Omega": [
+      "Lvl 60 Leviathan Omega",
+      "Lvl 100 Leviathan Omega"
+    ],
+    "Yggdrasil Omega": [
+      "Lvl 60 Yggdrasil Omega",
+      "Lvl 100 Yggdrasil Omega"
+    ],
+    "Luminiera Omega": [
+      "Lvl 75 Luminiera Omega",
+      "Lvl 100 Luminiera Omega"
+    ],
+    "Celeste Omega": [
+      "Lvl 75 Celeste Omega",
+      "Lvl 100 Celeste Omega"
+    ],
+    "Shiva": [
+      "Lvl 120 Shiva"
+    ],
+    "Europa": [
+      "Lvl 120 Europa"
+    ],
+    "Godsworn Alexiel": [
+      "Lvl 120 Godsworn Alexiel"
+    ],
+    "Grimnir": [
+      "Lvl 120 Grimnir"
+    ],
+    "Metatron": [
+      "Lvl 120 Metatron"
+    ],
+    "Avatar": [
+      "Lvl 120 Avatar"
+    ],
+    "Michael": [
+      "Lvl 100 Michael"
+    ],
+    "Gabriel": [
+      "Lvl 100 Gabriel"
+    ],
+    "Uriel": [
+      "Lvl 100 Uriel"
+    ],
+    "Raphael": [
+      "Lvl 100 Raphael"
+    ],
+    "The Four Primarchs": [
+      "The Four Primarchs"
+    ],
+    "Grand Order": [
+      "Lvl 100 Grand Order",
+      "Lvl 200 Grand Order"
+    ],
+    "Proto Bahamut": [
+      "Lvl 100 Proto Bahamut",
+      "Lvl 150 Proto Bahamut"
+    ],
+    "Ultimate Bahamut": [
+      "Lvl 150 Ultimate Bahamut",
+      "Lvl 200 Ultimate Bahamut"
+    ],
+    "Rose Queen": [
+      "Lvl 110 Rose Queen"
+    ],
+    "Akasha": [
+      "Lvl 200 Akasha"
+    ],
+    "Lucilius": [
+      "Lvl 150 Lucilius"
+    ],
+    "Lindwurm": [
+      "Lvl 200 Lindwurm"
+    ],
+    "Huanglong & Qilin": [
+      "Huanglong & Qilin (Impossible)"
+    ],
+    "Twin Elements": [
+      "Lvl 100 Twin Elements",
+      "Lvl 120 Twin Elements"
+    ],
+    "Macula Marius": [
+      "Lvl 100 Macula Marius",
+      "Lvl 120 Macula Marius"
+    ],
+    "Medusa": [
+      "Lvl 100 Medusa",
+      "Lvl 120 Medusa"
+    ],
+    "Nezha": [
+      "Lvl 100 Nezha",
+      "Lvl 120 Nezha"
+    ],
+    "Apollo": [
+      "Lvl 100 Apollo",
+      "Lvl 120 Apollo"
+    ],
+    "Dark Angel Olivia": [
+      "Lvl 100 Dark Angel Olivia",
+      "Lvl 120 Dark Angel Olivia"
+    ],
+    "Athena": [
+      "Lvl 100 Athena"
+    ],
+    "Grani": [
+      "Lvl 100 Grani"
+    ],
+    "Baal": [
+      "Lvl 100 Baal"
+    ],
+    "Garuda": [
+      "Lvl 100 Garuda"
+    ],
+    "Odin": [
+      "Lvl 100 Odin"
+    ],
+    "Lich": [
+      "Lvl 100 Lich"
+    ],
+    "Prometheus": [
+      "Lvl 120 Prometheus"
+    ],
+    "Ca Ong": [
+      "Lvl 120 Ca Ong"
+    ],
+    "Gilgamesh": [
+      "Lvl 120 Gilgamesh"
+    ],
+    "Morrigna": [
+      "Lvl 120 Morrigna"
+    ],
+    "Hector": [
+      "Lvl 120 Hector"
+    ],
+    "Anubis": [
+      "Lvl 120 Anubis"
+    ],
+    "Tiamat Malice": [
+      "Lvl 150 Tiamat Malice"
+    ],
+    "Leviathan Malice": [
+      "Lvl 150 Leviathan Malice"
+    ],
+    "Phronesis": [
+      "Lvl 150 Phronesis"
+    ],
+    "Luminiera Malice": [
+      "Lvl 150 Luminiera Malice"
+    ],
+    "Wilnas": [
+      "Lvl 200 Wilnas"
+    ],
+    "Wamdus": [
+      "Lvl 200 Wamdus"
+    ],
+    "Galleon": [
+      "Lvl 200 Galleon"
+    ],
+    "Ewiyar": [
+      "Lvl 200 Ewiyar"
+    ],
+    "Lu Woh": [
+      "Lvl 200 Lu Woh"
+    ],
+    "Fediel": [
+      "Lvl 200 Fediel"
+    ],
+    "Xeno Ifrit": [
+      "Lvl 100 Xeno Ifrit"
+    ],
+    "Xeno Cocytus": [
+      "Lvl 100 Xeno Cocytus"
+    ],
+    "Xeno Vohu Manah": [
+      "Lvl 100 Xeno Vohu Manah"
+    ],
+    "Xeno Sagittarius": [
+      "Lvl 100 Xeno Sagittarius"
+    ],
+    "Xeno Corow": [
+      "Lvl 100 Xeno Corow"
+    ],
+    "Xeno Diablo": [
+      "Lvl 100 Xeno Diablo"
+    ],
+    "Shenxian": [
+      "Lvl 100 Shenxian"
+    ],
+    "Agni": [
+      "Lvl 90 Agni"
+    ],
+    "Neptune": [
+      "Lvl 90 Neptune"
+    ],
+    "Titan": [
+      "Lvl 90 Titan"
+    ],
+    "Zephyrus": [
+      "Lvl 90 Zephyrus"
+    ]
+  },
+  "Event": {
+    "Event Quest": [
+      "EX Event Quest"
+    ],
+    "Event Raid": [
+      "VH Event Raid",
+      "EX Event Raid"
+    ]
+  },
+  "Event (Token Drawboxes)": {
+    "Event Quest": [
+      "EX Event Quest"
+    ],
+    "Event Raid": [
+      "VH Event Raid",
+      "EX Event Raid",
+      "IM Event Raid"
+    ]
+  },
+  "Rise of the Beasts": {
+    "Event Quest": [
+      "VH Zhuque",
+      "VH Xuanwu",
+      "VH Baihu",
+      "VH Qinglong"
+    ],
+    "Event Raid": [
+      "EX Zhuque",
+      "EX Xuanwu",
+      "EX Baihu",
+      "EX Qinglong",
+      "Lvl 100 Shenxian"
+    ]
+  },
+  "Guild Wars": {
+    "Nightmare": [
+      "NM90",
+      "NM95",
+      "NM100",
+      "NM150"
+    ],
+    "Meat": [
+      "Extreme",
+      "Extreme+"
+    ]
+  },
+  "Dread Barrage": {
+    "Dread Barrage Raid": [
+      "1 Star",
+      "2 Star",
+      "3 Star",
+      "4 Star",
+      "5 Star"
+    ]
+  },
+  "Proving Grounds": {
+    "Proving Ground Missions": [
+      "Extreme",
+      "Extreme+"
+    ]
+  },
+  "Xeno Clash": {
+    "Xeno Clash Extreme": [
+      "Xeno Clash Extreme"
+    ],
+    "Xeno Clash Raid": [
+      "Xeno Clash Raid"
+    ]
+  },
+  "Arcarum": {
+    "Arcarum Expeditions": [
+      "Point Aquila",
+      "Point Bellator",
+      "Point Celsus"
+    ]
+  }
+}
