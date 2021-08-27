@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -428,8 +427,8 @@ class ImageUtils(context: Context, private val game: Game) {
 			sourceBitmap = MediaProjectionService.takeScreenshotNow()
 			
 			if (sourceBitmap == null) {
-				game.gestureUtils.swipe(500f, 1500f, 500f, 1400f, 500L)
-				game.gestureUtils.swipe(500f, 1400f, 500f, 1500f, 500L)
+				game.gestureUtils.swipe(500f, 1500f, 500f, 1470f, 100L)
+				game.gestureUtils.swipe(500f, 1470f, 500f, 1500f, 100L)
 				game.wait(0.5)
 			}
 		}
