@@ -778,6 +778,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		// Reset the Retreat, Semi Auto, and Full Auto flags.
 		retreatCheckFlag = false
+		expGainedLocationCheck = false
 		var semiAutoCheckFlag = false
 		var fullAutoCheckFlag = false
 		
