@@ -241,6 +241,13 @@ class MyAccessibilityService : AccessibilityService() {
 		
 		if (!dispatchResult) {
 			Log.e(TAG, "Failed to dispatch scroll gesture.")
+		} else {
+			val direction: String = if (scrollDown) {
+				"down"
+			} else {
+				"up"
+			}
+			Log.d(TAG, "Scrolling $direction.")
 		}
 		
 		return dispatchResult
