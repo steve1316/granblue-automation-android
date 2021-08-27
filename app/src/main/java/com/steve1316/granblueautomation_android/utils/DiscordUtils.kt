@@ -29,7 +29,9 @@ class DiscordUtils(myContext: Context) {
 		lateinit var client: Kord
 		
 		suspend fun disconnectClient() {
-			client.logout()
+			if (this::client.isInitialized) {
+				client.logout()
+			}
 		}
 	}
 	
