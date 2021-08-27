@@ -86,4 +86,7 @@ dependencies {
 
     // Kord for Discord integration.
     implementation("dev.kord:kord-core:0.7.4")
+
+    // Klaxon to parse JSON data files.
+    implementation 'com.beust:klaxon:5.5'
 }
