@@ -16,38 +16,46 @@ class Arcarum(
 ) {
 	private val TAG: String = "${MainActivity.loggerTag}_Arcarum"
 	
+	private var firstRun: Boolean = true
+	
 	/**
 	 * Navigates to the specified Arcarum expedition.
 	 *
 	 * @return True if the bot was able to start/resume the expedition. False otherwise.
 	 */
 	private fun navigate(): Boolean {
-		game.printToLog("\n[ARCARUM] Now beginning navigation to $map.", MESSAGE_TAG = TAG)
-		game.goBackHome()
-		game.wait(1.0)
-		
-		// Scroll up in case of the rare cases where refreshing the page lead to being loaded in on the bottom of the Home page.
-		val tempFix: Boolean = game.imageUtils.findButton("home_menu", tries = 1) == null
-		
-		// Navigate to the Arcarum banner.
-		var tries = 5
-		while (tries > 0) {
-			if (!game.findAndClickButton("arcarum_banner", tries = 1)) {
-				if (tempFix) {
-					game.gestureUtils.scroll(scrollDown = false)
+		if (firstRun) {
+			game.printToLog("\n[ARCARUM] Now beginning navigation to $map.", MESSAGE_TAG = TAG)
+			game.goBackHome()
+			game.wait(2.0)
+			
+			// Scroll up in case of the rare cases where refreshing the page lead to being loaded in on the bottom of the Home page.
+			val tempFix: Boolean = game.imageUtils.findButton("home_menu", tries = 1) == null
+			
+			// Navigate to the Arcarum banner.
+			var tries = 5
+			while (tries > 0) {
+				if (!game.findAndClickButton("arcarum_banner", tries = 1)) {
+					if (tempFix) {
+						game.gestureUtils.scroll(scrollDown = false)
+					} else {
+						game.gestureUtils.scroll()
+					}
+					
+					game.wait(1.0)
+					
+					tries -= 1
+					if (tries <= 0) {
+						throw(IllegalStateException("Failed to navigate to Arcarum from the Home screen."))
+					}
 				} else {
-					game.gestureUtils.scroll()
+					break
 				}
-				
-				game.wait(1.0)
-				
-				tries -= 1
-				if (tries <= 0) {
-					throw(IllegalStateException("Failed to navigate to Arcarum from the Home screen."))
-				}
-			} else {
-				break
 			}
+			
+			firstRun = false
+		} else {
+			game.wait(4.0)
 		}
 		
 		// Now make sure that the Extreme difficulty is selected.
