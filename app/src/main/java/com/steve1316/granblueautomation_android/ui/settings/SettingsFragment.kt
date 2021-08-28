@@ -697,12 +697,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				} else {
 					// Display the list of ordered summons and display the Group/Party Preference pickers as well.
 					summonPicker.summary = "${values.toList()}"
-					
-					sharedPreferences.edit {
-						putInt("groupNumber", 1)
-						putInt("partyNumber", 1)
-						apply()
-					}
 				}
 			}
 			
