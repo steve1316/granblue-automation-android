@@ -1371,7 +1371,7 @@ class Game(val myContext: Context) {
 							}
 							
 							// For every other Farming Mode other than Coop and Proving Grounds, handle all popups and perform AP check until the bot reaches the Summon Selection screen.
-							if (farmingMode != "Proving Grounds") {
+							if (farmingMode != "Proving Grounds" && farmingMode != "Coop") {
 								checkForPopups()
 								
 								if (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
