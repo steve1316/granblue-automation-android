@@ -126,18 +126,22 @@ class Arcarum(
 				}
 			}
 			
+			// Clear any detected Treasure popup after claiming a chest.
+			game.printToLog("[ARCARUM] No action found for the current node. Looking for Treasure popup...")
 			if (game.imageUtils.confirmLocation("arcarum_treasure", tries = 1)) {
 				game.findAndClickButton("ok")
 				return "Claimed Treasure"
 			}
 			
 			// Next, determine if there is a available node to move to. Any bound monsters should have been destroyed by now.
+			game.printToLog("[ARCARUM] No Treasure popup detected. Looking for an available node to move to...")
 			if (game.findAndClickButton("arcarum_node", tries = 1)) {
 				game.wait(1.0)
 				return "Navigating"
 			}
 			
 			// If all else fails, attempt to navigate to a node that is occupied by mob(s).
+			game.printToLog("[ARCARUM] No available node to move to. Looking for nodes with mobs on them...")
 			if (game.findAndClickButton("arcarum_mob", tries = 1) || game.findAndClickButton("arcarum_red_mob", tries = 1)) {
 				game.wait(1.0)
 				return "Navigating"
@@ -153,6 +157,7 @@ class Arcarum(
 			tries -= 1
 		}
 		
+		game.printToLog("[ARCARUM] No action can be taken. Defaulting to moving to the next area.")
 		return "Next Area"
 	}
 	
