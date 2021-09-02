@@ -754,8 +754,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
 		if (game.farmingMode == "Raid" || eventRaids.contains(game.missionName) || rotbRaids.contains(game.missionName) || dreadBarrageRaids.contains(game.difficulty) ||
-			provingGroundsRaids.contains(game.difficulty) || guildWarsRaids.contains(game.difficulty) || xenoClashRaids.contains(game.missionName) ||
-			game.farmingMode == "Arcarum"
+			game.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.difficulty) || game.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.difficulty) ||
+			xenoClashRaids.contains(game.missionName) || game.farmingMode == "Arcarum"
 		) {
 			game.printToLog("[COMBAT] Reloading now.", MESSAGE_TAG = TAG)
 			game.findAndClickButton("reload")
