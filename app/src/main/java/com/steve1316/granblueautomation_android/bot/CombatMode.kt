@@ -786,6 +786,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		var semiAutoCheckFlag = false
 		var fullAutoCheckFlag = false
 		
+		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
+		if (game.farmingMode == "Arcarum") {
+			game.findAndClickButton("arcarum_stage_effect_active", tries = 5)
+		}
+		
 		attackButtonLocation = game.imageUtils.findButton("attack", tries = 10)
 		if (attackButtonLocation == null) {
 			game.printToLog("\n[ERROR] Cannot find Attack button. Raid must have just ended.", MESSAGE_TAG = TAG, isError = true)
