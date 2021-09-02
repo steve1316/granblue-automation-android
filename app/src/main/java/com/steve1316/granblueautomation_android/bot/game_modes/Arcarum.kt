@@ -143,6 +143,13 @@ class Arcarum(
 				return "Navigating"
 			}
 			
+			// If all else fails, see if there are any unclaimed chests, like the ones spawned by a random special event that spawns chests on all nodes.
+			game.printToLog("[ARCARUM] No nodes with mobs on them. Looking for nodes with chests on them...")
+			if (game.findAndClickButton("arcarum_silver_chest", tries = 1) || game.findAndClickButton("arcarum_gold_chest", tries = 1)) {
+				game.wait(1.0)
+				return "Navigating"
+			}
+			
 			tries -= 1
 		}
 		
