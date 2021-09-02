@@ -103,10 +103,14 @@ class Arcarum(
 		
 		var tries = 3
 		while (tries > 0) {
+			if (checkForBoss()) {
+				return "Boss Detected"
+			}
+			
 			// Prioritise any enemies/chests/thorns that are available on the current node.
 			if (game.findAndClickButton("arcarum_action", tries = 1)) {
 				game.wait(2.0)
-
+				
 				game.checkForCAPTCHA()
 				
 				return when {
@@ -143,6 +147,17 @@ class Arcarum(
 		}
 		
 		return "Next Area"
+	}
+	
+	/**
+	 * Checks for the existence of 3-3, 6-3 or 9-3 boss.
+	 *
+	 * @return Flag on whether or not a Boss was detected.
+	 */
+	private fun checkForBoss(): Boolean {
+		game.printToLog("\n[ARCARUM] Checking if boss is available...")
+		
+		return game.imageUtils.findButton("arcarum_boss", tries = 1) != null || game.imageUtils.findButton("arcarum_boss2", tries = 1) != null
 	}
 	
 	/**
@@ -188,6 +203,9 @@ class Arcarum(
 						runsCompleted += 1
 						break
 					}
+				} else if (action == "Boss Detected") {
+					game.printToLog("[ARCARUM] Boss has been detected. Stopping the bot.")
+					return true
 				}
 				
 				game.wait(1.0)
