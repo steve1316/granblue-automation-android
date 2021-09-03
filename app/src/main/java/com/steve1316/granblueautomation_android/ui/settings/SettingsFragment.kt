@@ -168,6 +168,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						putInt("confidence", confidenceSeekBar.value)
 					}
 				}
+				"confidenceAllSeekBar" -> {
+					val confidenceAllSeekBar: SeekBarPreference = findPreference("confidenceAllSeekBar")!!
+					sharedPreferences.edit {
+						putInt("confidenceAll", confidenceAllSeekBar.value)
+					}
+				}
 				"enableDiscord" -> {
 					val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 					sharedPreferences.edit {
@@ -393,6 +399,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
 		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		val confidence: Int = sharedPreferences.getInt("confidence", 80)
+		val confidenceAll: Int = sharedPreferences.getInt("confidenceAll", 80)
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
@@ -411,6 +418,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val randomizedDelayBetweenRunsSwitch: SwitchPreference = findPreference("randomizedDelayBetweenRunsSwitch")!!
 		val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
 		val confidenceSeekBar: SeekBarPreference = findPreference("confidenceSeekBar")!!
+		val confidenceAllSeekBar: SeekBarPreference = findPreference("confidenceAllSeekBar")!!
 		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 		val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
 		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
@@ -502,6 +510,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		// Misc Settings
 		////////////////////
 		confidenceSeekBar.value = confidence
+		confidenceAllSeekBar.value = confidenceAll
 		enableDiscordCheckBox.isChecked = enableDiscord
 		enableSkipAutoRestoreCheckBox.isChecked = enableSkipAutoRestore
 		debugModeCheckBox.isChecked = debugMode

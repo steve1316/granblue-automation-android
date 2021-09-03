@@ -126,12 +126,21 @@
         app:title="Misc">
         <SeekBarPreference
             android:max="100"
-            android:summary="Sets the confidence level for CV operations to allow differing devices with differing screen sizes to run more smoothly. Default is 80%."
+            android:summary="Sets the confidence level for matching an image to allow differing devices with differing screen sizes be more compatible. Default is 80%."
             app:defaultValue="80"
             app:key="confidenceSeekBar"
             app:min="1"
             app:showSeekBarValue="true"
             app:title="Set Confidence Level" />
+
+        <SeekBarPreference
+            android:max="100"
+            android:summary="Sets the confidence level for matching multiple images at once. Default is 80%. WARNING: Setting this too low will result in a infinite loop."
+            app:defaultValue="80"
+            app:key="confidenceAllSeekBar"
+            app:min="1"
+            app:showSeekBarValue="true"
+            app:title="Set Confidence Level for Multiple Matching" />
 
         <CheckBoxPreference
             app:key="enableDiscord"

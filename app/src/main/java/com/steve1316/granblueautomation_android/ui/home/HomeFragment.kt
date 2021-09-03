@@ -236,6 +236,7 @@ class HomeFragment : Fragment() {
 		val delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
 		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		val confidence: Int = sharedPreferences.getInt("confidence", 80)
+		val confidenceAll: Int = sharedPreferences.getInt("confidenceAll", 80)
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
@@ -330,7 +331,8 @@ class HomeFragment : Fragment() {
 				"Party: $partyNumber\n" +
 				autoExitCombatString +
 				"---------- Misc Settings ----------\n" +
-				"Confidence: $confidence%\n" +
+				"Confidence for Single Image Matching: $confidence%\n" +
+				"Confidence for Multiple Image Matching: $confidenceAll%\n" +
 				"Discord Notifications: $enableDiscordString\n" +
 				"Enable Skip checks for AP/EP: $enableSkipAutoRestoreString\n" +
 				"Debug Mode: $enableDebugModeString\n" +
