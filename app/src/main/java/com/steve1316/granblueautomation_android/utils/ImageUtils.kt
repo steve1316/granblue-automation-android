@@ -581,7 +581,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 			
 			summonIndex = 0
-			while (summonIndex <= summonList.size) {
+			while (summonIndex < summonList.size) {
 				// Go through each Summon detected on the Summon Selection screen and see if they match with the selected Summon.
 				val summonName = summonList[summonIndex]
 				val (sourceBitmap, templateBitmap) = getBitmaps(summonName, folderName)
@@ -590,13 +590,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					summonLocation = matchLocation
 					break
 				} else {
-					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon.")
+					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon.", MESSAGE_TAG = TAG)
 					
-					if (summonIndex + 1 >= summonList.size) {
-						break
-					} else {
-						summonIndex += 1
-					}
+					summonIndex += 1
 					
 					// If it reached the bottom of the Summon Selection page, scroll all the way back up.
 					if (findButton("bottom_of_summon_selection", tries = 1) != null) {
