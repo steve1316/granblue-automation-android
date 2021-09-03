@@ -1,19 +1,35 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.4.0</latestVersion>
+    <latestVersion>2.5.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.4.0 - Changelog
+v2.5.0 - Changelog
 
 New
 ---
-- Added support for Arcarum farming (no Replicard support).
+- Added support for Anima-Animus Core raid.
+- Enabled automatic stop on detection of Arcarum bosses (3-3, 6-3 and 9-3).
+- Arcarum will make sure to check already cleared nodes for chests. This is handy for the special event where every node spawns a chest.
+- Added 2 new options to set single and multi match confidences respectively to better support different devices.
+
+WARNING: If the confidence for the multi match is set too low, the bot will infinitely hang. 
+The reason for this is that the multi match logic keeps looping and finding ALL matches so it becomes clear that if confidence for this is set too low, it will constantly find inaccurate matches endlessly.
 
 Changed
 ---
-- Generalized detection of bottom of Summon Selection page.
-- Implemented various time-saving logic from Python version for Party and Summon selection.
-- Adjusted logic of swiping the screen to generate new images for ImageReader.
+- Adjustment made to image creation behavior for ImageReader.
+- Combat Mode will now reload for scripts during Arcarum.
+- Bot will no longer reset Group/Party settings when selecting/deselecting summons in the Settings page.
+- Used Stream API to support censored raids like 'Lvl 120 Avatar'.
+
+Fixed
+---
+- Fixed bug where Arcarum from going back to Home constantly in order to repeat another run.
+- Fixed bug where exp gained flag was not reset so Combat Mode would prematurely think that the battle is over.
+- Fixed bug where repeating Coop runs caused infinite hang.
+- Fixed reloading during Angel Halo and Proving Grounds.
+- Fixed bug where bot got stuck during Combat Mode if the stage effect is active during Arcarum.
+- Fixed bug where bot got stuck searching for only 1 select support summon.
     </releaseNotes>
   </update>
 </AppUpdater>
