@@ -3,13 +3,50 @@ package com.steve1316.granblueautomation_android.bot
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.StrictMode
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
-import twitter4j.Query
-import twitter4j.Status
-import twitter4j.Twitter
-import twitter4j.TwitterFactory
+import twitter4j.*
 import twitter4j.conf.ConfigurationBuilder
+
+class MyListener : StatusListener {
+	private val TAG: String = "${MainActivity.loggerTag}_MyListener"
+	
+	val tweets: ArrayList<Status> = arrayListOf()
+	private var numberOfTweets: Int = 1
+	
+	fun setNumberOfTweets(count: Int) {
+		numberOfTweets = count
+	}
+	
+	override fun onStatus(status: Status?) {
+		if (status != null) {
+			Log.d(TAG, "[DEBUG] Stream found: ${status.text}")
+			tweets.add(status)
+		}
+	}
+	
+	override fun onException(ex: java.lang.Exception?) {
+		return
+	}
+	
+	override fun onDeletionNotice(statusDeletionNotice: StatusDeletionNotice?) {
+		return
+	}
+	
+	override fun onTrackLimitationNotice(numberOfLimitedStatuses: Int) {
+		return
+	}
+	
+	override fun onScrubGeo(userId: Long, upToStatusId: Long) {
+		return
+	}
+	
+	override fun onStallWarning(warning: StallWarning?) {
+		return
+	}
+	
+}
 
 /**
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
@@ -18,6 +55,8 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 	private val TAG: String = "${MainActivity.loggerTag}_TwitterRoomFinder"
 	
 	private lateinit var twitter: Twitter
+	private lateinit var twitterStream: TwitterStream
+	private val listener = MyListener()
 	
 	private val alreadyVisitedRoomCodes: ArrayList<String> = arrayListOf()
 	private val alreadyVisitedIDs: ArrayList<Long> = arrayListOf()
@@ -132,7 +171,15 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
 				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
 			
+			val configurationStreamBuilder: ConfigurationBuilder = ConfigurationBuilder()
+				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
+				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
+				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
+				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
+			
 			twitter = TwitterFactory(configurationBuilder.build()).instance
+			twitterStream = TwitterStreamFactory(configurationStreamBuilder.build()).instance
+			twitterStream.addListener(listener)
 			
 			// Test connection by fetching user's timeline.
 			twitter.timelines().homeTimeline
@@ -153,10 +200,10 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 	 * Start collected tweets containing room codes from EN and JP players.
 	 *
 	 * @param raidName Name and level of the Raid that appears in tweets containing the room code to it.
-	 * @param count Number of most recent tweets to grab. Defaults to 10.
+	 * @param count Number of most recent tweets to grab. Defaults to 5.
 	 * @return ArrayList of the most recent room codes that match the query.
 	 */
-	fun findMostRecentRoomCodes(raidName: String, count: Int = 10): ArrayList<String> {
+	fun findMostRecentRoomCodes(raidName: String, count: Int = 5): ArrayList<String> {
 		// Construct the query for EN tweets.
 		val queryEN = Query("+(:Battle ID) AND +($raidName)")
 		queryEN.count = count / 2
@@ -185,7 +232,28 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 			}
 		}
 		
-		return parseRoomCodes(tweets)
+		// Either parse the tweets already acquired for room codes or fallback to the Stream API if the regular method failed to find any tweets.
+		return if (tweets.size == 0) {
+			listener.setNumberOfTweets(count)
+			val queryCombined = FilterQuery("$raidName,$jpRaidName")
+			
+			val startTime: Long = System.currentTimeMillis()
+			twitterStream.filter(queryCombined)
+			
+			while (listener.tweets.size < count) {
+				val seconds = (System.currentTimeMillis() - startTime) / 1000
+				if (seconds > 10) {
+					break
+				}
+			}
+			
+			twitterStream.shutdown()
+			Log.d(TAG, "\n[DEBUG] Closed Twitter stream.")
+			
+			parseRoomCodes(listener.tweets)
+		} else {
+			parseRoomCodes(tweets)
+		}
 	}
 	
 	/**
@@ -215,6 +283,11 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 				
 				index += 1
 			}
+		}
+		
+		// Clear the tweets list for the next run.
+		if (listener.tweets.size > 0) {
+			listener.tweets.clear()
 		}
 		
 		return roomCodes
