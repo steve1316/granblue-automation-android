@@ -23,6 +23,9 @@ class ImageUtils(context: Context, private val game: Game) {
 	private val TAG: String = "${MainActivity.loggerTag}_ImageUtils"
 	private var myContext = context
 	
+	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+	private val confidence: Double = sharedPreferences.getInt("confidence", 80).toDouble() / 100
+	
 	private val displayWidth: Int = MediaProjectionService.displayWidth
 	private val displayHeight: Int = MediaProjectionService.displayHeight
 	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560)
@@ -114,19 +117,19 @@ class ImageUtils(context: Context, private val game: Game) {
 			var matchCheck = false
 			
 			// Depending on which matching method was used, the algorithms determine which location was the best.
-			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
+			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 				matchLocation = mmr.minLoc
 				matchCheck = true
 				
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with similarity <= 0.2 at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+					game.printToLog("[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
 				}
-			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
+			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 				matchLocation = mmr.maxLoc
 				matchCheck = true
 				
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with similarity >= 0.8 at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+					game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
 				}
 			} else {
 				if (debugMode) {
@@ -206,10 +209,10 @@ class ImageUtils(context: Context, private val game: Game) {
 				matchLocation = Point()
 				
 				// Depending on which matching method was used, the algorithms determine which location was the best.
-				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
+				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 					matchLocation = mmr.minLoc
 					matchCheck = true
-				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
+				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 					matchLocation = mmr.maxLoc
 					matchCheck = true
 				}
@@ -277,11 +280,11 @@ class ImageUtils(context: Context, private val game: Game) {
 				Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
 				val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 				
-				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
+				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 					val tempMatchLocation: Point = mmr.minLoc
 					
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity <= 0.2 at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+						game.printToLog("[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
 					}
 					
 					// Draw a rectangle around the match and then save it to the specified file.
@@ -292,11 +295,11 @@ class ImageUtils(context: Context, private val game: Game) {
 					tempMatchLocation.x += (templateMat.cols() / 2)
 					tempMatchLocation.y += (templateMat.rows() / 2)
 					matchLocations.add(tempMatchLocation)
-				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
+				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 					val tempMatchLocation: Point = mmr.maxLoc
 					
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity >= 0.8 at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+						game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
 					}
 					
 					// Draw a rectangle around the match and then save it to the specified file.
@@ -353,10 +356,10 @@ class ImageUtils(context: Context, private val game: Game) {
 				matchLocation = Point()
 				
 				// Depending on which matching method was used, the algorithms determine which location was the best.
-				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
+				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 					matchLocation = mmr.minLoc
 					matchCheck = true
-				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
+				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 					matchLocation = mmr.maxLoc
 					matchCheck = true
 				}
@@ -372,11 +375,11 @@ class ImageUtils(context: Context, private val game: Game) {
 				Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
 				val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 				
-				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= 0.2) {
+				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 					val tempMatchLocation: Point = mmr.minLoc
 					
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity <= 0.2 at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+						game.printToLog("[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
 					}
 					
 					// Draw a rectangle around the match and then save it to the specified file.
@@ -387,11 +390,11 @@ class ImageUtils(context: Context, private val game: Game) {
 					tempMatchLocation.x += (templateMat.cols() / 2)
 					tempMatchLocation.y += (templateMat.rows() / 2)
 					matchLocations.add(tempMatchLocation)
-				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= 0.8) {
+				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 					val tempMatchLocation: Point = mmr.maxLoc
 					
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity >= 0.8 at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+						game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
 					}
 					
 					// Draw a rectangle around the match and then save it to the specified file.
