@@ -237,6 +237,7 @@ class HomeFragment : Fragment() {
 		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		val confidence: Int = sharedPreferences.getInt("confidence", 80)
 		val confidenceAll: Int = sharedPreferences.getInt("confidenceAll", 80)
+		val customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
@@ -271,9 +272,15 @@ class HomeFragment : Fragment() {
 		}
 		
 		val autoExitCombatString: String = if (enableAutoExitCombat) {
-			"Auto Exit Combat: Enabled\nAuto Exit Maximum Time: $autoExitCombatMinutes minutes\n"
+			"Enabled\nAuto Exit Maximum Time: $autoExitCombatMinutes minutes"
 		} else {
-			"Auto Exit Combat: Disabled\n"
+			"Disabled"
+		}
+		
+		val customScaleString: String = if (customScale == 1.0) {
+			"1.0 (Default)"
+		} else {
+			"$customScale"
 		}
 		
 		val enableDiscordString: String = if (enableDiscord) {
@@ -329,10 +336,11 @@ class HomeFragment : Fragment() {
 				"Summon: $summon\n" +
 				"Group: $groupNumber\n" +
 				"Party: $partyNumber\n" +
-				autoExitCombatString +
+				"Auto Exit Combat: $autoExitCombatString\n" +
 				"---------- Misc Settings ----------\n" +
 				"Confidence for Single Image Matching: $confidence%\n" +
 				"Confidence for Multiple Image Matching: $confidenceAll%\n" +
+				"Scale: $customScaleString\n" +
 				"Discord Notifications: $enableDiscordString\n" +
 				"Enable Skip checks for AP/EP: $enableSkipAutoRestoreString\n" +
 				"Debug Mode: $enableDebugModeString\n" +
