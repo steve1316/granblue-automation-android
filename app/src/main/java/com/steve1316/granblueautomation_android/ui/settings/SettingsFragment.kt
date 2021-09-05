@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.*
@@ -27,6 +28,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	private lateinit var summonListItems: Array<String>
 	private lateinit var summonListCheckedItems: BooleanArray
 	private var userSelectedSummonList: ArrayList<Int> = arrayListOf()
+	
+	private val editTextListener = EditTextPreference.OnBindEditTextListener { editText ->
+		editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+	}
 	
 	// This listener is triggered whenever the user changes a Preference setting in the Settings Page.
 	private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
@@ -162,39 +167,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						putInt("autoExitCombatMinutes", autoExitCombatMinutes.value)
 					}
 				}
-				"confidenceSeekBar" -> {
-					val confidenceSeekBar: SeekBarPreference = findPreference("confidenceSeekBar")!!
-					sharedPreferences.edit {
-						putInt("confidence", confidenceSeekBar.value)
-					}
-				}
-				"confidenceAllSeekBar" -> {
-					val confidenceAllSeekBar: SeekBarPreference = findPreference("confidenceAllSeekBar")!!
-					sharedPreferences.edit {
-						putInt("confidenceAll", confidenceAllSeekBar.value)
-					}
-				}
-				"enableDiscord" -> {
-					val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
-					sharedPreferences.edit {
-						putBoolean("enableDiscord", enableDiscordCheckBox.isChecked)
-						commit()
-					}
-				}
-				"enableSkipAutoRestore" -> {
-					val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
-					sharedPreferences.edit {
-						putBoolean("enableSkipAutoRestore", enableSkipAutoRestoreCheckBox.isChecked)
-						commit()
-					}
-				}
-				"debugModeCheckBox" -> {
-					val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
-					sharedPreferences.edit {
-						putBoolean("debugMode", debugModeCheckBox.isChecked)
-						commit()
-					}
-				}
 				"delayBetweenRunsSwitch" -> {
 					val delayBetweenRunsSwitch: SwitchPreference = findPreference("delayBetweenRunsSwitch")!!
 					val delayBetweenRunsSeekBar: SeekBarPreference = findPreference("delayBetweenRunsSeekBar")!!
@@ -278,6 +250,53 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					
 					sharedPreferences.edit {
 						putInt("randomizedDelayBetweenRuns", randomizedDelayBetweenRunsSeekBar.value.toString().toInt())
+						commit()
+					}
+				}
+				"confidenceSeekBar" -> {
+					val confidenceSeekBar: SeekBarPreference = findPreference("confidenceSeekBar")!!
+					sharedPreferences.edit {
+						putInt("confidence", confidenceSeekBar.value)
+					}
+				}
+				"confidenceAllSeekBar" -> {
+					val confidenceAllSeekBar: SeekBarPreference = findPreference("confidenceAllSeekBar")!!
+					sharedPreferences.edit {
+						putInt("confidenceAll", confidenceAllSeekBar.value)
+					}
+				}
+				"customScale" -> {
+					val customScaleEditText: EditTextPreference = findPreference("customScale")!!
+					sharedPreferences.edit {
+						if (customScaleEditText.text != "") {
+							customScaleEditText.summary =
+								"Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: ${customScaleEditText.text.toDouble()}"
+							putString("customScale", customScaleEditText.text)
+						} else {
+							customScaleEditText.summary =
+								"Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: 1.0 (Default)"
+							putString("customScale", "1.0")
+						}
+					}
+				}
+				"enableDiscord" -> {
+					val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
+					sharedPreferences.edit {
+						putBoolean("enableDiscord", enableDiscordCheckBox.isChecked)
+						commit()
+					}
+				}
+				"enableSkipAutoRestore" -> {
+					val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
+					sharedPreferences.edit {
+						putBoolean("enableSkipAutoRestore", enableSkipAutoRestoreCheckBox.isChecked)
+						commit()
+					}
+				}
+				"debugModeCheckBox" -> {
+					val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
+					sharedPreferences.edit {
+						putBoolean("debugMode", debugModeCheckBox.isChecked)
 						commit()
 					}
 				}
@@ -400,6 +419,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 		val confidence: Int = sharedPreferences.getInt("confidence", 80)
 		val confidenceAll: Int = sharedPreferences.getInt("confidenceAll", 80)
+		val customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
@@ -419,9 +439,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val randomizedDelayBetweenRunsSeekBar: SeekBarPreference = findPreference("randomizedDelayBetweenRunsSeekBar")!!
 		val confidenceSeekBar: SeekBarPreference = findPreference("confidenceSeekBar")!!
 		val confidenceAllSeekBar: SeekBarPreference = findPreference("confidenceAllSeekBar")!!
+		val customScaleEditText: EditTextPreference = findPreference("customScale")!!
 		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 		val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
 		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
+		
+		customScaleEditText.setOnBindEditTextListener(editTextListener)
 		
 		// Now set the following values from the shared preferences. Work downwards through the Preferences and make the next ones enabled to direct user's attention as they go through the settings
 		// down the page.
@@ -511,6 +534,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		////////////////////
 		confidenceSeekBar.value = confidence
 		confidenceAllSeekBar.value = confidenceAll
+		if (customScale == 1.0) {
+			customScaleEditText.summary =
+				"Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: 1.0 (Default)"
+		} else {
+			customScaleEditText.summary =
+				"Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: $customScale"
+		}
+		customScaleEditText.text = customScale.toString()
 		enableDiscordCheckBox.isChecked = enableDiscord
 		enableSkipAutoRestoreCheckBox.isChecked = enableSkipAutoRestore
 		debugModeCheckBox.isChecked = debugMode

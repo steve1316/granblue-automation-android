@@ -142,6 +142,11 @@
             app:showSeekBarValue="true"
             app:title="Set Confidence Level for Multiple Matching" />
 
+        <EditTextPreference
+            android:summary="Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: 1.0 (Default)"
+            android:title="Set Custom Scale"
+            app:key="customScale" />
+
         <CheckBoxPreference
             app:key="enableDiscord"
             app:summary="Enable Discord notifications to inform you of status updates like loot drops.\n\nPlease be sure to update your config.yaml in your Internal Storage with the necessary Discord information for this to work."
