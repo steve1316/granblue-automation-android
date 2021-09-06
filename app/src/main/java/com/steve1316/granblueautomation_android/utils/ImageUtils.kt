@@ -770,6 +770,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					// Increment scale by 0.01 until a match is found if Test Mode is enabled.
 					if (testMode) {
 						customScale += 0.01
+						customScale = decimalFormat.format(customScale).toDouble()
 					}
 					
 					numberOfTries -= 1
