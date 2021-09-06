@@ -241,6 +241,7 @@ class HomeFragment : Fragment() {
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+		val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableHomeTest", false)
 		
 		startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() && summon[0] != "") ||
 				((farmingMode == "Coop" || farmingMode == "Arcarum") && summon.isNotEmpty() && summon[0] == "")))
@@ -277,6 +278,30 @@ class HomeFragment : Fragment() {
 			"Disabled"
 		}
 		
+		val enableDelayBetweenRunsString: String = if (enableDelayBetweenRuns) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+		
+		val enableRandomizedDelayBetweenRunsString: String = if (enableRandomizedDelayBetweenRuns) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+		
+		val delayString: String = when {
+			enableDelayBetweenRuns -> {
+				"Delay Between Runs: $delayBetweenRuns seconds\n"
+			}
+			enableRandomizedDelayBetweenRuns -> {
+				"Delay Between Runs Lower Bound: $delayBetweenRuns seconds\nDelay Between Runs Upper Bound: $randomizedDelayBetweenRuns seconds\n"
+			}
+			else -> {
+				""
+			}
+		}
+		
 		val customScaleString: String = if (customScale == 1.0) {
 			"1.0 (Default)"
 		} else {
@@ -301,28 +326,10 @@ class HomeFragment : Fragment() {
 			"Disabled"
 		}
 		
-		val enableDelayBetweenRunsString: String = if (enableDelayBetweenRuns) {
+		val enableHomeTestString: String = if (enableHomeTest) {
 			"Enabled"
 		} else {
 			"Disabled"
-		}
-		
-		val enableRandomizedDelayBetweenRunsString: String = if (enableRandomizedDelayBetweenRuns) {
-			"Enabled"
-		} else {
-			"Disabled"
-		}
-		
-		val delayString: String = when {
-			enableDelayBetweenRuns -> {
-				"Delay Between Runs: $delayBetweenRuns seconds"
-			}
-			enableRandomizedDelayBetweenRuns -> {
-				"Delay Between Runs Lower Bound: $delayBetweenRuns seconds\nDelay Between Runs Upper Bound: $randomizedDelayBetweenRuns seconds"
-			}
-			else -> {
-				""
-			}
 		}
 		
 		settingsStatusTextView.setTextColor(Color.WHITE)
@@ -337,6 +344,10 @@ class HomeFragment : Fragment() {
 				"Group: $groupNumber\n" +
 				"Party: $partyNumber\n" +
 				"Auto Exit Combat: $autoExitCombatString\n" +
+				"---------- Delay Settings ----------\n" +
+				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
+				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +
+				delayString +
 				"---------- Misc Settings ----------\n" +
 				"Confidence for Single Image Matching: $confidence%\n" +
 				"Confidence for Multiple Image Matching: $confidenceAll%\n" +
@@ -344,9 +355,7 @@ class HomeFragment : Fragment() {
 				"Discord Notifications: $enableDiscordString\n" +
 				"Enable Skip checks for AP/EP: $enableSkipAutoRestoreString\n" +
 				"Debug Mode: $enableDebugModeString\n" +
-				"Delay Between Runs: $enableDelayBetweenRunsString\n" +
-				"Randomized Between Runs: $enableRandomizedDelayBetweenRunsString\n" +
-				delayString
+				"Enable Test for Home screen: $enableHomeTestString"
 		
 		// Now construct the data files if this is the first time.
 		if (firstRun) {

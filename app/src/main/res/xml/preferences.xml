@@ -163,5 +163,10 @@
             app:summary="Allows debugging messages to be shown in the log to reveal diagnostic information and potential errors."
             app:title="Enable Debug Mode" />
 
+        <CheckBoxPreference
+            app:key="enableHomeTestCheckBox"
+            android:summary="Enables test for getting to the Home screen instead of the regular bot process.\n\nUseful for troubleshooting working confidences and scales for device compatibility."
+            app:title="Enable Test for Home Screen" />
+
     </PreferenceCategory>
 </PreferenceScreen>

@@ -103,19 +103,26 @@ class BotService : Service() {
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
 									
-									// Run the Discord process on a new Thread.
-									if (PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("enableDiscord", false)) {
-										val discordUtils = DiscordUtils(myContext)
-										thread {
-											runBlocking {
-												DiscordUtils.queue.clear()
-												discordUtils.main()
+									val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
+									val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableHomeTest", false)
+									
+									if (!enableHomeTest) {
+										// Run the Discord process on a new Thread.
+										if (PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("enableDiscord", false)) {
+											val discordUtils = DiscordUtils(myContext)
+											thread {
+												runBlocking {
+													DiscordUtils.queue.clear()
+													discordUtils.main()
+												}
 											}
 										}
+										
+										// Start Farming Mode with the provided settings from SharedPreferences.
+										game.startFarmingMode()
+									} else {
+										game.goBackHome(confirmLocationCheck = true)
 									}
-									
-									// Start Farming Mode with the provided settings from SharedPreferences.
-									game.startFarmingMode()
 									
 									performCleanUp()
 								} catch (e: Exception) {

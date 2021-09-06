@@ -127,7 +127,9 @@ class Game(val myContext: Context) {
 	fun goBackHome(confirmLocationCheck: Boolean = false) {
 		if (!imageUtils.confirmLocation("home")) {
 			printToLog("[INFO] Moving back to the Home screen...")
-			findAndClickButton("home")
+			if (!findAndClickButton("home")) {
+				throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
+			}
 		} else {
 			printToLog("[INFO] Bot is already at the Home screen.")
 		}
@@ -135,7 +137,9 @@ class Game(val myContext: Context) {
 		printToLog("\n[INFO] Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, Screen DPI: ${MediaProjectionService.displayDPI}")
 		
 		if (confirmLocationCheck) {
-			imageUtils.confirmLocation("home")
+			if (!imageUtils.confirmLocation("home")) {
+				throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
+			}
 		}
 	}
 	

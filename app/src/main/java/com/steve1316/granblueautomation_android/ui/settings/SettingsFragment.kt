@@ -268,7 +268,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				"customScale" -> {
 					val customScaleEditText: EditTextPreference = findPreference("customScale")!!
 					sharedPreferences.edit {
-						if (customScaleEditText.text != "") {
+						if (customScaleEditText.text != "1" && customScaleEditText.text != "1.0" && customScaleEditText.text != "") {
 							customScaleEditText.summary =
 								"Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: ${customScaleEditText.text.toDouble()}"
 							putString("customScale", customScaleEditText.text)
@@ -297,6 +297,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 					sharedPreferences.edit {
 						putBoolean("debugMode", debugModeCheckBox.isChecked)
+						commit()
+					}
+				}
+				"enableHomeTestCheckBox" -> {
+					val enableHomeTestCheckBox: CheckBoxPreference = findPreference("enableHomeTestCheckBox")!!
+					sharedPreferences.edit {
+						putBoolean("enableHomeTest", enableHomeTestCheckBox.isChecked)
 						commit()
 					}
 				}
@@ -423,6 +430,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val enableDiscord: Boolean = sharedPreferences.getBoolean("enableDiscord", false)
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+		val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableHomeTest", false)
 		
 		// Get references to the Preference components.
 		val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
@@ -443,6 +451,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val enableDiscordCheckBox: CheckBoxPreference = findPreference("enableDiscord")!!
 		val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
 		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
+		val enableHomeTestCheckBox: CheckBoxPreference = findPreference("enableHomeTestCheckBox")!!
 		
 		customScaleEditText.setOnBindEditTextListener(editTextListener)
 		
@@ -545,6 +554,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		enableDiscordCheckBox.isChecked = enableDiscord
 		enableSkipAutoRestoreCheckBox.isChecked = enableSkipAutoRestore
 		debugModeCheckBox.isChecked = debugMode
+		enableHomeTestCheckBox.isChecked = enableHomeTest
 		
 		// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.
 		try {
