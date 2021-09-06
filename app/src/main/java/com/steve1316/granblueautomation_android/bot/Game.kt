@@ -123,24 +123,30 @@ class Game(val myContext: Context) {
 	 * Go back to the Home screen by tapping the "Home" button.
 	 *
 	 * @param confirmLocationCheck Whether or not the bot should confirm that it has arrived at the Home screen.
+	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 */
-	fun goBackHome(confirmLocationCheck: Boolean = false) {
+	fun goBackHome(confirmLocationCheck: Boolean = false, testMode: Boolean = false) {
 		if (!imageUtils.confirmLocation("home")) {
 			printToLog("[INFO] Moving back to the Home screen...")
+			
 			if (!findAndClickButton("home")) {
-				throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
+				if (!testMode) {
+					throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
+				} else {
+					printToLog("\n[DEBUG] Failed to find the HOME button. Now beginning test to find a valid scale for this device...")
+					imageUtils.findButton("home", testMode = true)
+					return
+				}
+			} else if (confirmLocationCheck) {
+				if (!imageUtils.confirmLocation("home")) {
+					throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
+				}
 			}
 		} else {
 			printToLog("[INFO] Bot is already at the Home screen.")
 		}
 		
 		printToLog("\n[INFO] Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, Screen DPI: ${MediaProjectionService.displayDPI}")
-		
-		if (confirmLocationCheck) {
-			if (!imageUtils.confirmLocation("home")) {
-				throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
-			}
-		}
 	}
 	
 	/**

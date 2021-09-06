@@ -164,8 +164,8 @@
             app:title="Enable Debug Mode" />
 
         <CheckBoxPreference
+            android:summary="Enables test for getting to the Home screen instead of the regular bot process. If the test fails, then it will run a different test to find which scale is appropriate for your device.\n\nUseful for troubleshooting working confidences and scales for device compatibility."
             app:key="enableHomeTestCheckBox"
-            android:summary="Enables test for getting to the Home screen instead of the regular bot process.\n\nUseful for troubleshooting working confidences and scales for device compatibility."
             app:title="Enable Test for Home Screen" />
 
     </PreferenceCategory>

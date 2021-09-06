@@ -121,7 +121,7 @@ class BotService : Service() {
 										// Start Farming Mode with the provided settings from SharedPreferences.
 										game.startFarmingMode()
 									} else {
-										game.goBackHome(confirmLocationCheck = true)
+										game.goBackHome(confirmLocationCheck = true, testMode = true)
 									}
 									
 									performCleanUp()

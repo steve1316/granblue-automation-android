@@ -40,7 +40,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	private val tabletPortraitScales: MutableList<Double> = mutableListOf(0.73, 0.75, 0.77) // 1600 pixels in width in Portrait Mode.
 	private val tabletLandscapeScales: MutableList<Double> = mutableListOf(0.55, 0.57, 0.59) // 2560 pixels in width in Landscape Mode.
 	private var customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
-	private val decimalFormat = DecimalFormat("#.##")
+	private val decimalFormat = DecimalFormat("#.###")
 	
 	// Initialize Google's ML OCR.
 	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -113,7 +113,7 @@ class ImageUtils(context: Context, private val game: Game) {
 				}
 				
 				while (scales.isNotEmpty()) {
-					val newScale: Double = scales.removeFirst()
+					val newScale: Double = decimalFormat.format(scales.removeFirst()).toDouble()
 					val tmp: Bitmap = Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
 					
 					// Create the Mats of both source and template images.
@@ -138,30 +138,30 @@ class ImageUtils(context: Context, private val game: Game) {
 					matchLocation = Point()
 					var matchCheck = false
 					
+					// Format minVal or maxVal.
+					val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
+					val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+					
 					// Depending on which matching method was used, the algorithms determine which location was the best.
 					if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 						matchLocation = mmr.minLoc
 						matchCheck = true
 						if (debugMode) {
-							game.printToLog(
-								"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG
-							)
+							game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG)
 						}
 					} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 						matchLocation = mmr.maxLoc
 						matchCheck = true
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG)
 						}
 					} else {
 						if (debugMode) {
-							val message: String = if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
-								"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} using scale $newScale."
+							if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
+								game.printToLog("[DEBUG] Match not found with $maxVal not >= $confidence at Point ${mmr.maxLoc} using scale $newScale.", MESSAGE_TAG = TAG)
 							} else {
-								"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale."
+								game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale.", MESSAGE_TAG = TAG)
 							}
-							
-							game.printToLog(message, MESSAGE_TAG = TAG)
 						}
 					}
 					
@@ -224,51 +224,48 @@ class ImageUtils(context: Context, private val game: Game) {
 				matchLocation = Point()
 				var matchCheck = false
 				
+				// Format minVal or maxVal.
+				val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
+				val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+				
 				// Depending on which matching method was used, the algorithms determine which location was the best.
 				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 					matchLocation = mmr.minLoc
 					matchCheck = true
 					
 					if (debugMode) {
-						val message: String = if (customScale == 1.0) {
-							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using default scales."
+						if (customScale == 1.0) {
+							game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using default scales.", MESSAGE_TAG = TAG)
 						} else {
-							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using custom scale: $customScale."
+							game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using custom scale: $customScale.", MESSAGE_TAG = TAG)
 						}
-						
-						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 					matchLocation = mmr.maxLoc
 					matchCheck = true
 					
 					if (debugMode) {
-						val message: String = if (customScale == 1.0) {
-							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using default scales."
+						if (customScale == 1.0) {
+							game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using default scales.", MESSAGE_TAG = TAG)
 						} else {
-							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using custom scale: $customScale."
+							game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using custom scale: $customScale.", MESSAGE_TAG = TAG)
 						}
-						
-						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				} else {
 					if (debugMode) {
-						val message: String = if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
+						if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
 							if (customScale == 1.0) {
-								"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} at default scale."
+								game.printToLog("[DEBUG] Match not found with $maxVal not >= $confidence at Point ${mmr.maxLoc} at default scale.", MESSAGE_TAG = TAG)
 							} else {
-								"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} at scale $customScale."
+								game.printToLog("[DEBUG] Match not found with $maxVal not >= $confidence at Point ${mmr.maxLoc} at scale $customScale.", MESSAGE_TAG = TAG)
 							}
 						} else {
 							if (customScale == 1.0) {
-								"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} at default scale."
+								game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - confidence} at Point ${mmr.minLoc} at default scale.", MESSAGE_TAG = TAG)
 							} else {
-								"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} at scale $customScale."
+								game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - confidence} at Point ${mmr.minLoc} at scale $customScale.", MESSAGE_TAG = TAG)
 							}
-							
 						}
-						
-						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				}
 				
@@ -317,7 +314,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 			
 			while (tabletScales.isNotEmpty()) {
-				val newScale: Double = tabletScales.removeFirst()
+				val newScale: Double = decimalFormat.format(tabletScales.removeFirst()).toDouble()
 				val tmp: Bitmap = Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
 				
 				// Create the Mats of both source and template images.
@@ -346,34 +343,30 @@ class ImageUtils(context: Context, private val game: Game) {
 				matchLocation = Point()
 				var matchCheck = false
 				
+				// Format minVal or maxVal.
+				val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
+				val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+				
 				// Depending on which matching method was used, the algorithms determine which location was the best.
 				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 					matchLocation = mmr.minLoc
 					matchCheck = true
 					if (debugMode) {
-						game.printToLog(
-							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using tablet scale: $newScale.",
-							MESSAGE_TAG = TAG
-						)
+						game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using tablet scale: $newScale.", MESSAGE_TAG = TAG)
 					}
 				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 					matchLocation = mmr.maxLoc
 					matchCheck = true
 					if (debugMode) {
-						game.printToLog(
-							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using tablet scale: $newScale.",
-							MESSAGE_TAG = TAG
-						)
+						game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using tablet scale: $newScale.", MESSAGE_TAG = TAG)
 					}
 				} else {
 					if (debugMode) {
-						val message: String = if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
-							"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} using scale $newScale."
+						if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
+							game.printToLog("[DEBUG] Match not found with $maxVal not >= $confidence at Point ${mmr.maxLoc} using scale $newScale.", MESSAGE_TAG = TAG)
 						} else {
-							"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale."
+							game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale.", MESSAGE_TAG = TAG)
 						}
-						
-						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				}
 				
@@ -443,7 +436,7 @@ class ImageUtils(context: Context, private val game: Game) {
 				
 				// Set templateMat at whatever scale it found the very first match for the next while loop.
 				while (!matchCheck && scales.isNotEmpty()) {
-					newScale = scales.removeFirst()
+					newScale = decimalFormat.format(scales.removeFirst()).toDouble()
 					
 					val tmp: Bitmap = Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
 					
@@ -486,11 +479,15 @@ class ImageUtils(context: Context, private val game: Game) {
 					Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
 					val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 					
+					// Format minVal or maxVal.
+					val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
+					val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+					
 					if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 						val tempMatchLocation: Point = mmr.minLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -505,7 +502,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						val tempMatchLocation: Point = mmr.maxLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -546,11 +543,15 @@ class ImageUtils(context: Context, private val game: Game) {
 					Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
 					val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 					
+					// Format minVal or maxVal.
+					val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
+					val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+					
 					if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidenceAll)) {
 						val tempMatchLocation: Point = mmr.minLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidenceAll} at Point $matchLocation.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidenceAll} at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -565,7 +566,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						val tempMatchLocation: Point = mmr.maxLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidenceAll at Point $matchLocation.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with $maxVal >= $confidenceAll at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -607,7 +608,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			
 			// Set the sourceMat and templateMat at whatever scale it found the very first match for the next while loop.
 			while (!matchCheck && tabletScales.isNotEmpty()) {
-				newScale = tabletScales.removeFirst()
+				newScale = decimalFormat.format(tabletScales.removeFirst()).toDouble()
 				
 				val tmp: Bitmap = Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
 				
@@ -652,14 +653,15 @@ class ImageUtils(context: Context, private val game: Game) {
 				Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
 				val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 				
+				// Format minVal or maxVal.
+				val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
+				val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+				
 				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 					val tempMatchLocation: Point = mmr.minLoc
 					
 					if (debugMode) {
-						game.printToLog(
-							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using tablet scale: $newScale.",
-							MESSAGE_TAG = TAG
-						)
+						game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using tablet scale: $newScale.", MESSAGE_TAG = TAG)
 						
 						// Draw a rectangle around the match and then save it to the specified file.
 						Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -674,10 +676,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					val tempMatchLocation: Point = mmr.maxLoc
 					
 					if (debugMode) {
-						game.printToLog(
-							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using tablet scale: $newScale.",
-							MESSAGE_TAG = TAG
-						)
+						game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using tablet scale: $newScale.", MESSAGE_TAG = TAG)
 						
 						// Draw a rectangle around the match and then save it to the specified file.
 						Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -745,14 +744,21 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param tries Number of tries before failing. Defaults to 3.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
+	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 * @return Point object containing the location of the match or null if not found.
 	 */
-	fun findButton(templateName: String, tries: Int = 3, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Point? {
+	fun findButton(templateName: String, tries: Int = 3, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false, testMode: Boolean = false): Point? {
 		val folderName = "buttons"
 		var numberOfTries = tries
 		
 		if (debugMode) {
 			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} button image...", MESSAGE_TAG = TAG)
+		}
+		
+		// If Test Mode is enabled, prepare for it by setting initial scale to 0.10.
+		if (testMode) {
+			numberOfTries = 100
+			customScale = 0.10
 		}
 		
 		while (numberOfTries > 0) {
@@ -761,6 +767,11 @@ class ImageUtils(context: Context, private val game: Game) {
 			if (sourceBitmap != null && templateBitmap != null) {
 				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region)
 				if (!resultFlag) {
+					// Increment scale by 0.01 until a match is found if Test Mode is enabled.
+					if (testMode) {
+						customScale += 0.01
+					}
+					
 					numberOfTries -= 1
 					if (numberOfTries <= 0) {
 						if (!suppressError) {
@@ -771,9 +782,26 @@ class ImageUtils(context: Context, private val game: Game) {
 					}
 					
 					Log.d(TAG, "Failed to find the ${templateName.uppercase()} button. Trying again...")
-					game.wait(0.5)
+					
+					if (!testMode) {
+						game.wait(0.5)
+					}
 				} else {
-					game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", MESSAGE_TAG = TAG)
+					if (testMode) {
+						val scale0: Double = decimalFormat.format(customScale).toDouble()
+						val scale1: Double = decimalFormat.format(scale0 + 0.01).toDouble()
+						val scale2: Double = decimalFormat.format(scale0 + 0.02).toDouble()
+						val scale3: Double = decimalFormat.format(scale0 + 0.03).toDouble()
+						val scale4: Double = decimalFormat.format(scale0 + 0.04).toDouble()
+						
+						game.printToLog(
+							"[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation with scale $scale0.\n\nRecommended to use scale $scale1, $scale2, $scale3 or $scale4.",
+							MESSAGE_TAG = TAG
+						)
+					} else {
+						game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", MESSAGE_TAG = TAG)
+					}
+					
 					return matchLocation
 				}
 			}
