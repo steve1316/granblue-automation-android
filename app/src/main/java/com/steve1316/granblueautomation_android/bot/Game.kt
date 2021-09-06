@@ -1145,6 +1145,11 @@ class Game(val myContext: Context) {
 		groupNumber = sharedPreferences.getInt("groupNumber", 1)
 		partyNumber = sharedPreferences.getInt("partyNumber", 1)
 		
+		// Throw an Exception if the user selected Coop or Arcarum that reset Summons and the user started the bot without selecting new Summons.
+		if (farmingMode != "Coop" && farmingMode != "Arcarum" && summonList[0] == "") {
+			throw Exception("You have no summons selected for this Farming Mode.")
+		}
+		
 		if (farmingMode == "Raid") {
 			twitterRoomFinder = TwitterRoomFinder(myContext, this)
 		}
