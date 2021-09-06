@@ -1,20 +1,24 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.5.1</latestVersion>
+    <latestVersion>2.5.2</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.5.1 - Changelog
+v2.5.2 - Changelog
 
 New
 ---
-- Added new option to manually set image scale for CV operations. You can find out your scale by taking a screenshot directly on your device 
-and then pick a easily recognizable image asset from the /images/folder in this repository and scaling it until it relatively matches the size 
-of the asset in your screenshot. Whatever percentage you scaled the image asset by will be the number that will go into this new setting.
-- Added preliminary support for devices with 720p in width (Oppo A5 2020).
+- Added new option to test device compatibility called 'Enable Test for Home Screen' under the Misc section of the Settings page. This should make it easier to test confidence/scale settings. In addition, it will also automatically find the best scale for your device. Bot will throw an Exception to stop itself if it failed this test.
+- Added and adjusted many logging messages to help me debug device compatibility when 'Debug Mode' is turned on under the Misc section of the Settings page.
 
 Changed
 ---
-- Readjusted image scales for tablets of 1600p in width (Galaxy Tab S7) both in portrait and landscape.
+- Changed number of tries to find button/header images from 5 to 3.
+- Updated scales for tablet based on results from new compatibility test.
+
+Fixed
+---
+- Fixed crash where user can input 0 as the scale.
+- Fixed bug where bot can run without any summons selected in the Settings page.
     </releaseNotes>
   </update>
 </AppUpdater>
