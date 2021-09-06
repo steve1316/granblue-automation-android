@@ -14,6 +14,7 @@ import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
+import java.text.DecimalFormat
 import java.util.*
 
 /**
@@ -29,16 +30,17 @@ class ImageUtils(context: Context, private val game: Game) {
 	
 	private val displayWidth: Int = MediaProjectionService.displayWidth
 	private val displayHeight: Int = MediaProjectionService.displayHeight
-	private val isLowerEnd: Boolean = (displayWidth == 720 || displayHeight == 1600)
-	private val isDefault: Boolean = (displayWidth == 1080 || displayHeight == 2560)
-	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560) // Galaxy Tab S7 1600x2560
-	val isLandscape: Boolean = (displayHeight == 1600 && displayWidth == 2560)
+	private val isLowerEnd: Boolean = (displayWidth == 720 || displayHeight == 1600) // Oppo A5 2020 720x1600
+	private val isDefault: Boolean = (displayWidth == 1080 || displayHeight == 2400) // Galaxy S20+ 1080x2400
+	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560) // Galaxy Tab S7 1600x2560 Portrait Mode
+	val isLandscape: Boolean = (displayHeight == 1600 && displayWidth == 2560) // Galaxy Tab S7 1600x2560 Landscape Mode
 	
 	private val lowerEndScales: MutableList<Double> = mutableListOf(0.65, 0.67, 0.69) // 720 pixels in width.
 	private val middleEndScales: MutableList<Double> = mutableListOf(0.85, 0.87, 0.89) // Middle ground between 720 and 1080 pixels.
 	private val tabletPortraitScales: MutableList<Double> = mutableListOf(0.73, 0.75, 0.77) // 1600 pixels in width in Portrait Mode.
 	private val tabletLandscapeScales: MutableList<Double> = mutableListOf(0.55, 0.57, 0.59) // 2560 pixels in width in Landscape Mode.
 	private var customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
+	private val decimalFormat = DecimalFormat("#.##")
 	
 	// Initialize Google's ML OCR.
 	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -92,11 +94,11 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 		
 		if (!isTablet) {
-			if (debugMode) {
-				game.printToLog("\n[DEBUG] Now beginning search for a single match...", MESSAGE_TAG = TAG)
-			}
-			
 			if (isLowerEnd || !isDefault) {
+				////////////////////////////////////////
+				// Devices like Oppo A5 2020 and anything in between Samsung Galaxy S20+ that is not a tablet.
+				////////////////////////////////////////
+				
 				// Scale images.
 				val scales: MutableList<Double> = when {
 					customScale != 1.0 -> {
@@ -141,17 +143,25 @@ class ImageUtils(context: Context, private val game: Game) {
 						matchLocation = mmr.minLoc
 						matchCheck = true
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal} using scale: $newScale.", MESSAGE_TAG = TAG)
+							game.printToLog(
+								"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG
+							)
 						}
 					} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 						matchLocation = mmr.maxLoc
 						matchCheck = true
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal} using scale: $newScale.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG)
 						}
 					} else {
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match not found using scale: $newScale.", MESSAGE_TAG = TAG)
+							val message: String = if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
+								"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} using scale $newScale."
+							} else {
+								"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale."
+							}
+							
+							game.printToLog(message, MESSAGE_TAG = TAG)
 						}
 					}
 					
@@ -182,11 +192,21 @@ class ImageUtils(context: Context, private val game: Game) {
 					}
 				}
 			} else {
+				////////////////////////////////////////
+				// Devices like Samsung Galaxy S20+.
+				////////////////////////////////////////
+				
+				val tmp: Bitmap = if (customScale != 1.0) {
+					Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * customScale).toInt(), (templateBitmap.height * customScale).toInt(), true)
+				} else {
+					templateBitmap
+				}
+				
 				// Create the Mats of both source and template images.
 				val sourceMat = Mat()
 				val templateMat = Mat()
 				Utils.bitmapToMat(srcBitmap, sourceMat)
-				Utils.bitmapToMat(templateBitmap, templateMat)
+				Utils.bitmapToMat(tmp, templateMat)
 				
 				// Make the Mats grayscale for the source and the template.
 				Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
@@ -210,18 +230,45 @@ class ImageUtils(context: Context, private val game: Game) {
 					matchCheck = true
 					
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+						val message: String = if (customScale == 1.0) {
+							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using default scales."
+						} else {
+							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using custom scale: $customScale."
+						}
+						
+						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 					matchLocation = mmr.maxLoc
 					matchCheck = true
 					
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+						val message: String = if (customScale == 1.0) {
+							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using default scales."
+						} else {
+							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using custom scale: $customScale."
+						}
+						
+						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				} else {
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match not found.", MESSAGE_TAG = TAG)
+						val message: String = if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
+							if (customScale == 1.0) {
+								"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} at default scale."
+							} else {
+								"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} at scale $customScale."
+							}
+						} else {
+							if (customScale == 1.0) {
+								"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} at default scale."
+							} else {
+								"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} at scale $customScale."
+							}
+							
+						}
+						
+						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				}
 				
@@ -252,9 +299,9 @@ class ImageUtils(context: Context, private val game: Game) {
 				}
 			}
 		} else {
-			if (debugMode) {
-				game.printToLog("\n[DEBUG] Now beginning search for a single match using tablet scales...", MESSAGE_TAG = TAG)
-			}
+			////////////////////////////////////////
+			// Tablets like Galaxy Tab S7.
+			////////////////////////////////////////
 			
 			// Scale images.
 			val tabletScales: MutableList<Double> = when {
@@ -305,7 +352,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					matchCheck = true
 					if (debugMode) {
 						game.printToLog(
-							"[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal} using tablet scale: $newScale.",
+							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using tablet scale: $newScale.",
 							MESSAGE_TAG = TAG
 						)
 					}
@@ -313,11 +360,20 @@ class ImageUtils(context: Context, private val game: Game) {
 					matchLocation = mmr.maxLoc
 					matchCheck = true
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal} using tablet scale: $newScale.", MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using tablet scale: $newScale.",
+							MESSAGE_TAG = TAG
+						)
 					}
 				} else {
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match not found using tablet scale: $newScale.", MESSAGE_TAG = TAG)
+						val message: String = if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
+							"[DEBUG] Match not found with highest maxVal being: ${decimalFormat.format(mmr.maxVal)} not >= $confidence at Point ${mmr.maxLoc} using scale $newScale."
+						} else {
+							"[DEBUG] Match not found with lowest minVal being: ${decimalFormat.format(mmr.minVal)} not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale."
+						}
+						
+						game.printToLog(message, MESSAGE_TAG = TAG)
 					}
 				}
 				
@@ -361,11 +417,11 @@ class ImageUtils(context: Context, private val game: Game) {
 	 */
 	private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap): ArrayList<Point> {
 		if (!isTablet) {
-			if (debugMode) {
-				game.printToLog("\n[DEBUG] Now beginning search for all matches...", MESSAGE_TAG = TAG)
-			}
-			
 			if (isLowerEnd || !isDefault) {
+				////////////////////////////////////////
+				// Devices like Oppo A5 2020 and anything in between Samsung Galaxy S20+ that is not a tablet.
+				////////////////////////////////////////
+				
 				// Scale images.
 				val scales: MutableList<Double> = when {
 					customScale != 1.0 -> {
@@ -424,8 +480,8 @@ class ImageUtils(context: Context, private val game: Game) {
 					}
 				}
 				
-				// Loop until all matches are found and break out when there are no more to be found.
-				while (true) {
+				// Loop until all other matches are found and break out when there are no more to be found.
+				while (matchCheck) {
 					// Now perform the matching and localize the result.
 					Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
 					val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
@@ -434,7 +490,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						val tempMatchLocation: Point = mmr.minLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -449,7 +505,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						val tempMatchLocation: Point = mmr.maxLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -465,6 +521,10 @@ class ImageUtils(context: Context, private val game: Game) {
 					}
 				}
 			} else {
+				////////////////////////////////////////
+				// Devices like Samsung Galaxy S20+.
+				////////////////////////////////////////
+				
 				// Create the Mats of both source and template images.
 				val sourceMat = Mat()
 				val templateMat = Mat()
@@ -490,7 +550,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						val tempMatchLocation: Point = mmr.minLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with similarity <= ${1.0 - confidenceAll} at Point $matchLocation with minVal = ${mmr.minVal}.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidenceAll} at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -505,7 +565,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						val tempMatchLocation: Point = mmr.maxLoc
 						
 						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with similarity >= $confidenceAll at Point $matchLocation with maxVal = ${mmr.maxVal}.", MESSAGE_TAG = TAG)
+							game.printToLog("[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidenceAll at Point $matchLocation.", MESSAGE_TAG = TAG)
 							
 							// Draw a rectangle around the match and then save it to the specified file.
 							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -522,9 +582,9 @@ class ImageUtils(context: Context, private val game: Game) {
 				}
 			}
 		} else {
-			if (debugMode) {
-				game.printToLog("\n[DEBUG] Now beginning search for all matches using tablet scales...", MESSAGE_TAG = TAG)
-			}
+			////////////////////////////////////////
+			// Tablets like Galaxy Tab S7.
+			////////////////////////////////////////
 			
 			// Scale images.
 			val tabletScales: MutableList<Double> = when {
@@ -597,7 +657,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					
 					if (debugMode) {
 						game.printToLog(
-							"[DEBUG] Match found with similarity <= ${1.0 - confidence} at Point $matchLocation with minVal = ${mmr.minVal} using tablet scale: $newScale.",
+							"[DEBUG] Match found with minVal = ${decimalFormat.format(mmr.minVal)} <= ${1.0 - confidence} at Point $matchLocation using tablet scale: $newScale.",
 							MESSAGE_TAG = TAG
 						)
 						
@@ -614,7 +674,10 @@ class ImageUtils(context: Context, private val game: Game) {
 					val tempMatchLocation: Point = mmr.maxLoc
 					
 					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with similarity >= $confidence at Point $matchLocation with maxVal = ${mmr.maxVal} using tablet scale: $newScale.", MESSAGE_TAG = TAG)
+						game.printToLog(
+							"[DEBUG] Match found with maxVal = ${decimalFormat.format(mmr.maxVal)} >= $confidence at Point $matchLocation using tablet scale: $newScale.",
+							MESSAGE_TAG = TAG
+						)
 						
 						// Draw a rectangle around the match and then save it to the specified file.
 						Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
@@ -688,6 +751,10 @@ class ImageUtils(context: Context, private val game: Game) {
 		val folderName = "buttons"
 		var numberOfTries = tries
 		
+		if (debugMode) {
+			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} button image...", MESSAGE_TAG = TAG)
+		}
+		
 		while (numberOfTries > 0) {
 			val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
 			
@@ -727,6 +794,11 @@ class ImageUtils(context: Context, private val game: Game) {
 	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Boolean {
 		val folderName = "headers"
 		var numberOfTries = tries
+		
+		if (debugMode) {
+			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} header image...", MESSAGE_TAG = TAG)
+		}
+		
 		while (numberOfTries > 0) {
 			val (sourceBitmap, templateBitmap) = getBitmaps(templateName + "_header", folderName)
 			
@@ -884,6 +956,10 @@ class ImageUtils(context: Context, private val game: Game) {
 			"buttons"
 		} else {
 			"items"
+		}
+		
+		if (debugMode) {
+			game.printToLog("\n[DEBUG] Starting process to find all ${templateName.uppercase()} images...", MESSAGE_TAG = TAG)
 		}
 		
 		val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
