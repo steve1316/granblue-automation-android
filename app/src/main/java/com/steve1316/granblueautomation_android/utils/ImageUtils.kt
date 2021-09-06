@@ -37,8 +37,8 @@ class ImageUtils(context: Context, private val game: Game) {
 	
 	private val lowerEndScales: MutableList<Double> = mutableListOf(0.65, 0.67, 0.69) // 720 pixels in width.
 	private val middleEndScales: MutableList<Double> = mutableListOf(0.85, 0.87, 0.89) // Middle ground between 720 and 1080 pixels.
-	private val tabletPortraitScales: MutableList<Double> = mutableListOf(0.73, 0.75, 0.77) // 1600 pixels in width in Portrait Mode.
-	private val tabletLandscapeScales: MutableList<Double> = mutableListOf(0.55, 0.57, 0.59) // 2560 pixels in width in Landscape Mode.
+	private val tabletPortraitScales: MutableList<Double> = mutableListOf(0.74) // 1600 pixels in width in Portrait Mode.
+	private val tabletLandscapeScales: MutableList<Double> = mutableListOf(0.57) // 2560 pixels in width in Landscape Mode.
 	private var customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
 	private val decimalFormat = DecimalFormat("#.###")
 	
