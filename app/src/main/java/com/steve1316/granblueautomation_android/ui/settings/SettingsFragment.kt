@@ -268,7 +268,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				"customScale" -> {
 					val customScaleEditText: EditTextPreference = findPreference("customScale")!!
 					sharedPreferences.edit {
-						if (customScaleEditText.text != "1" && customScaleEditText.text != "1.0" && customScaleEditText.text != "") {
+						if (customScaleEditText.text != "1" && customScaleEditText.text != "1.0" && customScaleEditText.text != "" && customScaleEditText.text != "0" && customScaleEditText.text != "0.0") {
 							customScaleEditText.summary =
 								"Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: ${customScaleEditText.text.toDouble()}"
 							putString("customScale", customScaleEditText.text)
