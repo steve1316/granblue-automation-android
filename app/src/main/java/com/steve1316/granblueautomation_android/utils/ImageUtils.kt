@@ -505,11 +505,11 @@ class ImageUtils(context: Context, private val game: Game) {
 			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
 				val tempMatchLocation: Point = mmr.minLoc
 				
+				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
+				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
+				
 				if (debugMode) {
 					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation with scale: $newScale.", MESSAGE_TAG = TAG)
-					
-					// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
-					Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				}
 				
@@ -522,11 +522,11 @@ class ImageUtils(context: Context, private val game: Game) {
 			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 				val tempMatchLocation: Point = mmr.maxLoc
 				
+				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
+				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
+				
 				if (debugMode) {
 					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation with scale: $newScale.", MESSAGE_TAG = TAG)
-					
-					// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
-					Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				}
 				
