@@ -1,6 +1,8 @@
 # Granblue Automation For Android using MediaProjection, AccessibilityService, and OpenCV
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/steve1316/granblue-automation-android?logo=GitHub) ![GitHub last commit](https://img.shields.io/github/last-commit/steve1316/granblue-automation-android?logo=GitHub) ![GitHub issues](https://img.shields.io/github/issues/steve1316/granblue-automation-android?logo=GitHub) ![GitHub pull requests](https://img.shields.io/github/issues-pr/steve1316/granblue-automation-android?logo=GitHub) ![GitHub](https://img.shields.io/github/license/steve1316/granblue-automation-android?logo=GitHub)
 
+> Discord here: https://discord.gg/nmBDMqwr
+
 > Python version here: https://github.com/steve1316/granblue-automation-pyautogui
 
 This Android application written in Kotlin is designed for educational research purposes on studying the Android architecture and using system services such as MediaProjection and AccessibilityService in conjunction with OpenCV to automate certain workflows via image template matching.
