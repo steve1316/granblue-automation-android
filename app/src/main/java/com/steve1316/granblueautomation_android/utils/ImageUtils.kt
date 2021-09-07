@@ -409,290 +409,137 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @return ArrayList of Point objects that represents the matches found on the source screenshot.
 	 */
 	private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap): ArrayList<Point> {
-		if (!isTablet) {
-			if (isLowerEnd || !isDefault) {
-				////////////////////////////////////////
-				// Devices like Oppo A5 2020 and anything in between Samsung Galaxy S20+ that is not a tablet.
-				////////////////////////////////////////
-				
-				// Scale images.
-				val scales: MutableList<Double> = when {
-					customScale != 1.0 -> {
-						mutableListOf(customScale)
-					}
-					isLowerEnd -> {
-						lowerEndScales
-					}
-					else -> {
-						middleEndScales
-					}
-				}
-				
-				var matchCheck = false
-				var newScale: Double
-				val sourceMat = Mat()
-				val templateMat = Mat()
-				var resultMat = Mat()
-				
-				// Set templateMat at whatever scale it found the very first match for the next while loop.
-				while (!matchCheck && scales.isNotEmpty()) {
-					newScale = decimalFormat.format(scales.removeFirst()).toDouble()
-					
-					val tmp: Bitmap = Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
-					
-					// Create the Mats of both source and template images.
-					Utils.bitmapToMat(sourceBitmap, sourceMat)
-					Utils.bitmapToMat(tmp, templateMat)
-					
-					// Make the Mats grayscale for the source and the template.
-					Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
-					Imgproc.cvtColor(templateMat, templateMat, Imgproc.COLOR_BGR2GRAY)
-					
-					// Create the result matrix.
-					val resultColumns: Int = sourceMat.cols() - templateMat.cols() + 1
-					val resultRows: Int = sourceMat.rows() - templateMat.rows() + 1
-					if (resultColumns < 0 || resultRows < 0) {
-						break
-					}
-					
-					resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
-					
-					// Now perform the matching and localize the result.
-					Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
-					val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-					
-					matchLocation = Point()
-					
-					// Depending on which matching method was used, the algorithms determine which location was the best.
-					if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidenceAll)) {
-						matchLocation = mmr.minLoc
-						matchCheck = true
-					} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidenceAll) {
-						matchLocation = mmr.maxLoc
-						matchCheck = true
-					}
-				}
-				
-				// Loop until all other matches are found and break out when there are no more to be found.
-				while (matchCheck) {
-					// Now perform the matching and localize the result.
-					Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
-					val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-					
-					// Format minVal or maxVal.
-					val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
-					val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
-					
-					if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
-						val tempMatchLocation: Point = mmr.minLoc
-						
-						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation.", MESSAGE_TAG = TAG)
-							
-							// Draw a rectangle around the match and then save it to the specified file.
-							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
-							Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-						}
-						
-						// Center the location coordinates and then save it to the arrayList.
-						tempMatchLocation.x += (templateMat.cols() / 2)
-						tempMatchLocation.y += (templateMat.rows() / 2)
-						matchLocations.add(tempMatchLocation)
-					} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
-						val tempMatchLocation: Point = mmr.maxLoc
-						
-						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation.", MESSAGE_TAG = TAG)
-							
-							// Draw a rectangle around the match and then save it to the specified file.
-							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
-							Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-						}
-						
-						// Center the location coordinates and then save it to the arrayList.
-						tempMatchLocation.x += (templateMat.cols() / 2)
-						tempMatchLocation.y += (templateMat.rows() / 2)
-						matchLocations.add(tempMatchLocation)
-					} else {
-						break
-					}
-				}
-			} else {
-				////////////////////////////////////////
-				// Devices like Samsung Galaxy S20+.
-				////////////////////////////////////////
-				
-				// Create the Mats of both source and template images.
-				val sourceMat = Mat()
-				val templateMat = Mat()
-				Utils.bitmapToMat(sourceBitmap, sourceMat)
-				Utils.bitmapToMat(templateBitmap, templateMat)
-				
-				// Make the Mats grayscale for the source and the template.
-				Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
-				Imgproc.cvtColor(templateMat, templateMat, Imgproc.COLOR_BGR2GRAY)
-				
-				// Create the result matrix.
-				val resultColumns: Int = sourceMat.cols() - templateMat.cols() + 1
-				val resultRows: Int = sourceMat.rows() - templateMat.rows() + 1
-				val resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
-				
-				// Loop until all matches are found.
-				while (true) {
-					// Now perform the matching and localize the result.
-					Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
-					val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-					
-					// Format minVal or maxVal.
-					val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
-					val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
-					
-					if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidenceAll)) {
-						val tempMatchLocation: Point = mmr.minLoc
-						
-						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidenceAll} at Point $matchLocation.", MESSAGE_TAG = TAG)
-							
-							// Draw a rectangle around the match and then save it to the specified file.
-							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
-							Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-						}
-						
-						// Center the location coordinates and then save it to the arrayList.
-						tempMatchLocation.x += (templateMat.cols() / 2)
-						tempMatchLocation.y += (templateMat.rows() / 2)
-						matchLocations.add(tempMatchLocation)
-					} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidenceAll) {
-						val tempMatchLocation: Point = mmr.maxLoc
-						
-						if (debugMode) {
-							game.printToLog("[DEBUG] Match found with $maxVal >= $confidenceAll at Point $matchLocation.", MESSAGE_TAG = TAG)
-							
-							// Draw a rectangle around the match and then save it to the specified file.
-							Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
-							Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-						}
-						
-						// Center the location coordinates and then save it to the arrayList.
-						tempMatchLocation.x += (templateMat.cols() / 2)
-						tempMatchLocation.y += (templateMat.rows() / 2)
-						matchLocations.add(tempMatchLocation)
-					} else {
-						break
-					}
-				}
+		// Scale images.
+		val scales: MutableList<Double> = when {
+			customScale != 1.0 -> {
+				mutableListOf(customScale)
 			}
-		} else {
-			////////////////////////////////////////
-			// Tablets like Galaxy Tab S7.
-			////////////////////////////////////////
-			
-			// Scale images.
-			val tabletScales: MutableList<Double> = when {
-				customScale != 1.0 -> {
-					mutableListOf(customScale)
-				}
-				isLandscape -> {
-					tabletLandscapeScales
-				}
-				else -> {
-					tabletPortraitScales
-				}
+			isLowerEnd -> {
+				lowerEndScales
 			}
-			
-			var matchCheck = false
-			var newScale = 0.0
-			val sourceMat = Mat()
-			val templateMat = Mat()
-			var resultMat = Mat()
-			
-			// Set the sourceMat and templateMat at whatever scale it found the very first match for the next while loop.
-			while (!matchCheck && tabletScales.isNotEmpty()) {
-				newScale = decimalFormat.format(tabletScales.removeFirst()).toDouble()
-				
-				val tmp: Bitmap = Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
-				
-				// Create the Mats of both source and template images.
-				Utils.bitmapToMat(sourceBitmap, sourceMat)
-				Utils.bitmapToMat(tmp, templateMat)
-				
-				// Make the Mats grayscale for the source and the template.
-				Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
-				Imgproc.cvtColor(templateMat, templateMat, Imgproc.COLOR_BGR2GRAY)
-				
-				// Create the result matrix.
-				val resultColumns: Int = sourceMat.cols() - templateMat.cols() + 1
-				val resultRows: Int = sourceMat.rows() - templateMat.rows() + 1
-				if (resultColumns < 0 || resultRows < 0) {
-					break
-				}
-				
-				resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
-				
-				// Now perform the matching and localize the result.
-				Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
-				val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-				
-				matchLocation = Point()
-				
-				// Depending on which matching method was used, the algorithms determine which location was the best.
-				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidenceAll)) {
-					matchLocation = mmr.minLoc
-					matchCheck = true
-					break
-				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidenceAll) {
-					matchLocation = mmr.maxLoc
-					matchCheck = true
-					break
-				}
+			!isLowerEnd && !isDefault && !isTablet -> {
+				middleEndScales
 			}
-			
-			// Loop until all matches are found.
-			while (matchCheck) {
-				// Now perform the matching and localize the result.
-				Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
-				val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-				
-				// Format minVal or maxVal.
-				val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
-				val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
-				
-				if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
-					val tempMatchLocation: Point = mmr.minLoc
-					
-					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using tablet scale: $newScale.", MESSAGE_TAG = TAG)
-						
-						// Draw a rectangle around the match and then save it to the specified file.
-						Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
-						Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-					}
-					
-					// Center the location coordinates and then save it to the arrayList.
-					tempMatchLocation.x += (templateMat.cols() / 2)
-					tempMatchLocation.y += (templateMat.rows() / 2)
-					matchLocations.add(tempMatchLocation)
-				} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
-					val tempMatchLocation: Point = mmr.maxLoc
-					
-					if (debugMode) {
-						game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using tablet scale: $newScale.", MESSAGE_TAG = TAG)
-						
-						// Draw a rectangle around the match and then save it to the specified file.
-						Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
-						Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-					}
-					
-					// Center the location coordinates and then save it to the arrayList.
-					tempMatchLocation.x += (templateMat.cols() / 2)
-					tempMatchLocation.y += (templateMat.rows() / 2)
-					matchLocations.add(tempMatchLocation)
-				} else {
-					break
-				}
+			isTablet && isLandscape -> {
+				tabletLandscapeScales
+			}
+			isTablet && !isLandscape -> {
+				tabletPortraitScales
+			}
+			else -> {
+				mutableListOf(1.0)
 			}
 		}
 		
+		var matchCheck = false
+		var newScale = 0.0
+		val sourceMat = Mat()
+		val templateMat = Mat()
+		var resultMat = Mat()
+		
+		// Set templateMat at whatever scale it found the very first match for the next while loop.
+		while (!matchCheck && scales.isNotEmpty()) {
+			newScale = decimalFormat.format(scales.removeFirst()).toDouble()
+			
+			val tmp: Bitmap = if (newScale != 1.0) {
+				Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
+			} else {
+				templateBitmap
+			}
+			
+			// Create the Mats of both source and template images.
+			Utils.bitmapToMat(sourceBitmap, sourceMat)
+			Utils.bitmapToMat(tmp, templateMat)
+			
+			// Make the Mats grayscale for the source and the template.
+			Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
+			Imgproc.cvtColor(templateMat, templateMat, Imgproc.COLOR_BGR2GRAY)
+			
+			// Create the result matrix.
+			val resultColumns: Int = sourceMat.cols() - templateMat.cols() + 1
+			val resultRows: Int = sourceMat.rows() - templateMat.rows() + 1
+			if (resultColumns < 0 || resultRows < 0) {
+				break
+			}
+			
+			resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
+			
+			// Now perform the matching and localize the result.
+			Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
+			val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
+			
+			matchLocation = Point()
+			
+			// Depending on which matching method was used, the algorithms determine which location was the best.
+			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidenceAll)) {
+				matchLocation = mmr.minLoc
+				matchCheck = true
+				
+				// Center the location coordinates and then save it.
+				matchLocation.x += (templateMat.cols() / 2)
+				matchLocation.y += (templateMat.rows() / 2)
+				
+				matchLocations.add(matchLocation)
+			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidenceAll) {
+				matchLocation = mmr.maxLoc
+				matchCheck = true
+				
+				// Center the location coordinates and then save it.
+				matchLocation.x += (templateMat.cols() / 2)
+				matchLocation.y += (templateMat.rows() / 2)
+				
+				matchLocations.add(matchLocation)
+			}
+		}
+		
+		// Loop until all other matches are found and break out when there are no more to be found.
+		while (matchCheck) {
+			// Now perform the matching and localize the result.
+			Imgproc.matchTemplate(sourceMat, templateMat, resultMat, matchMethod)
+			val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
+			
+			// Format minVal or maxVal.
+			val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
+			val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+			
+			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
+				val tempMatchLocation: Point = mmr.minLoc
+				
+				if (debugMode) {
+					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation with scale: $newScale.", MESSAGE_TAG = TAG)
+					
+					// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
+					Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
+					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
+				}
+				
+				// Center the location coordinates and then save it.
+				tempMatchLocation.x += (templateMat.cols() / 2)
+				tempMatchLocation.y += (templateMat.rows() / 2)
+				if (!matchLocations.contains(tempMatchLocation)) {
+					matchLocations.add(tempMatchLocation)
+				}
+			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
+				val tempMatchLocation: Point = mmr.maxLoc
+				
+				if (debugMode) {
+					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation with scale: $newScale.", MESSAGE_TAG = TAG)
+					
+					// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
+					Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
+					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
+				}
+				
+				// Center the location coordinates and then save it.
+				tempMatchLocation.x += (templateMat.cols() / 2)
+				tempMatchLocation.y += (templateMat.rows() / 2)
+				if (!matchLocations.contains(tempMatchLocation)) {
+					matchLocations.add(tempMatchLocation)
+				}
+			} else {
+				break
+			}
+		}
 		
 		return matchLocations
 	}
