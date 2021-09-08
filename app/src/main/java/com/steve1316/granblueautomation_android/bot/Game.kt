@@ -179,11 +179,11 @@ class Game(val myContext: Context) {
 		var newButtonName = buttonName
 		
 		if (buttonName.lowercase() == "quest") {
-			tempLocation = imageUtils.findButton("quest_blue", tries = 1, suppressError = suppressError)
+			tempLocation = imageUtils.findButton("quest_blue", suppressError = suppressError)
 			newButtonName = "quest_blue"
 			
 			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_red", tries = 1, suppressError = suppressError)
+				tempLocation = imageUtils.findButton("quest_red", suppressError = suppressError)
 				newButtonName = "quest_red"
 			}
 			
