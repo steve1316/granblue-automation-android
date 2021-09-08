@@ -27,27 +27,36 @@ class ImageUtils(context: Context, private val game: Game) {
 	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 	private val confidence: Double = sharedPreferences.getInt("confidence", 80).toDouble() / 100
 	private val confidenceAll: Double = sharedPreferences.getInt("confidenceAll", 80).toDouble() / 100
+	private val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+	private var customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
 	
 	private val displayWidth: Int = MediaProjectionService.displayWidth
 	private val displayHeight: Int = MediaProjectionService.displayHeight
-	private val isLowerEnd: Boolean = (displayWidth == 720 || displayHeight == 1600) // Oppo A5 2020 720x1600
-	private val isDefault: Boolean = (displayWidth == 1080 || displayHeight == 2400) // Galaxy S20+ 1080x2400
-	val isTablet: Boolean = (displayWidth == 1600) || (displayWidth == 2560) // Galaxy Tab S7 1600x2560 Portrait Mode
-	val isLandscape: Boolean = (displayHeight == 1600 && displayWidth == 2560) // Galaxy Tab S7 1600x2560 Landscape Mode
+	private val isDefault: Boolean = (displayWidth == 1080) // 1080p
+	val isLowerEnd: Boolean = (displayWidth == 720) // 720p
+	val isTablet: Boolean = (displayWidth == 1600 && displayHeight == 2560) || (displayWidth == 2560 && displayHeight == 1600) // Galaxy Tab S7 1600x2560 Portrait Mode
+	val isLandscape: Boolean = (displayWidth == 2560 && displayHeight == 1600) // Galaxy Tab S7 1600x2560 Landscape Mode
 	
-	private val lowerEndScales: MutableList<Double> = mutableListOf(0.65, 0.67, 0.69) // 720 pixels in width.
-	private val middleEndScales: MutableList<Double> = mutableListOf(0.85, 0.87, 0.89) // Middle ground between 720 and 1080 pixels.
-	private val tabletPortraitScales: MutableList<Double> = mutableListOf(0.74) // 1600 pixels in width in Portrait Mode.
-	private val tabletLandscapeScales: MutableList<Double> = mutableListOf(0.57) // 2560 pixels in width in Landscape Mode.
-	private var customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
-	private val decimalFormat = DecimalFormat("#.###")
+	// 720 pixels in width.
+	private val lowerEndScales: MutableList<Double> = mutableListOf(0.60, 0.61, 0.62, 0.63, 0.64, 0.65, 0.67, 0.68, 0.69, 0.70)
+	
+	// Middle ground between 720 and 1080 pixels.
+	private val middleEndScales: MutableList<Double> = mutableListOf(
+		0.70, 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.80, 0.81, 0.82, 0.83, 0.84, 0.85, 0.87, 0.88, 0.89, 0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99
+	)
+	
+	// 1600 pixels in width in Portrait Mode.
+	private val tabletPortraitScales: MutableList<Double> = mutableListOf(0.70, 0.71, 0.72, 0.73, 0.74, 0.75)
+	
+	// 2560 pixels in width in Landscape Mode.
+	private val tabletLandscapeScales: MutableList<Double> = mutableListOf(0.55, 0.56, 0.57, 0.58, 0.59, 0.60)
 	
 	// Initialize Google's ML OCR.
 	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 	
-	private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
+	private val decimalFormat = DecimalFormat("#.###")
 	
-	private var debugMode: Boolean = false
+	private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
 	
 	// Used for skipping selecting the Summon Element every time on repeated runs.
 	private var summonSelectionFirstRun: Boolean = true
@@ -72,9 +81,6 @@ class ImageUtils(context: Context, private val game: Game) {
 		// Set the file path to the /files/temp/ folder.
 		val matchFilePath: String = myContext.getExternalFilesDir(null)?.absolutePath + "/temp"
 		updateMatchFilePath(matchFilePath)
-		
-		// Now determine if Debug Mode is turned on for more informational logging messages.
-		debugMode = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("debugMode", false)
 	}
 	
 	/**
@@ -195,8 +201,6 @@ class ImageUtils(context: Context, private val game: Game) {
 				}
 				
 				return true
-			} else {
-				return false
 			}
 		}
 		
@@ -404,10 +408,10 @@ class ImageUtils(context: Context, private val game: Game) {
 			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} button image...", MESSAGE_TAG = TAG)
 		}
 		
-		// If Test Mode is enabled, prepare for it by setting initial scale to 0.10.
+		// If Test Mode is enabled, prepare for it by setting initial scale.
 		if (testMode) {
-			numberOfTries = 100
-			customScale = 0.10
+			numberOfTries = 80
+			customScale = 0.20
 		}
 		
 		while (numberOfTries > 0) {
@@ -416,8 +420,8 @@ class ImageUtils(context: Context, private val game: Game) {
 			if (sourceBitmap != null && templateBitmap != null) {
 				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region)
 				if (!resultFlag) {
-					// Increment scale by 0.01 until a match is found if Test Mode is enabled.
 					if (testMode) {
+						// Increment scale by 0.01 until a match is found if Test Mode is enabled.
 						customScale += 0.01
 						customScale = decimalFormat.format(customScale).toDouble()
 					}
@@ -428,7 +432,7 @@ class ImageUtils(context: Context, private val game: Game) {
 							game.printToLog("[WARNING] Failed to find the ${templateName.uppercase()} button.", MESSAGE_TAG = TAG)
 						}
 						
-						return null
+						break
 					}
 					
 					Log.d(TAG, "Failed to find the ${templateName.uppercase()} button. Trying again...")
