@@ -1,24 +1,22 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.5.2</latestVersion>
+    <latestVersion>2.5.3</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.5.2 - Changelog
-
-New
----
-- Added new option to test device compatibility called 'Enable Test for Home Screen' under the Misc section of the Settings page. This should make it easier to test confidence/scale settings. In addition, it will also automatically find the best scale for your device. Bot will throw an Exception to stop itself if it failed this test.
-- Added and adjusted many logging messages to help me debug device compatibility when 'Debug Mode' is turned on under the Misc section of the Settings page.
+v2.5.3 - Changelog
 
 Changed
 ---
-- Changed number of tries to find button/header images from 5 to 3.
-- Updated scales for tablet based on results from new compatibility test.
+- Updated the Quest and Special button image assets.
+- Added a delay when waiting for the Home screen to appear.
+- Removed number of tries when searching for the Quest button.
+- Fleshed out scales in general and clarified 1080p eligibility.
 
 Fixed
 ---
-- Fixed crash where user can input 0 as the scale.
-- Fixed bug where bot can run without any summons selected in the Settings page.
+- Fixed infinite loop when matching multiple images when Debug Mode is turned off.
+- Fixed bug where scales were empty due to not deep copying.
+- Fixed 720p support.
     </releaseNotes>
   </update>
 </AppUpdater>
