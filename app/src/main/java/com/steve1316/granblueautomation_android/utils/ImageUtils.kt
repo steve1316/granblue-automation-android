@@ -96,19 +96,19 @@ class ImageUtils(context: Context, private val game: Game) {
 		// Scale images.
 		val scales: MutableList<Double> = when {
 			customScale != 1.0 -> {
-				mutableListOf(customScale)
+				mutableListOf(customScale - 0.02, customScale - 0.01, customScale, customScale + 0.01, customScale + 0.02, customScale + 0.03, customScale + 0.04)
 			}
 			isLowerEnd -> {
-				lowerEndScales
+				lowerEndScales.toMutableList()
 			}
 			!isLowerEnd && !isDefault && !isTablet -> {
-				middleEndScales
+				middleEndScales.toMutableList()
 			}
 			isTablet && isLandscape -> {
-				tabletLandscapeScales
+				tabletLandscapeScales.toMutableList()
 			}
 			isTablet && !isLandscape -> {
-				tabletPortraitScales
+				tabletPortraitScales.toMutableList()
 			}
 			else -> {
 				mutableListOf(1.0)
@@ -214,19 +214,19 @@ class ImageUtils(context: Context, private val game: Game) {
 		// Scale images.
 		val scales: MutableList<Double> = when {
 			customScale != 1.0 -> {
-				mutableListOf(customScale)
+				mutableListOf(customScale - 0.02, customScale - 0.01, customScale, customScale + 0.01, customScale + 0.02, customScale + 0.03, customScale + 0.04)
 			}
 			isLowerEnd -> {
-				lowerEndScales
+				lowerEndScales.toMutableList()
 			}
 			!isLowerEnd && !isDefault && !isTablet -> {
-				middleEndScales
+				middleEndScales.toMutableList()
 			}
 			isTablet && isLandscape -> {
-				tabletLandscapeScales
+				tabletLandscapeScales.toMutableList()
 			}
 			isTablet && !isLandscape -> {
-				tabletPortraitScales
+				tabletPortraitScales.toMutableList()
 			}
 			else -> {
 				mutableListOf(1.0)
