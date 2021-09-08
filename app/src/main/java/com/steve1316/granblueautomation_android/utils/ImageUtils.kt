@@ -91,7 +91,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @return True if a match was found. False otherwise.
 	 */
-	private fun match(sourceBitmap: Bitmap, templateBitmap: Bitmap, region: IntArray = intArrayOf(0, 0, 0, 0)): Boolean {
+	private fun match(sourceBitmap: Bitmap, templateBitmap: Bitmap, region: IntArray = intArrayOf(0, 0, 0, 0), useSingleScale: Boolean = false): Boolean {
 		// If a custom region was specified, crop the source screenshot.
 		val srcBitmap = if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
 			Bitmap.createBitmap(sourceBitmap, region[0], region[1], region[2], region[3])
@@ -101,8 +101,11 @@ class ImageUtils(context: Context, private val game: Game) {
 		
 		// Scale images.
 		val scales: MutableList<Double> = when {
-			customScale != 1.0 -> {
+			customScale != 1.0 && !useSingleScale -> {
 				mutableListOf(customScale - 0.02, customScale - 0.01, customScale, customScale + 0.01, customScale + 0.02, customScale + 0.03, customScale + 0.04)
+			}
+			customScale != 1.0 && useSingleScale -> {
+				mutableListOf(customScale)
 			}
 			isLowerEnd -> {
 				lowerEndScales.toMutableList()
@@ -418,7 +421,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
 			
 			if (sourceBitmap != null && templateBitmap != null) {
-				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region)
+				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region, useSingleScale = true)
 				if (!resultFlag) {
 					if (testMode) {
 						// Increment scale by 0.01 until a match is found if Test Mode is enabled.
