@@ -464,9 +464,17 @@ class Game(val myContext: Context) {
 			// Select the Group.
 			var equation: Double = if (!imageUtils.isTablet) {
 				if (selectedGroupNumber == 1) {
-					787.0
+					if (imageUtils.isLowerEnd) {
+						537.0
+					} else {
+						787.0
+					}
 				} else {
-					787.0 - (140 * (selectedGroupNumber - 1))
+					if (imageUtils.isLowerEnd) {
+						537.0 - (93 * (selectedGroupNumber - 1))
+					} else {
+						787.0 - (140 * (selectedGroupNumber - 1))
+					}
 				}
 			} else {
 				if (!imageUtils.isLandscape) {
@@ -485,7 +493,11 @@ class Game(val myContext: Context) {
 			}
 			
 			if (!imageUtils.isTablet) {
-				gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
+				if (imageUtils.isLowerEnd) {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 80.0, "template_group")
+				} else {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
+				}
 			} else {
 				if (!imageUtils.isLandscape) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 90.0, "template_group")
@@ -499,9 +511,17 @@ class Game(val myContext: Context) {
 			// Select the Party.
 			equation = if (!imageUtils.isTablet) {
 				if (selectedPartyNumber == 1) {
-					690.0
+					if (imageUtils.isLowerEnd) {
+						468.0
+					} else {
+						690.0
+					}
 				} else {
-					690.0 - (130 * (selectedPartyNumber - 1))
+					if (imageUtils.isLowerEnd) {
+						468.0 - (85 * (selectedPartyNumber - 1))
+					} else {
+						690.0 - (130 * (selectedPartyNumber - 1))
+					}
 				}
 			} else {
 				if (!imageUtils.isLandscape) {
@@ -520,7 +540,11 @@ class Game(val myContext: Context) {
 			}
 			
 			if (!imageUtils.isTablet) {
-				gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
+				if (imageUtils.isLowerEnd) {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 490.0, "template_party")
+				} else {
+					gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
+				}
 			} else {
 				if (!imageUtils.isLandscape) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 540.0, "template_party")

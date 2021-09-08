@@ -215,7 +215,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		val cancelButtonLocation = game.imageUtils.findButton("cancel")
 		if (cancelButtonLocation != null) {
 			if (!game.imageUtils.isTablet) {
-				game.gestureUtils.tap(cancelButtonLocation.x + 500, cancelButtonLocation.y, "cancel")
+				if (!game.imageUtils.isLowerEnd) {
+					game.gestureUtils.tap(cancelButtonLocation.x + 340, cancelButtonLocation.y, "cancel")
+				} else {
+					game.gestureUtils.tap(cancelButtonLocation.x + 500, cancelButtonLocation.y, "cancel")
+				}
 			} else {
 				if (!game.imageUtils.isLandscape) {
 					game.gestureUtils.tap(cancelButtonLocation.x + 370, cancelButtonLocation.y, "cancel")
@@ -279,18 +283,35 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun selectCharacter(characterNumber: Int) {
 		val x = if (!game.imageUtils.isTablet) {
-			when (characterNumber) {
-				1 -> {
-					attackButtonLocation!!.x - 715.0
+			if (game.imageUtils.isLowerEnd) {
+				when (characterNumber) {
+					1 -> {
+						attackButtonLocation!!.x - 480.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 355.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 230.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 105.0
+					}
 				}
-				2 -> {
-					attackButtonLocation!!.x - 540.0
-				}
-				3 -> {
-					attackButtonLocation!!.x - 350.0
-				}
-				else -> {
-					attackButtonLocation!!.x - 180.0
+			} else {
+				when (characterNumber) {//550,745 ATTACK
+					1 -> {
+						attackButtonLocation!!.x - 715.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 540.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 350.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 180.0
+					}
 				}
 			}
 		} else {
@@ -329,7 +350,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 		
 		val y = if (!game.imageUtils.isTablet) {
-			attackButtonLocation!!.y + 290.0
+			if (game.imageUtils.isLowerEnd) {
+				attackButtonLocation!!.y + 185.0
+			} else {
+				attackButtonLocation!!.y + 290.0
+			}
 		} else {
 			if (!game.imageUtils.isLandscape) {
 				attackButtonLocation!!.y + 220.0
@@ -357,7 +382,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				when (target) {
 					1 -> {
 						x = if (!game.imageUtils.isTablet) {
-							626.0
+							if (game.imageUtils.isLowerEnd) {
+								400.0
+							} else {
+								626.0
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								458.0
@@ -368,7 +397,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					}
 					2 -> {
 						x = if (!game.imageUtils.isTablet) {
-							253.0
+							if (game.imageUtils.isLowerEnd) {
+								165.0
+							} else {
+								253.0
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								183.0
@@ -379,7 +412,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					}
 					else -> {
 						x = if (!game.imageUtils.isTablet) {
-							-85.0
+							if (game.imageUtils.isLowerEnd) {
+								-75.0
+							} else {
+								-85.0
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								-67.0
@@ -391,7 +428,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				}
 				
 				val y: Double = if (!game.imageUtils.isTablet) {
-					667.0
+					if (game.imageUtils.isLowerEnd) {
+						430.0
+					} else {
+						667.0
+					}
 				} else {
 					if (!game.imageUtils.isLandscape) {
 						478.0
@@ -426,7 +467,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				"useskill(1)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", MESSAGE_TAG = TAG)
 					if (!game.imageUtils.isTablet) {
-						attackButtonLocation!!.x - 485.0
+						if (game.imageUtils.isLowerEnd) {
+							attackButtonLocation!!.x - 320.0
+						} else {
+							attackButtonLocation!!.x - 485.0
+						}
 					} else {
 						if (!game.imageUtils.isLandscape) {
 							attackButtonLocation!!.x - 356.0
@@ -438,7 +483,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				"useskill(2)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", MESSAGE_TAG = TAG)
 					if (!game.imageUtils.isTablet) {
-						attackButtonLocation!!.x - 295.0
+						if (game.imageUtils.isLowerEnd) {
+							attackButtonLocation!!.x - 195.0
+						} else {
+							attackButtonLocation!!.x - 295.0
+						}
 					} else {
 						if (!game.imageUtils.isLandscape) {
 							attackButtonLocation!!.x - 216.0
@@ -450,7 +499,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				"useskill(3)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", MESSAGE_TAG = TAG)
 					if (!game.imageUtils.isTablet) {
-						attackButtonLocation!!.x - 105.0
+						if (game.imageUtils.isLowerEnd) {
+							attackButtonLocation!!.x - 70.0
+						} else {
+							attackButtonLocation!!.x - 105.0
+						}
 					} else {
 						if (!game.imageUtils.isLandscape) {
 							attackButtonLocation!!.x - 77.0
@@ -462,7 +515,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				"useskill(4)" -> {
 					game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", MESSAGE_TAG = TAG)
 					if (!game.imageUtils.isTablet) {
-						attackButtonLocation!!.x + 85.0
+						if (game.imageUtils.isLowerEnd) {
+							attackButtonLocation!!.x + 55.0
+						} else {
+							attackButtonLocation!!.x + 85.0
+						}
 					} else {
 						if (!game.imageUtils.isLandscape) {
 							attackButtonLocation!!.x + 65.0
@@ -480,7 +537,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			tempSkillCommandList = tempSkillCommandList.drop(1)
 			
 			val y = if (!game.imageUtils.isTablet) {
-				attackButtonLocation!!.y + 395.0
+				if (game.imageUtils.isLowerEnd) {
+					attackButtonLocation!!.y + 255.0
+				} else {
+					attackButtonLocation!!.y + 395.0
+				}
 			} else {
 				if (!game.imageUtils.isLandscape) {
 					attackButtonLocation!!.y + 287.0
@@ -508,7 +569,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							"target(1)" -> {
 								game.printToLog("[COMBAT] Targeting Character 1 for Skill.", MESSAGE_TAG = TAG)
 								if (!game.imageUtils.isTablet) {
-									game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
+									if (game.imageUtils.isLowerEnd) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 140.0, selectCharacterLocation.y + 125.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
+									}
 								} else {
 									if (!game.imageUtils.isLandscape) {
 										game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 135.0, "template_target")
@@ -520,7 +585,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							"target(2)" -> {
 								game.printToLog("[COMBAT] Targeting Character 2 for Skill.", MESSAGE_TAG = TAG)
 								if (!game.imageUtils.isTablet) {
-									game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0, "template_target")
+									if (game.imageUtils.isLowerEnd) {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 125.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0, "template_target")
+									}
 								} else {
 									if (!game.imageUtils.isLandscape) {
 										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 135.0, "template_target")
@@ -532,7 +601,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							"target(3)" -> {
 								game.printToLog("[COMBAT] Targeting Character 3 for Skill.", MESSAGE_TAG = TAG)
 								if (!game.imageUtils.isTablet) {
-									game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
+									if (game.imageUtils.isLowerEnd) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 125.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
+									}
 								} else {
 									if (!game.imageUtils.isLandscape) {
 										game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 135.0, "template_target")
@@ -541,10 +614,14 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 									}
 								}
 							}
-							"target(4)" -> {
+							"target(4)" -> {//360,495
 								game.printToLog("[COMBAT] Targeting Character 4 for Skill.", MESSAGE_TAG = TAG)
 								if (!game.imageUtils.isTablet) {
-									game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0, "template_target")
+									if (game.imageUtils.isLowerEnd) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 140.0, selectCharacterLocation.y + 375.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0, "template_target")
+									}
 								} else {
 									if (!game.imageUtils.isLandscape) {
 										game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 415.0, "template_target")
@@ -556,7 +633,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							"target(5)" -> {
 								game.printToLog("[COMBAT] Targeting Character 5 for Skill.", MESSAGE_TAG = TAG)
 								if (!game.imageUtils.isTablet) {
-									game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0, "template_target")
+									if (game.imageUtils.isLowerEnd) {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 375.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0, "template_target")
+									}
 								} else {
 									if (!game.imageUtils.isLandscape) {
 										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 415.0, "template_target")
@@ -568,7 +649,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							"target(6)" -> {
 								game.printToLog("[COMBAT] Targeting Character 6 for Skill.", MESSAGE_TAG = TAG)
 								if (!game.imageUtils.isTablet) {
-									game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
+									if (game.imageUtils.isLowerEnd) {
+										game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 375.0, "template_target")
+									} else {
+										game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
+									}
 								} else {
 									if (!game.imageUtils.isLandscape) {
 										game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 415.0, "template_target")
@@ -616,7 +701,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					when (j) {
 						1 -> {
 							if (!game.imageUtils.isTablet) {
-								game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0, "summon")
+								if (game.imageUtils.isLowerEnd) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 485.0, attackButtonLocation!!.y + 210.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 715.0, attackButtonLocation!!.y + 300.0, "summon")
+								}
 							} else {
 								if (!game.imageUtils.isLandscape) {
 									game.gestureUtils.tap(attackButtonLocation!!.x - 528.0, attackButtonLocation!!.y + 220.0, "summon")
@@ -627,7 +716,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						}
 						2 -> {
 							if (!game.imageUtils.isTablet) {
-								game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0, "summon")
+								if (game.imageUtils.isLowerEnd) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 370.0, attackButtonLocation!!.y + 210.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 545.0, attackButtonLocation!!.y + 300.0, "summon")
+								}
 							} else {
 								if (!game.imageUtils.isLandscape) {
 									game.gestureUtils.tap(attackButtonLocation!!.x - 407.0, attackButtonLocation!!.y + 220.0, "summon")
@@ -638,7 +731,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						}
 						3 -> {
 							if (!game.imageUtils.isTablet) {
-								game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0, "summon")
+								if (game.imageUtils.isLowerEnd) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 255.0, attackButtonLocation!!.y + 210.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 375.0, attackButtonLocation!!.y + 300.0, "summon")
+								}
 							} else {
 								if (!game.imageUtils.isLandscape) {
 									game.gestureUtils.tap(attackButtonLocation!!.x - 274.0, attackButtonLocation!!.y + 220.0, "summon")
@@ -649,7 +746,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						}
 						4 -> {
 							if (!game.imageUtils.isTablet) {
-								game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0, "summon")
+								if (game.imageUtils.isLowerEnd) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 140.0, attackButtonLocation!!.y + 210.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 205.0, attackButtonLocation!!.y + 300.0, "summon")
+								}
 							} else {
 								if (!game.imageUtils.isLandscape) {
 									game.gestureUtils.tap(attackButtonLocation!!.x - 144.0, attackButtonLocation!!.y + 220.0, "summon")
@@ -660,7 +761,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						}
 						5 -> {
 							if (!game.imageUtils.isTablet) {
-								game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0, "summon")
+								if (game.imageUtils.isLowerEnd) {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 25.0, attackButtonLocation!!.y + 210.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x - 35.0, attackButtonLocation!!.y + 300.0, "summon")
+								}
 							} else {
 								if (!game.imageUtils.isLandscape) {
 									game.gestureUtils.tap(attackButtonLocation!!.x - 20.0, attackButtonLocation!!.y + 220.0, "summon")
@@ -671,7 +776,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						}
 						6 -> {
 							if (!game.imageUtils.isTablet) {
-								game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0, "summon")
+								if (game.imageUtils.isLowerEnd) {
+									game.gestureUtils.tap(attackButtonLocation!!.x + 90.0, attackButtonLocation!!.y + 210.0, "summon")
+								} else {
+									game.gestureUtils.tap(attackButtonLocation!!.x + 135.0, attackButtonLocation!!.y + 300.0, "summon")
+								}
 							} else {
 								if (!game.imageUtils.isLandscape) {
 									game.gestureUtils.tap(attackButtonLocation!!.x + 105.0, attackButtonLocation!!.y + 220.0, "summon")

@@ -70,7 +70,8 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
 		if (game.imageUtils.confirmLocation("check_your_pending_battles", tries = 1) ||
 			game.imageUtils.confirmLocation("pending_battles", tries = 1) ||
-			game.findAndClickButton("quest_results_pending_battles", tries = 1)) {
+			game.findAndClickButton("quest_results_pending_battles", tries = 1)
+		) {
 			game.printToLog("\n[INFO] Found Pending Battles that need collecting from.", MESSAGE_TAG = TAG)
 			
 			game.findAndClickButton("ok", tries = 1)
@@ -149,7 +150,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				when (mapName) {
 					"Port Breeze Archipelago" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289, "world_right_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x - 485, arrowLocation.y - 225, "world_right_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289, "world_right_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 526, arrowLocation.y - 250, "world_right_arrow")
@@ -160,7 +165,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Valtz Duchy" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118, "world_right_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x - 230, arrowLocation.y - 110, "world_right_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118, "world_right_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 250, arrowLocation.y - 122, "world_right_arrow")
@@ -171,7 +180,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Auguste Isles" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54, "world_right_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x - 560, arrowLocation.y + 5, "world_right_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54, "world_right_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 620, arrowLocation.y + 6, "world_right_arrow")
@@ -182,7 +195,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Lumacie Archipelago" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159, "world_right_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x - 130, arrowLocation.y + 75, "world_right_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159, "world_right_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 140, arrowLocation.y + 88, "world_right_arrow")
@@ -193,7 +210,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Albion Citadel" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344, "world_right_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x - 400, arrowLocation.y + 200, "world_right_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344, "world_right_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 435, arrowLocation.y + 200, "world_right_arrow")
@@ -222,7 +243,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 				when (mapName) {
 					"Mist-Shrouded Isle" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342, "world_left_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x + 240, arrowLocation.y + 190, "world_left_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342, "world_left_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 270, arrowLocation.y + 200, "world_left_arrow")
@@ -233,7 +258,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Golonzo Island" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255, "world_left_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x + 540, arrowLocation.y + 145, "world_left_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255, "world_left_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 526, arrowLocation.y + 146, "world_left_arrow")
@@ -244,7 +273,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Amalthea Island" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34, "world_left_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x + 190, arrowLocation.y + 5, "world_left_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34, "world_left_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 220, arrowLocation.y + 11, "world_left_arrow")
@@ -255,7 +288,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Former Capital Mephorash" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43, "world_left_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x + 535, arrowLocation.y - 60, "world_left_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43, "world_left_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 595, arrowLocation.y - 67, "world_left_arrow")
@@ -266,7 +303,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 					}
 					"Agastia" -> {
 						if (!game.imageUtils.isTablet) {
-							game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267, "world_left_arrow")
+							if (game.imageUtils.isLowerEnd) {
+								game.gestureUtils.tap(arrowLocation.x + 290, arrowLocation.y - 200, "world_left_arrow")
+							} else {
+								game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267, "world_left_arrow")
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 320, arrowLocation.y - 226, "world_left_arrow")
@@ -578,7 +619,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 						// Tap the mission's "Select" button.
 						game.printToLog("[INFO] Navigating to $mapName...", MESSAGE_TAG = TAG)
 						missionLocation.x += if (!game.imageUtils.isTablet) {
-							405
+							if (game.imageUtils.isLowerEnd) {
+								200
+							} else {
+								400
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								290
@@ -587,7 +632,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 							}
 						}
 						missionLocation.y += if (!game.imageUtils.isTablet) {
-							175
+							if (game.imageUtils.isLowerEnd) {
+								110
+							} else {
+								175
+							}
 						} else {
 							if (!game.imageUtils.isLandscape) {
 								120
@@ -1537,7 +1586,11 @@ class MapSelection(private val game: Game, private val twitterRoomFinder: Twitte
 			if (firstRun) {
 				joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
 				roomCodeTextBoxLocation = if (!game.imageUtils.isTablet) {
-					Point(joinRoomButtonLocation.x - 400.0, joinRoomButtonLocation.y)
+					if (game.imageUtils.isLowerEnd) {
+						Point(joinRoomButtonLocation.x - 200.0, joinRoomButtonLocation.y)
+					} else {
+						Point(joinRoomButtonLocation.x - 400.0, joinRoomButtonLocation.y)
+					}
 				} else {
 					if (!game.imageUtils.isLandscape) {
 						Point(joinRoomButtonLocation.x - 300.0, joinRoomButtonLocation.y)
