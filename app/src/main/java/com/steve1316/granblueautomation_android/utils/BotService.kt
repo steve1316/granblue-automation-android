@@ -124,6 +124,9 @@ class BotService : Service() {
 										game.goBackHome(confirmLocationCheck = true, testMode = true)
 									}
 									
+									// Reset the overlay button's image.
+									overlayButton.setImageResource(R.drawable.play_circle_filled)
+									
 									performCleanUp()
 								} catch (e: Exception) {
 									if (e.toString() == "java.lang.InterruptedException") {
@@ -151,10 +154,16 @@ class BotService : Service() {
 										}
 									}
 									
+									// Reset the overlay button's image.
+									overlayButton.setImageResource(R.drawable.play_circle_filled)
+									
 									performCleanUp(isException = true)
 								}
 							}
 						} else {
+							// Reset the overlay button's image.
+							overlayButton.setImageResource(R.drawable.play_circle_filled)
+							
 							thread.interrupt()
 							performCleanUp()
 						}
@@ -217,8 +226,5 @@ class BotService : Service() {
 		if (!isException) {
 			NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
 		}
-		
-		// Reset the overlay button's image.
-		overlayButton.setImageResource(R.drawable.play_circle_filled)
 	}
 }
