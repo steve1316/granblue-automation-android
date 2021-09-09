@@ -3,18 +3,13 @@ package com.steve1316.granblueautomation_android.bot.game_modes
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.bot.Game
 
+class ArcarumException(message: String) : Exception(message)
+
 /**
  * Provides the navigation and any necessary utility functions to handle the Arcarum game mode.
  */
-class Arcarum(
-	private val game: Game,
-	private val map: String,
-	private val groupNumber: Int,
-	private val partyNumber: Int,
-	private val numberOfRuns: Int = 1,
-	private val combatScript: List<String> = arrayListOf()
-) {
-	private val TAG: String = "${MainActivity.loggerTag}_Arcarum"
+class Arcarum(private val game: Game, private val mapName: String) {
+	private val tag: String = "${MainActivity.loggerTag}_Arcarum"
 	
 	private var firstRun: Boolean = true
 	
@@ -25,7 +20,7 @@ class Arcarum(
 	 */
 	private fun navigate(): Boolean {
 		if (firstRun) {
-			game.printToLog("\n[ARCARUM] Now beginning navigation to $map.", MESSAGE_TAG = TAG)
+			game.printToLog("\n[ARCARUM] Now beginning navigation to $mapName.", tag = tag)
 			game.goBackHome()
 			game.wait(2.0)
 			
@@ -69,13 +64,13 @@ class Arcarum(
 		game.findAndClickButton("arcarum_extreme")
 		
 		// Finally, navigate to the specified map to start it.
-		game.printToLog("[ARCARUM] Now starting the specified expedition: $map", MESSAGE_TAG = TAG)
-		val formattedMapName: String = map.lowercase().replace(" ", "_")
+		game.printToLog("[ARCARUM] Now starting the specified expedition: $mapName", tag = tag)
+		val formattedMapName: String = mapName.lowercase().replace(" ", "_")
 		if (!game.findAndClickButton("arcarum_${formattedMapName}", tries = 5)) {
 			// Resume the expedition if it is already in-progress.
 			game.findAndClickButton("arcarum_exploring")
 		} else if (game.imageUtils.confirmLocation("arcarum_departure_check", tries = 3)) {
-			game.printToLog("[ARCARUM] Now using 1 Arcarum ticket to start this expedition...", MESSAGE_TAG = TAG)
+			game.printToLog("[ARCARUM] Now using 1 Arcarum ticket to start this expedition...", tag = tag)
 			val resultCheck = game.findAndClickButton("start_expedition")
 			game.wait(6.0)
 			return resultCheck
@@ -96,7 +91,7 @@ class Arcarum(
 	 */
 	private fun chooseAction(): String {
 		// Determine what action to take.
-		game.printToLog("\n[ARCARUM] Now determining what action to take...", MESSAGE_TAG = TAG)
+		game.printToLog("\n[ARCARUM] Now determining what action to take...", tag = tag)
 		
 		// Wait a second in case the "Do or Die" animation plays.
 		game.wait(1.0)
@@ -175,20 +170,20 @@ class Arcarum(
 	/**
 	 * Starts the process of completing Arcarum expeditions.
 	 *
-	 * @return True if the number of completed runs has been reached. False otherwise.
+	 * @return Number of completed runs.
 	 */
-	fun start(): Boolean {
+	fun start(): Int {
 		var runsCompleted = 0
-		while (runsCompleted < numberOfRuns) {
+		while (runsCompleted < game.itemAmount) {
 			navigate()
 			
 			while (true) {
 				val action = chooseAction()
-				game.printToLog("[ARCARUM] Action to take will be: $action", MESSAGE_TAG = TAG)
+				game.printToLog("[ARCARUM] Action to take will be: $action", tag = tag)
 				
 				if (action == "Combat") {
 					// Start Combat Mode.
-					if (game.selectPartyAndStartMission(groupNumber, partyNumber)) {
+					if (game.selectPartyAndStartMission()) {
 						if (game.imageUtils.confirmLocation("elemental_damage", tries = 1)) {
 							throw(IllegalStateException("Encountered an important mob for Arcarum and the selected party does not conform to the enemy's weakness. Perhaps you would like to do this battle yourself?"))
 						} else if (game.imageUtils.confirmLocation("arcarum_restriction", tries = 1)) {
@@ -196,7 +191,7 @@ class Arcarum(
 						}
 						
 						game.wait(3.0)
-						if (game.combatMode.startCombatMode(combatScript)) {
+						if (game.combatMode.startCombatMode(game.combatScript)) {
 							game.collectLoot(skipInfo = true)
 							game.findAndClickButton("expedition")
 						}
@@ -208,22 +203,27 @@ class Arcarum(
 					// Either navigate to the next area or confirm the expedition's conclusion.
 					if (game.findAndClickButton("arcarum_next_stage")) {
 						game.findAndClickButton("ok")
-						game.printToLog("[ARCARUM] Moving to the next area...", MESSAGE_TAG = TAG)
+						game.printToLog("[ARCARUM] Moving to the next area...", tag = tag)
 					} else if (game.findAndClickButton("arcarum_checkpoint")) {
 						game.findAndClickButton("arcarum")
-						game.printToLog("[ARCARUM] Expedition is complete", MESSAGE_TAG = TAG)
+						game.printToLog("[ARCARUM] Expedition is complete", tag = tag)
 						runsCompleted += 1
+						
+						game.wait(1.0)
+						
+						game.checkSkyscope()
+						
 						break
 					}
 				} else if (action == "Boss Detected") {
 					game.printToLog("[ARCARUM] Boss has been detected. Stopping the bot.")
-					return true
+					throw ArcarumException("Boss has been detected. Stopping the bot.")
 				}
 				
 				game.wait(1.0)
 			}
 		}
 		
-		return true
+		return runsCompleted
 	}
 }

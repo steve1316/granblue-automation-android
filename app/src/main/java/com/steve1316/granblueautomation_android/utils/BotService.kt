@@ -28,7 +28,7 @@ import kotlin.math.roundToInt
  * https://www.tutorialspoint.com/in-android-how-to-register-a-custom-intent-filter-to-a-broadcast-receiver
  */
 class BotService : Service() {
-	private val TAG: String = "${MainActivity.loggerTag}_BotService"
+	private val tag: String = "${MainActivity.loggerTag}_BotService"
 	private var appName: String = ""
 	private lateinit var myContext: Context
 	private lateinit var overlayView: View
@@ -87,15 +87,14 @@ class BotService : Service() {
 				} else if (action == MotionEvent.ACTION_UP) {
 					val elapsedTime: Long = event.eventTime - event.downTime
 					if (elapsedTime < 100L) {
-						// Update both the Notification and the overlay button to reflect the current bot status.
+						val game = Game(myContext)
+						
 						if (!isRunning) {
-							Log.d(TAG, "Bot Service for $appName is now running.")
+							Log.d(tag, "Bot Service for $appName is now running.")
 							Toast.makeText(myContext, "Bot Service for $appName is now running.", Toast.LENGTH_SHORT).show()
 							isRunning = true
 							NotificationUtils.updateNotification(myContext, isRunning)
 							overlayButton.setImageResource(R.drawable.stop_circle_filled)
-							
-							val game = Game(myContext)
 							
 							thread = thread {
 								try {
@@ -133,10 +132,10 @@ class BotService : Service() {
 										NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
 									} else {
 										NotificationUtils.updateNotification(myContext, false, "Encountered Exception: ${e}. Tap me to see more details.")
-										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
+										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", tag = tag, isError = true)
 										
 										if (e.stackTraceToString().length >= 2500) {
-											Log.d(TAG, "Splitting Discord message.")
+											Log.d(tag, "Splitting Discord message.")
 											val halfLength: Int = e.stackTraceToString().length / 2
 											val message1: String = e.stackTraceToString().substring(0, halfLength)
 											val message2: String = e.stackTraceToString().substring(halfLength)
@@ -154,6 +153,8 @@ class BotService : Service() {
 										}
 									}
 									
+									game.twitterRoomFinder.disconnect()
+									
 									// Reset the overlay button's image.
 									overlayButton.setImageResource(R.drawable.play_circle_filled)
 									
@@ -161,6 +162,8 @@ class BotService : Service() {
 								}
 							}
 						} else {
+							game.twitterRoomFinder.disconnect()
+							
 							// Reset the overlay button's image.
 							overlayButton.setImageResource(R.drawable.play_circle_filled)
 							
@@ -219,7 +222,7 @@ class BotService : Service() {
 		// Save the message log.
 		MessageLog.saveLogToFile(myContext)
 		
-		Log.d(TAG, "Bot Service for $appName is now stopped.")
+		Log.d(tag, "Bot Service for $appName is now stopped.")
 		isRunning = false
 		
 		// Update the app's notification with the status.

@@ -6,7 +6,7 @@ import android.content.res.Resources
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
-import com.steve1316.granblueautomation_android.bot.game_modes.Arcarum
+import com.steve1316.granblueautomation_android.bot.game_modes.*
 import com.steve1316.granblueautomation_android.data.SummonData
 import com.steve1316.granblueautomation_android.utils.*
 import kotlinx.coroutines.delay
@@ -19,64 +19,77 @@ import java.util.concurrent.TimeUnit
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
 class Game(val myContext: Context) {
-	private val TAG: String = "${MainActivity.loggerTag}_Game"
+	private val tag: String = "${MainActivity.loggerTag}_Game"
 	
 	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 	
-	private var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+	// Grab all necessary information from SharedPreferences.
+	var farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
+	var mapName: String = sharedPreferences.getString("mapName", "")!!
+	var missionName: String = sharedPreferences.getString("missionName", "")!!
+	var difficulty: String = ""
+	var itemName: String = sharedPreferences.getString("itemName", "")!!
+	var itemAmount: Int = sharedPreferences.getInt("itemAmount", 1)
+	var itemAmountFarmed: Int = 0
+	private var amountOfRuns: Int = 0
+	var combatScriptName: String = sharedPreferences.getString("combatScriptName", "")!!
+	var combatScript: List<String> = sharedPreferences.getString("combatScript", "")!!.split("|")
+	var summonList: List<String> = sharedPreferences.getString("summon", "")!!.split("|")
+	var groupNumber: Int = sharedPreferences.getInt("groupNumber", 1)
+	var partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
+	private var enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
+	private var delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
+	private var enableRandomizedDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
+	private var randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
+	private var enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enabledSkipAutoRestore", true)
+	var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 	
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
-	private var twitterRoomFinder: TwitterRoomFinder? = null
-	private lateinit var mapSelection: MapSelection
+	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext, this)
 	val combatMode: CombatMode = CombatMode(this, debugMode)
+	
+	private lateinit var quest: Quest
+	private lateinit var special: Special
+	private lateinit var coop: Coop
+	private lateinit var raid: Raid
+	private lateinit var event: Event
+	private lateinit var dreadBarrage: DreadBarrage
+	private lateinit var riseOfTheBeasts: RiseOfTheBeasts
+	private lateinit var guildWars: GuildWars
+	private lateinit var provingGrounds: ProvingGrounds
+	private lateinit var xenoClash: XenoClash
+	private lateinit var arcarum: Arcarum
 	
 	private val startTime: Long = System.currentTimeMillis()
 	
-	private var enableDelayBetweenRuns: Boolean = false
-	private var delayBetweenRuns: Int = 1
-	private var enableRandomizedDelayBetweenRuns: Boolean = false
-	private var randomizedDelayBetweenRuns: Int = 1
-	
-	private var enableDimensionalHalo: Boolean = false
-	private var dimensionalHaloSummonList: List<String> = arrayListOf()
-	private var dimensionalHaloGroupNumber: Int = 0
-	private var dimensionalHaloPartyNumber: Int = 0
-	private var dimensionalHaloAmount: Int = 0
-	
-	private var enableEventNightmare: Boolean = false
-	private var eventNightmareSummonList: List<String> = arrayListOf()
-	private var eventNightmareGroupNumber: Int = 0
-	private var eventNightmarePartyNumber: Int = 0
-	
-	private var enableROTBExtremePlus: Boolean = false
-	private var rotbExtremePlusSummonList: List<String> = arrayListOf()
-	private var rotbExtremePlusGroupNumber: Int = 0
-	private var rotbExtremePlusPartyNumber: Int = 0
-	
-	private var enableXenoClashNightmare: Boolean = false
-	private var xenoClashNightmareSummonList: List<String> = arrayListOf()
-	private var xenoClashNightmareGroupNumber: Int = 0
-	private var xenoClashNightmarePartyNumber: Int = 0
-	
-	var farmingMode: String = ""
-	private var mapName: String = ""
-	var missionName: String = ""
-	var difficulty: String = ""
-	private var itemName: String = ""
-	private var itemAmount: Int = 0
-	private var itemAmountFarmed: Int = 0
-	private var amountOfRuns: Int = 0
-	private var combatScriptName: String = ""
-	private var combatScript: List<String> = arrayListOf()
-	private var summonList: List<String> = arrayListOf()
-	private var groupNumber: Int = 0
-	private var partyNumber: Int = 0
-	
-	private var coopFirstRun: Boolean = true
-	private var provingGroundsFirstRun: Boolean = true
-	private var enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enabledSkipAutoRestore", true)
 	private var partySelectionFirstRun: Boolean = true
+	
+	init {
+		if (farmingMode == "Quest") {
+			quest = Quest(this, mapName, missionName)
+		} else if (farmingMode == "Special") {
+			special = Special(this, mapName, missionName)
+		} else if (farmingMode == "Coop") {
+			coop = Coop(this, missionName)
+		} else if (farmingMode == "Raid") {
+			raid = Raid(this)
+		} else if (farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") {
+			event = Event(this, missionName)
+		} else if (farmingMode == "Dread Barrage") {
+			dreadBarrage = DreadBarrage(this, missionName)
+		} else if (farmingMode == "Rise of the Beasts") {
+			riseOfTheBeasts = RiseOfTheBeasts(this, missionName)
+		} else if (farmingMode == "Guild Wars") {
+			guildWars = GuildWars(this, missionName)
+		} else if (farmingMode == "Proving Grounds") {
+			provingGrounds = ProvingGrounds(this, missionName)
+		} else if (farmingMode == "Xeno Clash") {
+			xenoClash = XenoClash(this, missionName)
+		} else if (farmingMode == "Arcarum") {
+			arcarum = Arcarum(this, missionName)
+		}
+	}
 	
 	/**
 	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
@@ -100,14 +113,14 @@ class Game(val myContext: Context) {
 	 * Print the specified message to debug console and then saves the message to the log.
 	 *
 	 * @param message Message to be saved.
-	 * @param MESSAGE_TAG TAG to distinguish between messages for where they came from. Defaults to Game's TAG.
+	 * @param tag Tag to distinguish between messages for where they came from. Defaults to Game's tag.
 	 * @param isError Flag to determine whether to display log message in console as debug or error.
 	 */
-	fun printToLog(message: String, MESSAGE_TAG: String = TAG, isError: Boolean = false) {
+	fun printToLog(message: String, tag: String = this.tag, isError: Boolean = false) {
 		if (!isError) {
-			Log.d(MESSAGE_TAG, message)
+			Log.d(tag, message)
 		} else {
-			Log.e(MESSAGE_TAG, message)
+			Log.e(tag, message)
 		}
 		
 		// Remove the newline prefix if needed and place it where it should be.
@@ -274,7 +287,8 @@ class Game(val myContext: Context) {
 			val newSeconds = Random().nextInt(randomizedDelayBetweenRuns - delayBetweenRuns) + delayBetweenRuns
 			printToLog(
 				"\n[INFO] Given the bounds of ($delayBetweenRuns, $randomizedDelayBetweenRuns), bot will now wait for $newSeconds seconds as a resting period. Please do not navigate from the " +
-						"current screen.")
+						"current screen."
+			)
 			
 			wait(newSeconds.toDouble())
 		}
@@ -289,7 +303,7 @@ class Game(val myContext: Context) {
 	 * @param optionalSummonList Overrides the Summon list used. Defaults to the ones selected for Farming Mode.
 	 * @return True if the Summon was found and selected. False otherwise.
 	 */
-	private fun selectSummon(optionalSummonList: List<String> = arrayListOf()): Boolean {
+	fun selectSummon(optionalSummonList: List<String> = arrayListOf()): Boolean {
 		// Format the Summon strings.
 		val newSummonList = mutableListOf<String>()
 		val unformattedSummonList = if (optionalSummonList.isNotEmpty()) {
@@ -588,7 +602,8 @@ class Game(val myContext: Context) {
 			
 			if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1) && !imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
 				while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
-					(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))) {
+					(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))
+				) {
 					if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 						val useLocations = imageUtils.findAll("use")
 						if (!useFullElixir) {
@@ -603,8 +618,6 @@ class Game(val myContext: Context) {
 						
 						// Press the "OK" button to confirm the item usage.
 						findAndClickButton("ok")
-					} else if (farmingMode == "Coop" && !coopFirstRun && imageUtils.findButton("attack") != null) {
-						break
 					} else {
 						numberOfTries -= 1
 						if (numberOfTries <= 0) {
@@ -673,8 +686,9 @@ class Game(val myContext: Context) {
 	 * @param isPendingBattle Skip the incrementation of runs attempted if this was a Pending Battle. Defaults to false.
 	 * @param isEventNightmare Skip the incrementation of runs attempted if this was a Event Nightmare. Defaults to false.
 	 * @param skipInfo Skip printing the information of the run. Defaults to False.
+	 * @return Number of specified items dropped.
 	 */
-	fun collectLoot(isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false) {
+	fun collectLoot(isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false): Int {
 		var amountGained = 0
 		
 		// Close all popups until the bot reaches the Loot Collected screen.
@@ -700,8 +714,6 @@ class Game(val myContext: Context) {
 				1
 			}
 			
-			itemAmountFarmed += amountGained
-			
 			// Only increment number of runs for Proving Grounds when the bot acquires the Completion Rewards.
 			// Currently for Proving Grounds, completing 2 battles per difficulty nets you the Completion Rewards.
 			if (farmingMode == "Proving Grounds") {
@@ -712,20 +724,29 @@ class Game(val myContext: Context) {
 			} else {
 				amountOfRuns += 1
 			}
+		} else if (isPendingBattle) {
+			printToLog("\n[INFO] Detecting if any user-specified loot dropped this Pending Battle...")
+			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+				imageUtils.findFarmedItems(itemName)
+			} else {
+				1
+			}
+			
+			itemAmountFarmed += amountGained
 		}
 		
 		if (!isPendingBattle && !isEventNightmare && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
-				printToLog("\n********************************************************************************")
-				printToLog("********************************************************************************")
+				printToLog("\n************************************************************")
+				printToLog("************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
 				printToLog("[INFO] Mission: $missionName")
 				printToLog("[INFO] Summons: $summonList")
 				printToLog("[INFO] # of $itemName gained this run: $amountGained")
 				printToLog("[INFO] # of $itemName gained in total: $itemAmountFarmed/$itemAmount")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
-				printToLog("********************************************************************************")
-				printToLog("********************************************************************************")
+				printToLog("************************************************************")
+				printToLog("************************************************************")
 				
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
@@ -738,14 +759,14 @@ class Game(val myContext: Context) {
 					DiscordUtils.queue.add(discordString)
 				}
 			} else {
-				printToLog("\n********************************************************************************")
-				printToLog("********************************************************************************")
+				printToLog("\n************************************************************")
+				printToLog("************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
 				printToLog("[INFO] Mission: $missionName")
 				printToLog("[INFO] Summons: $summonList")
 				printToLog("[INFO] # of runs completed: $amountOfRuns / $itemAmount")
-				printToLog("********************************************************************************")
-				printToLog("********************************************************************************")
+				printToLog("************************************************************")
+				printToLog("************************************************************")
 				
 				// Construct the message for the Discord private DM.
 				val discordString = if (amountOfRuns >= itemAmount) {
@@ -758,16 +779,16 @@ class Game(val myContext: Context) {
 			}
 		} else if (isPendingBattle && amountGained > 0 && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
-				printToLog("\n********************************************************************************")
-				printToLog("********************************************************************************")
+				printToLog("\n************************************************************")
+				printToLog("************************************************************")
 				printToLog("[INFO] Farming Mode: $farmingMode")
 				printToLog("[INFO] Mission: $missionName")
 				printToLog("[INFO] Summons: $summonList")
 				printToLog("[INFO] # of $itemName gained from this Pending Battle: $amountGained")
 				printToLog("[INFO] # of $itemName gained in total: $itemAmountFarmed/$itemAmount")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
-				printToLog("********************************************************************************")
-				printToLog("********************************************************************************")
+				printToLog("************************************************************")
+				printToLog("************************************************************")
 				
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
@@ -782,13 +803,20 @@ class Game(val myContext: Context) {
 				}
 			}
 		}
+		
+		return amountGained
 	}
 	
 	/**
 	 * Detect any popups and attempt to close them all with the final destination being the Summon Selection screen.
+	 *
+	 * @return True if there was a Nightmare mission detected or some other popup appeared that requires the navigation process to be restarted.
 	 */
-	private fun checkForPopups() {
-		while (!imageUtils.confirmLocation("select_a_summon")) {
+	fun checkForPopups(): Boolean {
+		printToLog("\n[INFO] Now beginning process to check for popups...")
+		
+		var tries = 10
+		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon")) {
 			if (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
 				break
 			}
@@ -804,21 +832,18 @@ class Game(val myContext: Context) {
 			}
 			
 			// Check for certain popups for certain Farming Modes.
-			if ((farmingMode == "Rise of the Beasts" && checkROTBExtremePlus()) ||
-				(farmingMode == "Special" && missionName == "VH Angel Halo" && itemName == "Angel Halo Weapons" && checkDimensionalHalo()) ||
-				(farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && checkEventNightmare() ||
-				(farmingMode == "Xeno Clash" && checkForXenoClashNightmare())) {
-				// Make sure the bot goes back to the Home screen so that the "Play Again" functionality comes back.
-				mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-				break
+			if ((farmingMode == "Rise of the Beasts" && riseOfTheBeasts.checkROTBExtremePlus()) ||
+				(farmingMode == "Special" && missionName == "VH Angel Halo" && itemName == "Angel Halo Weapons" && special.checkDimensionalHalo()) ||
+				(farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && event.checkEventNightmare() ||
+				(farmingMode == "Xeno Clash" && xenoClash.checkForXenoClashNightmare())
+			) {
+				return true
 			}
 			
 			// If the bot tried to repeat a Extreme/Impossible difficulty Event Raid and it lacked the treasures to host it, go back to the Mission again.
 			if ((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
 				findAndClickButton("ok")
-				delayBetweenRuns()
-				mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-				break
+				return true
 			}
 			
 			// Attempt to close the popup by clicking on any detected "Close" and "Cancel" buttons.
@@ -827,324 +852,110 @@ class Game(val myContext: Context) {
 			}
 			
 			wait(1.0)
+			tries -= 1
 		}
+		
+		return false
 	}
 	
 	/**
 	 * Detects any "Friend Request" popups and close them.
 	 */
-	fun checkFriendRequest() {
-		if (imageUtils.confirmLocation("friend_request", tries = 1)) {
+	private fun checkFriendRequest() {
+		if (imageUtils.confirmLocation("friend_request")) {
 			findAndClickButton("cancel")
 		}
 	}
 	
 	/**
-	 * Checks for Dimensional Halo and if it appeared and the user enabled it in settings, start it.
-	 *
-	 * @return True if Dimensional Halo was detected and successfully completed. False otherwise.
+	 * Detects Skyscope popup and close it.
 	 */
-	private fun checkDimensionalHalo(): Boolean {
-		if (enableDimensionalHalo && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
-			printToLog("\n[D.HALO] Detected Dimensional Halo. Starting it now...")
-			dimensionalHaloAmount += 1
+	fun checkSkyscope() {
+		if (imageUtils.confirmLocation("skyscope")) {
+			findAndClickButton("close")
+			wait(1.0)
+		}
+	}
+	
+	/**
+	 * Process a Pending Battle.
+	 *
+	 * @return Return True if a Pending Battle was successfully processed. Otherwise, return False.
+	 */
+	private fun clearPendingBattle(): Boolean {
+		if (findAndClickButton("tap_here_to_see_rewards")) {
+			wait(1.0)
 			
-			printToLog("\n********************************************************************************")
-			printToLog("********************************************************************************")
-			printToLog("[D.HALO] Dimensional Halo")
-			printToLog("[D.HALO] Dimensional Halo Summons: $dimensionalHaloSummonList")
-			printToLog("[D.HALO] Dimensional Halo Group Number: $dimensionalHaloGroupNumber")
-			printToLog("[D.HALO] Dimensional Halo Party Number: $dimensionalHaloPartyNumber")
-			printToLog("[D.HALO] Amount of Dimensional Halos encountered: $dimensionalHaloAmount")
-			printToLog("********************************************************************************")
-			printToLog("\n********************************************************************************")
+			if (imageUtils.confirmLocation("no_loot", tries = 1)) {
+				printToLog("[INFO] No loot can be collected. Backing out...")
+				
+				// Navigate back to the Quests screen.
+				findAndClickButton("quests")
+				
+				return true
+			} else {
+				// Start loot detection if there it is available.
+				if (farmingMode == "Raid") {
+					collectLoot()
+				} else {
+					collectLoot(isPendingBattle = true)
+				}
+				
+				findAndClickButton("close", tries = 1)
+				findAndClickButton("ok", tries = 1)
+				
+				return true
+			}
+		}
+		
+		return false
+	}
+	
+	/**
+	 * Check and collect any pending rewards and free up slots for the bot to join more Raids.
+	 *
+	 * @return True if Pending Battles were detected. False otherwise.
+	 */
+	fun checkPendingBattles(): Boolean {
+		printToLog("\n[INFO] Starting process of checking for Pending Battles...")
+		wait(1.0)
+		
+		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
+		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
+		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 1) ||
+			imageUtils.confirmLocation("pending_battles", tries = 1) ||
+			findAndClickButton("quest_results_pending_battles", tries = 1)
+		) {
+			printToLog("[INFO] Found Pending Battles that need collecting from.")
 			
-			// Tap the "Play Next" button to head to the Summon Selection screen.
-			findAndClickButton("play_next")
+			findAndClickButton("ok", tries = 1)
 			
 			wait(1.0)
 			
-			// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
-			if (imageUtils.confirmLocation("select_a_summon")) {
-				selectSummon(optionalSummonList = dimensionalHaloSummonList)
-				val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = dimensionalHaloGroupNumber, optionalPartyNumber = dimensionalHaloPartyNumber)
-				
-				// Once preparations are completed, start Combat Mode.
-				if (startCheck && combatMode.startCombatMode(combatScript)) {
-					collectLoot()
-					return true
-				}
-			}
-		} else if (!enableDimensionalHalo && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
-			printToLog("\n[D.HALO] Dimensional Halo detected but user opted to not run it. Moving on...")
-			findAndClickButton("close")
-		} else {
-			printToLog("\n[D.HALO] No Dimensional Halo detected. Moving on...")
-		}
-		
-		return false
-	}
-	
-	/**
-	 * Checks for Event Nightmare and if it appeared and the user enabled it in settings, start it.
-	 *
-	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
-	 */
-	private fun checkEventNightmare(): Boolean {
-		if (enableEventNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
-			// First check if the Nightmare is skippable.
-			if (findAndClickButton("event_claim_loot", tries = 1)) {
-				printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...")
-				collectLoot(isEventNightmare = true)
-				return true
-			} else {
-				printToLog("\n[EVENT] Detected Event Nightmare. Starting it now...")
-				
-				printToLog("\n********************************************************************************")
-				printToLog("********************************************************************************")
-				printToLog("[EVENT] Event Nightmare")
-				printToLog("[EVENT] Event Nightmare Summons: $eventNightmareSummonList")
-				printToLog("[EVENT] Event Nightmare Group Number: $eventNightmareGroupNumber")
-				printToLog("[EVENT] Event Nightmare Party Number: $eventNightmarePartyNumber")
-				printToLog("********************************************************************************")
-				printToLog("\n********************************************************************************")
-				
-				// Tap the "Play Next" button to head to the Summon Selection screen.
-				findAndClickButton("play_next")
-				
-				wait(1.0)
-				
-				// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
-				if (imageUtils.confirmLocation("select_a_summon")) {
-					selectSummon(optionalSummonList = eventNightmareSummonList)
-					val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = eventNightmareGroupNumber, optionalPartyNumber = eventNightmarePartyNumber)
-					
-					// Once preparations are completed, start Combat Mode.
-					if (startCheck && combatMode.startCombatMode(combatScript)) {
-						collectLoot()
-						return true
+			if (imageUtils.confirmLocation("pending_battles", tries = 1)) {
+				// Process the current Pending Battle.
+				while (clearPendingBattle()) {
+					// While on the Loot Collected screen, if there are more Pending Battles then head back to the Pending Battles screen.
+					if (findAndClickButton("quest_results_pending_battles", tries = 1)) {
+						wait(1.0)
+						checkSkyscope()
+						checkFriendRequest()
+						wait(1.0)
+					} else {
+						// When there are no more Pending Battles, go back to the Home screen.
+						findAndClickButton("home")
+						checkSkyscope()
+						break
 					}
 				}
 			}
-		} else if (!enableEventNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
-			// First check if the Nightmare is skippable.
-			if (findAndClickButton("event_claim_loot", tries = 1)) {
-				printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...")
-				collectLoot(isEventNightmare = true)
-				return true
-			} else {
-				printToLog("\n[EVENT] Event Nightmare detected but user opted to not run it. Moving on...")
-				findAndClickButton("close")
-			}
-		} else {
-			printToLog("\n[EVENT] No Event Nightmare detected. Moving on...")
+			
+			printToLog("[INFO] Pending Battles have been cleared.")
+			return true
 		}
 		
+		printToLog("[INFO] No Pending Battles needed to be cleared.")
 		return false
-	}
-	
-	/**
-	 * Checks for Extreme Plus during Rise of the Beasts and if it appeared and the user enabled it in settings, start it.
-	 *
-	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
-	 */
-	private fun checkROTBExtremePlus(): Boolean {
-		if (enableROTBExtremePlus && imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
-			printToLog("\n[ROTB] Detected Extreme+. Starting it now...")
-			dimensionalHaloAmount += 1
-			
-			printToLog("\n********************************************************************************")
-			printToLog("********************************************************************************")
-			printToLog("[ROTB] Rise of the Beasts Extreme+")
-			printToLog("[ROTB] Rise of the Beasts Extreme+ Summons: $rotbExtremePlusSummonList")
-			printToLog("[ROTB] Rise of the Beasts Extreme+ Group Number: $rotbExtremePlusGroupNumber")
-			printToLog("[ROTB] Rise of the Beasts Extreme+ Party Number: $rotbExtremePlusPartyNumber")
-			printToLog("********************************************************************************")
-			printToLog("\n********************************************************************************")
-			
-			// Tap the "Play Next" button to head to the Summon Selection screen.
-			findAndClickButton("play_next")
-			
-			wait(1.0)
-			
-			// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
-			if (imageUtils.confirmLocation("select_a_summon")) {
-				selectSummon(optionalSummonList = rotbExtremePlusSummonList)
-				val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = rotbExtremePlusGroupNumber, optionalPartyNumber = rotbExtremePlusPartyNumber)
-				
-				// Once preparations are completed, start Combat Mode.
-				if (startCheck && combatMode.startCombatMode(combatScript)) {
-					collectLoot()
-					return true
-				}
-			}
-		} else if (!enableROTBExtremePlus && imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
-			printToLog("\n[ROTB] Rise of the Beasts Extreme+ detected but user opted to not run it. Moving on...")
-			findAndClickButton("close")
-		} else {
-			printToLog("\n[ROTB] No Rise of the Beasts Extreme+ detected. Moving on...")
-		}
-		
-		return false
-	}
-	
-	/**
-	 * Checks for Xeno Clash Nightmare and if it appeared and the user enabled it in settings, start it.
-	 *
-	 * @return True if Xeno Clash Nightmare was detected and successfully completed. False otherwise.
-	 */
-	private fun checkForXenoClashNightmare(): Boolean {
-		if (enableXenoClashNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
-			// First check if the Nightmare is skippable.
-			if (findAndClickButton("event_claim_loot", tries = 1)) {
-				printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...")
-				collectLoot(isEventNightmare = true)
-				return true
-			} else {
-				printToLog("\n[XENO] Detected Event Nightmare. Starting it now...")
-				
-				printToLog("\n********************************************************************************")
-				printToLog("********************************************************************************")
-				printToLog("[XENO] Xeno Clash Nightmare")
-				printToLog("[XENO] Xeno Clash Nightmare Summons: $xenoClashNightmareSummonList")
-				printToLog("[XENO] Xeno Clash Nightmare Group Number: $xenoClashNightmareGroupNumber")
-				printToLog("[XENO] Xeno Clash Nightmare Party Number: $xenoClashNightmarePartyNumber")
-				printToLog("********************************************************************************")
-				printToLog("\n********************************************************************************")
-				
-				// Tap the "Play Next" button to head to the Summon Selection screen.
-				findAndClickButton("play_next")
-				
-				wait(1.0)
-				
-				// Select only the first Nightmare.
-				val playRoundButtons = imageUtils.findAll("play_round_buttons")
-				gestureUtils.tap(playRoundButtons[0].x, playRoundButtons[0].y, "play_round_buttons")
-				
-				wait(1.0)
-				
-				// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
-				if (imageUtils.confirmLocation("select_a_summon")) {
-					selectSummon(optionalSummonList = xenoClashNightmareSummonList)
-					val startCheck: Boolean = selectPartyAndStartMission(optionalGroupNumber = xenoClashNightmareGroupNumber, optionalPartyNumber = xenoClashNightmarePartyNumber)
-					
-					// Once preparations are completed, start Combat Mode.
-					if (startCheck && combatMode.startCombatMode(combatScript)) {
-						collectLoot()
-						return true
-					}
-				}
-			}
-		} else if (!enableXenoClashNightmare && imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
-			// First check if the Nightmare is skippable.
-			if (findAndClickButton("event_claim_loot", tries = 1)) {
-				printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...")
-				collectLoot(isEventNightmare = true)
-				return true
-			} else {
-				printToLog("\n[XENO] Xeno Clash Nightmare detected but user opted to not run it. Moving on...")
-				findAndClickButton("close")
-			}
-		} else {
-			printToLog("\n[XENO] No Xeno Clash Nightmare detected. Moving on...")
-		}
-		
-		return false
-	}
-	
-	/**
-	 * Performs additional setup for special fights outlined in config.ini like Dimensional Halo and Event Nightmares.
-	 */
-	private fun advancedSetup() {
-		enableDimensionalHalo = sharedPreferences.getBoolean("enableDimensionalHalo", false)
-		dimensionalHaloSummonList = sharedPreferences.getStringSet("dimensionalHaloSummonList", setOf<String>())!!.toList()
-		dimensionalHaloGroupNumber = sharedPreferences.getInt("dimensionalHaloGroupNumber", 0)
-		dimensionalHaloPartyNumber = sharedPreferences.getInt("dimensionalHaloPartyNumber", 0)
-		
-		enableEventNightmare = sharedPreferences.getBoolean("enableEventNightmare", false)
-		eventNightmareSummonList = sharedPreferences.getStringSet("eventNightmareSummonList", setOf<String>())!!.toList()
-		eventNightmareGroupNumber = sharedPreferences.getInt("eventNightmareGroupNumber", 0)
-		eventNightmarePartyNumber = sharedPreferences.getInt("eventNightmarePartyNumber", 0)
-		
-		enableROTBExtremePlus = sharedPreferences.getBoolean("enableROTBExtremePlus", false)
-		rotbExtremePlusSummonList = sharedPreferences.getStringSet("rotbExtremePlusSummonList", setOf<String>())!!.toList()
-		rotbExtremePlusGroupNumber = sharedPreferences.getInt("rotbExtremePlusGroupNumber", 0)
-		rotbExtremePlusPartyNumber = sharedPreferences.getInt("rotbExtremePlusPartyNumber", 0)
-		
-		enableXenoClashNightmare = sharedPreferences.getBoolean("enableXenoClashNightmare", false)
-		xenoClashNightmareSummonList = sharedPreferences.getStringSet("xenoClashNightmareSummonList", setOf<String>())!!.toList()
-		xenoClashNightmareGroupNumber = sharedPreferences.getInt("xenoClashNightmareGroupNumber", 0)
-		xenoClashNightmarePartyNumber = sharedPreferences.getInt("xenoClashNightmarePartyNumber", 0)
-		
-		if (farmingMode == "Special" && missionName == "VH Angel Halo" && enableDimensionalHalo && (itemName == "EXP" || itemName == "Angel Halo Weapons")) {
-			printToLog("\n[INFO] Initializing settings for Dimensional Halo...")
-			
-			if (dimensionalHaloSummonList.isEmpty()) {
-				printToLog("[INFO] Summons for Dimensional Halo will reuse the ones for Farming Mode.")
-				dimensionalHaloSummonList = summonList
-			}
-			
-			if (dimensionalHaloGroupNumber == 0) {
-				printToLog("[INFO] Group Number for Dimensional Halo will reuse the ones for Farming Mode.")
-				dimensionalHaloGroupNumber = groupNumber
-			}
-			
-			if (dimensionalHaloPartyNumber == 0) {
-				printToLog("[INFO] Party Number for Dimensional Halo will reuse the ones for Farming Mode.")
-				dimensionalHaloPartyNumber = partyNumber
-			}
-		} else if ((farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && itemName == "Repeated Runs" && enableEventNightmare) {
-			printToLog("\n[INFO] Initializing settings for Event Nightmare...")
-			
-			if (eventNightmareSummonList.isEmpty()) {
-				printToLog("[INFO] Summons for Event Nightmare will reuse the ones for Farming Mode.")
-				eventNightmareSummonList = summonList
-			}
-			
-			if (eventNightmareGroupNumber == 0) {
-				printToLog("[INFO] Group Number for Event Nightmare will reuse the ones for Farming Mode.")
-				eventNightmareGroupNumber = groupNumber
-			}
-			
-			if (eventNightmarePartyNumber == 0) {
-				printToLog("[INFO] Party Number for Event Nightmare will reuse the ones for Farming Mode.")
-				eventNightmarePartyNumber = partyNumber
-			}
-		} else if (farmingMode == "Rise of the Beasts" && itemName == "Repeated Runs" && enableROTBExtremePlus) {
-			printToLog("\n[INFO] Initializing settings for Rise of the Beasts Extreme+...")
-			
-			if (rotbExtremePlusSummonList.isEmpty()) {
-				printToLog("[INFO] Summons for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.")
-				rotbExtremePlusSummonList = summonList
-			}
-			
-			if (rotbExtremePlusGroupNumber == 0) {
-				printToLog("[INFO] Group Number for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.")
-				rotbExtremePlusGroupNumber = groupNumber
-			}
-			
-			if (rotbExtremePlusPartyNumber == 0) {
-				printToLog("[INFO] Party Number for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.")
-				rotbExtremePlusPartyNumber = partyNumber
-			}
-		} else if (farmingMode == "Xeno Clash" && itemName == "Repeated Runs" && enableXenoClashNightmare) {
-			printToLog("\n[INFO] Initializing settings for Xeno Clash Nightmare...")
-			
-			if (xenoClashNightmareSummonList.isEmpty()) {
-				printToLog("[INFO] Summons for Xeno Clash Nightmare will reuse the ones for Farming Mode.")
-				xenoClashNightmareSummonList = summonList
-			}
-			
-			if (xenoClashNightmareGroupNumber == 0) {
-				printToLog("[INFO] Group Number for Xeno Clash Nightmare will reuse the ones for Farming Mode.")
-				xenoClashNightmareGroupNumber = groupNumber
-			}
-			
-			if (xenoClashNightmarePartyNumber == 0) {
-				printToLog("[INFO] Party Number for Xeno Clash Nightmare will reuse the ones for Farming Mode.")
-				xenoClashNightmarePartyNumber = partyNumber
-			}
-		}
 	}
 	
 	/**
@@ -1153,116 +964,26 @@ class Game(val myContext: Context) {
 	 * @return True if Farming Mode completed successfully. False otherwise.
 	 */
 	fun startFarmingMode(): Boolean {
-		// Grab all necessary information from SharedPreferences.
-		
-		enableDelayBetweenRuns = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
-		delayBetweenRuns = sharedPreferences.getInt("delayBetweenRuns", 1)
-		enableRandomizedDelayBetweenRuns = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
-		randomizedDelayBetweenRuns = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
-		
-		farmingMode = sharedPreferences.getString("farmingMode", "")!!
-		mapName = sharedPreferences.getString("mapName", "")!!
-		missionName = sharedPreferences.getString("missionName", "")!!
-		itemName = sharedPreferences.getString("itemName", "")!!
-		itemAmount = sharedPreferences.getInt("itemAmount", 1)
-		combatScriptName = sharedPreferences.getString("combatScriptName", "")!!
-		combatScript = sharedPreferences.getString("combatScript", "")!!.split("|")
-		summonList = sharedPreferences.getString("summon", "")!!.split("|")
-		groupNumber = sharedPreferences.getInt("groupNumber", 1)
-		partyNumber = sharedPreferences.getInt("partyNumber", 1)
-		
 		// Throw an Exception if the user selected Coop or Arcarum that reset Summons and the user started the bot without selecting new Summons.
 		if (farmingMode != "Coop" && farmingMode != "Arcarum" && summonList[0] == "") {
 			throw Exception("You have no summons selected for this Farming Mode.")
 		}
 		
-		if (farmingMode == "Raid") {
-			twitterRoomFinder = TwitterRoomFinder(myContext, this)
-		}
-		
-		mapSelection = MapSelection(this, twitterRoomFinder)
-		
 		if (itemName != "EXP") {
-			printToLog("\n################################################################################")
-			printToLog("################################################################################")
+			printToLog("\n############################################################")
+			printToLog("############################################################")
 			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
 			printToLog("[FARM] Farming ${itemAmount}x $itemName at $missionName.")
-			printToLog("################################################################################")
-			printToLog("################################################################################")
+			printToLog("############################################################")
+			printToLog("############################################################")
 		} else {
-			printToLog("\n################################################################################")
-			printToLog("################################################################################")
+			printToLog("\n############################################################")
+			printToLog("############################################################")
 			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
 			printToLog("[FARM] Doing ${itemAmount}x runs for $itemName at $missionName.")
-			printToLog("################################################################################")
-			printToLog("################################################################################")
+			printToLog("############################################################")
+			printToLog("############################################################")
 		}
-		
-		// Parse the difficulty for the chosen Mission.
-		if (farmingMode == "Special" || farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)" || farmingMode == "Rise of the Beasts") {
-			when {
-				missionName.indexOf("N ") == 0 -> {
-					difficulty = "Normal"
-				}
-				missionName.indexOf("H ") == 0 -> {
-					difficulty = "Hard"
-				}
-				missionName.indexOf("VH ") == 0 -> {
-					difficulty = "Very Hard"
-				}
-				missionName.indexOf("EX ") == 0 -> {
-					difficulty = "Extreme"
-				}
-				missionName.indexOf("IM ") == 0 -> {
-					difficulty = "Impossible"
-				}
-			}
-		} else if (farmingMode == "Dread Barrage") {
-			when {
-				missionName.indexOf("1 Star") == 0 -> {
-					difficulty = "1 Star"
-				}
-				missionName.indexOf("2 Star") == 0 -> {
-					difficulty = "2 Star"
-				}
-				missionName.indexOf("3 Star") == 0 -> {
-					difficulty = "3 Star"
-				}
-				missionName.indexOf("4 Star") == 0 -> {
-					difficulty = "4 Star"
-				}
-				missionName.indexOf("5 Star") == 0 -> {
-					difficulty = "5 Star"
-				}
-			}
-		} else if (farmingMode == "Guild Wars") {
-			when {
-				missionName.indexOf("Very Hard") == 0 -> {
-					difficulty = "Very Hard"
-				}
-				missionName.indexOf("Extreme+") == 0 -> {
-					difficulty = "Extreme+"
-				}
-				missionName.indexOf("Extreme") == 0 -> {
-					difficulty = "Extreme"
-				}
-				missionName.indexOf("NM90") == 0 -> {
-					difficulty = "NM90"
-				}
-				missionName.indexOf("NM95") == 0 -> {
-					difficulty = "NM95"
-				}
-				missionName.indexOf("NM100") == 0 -> {
-					difficulty = "NM100"
-				}
-				missionName.indexOf("NM150") == 0 -> {
-					difficulty = "NM150"
-				}
-			}
-		}
-		
-		// Perform advanced setup for the special fights like Dimensional Halo, Event Nightmares, and Dread Barrage's Unparalleled Foes.
-		advancedSetup()
 		
 		// If the user did not select a combat script, use the default Full Auto combat script.
 		if (combatScript.isEmpty() || combatScript[0] == "") {
@@ -1275,200 +996,44 @@ class Game(val myContext: Context) {
 			)
 		}
 		
-		val eventQuests = arrayListOf("N Event Quest", "H Event Quest", "VH Event Quest", "EX Event Quest")
-		var startCheckFlag = false
-		var summonCheckFlag: Boolean
-		
-		printToLog("\n[INFO] Now selecting the Mission...")
-		
-		if (farmingMode == "Arcarum") {
-			val arcarum = Arcarum(this, missionName, groupNumber, partyNumber, itemAmount, combatScript)
-			arcarum.start()
-		} else {
-			if (farmingMode != "Raid") {
-				mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-			} else {
-				mapSelection.joinRaid(missionName)
+		var firstRun = true
+		while (itemAmountFarmed < itemAmount) {
+			if (farmingMode == "Quest") {
+				itemAmountFarmed += quest.start(firstRun)
+			} else if (farmingMode == "Special") {
+				itemAmountFarmed += special.start(firstRun)
+			} else if (farmingMode == "Coop") {
+				itemAmountFarmed += coop.start(firstRun)
+			} else if (farmingMode == "Raid") {
+				itemAmountFarmed += raid.start(firstRun)
+			} else if (farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") {
+				itemAmountFarmed += event.start(firstRun)
+			} else if (farmingMode == "Rise of the Beasts") {
+				itemAmountFarmed += riseOfTheBeasts.start(firstRun)
+			} else if (farmingMode == "Guild Wars") {
+				itemAmountFarmed += guildWars.start(firstRun)
+			} else if (farmingMode == "Dread Barrage") {
+				itemAmountFarmed += dreadBarrage.start(firstRun)
+			} else if (farmingMode == "Proving Grounds") {
+				itemAmountFarmed += provingGrounds.start(firstRun)
+			} else if (farmingMode == "Xeno Clash") {
+				itemAmountFarmed += xenoClash.start(firstRun)
+			} else if (farmingMode == "Arcarum") {
+				itemAmountFarmed += arcarum.start()
 			}
 			
-			// Primary workflow loop for Farming Mode.
-			while (itemAmountFarmed < itemAmount) {
-				// Reset the Summon Selection flag.
-				summonCheckFlag = false
-				
-				// Loop and attempt to select a Summon. Reset Summons if necessary.
-				while (!summonCheckFlag && farmingMode != "Coop") {
-					summonCheckFlag = selectSummon()
-					
-					// If the return came back as false, that means the Summons were reset.
-					if (!summonCheckFlag && farmingMode != "Raid") {
-						printToLog("\n[INFO] Selecting Mission again after resetting Summons.")
-						mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-					} else if (!summonCheckFlag && farmingMode == "Raid") {
-						printToLog("\n[INFO] Joining Raids again after resetting Summons.")
-						mapSelection.joinRaid(missionName)
-					}
-				}
-				
-				// Perform Party Selection and then start the Mission. If Farming Mode is Coop, skip this as Coop reuses the same Party.
-				if (farmingMode != "Coop" && farmingMode != "Proving Grounds") {
-					startCheckFlag = selectPartyAndStartMission()
-				} else if (farmingMode == "Coop" && coopFirstRun) {
-					startCheckFlag = selectPartyAndStartMission()
-					coopFirstRun = false
-					
-					// Click the "Start" button to start the Coop Mission.
-					findAndClickButton("coop_start")
-				} else if (farmingMode == "Coop" && !coopFirstRun) {
-					printToLog("\n[INFO] Starting Coop Mission again.")
-					startCheckFlag = true
-				} else if (farmingMode == "Proving Grounds") {
-					// Parties are assumed to have already been formed by the player prior to starting. In addition, no need to select a Summon again as it is reused.
-					if (provingGroundsFirstRun) {
-						checkAP()
-						findAndClickButton("ok")
-						provingGroundsFirstRun = false
-					}
-					
-					startCheckFlag = true
-				}
-				
-				if (startCheckFlag && farmingMode != "Raid") {
-					wait(3.0)
-					
-					// Check for "Items Picked Up" popup that appears after starting a Quest Mission.
-					if (farmingMode == "Quest" && imageUtils.confirmLocation("items_picked_up", tries = 1)) {
-						findAndClickButton("ok")
-					}
-					
-					// Finally, start Combat Mode. If it ended successfully, detect loot and do it again if necessary.
-					if (combatMode.startCombatMode(combatScript)) {
-						// If it ended successfully, detect loot and repeat if acquired item amount has not been reached.
-						collectLoot()
-						
-						if (itemAmountFarmed < itemAmount) {
-							// Generate a resting period if the user enabled it.
-							delayBetweenRuns()
-							
-							if (farmingMode != "Coop" && farmingMode != "Proving Grounds" && !findAndClickButton("play_again")) {
-								// Clear away any Pending Battles.
-								mapSelection.checkPendingBattles(farmingMode)
-								
-								// Now that Pending Battles have been cleared away, select the Mission again.
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if (farmingMode == "Event (Token Drawboxes)" && eventQuests.contains(missionName)) {
-								// Select the Mission again since Event Quests do not have "Play Again" functionality.
-								mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-							} else if (farmingMode == "Coop") {
-								// Head back to the Coop Room.
-								findAndClickButton("coop_room")
-								
-								wait(1.0)
-								
-								// Check for "Daily Missions" popup for Coop.
-								if (imageUtils.confirmLocation("coop_daily_missions", tries = 1)) {
-									findAndClickButton("close")
-								}
-								
-								wait(1.0)
-								
-								// Now that the bot is back at the Coop Room, check if it is closed due to time running out.
-								if (imageUtils.confirmLocation("coop_room_closed", tries = 1)) {
-									printToLog("\n[INFO] Coop room has closed due to time running out.")
-									break
-								}
-								
-								// Now start the Coop Mission again.
-								findAndClickButton("coop_start")
-								
-								wait(1.0)
-							} else if (farmingMode == "Proving Grounds") {
-								// Tap the "Next Battle" button if there are any battles left.
-								if (findAndClickButton("proving_grounds_next_battle", suppressError = true)) {
-									printToLog("\n[INFO] Moving onto the next battle for Proving Grounds...")
-									
-									// Then tap the "OK" button to play the next battle.
-									findAndClickButton("ok")
-								} else {
-									// Otherwise, all battles for the Mission has been completed. Collect the Completion Rewards at the end.
-									printToLog("\n[INFO] Proving Grounds Mission has been completed.")
-									findAndClickButton("event")
-									
-									wait(2.0)
-									
-									findAndClickButton("proving_grounds_open_chest", tries = 5)
-									
-									if (imageUtils.confirmLocation("proving_grounds_completion_loot")) {
-										printToLog("\n[INFO] Completion rewards has been acquired.")
-										
-										// Reset the First Time flag so the bot can select a Summon and select the Mission again.
-										if (itemAmountFarmed < itemAmount) {
-											printToLog("\\n[INFO] Starting Proving Grounds Mission again...")
-											provingGroundsFirstRun = true
-											findAndClickButton("play_again")
-										}
-									}
-								}
-							}
-							
-							// For every other Farming Mode other than Coop and Proving Grounds, handle all popups and perform AP check until the bot reaches the Summon Selection screen.
-							if (farmingMode != "Proving Grounds" && farmingMode != "Coop") {
-								checkForPopups()
-								
-								if (!imageUtils.confirmLocation("select_a_summon", tries = 1)) {
-									checkAP()
-								}
-							}
-						}
-					} else {
-						// Restart the Mission if the Party wiped or exited prematurely during Combat Mode.
-						printToLog("\n[INFO] Restarting the Mission due to retreating...")
-						mapSelection.selectMap(farmingMode, mapName, missionName, difficulty)
-					}
-				} else if (startCheckFlag && farmingMode == "Raid") {
-					// Cover the occasional case where joining the Raid after selecting the Summon and Party led to the Quest Results screen with no loot to collect.
-					if (imageUtils.confirmLocation("no_loot", tries = 1)) {
-						printToLog("\n[INFO] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...")
-						mapSelection.joinRaid(missionName)
-					} else {
-						// At this point, the Summon and Party have already been selected and the Mission has started. Start Combat Mode.
-						if (combatMode.startCombatMode(combatScript)) {
-							collectLoot()
-							
-							if (itemAmountFarmed < itemAmount) {
-								// Generate a resting period if the user enabled it.
-								delayBetweenRuns()
-								
-								// Clear away any Pending Battles.
-								mapSelection.checkPendingBattles(farmingMode)
-								
-								// Now join a new Raid.
-								mapSelection.joinRaid(missionName)
-							}
-						} else {
-							delayBetweenRuns()
-							
-							// Join a new Raid.
-							mapSelection.joinRaid(missionName)
-						}
-					}
-				} else if (!startCheckFlag && farmingMode == "Raid") {
-					// If the bot reaches here, that means that the Raid ended before the bot could start the Mission after selecting the Summon and Party.
-					printToLog("\n[INFO] Seems that the Raid ended before the bot was able to join. Now looking for another Raid to join...")
-					mapSelection.joinRaid(missionName)
-				} else if (!startCheckFlag) {
-					throw Exception("Failed to arrive at the Summon Selection screen after selecting the Mission.")
-				}
+			if (itemAmountFarmed < itemAmount) {
+				// Generate a resting period if the user enabled it.
+				delayBetweenRuns()
+				firstRun = false
 			}
 		}
 		
-		
-		
-		printToLog("\n********************************************************************************")
-		printToLog("********************************************************************************")
+		printToLog("\n************************************************************")
+		printToLog("************************************************************")
 		printToLog("[INFO] Farming Mode has ended")
-		printToLog("********************************************************************************")
-		printToLog("********************************************************************************")
+		printToLog("************************************************************")
+		printToLog("************************************************************")
 		
 		return true
 	}

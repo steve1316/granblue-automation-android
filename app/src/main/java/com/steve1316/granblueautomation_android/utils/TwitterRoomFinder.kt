@@ -1,4 +1,4 @@
-package com.steve1316.granblueautomation_android.bot
+package com.steve1316.granblueautomation_android.utils
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,23 +6,22 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
+import com.steve1316.granblueautomation_android.bot.Game
 import twitter4j.*
 import twitter4j.conf.ConfigurationBuilder
 
-class MyListener : StatusListener {
-	private val TAG: String = "${MainActivity.loggerTag}_MyListener"
+class MyListener(private val game: Game) : StatusListener {
+	private val tag: String = "${MainActivity.loggerTag}_MyListener"
 	
-	val tweets: ArrayList<Status> = arrayListOf()
-	private var numberOfTweets: Int = 1
-	
-	fun setNumberOfTweets(count: Int) {
-		numberOfTweets = count
-	}
+	val tweets: ArrayDeque<Status> = ArrayDeque()
 	
 	override fun onStatus(status: Status?) {
 		if (status != null) {
-			Log.d(TAG, "[DEBUG] Stream found: ${status.text}")
-			tweets.add(status)
+			if (game.debugMode) {
+				Log.d(tag, "[DEBUG] Stream found: ${status.text}")
+			}
+			
+			tweets.addFirst(status)
 		}
 	}
 	
@@ -45,21 +44,19 @@ class MyListener : StatusListener {
 	override fun onStallWarning(warning: StallWarning?) {
 		return
 	}
-	
 }
 
 /**
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
-class TwitterRoomFinder(myContext: Context, game: Game) {
-	private val TAG: String = "${MainActivity.loggerTag}_TwitterRoomFinder"
+class TwitterRoomFinder(myContext: Context, private val game: Game) {
+	private val tag: String = "${MainActivity.loggerTag}_TwitterRoomFinder"
 	
 	private lateinit var twitter: Twitter
-	private lateinit var twitterStream: TwitterStream
-	private val listener = MyListener()
+	private var twitterStream: TwitterStream? = null
+	private val listener = MyListener(game)
 	
 	private val alreadyVisitedRoomCodes: ArrayList<String> = arrayListOf()
-	private val alreadyVisitedIDs: ArrayList<Long> = arrayListOf()
 	
 	private val listOfRaids = mapOf(
 		"Lvl 50 Tiamat Omega" to "Lv50 ティアマト・マグナ",
@@ -160,39 +157,44 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 	)
 	
 	init {
-		try {
-			game.printToLog("\n[INFO] Connecting to Twitter API...", MESSAGE_TAG = TAG)
-			
-			// Initialize the Twitter object.
-			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-			val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
-				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
-				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
-				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
-				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
-			
-			val configurationStreamBuilder: ConfigurationBuilder = ConfigurationBuilder()
-				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
-				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
-				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
-				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
-			
-			twitter = TwitterFactory(configurationBuilder.build()).instance
-			twitterStream = TwitterStreamFactory(configurationStreamBuilder.build()).instance
-			twitterStream.addListener(listener)
-			
-			// Test connection by fetching user's timeline.
-			twitter.timelines().homeTimeline
-			
-			game.printToLog("[SUCCESS] Connection to Twitter API is successful.", MESSAGE_TAG = TAG)
-			
-			// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
-			val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-			StrictMode.setThreadPolicy(policy)
-			
-			game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", MESSAGE_TAG = TAG)
-		} catch (e: Exception) {
-			game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.stackTraceToString()}", MESSAGE_TAG = TAG, isError = true)
+		if (game.farmingMode == "Raid") {
+			try {
+				game.printToLog("\n[INFO] Connecting to Twitter API...", tag = tag)
+				
+				// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
+				val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+				StrictMode.setThreadPolicy(policy)
+				
+				game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", tag = tag)
+				
+				// Initialize the Twitter object.
+				val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
+				val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
+					.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
+					.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
+					.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
+					.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
+				
+				val configurationStreamBuilder: ConfigurationBuilder = ConfigurationBuilder()
+					.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
+					.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
+					.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
+					.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
+				
+				// Create the listener and stream objects.
+				twitterStream = TwitterStreamFactory(configurationStreamBuilder.build()).instance
+				twitterStream?.addListener(listener)
+				
+				// Test connection by fetching user's timeline.
+				twitter = TwitterFactory(configurationBuilder.build()).instance
+				twitter.timelines().homeTimeline
+				
+				game.printToLog("[SUCCESS] Connection to Twitter API is successful.", tag = tag)
+				
+				findMostRecent(game.missionName)
+			} catch (e: Exception) {
+				game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.stackTraceToString()}", tag = tag, isError = true)
+			}
 		}
 	}
 	
@@ -200,72 +202,34 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 	 * Start collected tweets containing room codes from EN and JP players.
 	 *
 	 * @param raidName Name and level of the Raid that appears in tweets containing the room code to it.
-	 * @param count Number of most recent tweets to grab. Defaults to 5.
-	 * @return ArrayList of the most recent room codes that match the query.
 	 */
-	fun findMostRecentRoomCodes(raidName: String, count: Int = 5): ArrayList<String> {
-		// Construct the query for EN tweets.
-		val queryEN = Query("+(:Battle ID) AND +($raidName)")
-		queryEN.count = count / 2
-		
-		// Grab the Japanese name of the Raid and construct the query for JP tweets.
+	private fun findMostRecent(raidName: String) {
+		// Grab the Japanese name of the Raid.
 		val jpRaidName = listOfRaids[raidName]!!
-		val queryJP = Query("+(:参戦ID) AND +($jpRaidName)")
-		queryJP.count = count / 2
 		
-		// Retrieve tweets from both EN and JP players.
-		val tweetsEN = twitter.search(queryEN).tweets
-		val tweetsJP = twitter.search(queryJP).tweets
+		// Construct the combined query for both EN and JP tweets.
+		val queryCombined = FilterQuery("$raidName,$jpRaidName")
 		
-		// Filter out tweets that the bot already visited.
-		val tweets: MutableList<Status> = mutableListOf()
-		tweetsEN.forEach { tweet ->
-			if (!alreadyVisitedIDs.contains(tweet.id)) {
-				alreadyVisitedIDs.add(tweet.id)
-				tweets.add(tweet)
-			}
-		}
-		tweetsJP.forEach { tweet ->
-			if (!alreadyVisitedIDs.contains(tweet.id)) {
-				alreadyVisitedIDs.add(tweet.id)
-				tweets.add(tweet)
-			}
-		}
-		
-		// Either parse the tweets already acquired for room codes or fallback to the Stream API if the regular method failed to find any tweets.
-		return if (tweets.size == 0) {
-			listener.setNumberOfTweets(count)
-			val queryCombined = FilterQuery("$raidName,$jpRaidName")
-			
-			val startTime: Long = System.currentTimeMillis()
-			twitterStream.filter(queryCombined)
-			
-			while (listener.tweets.size < count) {
-				val seconds = (System.currentTimeMillis() - startTime) / 1000
-				if (seconds > 10) {
-					break
-				}
-			}
-			
-			twitterStream.shutdown()
-			Log.d(TAG, "\n[DEBUG] Closed Twitter stream.")
-			
-			parseRoomCodes(listener.tweets)
-		} else {
-			parseRoomCodes(tweets)
-		}
+		// Start listening to the Stream API.
+		twitterStream?.filter(queryCombined)
 	}
 	
 	/**
 	 * Clean the tweets and parse out the room codes from them.
 	 *
-	 * @param tweets List of Status objects containing the tweets.
-	 * @return ArrayList of room codes.
+	 * @return A single room code that has not been visited.
 	 */
-	private fun parseRoomCodes(tweets: MutableList<Status>): ArrayList<String> {
-		val roomCodes: ArrayList<String> = arrayListOf()
+	fun getRoomCode(): String {
+		if (listener.tweets.isEmpty()) {
+			game.printToLog("[TWITTER] There are no recent or detected tweets available for the given raid.", tag = tag)
+			return ""
+		}
 		
-		tweets.forEach { tweet ->
+		game.printToLog("[TWITTER] Now cleaning up the tweets and parsing for room codes...", tag = tag)
+		
+		while (listener.tweets.isNotEmpty()) {
+			val tweet = listener.tweets.removeFirst()
+			
 			// Split up the text by whitespaces.
 			val splitText = tweet.text.split(" ")
 			var index = 0
@@ -277,7 +241,9 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 					
 					if (!alreadyVisitedRoomCodes.contains(roomCode)) {
 						alreadyVisitedRoomCodes.add(roomCode)
-						roomCodes.add(roomCode)
+						return roomCode
+					} else {
+						game.printToLog("[TWITTER] Already visited $roomCode before in this session. Skipping this code...", tag = tag)
 					}
 				}
 				
@@ -285,11 +251,11 @@ class TwitterRoomFinder(myContext: Context, game: Game) {
 			}
 		}
 		
-		// Clear the tweets list for the next run.
-		if (listener.tweets.size > 0) {
-			listener.tweets.clear()
-		}
-		
-		return roomCodes
+		return ""
+	}
+	
+	fun disconnect() {
+		twitterStream?.shutdown()
+		Log.d(tag, "[TWITTER] Stream API disconnected.")
 	}
 }

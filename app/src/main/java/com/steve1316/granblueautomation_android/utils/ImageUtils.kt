@@ -21,7 +21,7 @@ import java.util.*
  * Utility functions for image processing via CV like OpenCV.
  */
 class ImageUtils(context: Context, private val game: Game) {
-	private val TAG: String = "${MainActivity.loggerTag}_ImageUtils"
+	private val tag: String = "${MainActivity.loggerTag}_ImageUtils"
 	private var myContext = context
 	
 	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -164,20 +164,20 @@ class ImageUtils(context: Context, private val game: Game) {
 				matchLocation = mmr.minLoc
 				matchCheck = true
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG)
+					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using scale: $newScale.", tag = tag)
 				}
 			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
 				matchLocation = mmr.maxLoc
 				matchCheck = true
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using scale: $newScale.", MESSAGE_TAG = TAG)
+					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using scale: $newScale.", tag = tag)
 				}
 			} else {
 				if (debugMode) {
 					if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
-						game.printToLog("[DEBUG] Match not found with $maxVal not >= $confidence at Point ${mmr.maxLoc} using scale $newScale.", MESSAGE_TAG = TAG)
+						game.printToLog("[DEBUG] Match not found with $maxVal not >= $confidence at Point ${mmr.maxLoc} using scale $newScale.", tag = tag)
 					} else {
-						game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale.", MESSAGE_TAG = TAG)
+						game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale.", tag = tag)
 					}
 				}
 			}
@@ -318,7 +318,7 @@ class ImageUtils(context: Context, private val game: Game) {
 				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation with scale: $newScale.", MESSAGE_TAG = TAG)
+					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation with scale: $newScale.", tag = tag)
 					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				}
 				
@@ -335,7 +335,7 @@ class ImageUtils(context: Context, private val game: Game) {
 				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation with scale: $newScale.", MESSAGE_TAG = TAG)
+					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation with scale: $newScale.", tag = tag)
 					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				}
 				
@@ -386,7 +386,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			Pair(sourceBitmap, templateBitmap)
 		} else {
 			if (debugMode) {
-				game.printToLog("[ERROR] One or more of the Bitmaps are null.", MESSAGE_TAG = TAG, isError = true)
+				game.printToLog("[ERROR] One or more of the Bitmaps are null.", tag = tag, isError = true)
 			}
 			
 			Pair(sourceBitmap, templateBitmap)
@@ -408,7 +408,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		var numberOfTries = tries
 		
 		if (debugMode) {
-			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} button image...", MESSAGE_TAG = TAG)
+			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} button image...", tag = tag)
 		}
 		
 		// If Test Mode is enabled, prepare for it by setting initial scale.
@@ -432,13 +432,13 @@ class ImageUtils(context: Context, private val game: Game) {
 					numberOfTries -= 1
 					if (numberOfTries <= 0) {
 						if (!suppressError) {
-							game.printToLog("[WARNING] Failed to find the ${templateName.uppercase()} button.", MESSAGE_TAG = TAG)
+							game.printToLog("[WARNING] Failed to find the ${templateName.uppercase()} button.", tag = tag)
 						}
 						
 						break
 					}
 					
-					Log.d(TAG, "Failed to find the ${templateName.uppercase()} button. Trying again...")
+					Log.d(tag, "Failed to find the ${templateName.uppercase()} button. Trying again...")
 					
 					if (!testMode) {
 						game.wait(0.5)
@@ -453,10 +453,10 @@ class ImageUtils(context: Context, private val game: Game) {
 						
 						game.printToLog(
 							"[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation with scale $scale0.\n\nRecommended to use scale $scale1, $scale2, $scale3 or $scale4.",
-							MESSAGE_TAG = TAG
+							tag = tag
 						)
 					} else {
-						game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", MESSAGE_TAG = TAG)
+						game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", tag = tag)
 					}
 					
 					return matchLocation
@@ -481,7 +481,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		var numberOfTries = tries
 		
 		if (debugMode) {
-			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} header image...", MESSAGE_TAG = TAG)
+			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} header image...", tag = tag)
 		}
 		
 		while (numberOfTries > 0) {
@@ -497,7 +497,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					
 					game.wait(0.5)
 				} else {
-					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.uppercase()}.", MESSAGE_TAG = TAG)
+					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.uppercase()}.", tag = tag)
 					return true
 				}
 			} else {
@@ -506,7 +506,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 		
 		if (!suppressError) {
-			game.printToLog("[WARNING] Failed to confirm the bot location at ${templateName.uppercase()}.", MESSAGE_TAG = TAG)
+			game.printToLog("[WARNING] Failed to confirm the bot location at ${templateName.uppercase()}.", tag = tag)
 		}
 		
 		return false
@@ -523,8 +523,8 @@ class ImageUtils(context: Context, private val game: Game) {
 		val folderName = "summons"
 		
 		if (debugMode) {
-			game.printToLog("[DEBUG] Received the following list of Summons to search for: $summonList", MESSAGE_TAG = TAG)
-			game.printToLog("[DEBUG] Received the following list of Summon Elements: $summonElementList", MESSAGE_TAG = TAG)
+			game.printToLog("[DEBUG] Received the following list of Summons to search for: $summonList", tag = tag)
+			game.printToLog("[DEBUG] Received the following list of Summon Elements: $summonElementList", tag = tag)
 		}
 		
 		var lastSummonElement = ""
@@ -569,13 +569,13 @@ class ImageUtils(context: Context, private val game: Game) {
 					summonLocation = matchLocation
 					break
 				} else {
-					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon.", MESSAGE_TAG = TAG)
+					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon.", tag = tag)
 					
 					summonIndex += 1
 					
 					// If it reached the bottom of the Summon Selection page, scroll all the way back up.
 					if (findButton("bottom_of_summon_selection", tries = 1) != null) {
-						game.printToLog("[WARNING] Bot has reached the bottom of the page and found no suitable Summons. Resetting Summons now...", MESSAGE_TAG = TAG)
+						game.printToLog("[WARNING] Bot has reached the bottom of the page and found no suitable Summons. Resetting Summons now...", tag = tag)
 						return null
 					}
 					
@@ -604,7 +604,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 		
 		if (debugMode) {
-			game.printToLog("\n[DEBUG] Starting process to find all ${templateName.uppercase()} images...", MESSAGE_TAG = TAG)
+			game.printToLog("\n[DEBUG] Starting process to find all ${templateName.uppercase()} images...", tag = tag)
 		}
 		
 		val (sourceBitmap, templateBitmap) = getBitmaps(templateName, folderName)
@@ -621,7 +621,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		matchLocations.sortBy { it.y }
 		
 		if (debugMode) {
-			game.printToLog("[DEBUG] Found match locations for $templateName: $matchLocations.", MESSAGE_TAG = TAG)
+			game.printToLog("[DEBUG] Found match locations for $templateName: $matchLocations.", tag = tag)
 		}
 		
 		return matchLocations
@@ -634,7 +634,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @return Sum of all the item's amounts.
 	 */
 	fun findFarmedItems(templateName: String): Int {
-		game.printToLog("[INFO] Now detecting item rewards.", MESSAGE_TAG = TAG)
+		game.printToLog("[INFO] Now detecting item rewards.", tag = tag)
 		
 		// Reset the total item amount.
 		var totalItemAmount = 0
@@ -663,7 +663,7 @@ class ImageUtils(context: Context, private val game: Game) {
 							try {
 								val detectedAmount: Int = block.text.toInt()
 								if (debugMode) {
-									game.printToLog("[DEBUG] Detected item amount: $detectedAmount", MESSAGE_TAG = TAG)
+									game.printToLog("[DEBUG] Detected item amount: $detectedAmount", tag = tag)
 								}
 								
 								totalItemAmount += detectedAmount
@@ -672,7 +672,7 @@ class ImageUtils(context: Context, private val game: Game) {
 						}
 					}
 				}.addOnFailureListener {
-					game.printToLog("[ERROR] Failed to do text detection on bitmap.", MESSAGE_TAG = TAG, isError = true)
+					game.printToLog("[ERROR] Failed to do text detection on bitmap.", tag = tag, isError = true)
 				}
 			}
 		}
@@ -693,7 +693,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @return True if the specified image vanished from the screen. False otherwise.
 	 */
 	fun waitVanish(templateName: String, timeout: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Boolean {
-		game.printToLog("[INFO] Now waiting for $templateName to vanish from the screen...", MESSAGE_TAG = TAG)
+		game.printToLog("[INFO] Now waiting for $templateName to vanish from the screen...", tag = tag)
 		
 		var remaining = timeout
 		if (findButton(templateName, tries = 1, region = region, suppressError = suppressError) == null) {
