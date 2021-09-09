@@ -1143,6 +1143,19 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 								// Advance the Turn number by 1.
 								turnNumber += 1
 							}
+							command.contains("reload") -> {
+								game.printToLog("[COMBAT] Bot will now attempt to manually reload.", tag = tag)
+								
+								// Press the "Attack" button in order to show the "Cancel" button. Once that disappears, manually reload the page.
+								if (game.findAndClickButton("attack")) {
+									if (game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
+										game.findAndClickButton("reload")
+									} else {
+										// If the "Cancel" button fails to disappear after 10 tries, reload anyways.
+										game.findAndClickButton("reload")
+									}
+								}
+							}
 						}
 						
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
