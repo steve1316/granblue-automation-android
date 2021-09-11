@@ -923,7 +923,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		expGainedLocationCheck = false
 		var semiAutoCheckFlag = false
 		var fullAutoCheckFlag = false
-		var backFlag = false
 		
 		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
 		if (game.farmingMode == "Arcarum") {
@@ -1076,7 +1075,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					command.contains("back") && game.findAndClickButton("home_back", tries = 1) -> {
 						game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
 						waitForAttack()
-						backFlag = true
 						
 						game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
 						
@@ -1100,7 +1098,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							}
 						}
 					}
-					!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end" && !backFlag -> {
+					!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end" -> {
 						// Tap the "Attack" button once every command inside the Turn Block has been processed.
 						game.printToLog("[COMBAT] Ending Turn $turnNumber")
 						game.findAndClickButton("attack", tries = 10)
