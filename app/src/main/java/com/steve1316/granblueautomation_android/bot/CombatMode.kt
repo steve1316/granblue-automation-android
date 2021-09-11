@@ -555,7 +555,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			game.gestureUtils.tap(x, y, "template_skill", taps = 2)
 			
 			// Check if the Skill requires a target.
-			if (game.imageUtils.confirmLocation("use_skill", tries = 1, suppressError = true)) {
+			if (game.imageUtils.confirmLocation("use_skill", tries = 2)) {
 				val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
 				
 				if (selectCharacterLocation != null) {
@@ -670,7 +670,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						
 						tempSkillCommandList = tempSkillCommandList.drop(1)
 					}
-				} else if (game.imageUtils.confirmLocation("skill_unusable", tries = 1)) {
+				} else if (game.imageUtils.confirmLocation("skill_unusable", tries = 2)) {
 					game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", tag = tag)
 					game.findAndClickButton("cancel")
 				}
@@ -820,34 +820,29 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	}
 	
 	/**
-	 * Wait for a maximum of 20 seconds until the bot sees either the "Attack" or the "Next" button before starting a new turn.
+	 * Wait several tries until the bot sees either the "Attack" or the "Next" button before starting a new turn.
 	 */
 	private fun waitForAttack() {
+		game.printToLog("[COMBAT] Attack ended.", tag = tag)
 		var tries = 10
 		
-		while ((!retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null) ||
-			(!retreatCheckFlag && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null)
-		) {
-			if (game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
-				expGainedLocationCheck = true
-				break
-			}
-			
+		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1) != null && game.imageUtils.findButton("next", tries = 1) != null) {
 			// Stagger the checks for dialog popups during Combat Mode.
 			if (tries % 2 == 0) {
 				findCombatDialog()
+				
+				// Check if the Party wiped after attacking.
+				partyWipeCheck()
+				
+				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1) || game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
+					break
+				}
 			}
 			
 			tries -= 1
-			if (tries <= 0 || game.imageUtils.findButton("attack", tries = 1, suppressError = true) != null ||
-				game.imageUtils.findButton("next", tries = 1, suppressError = true) != null
-			) {
-				break
-			}
-			
-			// Check if the Party wiped after attacking.
-			partyWipeCheck()
 		}
+		
+		game.printToLog("[COMBAT] Attack ended.", tag = tag)
 	}
 	
 	/**
@@ -871,6 +866,39 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 	}
 	
+	private fun processIncorrectTurn(turnNumber: Int): Int {
+		game.printToLog("\n[COMBAT] Starting Turn $turnNumber.", tag = tag)
+		
+		// Clear any detected dialog popups that might obstruct the "Attack" button.
+		findCombatDialog()
+		
+		// Tap the "Attack" button.
+		game.printToLog("[COMBAT] Ending Turn $turnNumber")
+		game.findAndClickButton("attack", tries = 10)
+		
+		// Wait until the "Cancel" button vanishes from the screen.
+		if (game.imageUtils.findButton("combat_cancel") != null) {
+			while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5)) {
+				if (debugMode) {
+					game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
+				}
+				
+				game.wait(1.0)
+			}
+		}
+		
+		reloadAfterAttack()
+		waitForAttack()
+		
+		game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
+		
+		if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+			game.wait(3.0)
+		}
+		
+		return turnNumber + 1
+	}
+	
 	/**
 	 * Start Combat Mode with the provided combat script.
 	 *
@@ -887,6 +915,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		val commandList = combatScript.toMutableList()
 		
 		// Current Turn number for script execution.
+		var commandTurnNumber = 1
 		var turnNumber = 1
 		
 		// Reset the Retreat, Semi Auto, and Full Auto flags.
@@ -894,13 +923,14 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		expGainedLocationCheck = false
 		var semiAutoCheckFlag = false
 		var fullAutoCheckFlag = false
+		var backFlag = false
 		
 		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
 		if (game.farmingMode == "Arcarum") {
 			game.findAndClickButton("arcarum_stage_effect_active", tries = 5)
 		}
 		
-		attackButtonLocation = game.imageUtils.findButton("attack", tries = 10)
+		attackButtonLocation = game.imageUtils.findButton("attack", tries = 30)
 		if (attackButtonLocation == null) {
 			game.printToLog("\n[ERROR] Cannot find Attack button. Raid must have just ended.", tag = tag, isError = true)
 			return false
@@ -908,305 +938,225 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		// The following is the primary loop workflow for Combat Mode.
 		while (combatScript.isNotEmpty() && commandList.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
-			// The commands are already preprocessed to remove all comments back in SettingsFragment.
-			var command = commandList.removeAt(0).lowercase()
-			var backFlag = false
+			// Check if the Battle has ended.
+			when {
+				game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+					game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+					game.printToLog("\n################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					return false
+				}
+				game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+					game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+					game.printToLog("\n################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.findAndClickButton("reload")
+					return true
+				}
+				retreatCheckFlag -> {
+					game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
+					game.printToLog("\n################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					return false
+				}
+				game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+					game.printToLog("\n################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					game.printToLog("################################################################################", tag = tag)
+					return true
+				}
+			}
 			
-			game.printToLog("[COMBAT] Reading command: $command", tag = tag)
+			// The commands are already preprocessed to remove all comments back in SettingsFragment.
+			val command = commandList.removeAt(0).lowercase()
+			
+			game.printToLog("\n[COMBAT] Reading command: \"$command\"", tag = tag)
 			
 			if (command.contains("turn")) {
+				// Clear any detected dialog popups that might obstruct the "Attack" button.
+				findCombatDialog()
+				
 				// Parse the Turn's number.
-				val commandTurnNumber: Int = (command.split(":")[0].split(" ")[1]).toInt()
+				commandTurnNumber = (command.split(":")[0].split(" ")[1]).toInt()
 				
 				// If the command is a "Turn #:" and it is currently not the correct Turn, attack until the Turn numbers match.
 				if (!retreatCheckFlag && turnNumber != commandTurnNumber) {
-					game.printToLog("[COMBAT] Attacking until the bot reaches Turn $commandTurnNumber", tag = tag)
+					game.printToLog("[COMBAT] Attacking until the bot reaches Turn $commandTurnNumber.", tag = tag)
 					
 					while (turnNumber != commandTurnNumber) {
-						game.printToLog("[COMBAT] Starting Turn $turnNumber.", tag = tag)
+						turnNumber = processIncorrectTurn(turnNumber)
+					}
+				} else {
+					game.printToLog("\n[COMBAT] Starting Turn $turnNumber.", tag = tag)
+				}
+			} else if (turnNumber == commandTurnNumber) {
+				// Proceed to process each command inside this Turn block until the "end" command is reached.
+				
+				// Determine which Character to take action.
+				val characterSelected = when {
+					command.contains("character1") -> {
+						1
+					}
+					command.contains("character2") -> {
+						2
+					}
+					command.contains("character3") -> {
+						3
+					}
+					command.contains("character4") -> {
+						4
+					}
+					else -> {
+						0
+					}
+				}
+				
+				when {
+					characterSelected != 0 -> {
+						// Select the specified Character.
+						selectCharacter(characterSelected)
 						
-						// Clear any detected dialog popups that might obstruct the "Attack" button.
-						findCombatDialog()
+						// Now execute each Skill command starting from left to right for this Character.
+						val skillCommandList: List<String> = command.split(".").drop(1)
 						
-						if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) != null) {
-							game.printToLog("[COMBAT] Ending Turn $turnNumber")
-							
-							// Tap the "Attack" button.
-							game.gestureUtils.tap(attackButtonLocation!!.x, attackButtonLocation!!.y, "attack")
-							
-							// Wait until the "Cancel" button vanishes from the screen.
-							if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
-								while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
-									if (debugMode) {
-										game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
-									}
-									
-									game.wait(1.0)
-								}
-							}
-							
-							reloadAfterAttack()
-							waitForAttack()
-							
-							game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-							
-							turnNumber += 1
+						useCharacterSkill(characterSelected, skillCommandList)
+					}
+					command == "requestbackup" -> {
+						requestBackup()
+					}
+					command == "tweetbackup" -> {
+						tweetBackup()
+					}
+					healingItemCommands.contains(command) -> {
+						useCombatHealingItem(command)
+					}
+					command.contains("summon") && command != "quicksummon" -> {
+						useSummon(command)
+					}
+					command == "quicksummon" -> {
+						game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
+						if (game.findAndClickButton("quick_summon")) {
+							game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
+						} else {
+							game.printToLog("[COMBAT] Was not able to quick summon this Turn.", tag = tag)
 						}
+					}
+					command == "enablesemiauto" -> {
+						game.printToLog("[COMBAT] Enabling Semi Auto.", tag = tag)
+						semiAutoCheckFlag = true
+						break
+					}
+					command == "enablefullauto" -> {
+						game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
+						fullAutoCheckFlag = game.findAndClickButton("full_auto", tries = 3)
+						
+						// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
+						if (!fullAutoCheckFlag) {
+							game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
+							semiAutoCheckFlag = true
+						}
+						
+						break
+					}
+					command.contains("targetenemy") -> {
+						// Select enemy target.
+						selectEnemyTarget(command)
+					}
+					command.contains("back") && game.findAndClickButton("home_back", tries = 1) -> {
+						game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
+						waitForAttack()
+						backFlag = true
+						
+						game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
+						
+						// Advance the Turn number by 1.
+						turnNumber += 1
 						
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 							game.wait(3.0)
 						}
+					}
+					command.contains("reload") -> {
+						game.printToLog("[COMBAT] Bot will now attempt to manually reload.", tag = tag)
 						
-						// Check if the Battle has ended.
-						when {
-							game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								return true
-							}
-							game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
-								game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
+						// Press the "Attack" button in order to show the "Cancel" button. Once that disappears, manually reload the page.
+						if (game.findAndClickButton("attack")) {
+							if (game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
 								game.findAndClickButton("reload")
-								return true
-							}
-							game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
-								game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								return false
-							}
-							retreatCheckFlag -> {
-								game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								return false
+							} else {
+								// If the "Cancel" button fails to disappear after 10 tries, reload anyways.
+								game.findAndClickButton("reload")
 							}
 						}
 					}
-				}
-				
-				if (!retreatCheckFlag && turnNumber == commandTurnNumber) {
-					game.printToLog("[COMBAT] Starting Turn $turnNumber.", tag = tag)
-					
-					// Clear any detected dialog popups that might obstruct the "Attack" button.
-					findCombatDialog()
-					
-					// Proceed to process each command inside this Turn block until the "end" command is reached.
-					loop@ while (commandList.isNotEmpty() && command != "end" && command != "exit") {
-						command = commandList.removeAt(0).lowercase()
+					!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end" && !backFlag -> {
+						// Tap the "Attack" button once every command inside the Turn Block has been processed.
+						game.printToLog("[COMBAT] Ending Turn $turnNumber")
+						game.findAndClickButton("attack", tries = 10)
 						
-						game.printToLog("[COMBAT] Reading command: $command", tag = tag)
-						
-						if (command == "end") {
-							break
-						} else if (command == "exit") {
-							// End Combat Mode by heading back to the Home screen without retreating.
-							game.printToLog("\n[COMBAT] Leaving this Raid without retreating.", tag = tag)
-							game.printToLog("\n################################################################################", tag = tag)
-							game.printToLog("################################################################################", tag = tag)
-							game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-							game.printToLog("################################################################################", tag = tag)
-							game.printToLog("################################################################################", tag = tag)
-							game.goBackHome(confirmLocationCheck = true)
-							return false
-						}
-						
-						// Determine which Character to take action.
-						val characterSelected = when {
-							command.contains("character1") -> {
-								1
-							}
-							command.contains("character2") -> {
-								2
-							}
-							command.contains("character3") -> {
-								3
-							}
-							command.contains("character4") -> {
-								4
-							}
-							else -> {
-								0
+						// Wait until the "Cancel" button vanishes from the screen.
+						if (game.imageUtils.findButton("combat_cancel") != null) {
+							while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5)) {
+								if (debugMode) {
+									game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
+								}
+								
+								game.wait(1.0)
 							}
 						}
 						
-						// Check if the Battle has ended.
-						when {
-							game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								return true
-							}
-							game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
-								game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.findAndClickButton("reload")
-								return true
-							}
-							game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
-								game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								return false
-							}
-							retreatCheckFlag -> {
-								game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
-								game.printToLog("\n################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								game.printToLog("################################################################################", tag = tag)
-								return false
-							}
-							characterSelected != 0 -> {
-								// Select the specified Character.
-								selectCharacter(characterSelected)
-								
-								// Now execute each Skill command starting from left to right for this Character.
-								val skillCommandList: List<String> = command.split(".").drop(1)
-								
-								useCharacterSkill(characterSelected, skillCommandList)
-								
-								if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true)) {
-									game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
-									game.printToLog("\n################################################################################", tag = tag)
-									game.printToLog("################################################################################", tag = tag)
-									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-									game.printToLog("################################################################################", tag = tag)
-									game.printToLog("################################################################################", tag = tag)
-									game.findAndClickButton("reload")
-									return true
-								}
-							}
-							command == "requestbackup" -> {
-								requestBackup()
-							}
-							command == "tweetbackup" -> {
-								tweetBackup()
-							}
-							healingItemCommands.contains(command) -> {
-								useCombatHealingItem(command)
-							}
-							command.contains("summon") -> {
-								useSummon(command)
-							}
-							command == "enablesemiauto" -> {
-								game.printToLog("[COMBAT] Enabling Semi Auto.", tag = tag)
-								semiAutoCheckFlag = true
-								break@loop
-							}
-							command == "enablefullauto" -> {
-								game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
-								fullAutoCheckFlag = game.findAndClickButton("full_auto", tries = 3)
-								
-								// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
-								if (!fullAutoCheckFlag) {
-									game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
-									semiAutoCheckFlag = true
-								}
-								
-								break@loop
-							}
-							command.contains("targetenemy") -> {
-								// Select enemy target.
-								selectEnemyTarget(command)
-							}
-							command.contains("back") && game.findAndClickButton("home_back", tries = 1) -> {
-								game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
-								waitForAttack()
-								backFlag = true
-								
-								// Advance the Turn number by 1.
-								turnNumber += 1
-							}
-							command.contains("reload") -> {
-								game.printToLog("[COMBAT] Bot will now attempt to manually reload.", tag = tag)
-								
-								// Press the "Attack" button in order to show the "Cancel" button. Once that disappears, manually reload the page.
-								if (game.findAndClickButton("attack")) {
-									if (game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
-										game.findAndClickButton("reload")
-									} else {
-										// If the "Cancel" button fails to disappear after 10 tries, reload anyways.
-										game.findAndClickButton("reload")
-									}
-								}
-							}
-						}
+						reloadAfterAttack()
+						waitForAttack()
+						
+						game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
+						
+						turnNumber += 1
 						
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-							break
+							game.wait(3.0)
 						}
 					}
+					command == "exit" -> {
+						// End Combat Mode by heading back to the Home screen without retreating.
+						game.printToLog("\n[COMBAT] Leaving this Raid without retreating.", tag = tag)
+						game.printToLog("\n################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.goBackHome(confirmLocationCheck = true)
+						return false
+					}
+				}
+			}
+			
+			// Handle certain commands that could be present outside of a Turn block.
+			if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablesemiauto") {
+				game.printToLog("[COMBAT] Enabling Semi Auto.", tag = tag)
+				semiAutoCheckFlag = true
+				break
+			} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablefullauto") {
+				game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
+				fullAutoCheckFlag = game.findAndClickButton("full_auto")
+				
+				// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
+				if (!fullAutoCheckFlag) {
+					game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
+					semiAutoCheckFlag = true
 				}
 				
-				// Handle certain commands that could be present outside of a Turn block.
-				if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablesemiauto") {
-					game.printToLog("[COMBAT] Enabling Semi Auto.", tag = tag)
-					semiAutoCheckFlag = true
-					break
-				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablefullauto") {
-					game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
-					fullAutoCheckFlag = game.findAndClickButton("full_auto")
-					
-					// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
-					if (!fullAutoCheckFlag) {
-						game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
-						semiAutoCheckFlag = true
-					}
-					
-					break
-				} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end" && !backFlag) {
-					// Tap the "Attack" button once every command inside the Turn Block has been processed.
-					game.printToLog("[COMBAT] Ending Turn $turnNumber")
-					game.findAndClickButton("attack", tries = 10)
-					
-					// Wait until the "Cancel" button vanishes from the screen.
-					if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
-						while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
-							if (debugMode) {
-								game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
-							}
-							
-							game.wait(1.0)
-						}
-					}
-					
-					reloadAfterAttack()
-					waitForAttack()
-					
-					game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-					
-					turnNumber += 1
-					
-					if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-						game.wait(3.0)
-					}
-				}
+				break
 			}
 		}
 		
@@ -1216,9 +1166,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		// Skip this entire section if combat already ended as dictated in the waitForAttack() function.
 		if (!expGainedLocationCheck) {
 			// Until the bot reaches the Quest Results screen, keep pressing the "Attack" and "Next" buttons if not Semi Auto or Full Auto.
-			while (!retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) &&
-				!game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true)
-			) {
+			while (!retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
 				// Clear any detected dialog popups that might obstruct the "Attack" button.
 				findCombatDialog()
 				
@@ -1227,8 +1175,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.findAndClickButton("attack", tries = 10)
 				
 				// Wait until the "Cancel" button vanishes from the screen.
-				if (game.imageUtils.findButton("combat_cancel", suppressError = true) != null) {
-					while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
+				if (game.imageUtils.findButton("combat_cancel") != null) {
+					while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5)) {
 						if (debugMode) {
 							game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
 						}
@@ -1243,6 +1191,77 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
 				
 				turnNumber += 1
+				
+				var sleepPreventionTimer = 0
+				
+				if ((semiAutoCheckFlag || fullAutoCheckFlag) && enableAutoExitCombat) {
+					autoExitStartTime = System.currentTimeMillis()
+				}
+				
+				when {
+					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+						game.printToLog("\n################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						return false
+					}
+					game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+						game.printToLog("\n################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.findAndClickButton("reload")
+						return true
+					}
+					game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+						game.printToLog("\n################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						return true
+					}
+					retreatCheckFlag -> {
+						game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
+						game.printToLog("\n################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						return false
+					}
+					
+					// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
+					else -> {
+						autoExitEndTime = System.currentTimeMillis()
+						if (enableAutoExitCombat && (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes)) {
+							game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", tag = tag)
+							game.printToLog("\n################################################################################", tag = tag)
+							game.printToLog("################################################################################", tag = tag)
+							game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+							game.printToLog("################################################################################", tag = tag)
+							game.printToLog("################################################################################", tag = tag)
+							return false
+						}
+						
+						// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
+						if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
+							game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", tag = tag)
+							game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
+							game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+						}
+						
+						partyWipeCheck()
+						game.wait(1.0)
+						
+						sleepPreventionTimer += 1
+					}
+				}
 				
 				if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 					game.wait(3.0)
@@ -1281,9 +1300,18 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				autoExitStartTime = System.currentTimeMillis()
 			}
 			
-			// Primary loop workflow for Semi Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
-			while (!retreatCheckFlag && !fullAutoCheckFlag && semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
+			// Primary loop workflow for both Semi Auto Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
+			while (!retreatCheckFlag && (fullAutoCheckFlag || semiAutoCheckFlag)) {
 				when {
+					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+						game.printToLog("\n################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						game.printToLog("################################################################################", tag = tag)
+						return false
+					}
 					game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
 						game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
 						game.printToLog("\n################################################################################", tag = tag)
@@ -1294,74 +1322,13 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						game.findAndClickButton("reload")
 						return true
 					}
-					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
-						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+					game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
 						game.printToLog("\n################################################################################", tag = tag)
 						game.printToLog("################################################################################", tag = tag)
 						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
 						game.printToLog("################################################################################", tag = tag)
 						game.printToLog("################################################################################", tag = tag)
-						return false
-					}
-					retreatCheckFlag -> {
-						game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
-						game.printToLog("\n################################################################################", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						return false
-					}
-					
-					// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-					else -> {
-						autoExitEndTime = System.currentTimeMillis()
-						if (enableAutoExitCombat && (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes)) {
-							game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", tag = tag)
-							game.printToLog("\n################################################################################", tag = tag)
-							game.printToLog("################################################################################", tag = tag)
-							game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-							game.printToLog("################################################################################", tag = tag)
-							game.printToLog("################################################################################", tag = tag)
-							return false
-						}
-						
-						// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-						if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
-							game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", tag = tag)
-							game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
-							game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
-						}
-						
-						partyWipeCheck()
-						game.wait(1.0)
-						
-						sleepPreventionTimer += 1
-					}
-				}
-			}
-			
-			// Primary loop workflow for Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
-			while (!retreatCheckFlag && fullAutoCheckFlag && !semiAutoCheckFlag && !game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)) {
-				when {
-					game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
-						game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
-						game.printToLog("\n################################################################################", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						game.findAndClickButton("reload")
 						return true
-					}
-					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
-						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
-						game.printToLog("\n################################################################################", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						game.printToLog("################################################################################", tag = tag)
-						return false
 					}
 					retreatCheckFlag -> {
 						game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
