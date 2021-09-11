@@ -59,7 +59,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 			
 			// Perform different navigation actions based on whether the user wants to farm meat or to farm Nightmares.
 			if (difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Extreme+") {
-				game.printToLog("\n[INFO] Now proceeding to farm meat.", tag = tag)
+				game.printToLog("\n[GUILD.WARS] Now proceeding to farm meat.", tag = tag)
 				
 				// Click on the banner to farm meat.
 				game.findAndClickButton("guild_wars_meat")
@@ -83,7 +83,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 					}
 				}
 			} else {
-				game.printToLog("\n[INFO] Now proceeding to farm Nightmares.", tag = tag)
+				game.printToLog("\n[GUILD.WARS] Now proceeding to farm Nightmares.", tag = tag)
 				
 				var startCheckForNM150 = false
 				
@@ -103,7 +103,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 					// If today is the first day of Guild Wars, only NM90 is available.
 					when {
 						game.imageUtils.confirmLocation("guild_wars_nightmare_first_day", tries = 1) -> {
-							game.printToLog("[INFO] Today is the first day so hosting NM90.", tag = tag)
+							game.printToLog("[GUILD.WARS] Today is the first day so hosting NM90.", tag = tag)
 							game.findAndClickButton("ok")
 						}
 						
@@ -130,7 +130,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 						game.findAndClickButton("cancel")
 					}
 					
-					game.printToLog("[INFO] Hosting Extreme+ now.", tag = tag)
+					game.printToLog("[GUILD.WARS] Hosting Extreme+ now.", tag = tag)
 					
 					// Click on the banner to farm meat.
 					game.findAndClickButton("guild_wars_meat")

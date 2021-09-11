@@ -25,20 +25,20 @@ class Special(private val game: Game, private val mapName: String, private val m
 		dimensionalHaloPartyNumber = sharedPreferences.getInt("dimensionalHaloPartyNumber", 0)
 		
 		if (missionName == "VH Angel Halo" && enableDimensionalHalo && (game.itemName == "EXP" || game.itemName == "Angel Halo Weapons")) {
-			game.printToLog("\n[INFO] Initializing settings for Dimensional Halo...", tag = tag)
+			game.printToLog("\n[SPECIAL] Initializing settings for Dimensional Halo...", tag = tag)
 			
 			if (dimensionalHaloSummonList.isEmpty()) {
-				game.printToLog("[INFO] Summons for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
+				game.printToLog("[SPECIAL] Summons for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
 				dimensionalHaloSummonList = game.summonList
 			}
 			
 			if (dimensionalHaloGroupNumber == 0) {
-				game.printToLog("[INFO] Group Number for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
+				game.printToLog("[SPECIAL] Group Number for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
 				dimensionalHaloGroupNumber = game.groupNumber
 			}
 			
 			if (dimensionalHaloPartyNumber == 0) {
-				game.printToLog("[INFO] Party Number for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
+				game.printToLog("[SPECIAL] Party Number for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
 				dimensionalHaloPartyNumber = game.partyNumber
 			}
 		}
@@ -153,7 +153,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 					
 					if (missionLocation != null) {
 						// Tap the mission's "Select" button.
-						game.printToLog("[INFO] Navigating to $mapName...", tag = tag)
+						game.printToLog("[SPECIAL] Navigating to $mapName...", tag = tag)
 						missionLocation.x += if (!game.imageUtils.isTablet) {
 							if (game.imageUtils.isLowerEnd) {
 								200
@@ -190,21 +190,21 @@ class Special(private val game: Game, private val mapName: String, private val m
 							
 							when (formattedMissionName) {
 								"Scarlet Trial" -> {
-									game.printToLog("[INFO] Opening up Scarlet Trial mission popup...", tag = tag)
+									game.printToLog("[SPECIAL] Opening up Scarlet Trial mission popup...", tag = tag)
 									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 								}
 								"Cerulean Trial" -> {
-									game.printToLog("[INFO] Opening up Cerulean Trial mission popup...", tag = tag)
+									game.printToLog("[SPECIAL] Opening up Cerulean Trial mission popup...", tag = tag)
 									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 								}
 								"Violet Trial" -> {
-									game.printToLog("[INFO] Opening up Violet Trial mission popup...", tag = tag)
+									game.printToLog("[SPECIAL] Opening up Violet Trial mission popup...", tag = tag)
 									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 								}
 							}
 							
 							// Now that the mission's sub-missions popup is open, select the specified difficulty.
-							game.printToLog("[INFO] Now selecting $difficulty difficulty...")
+							game.printToLog("[SPECIAL] Now selecting $difficulty difficulty...")
 							roundPlayButtonLocations = game.imageUtils.findAll("play_round_button")
 							
 							when (difficulty) {
@@ -220,7 +220,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 							}
 						} else if (mapName == "Shiny Slime Search!" || mapName == "Six Dragon Trial" || mapName == "Angel Halo") {
 							// Open up the mission's difficulty selection popup and then select its difficulty.
-							game.printToLog("[INFO] Now selecting $difficulty $mapName...", tag = tag)
+							game.printToLog("[SPECIAL] Now selecting $difficulty $mapName...", tag = tag)
 							val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 							
 							when (difficulty) {
@@ -235,7 +235,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 								}
 							}
 						} else if (mapName == "Elemental Treasure Quests") {
-							game.printToLog("[INFO] Now selecting $missionName...", tag = tag)
+							game.printToLog("[SPECIAL] Now selecting $missionName...", tag = tag)
 							val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 							
 							when (formattedMissionName) {
@@ -259,7 +259,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 								}
 							}
 						} else if (mapName == "Showdowns") {
-							game.printToLog("[INFO] Opening up $formattedMissionName mission popup...", tag = tag)
+							game.printToLog("[SPECIAL] Opening up $formattedMissionName mission popup...", tag = tag)
 							var roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 							
 							when (formattedMissionName) {
@@ -284,7 +284,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 							}
 							
 							// Now select the difficulty.
-							game.printToLog("[INFO] Now selecting $difficulty difficulty...", tag = tag)
+							game.printToLog("[SPECIAL] Now selecting $difficulty difficulty...", tag = tag)
 							roundPlayButtonLocations = game.imageUtils.findAll("play_round_button")
 							
 							when (difficulty) {
@@ -299,7 +299,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 								}
 							}
 						} else if (mapName == "Campaign-Exclusive Quest") {
-							game.printToLog("[INFO] Selecting Campaign-Exclusive Quest...", tag = tag)
+							game.printToLog("[SPECIAL] Selecting Campaign-Exclusive Quest...", tag = tag)
 							
 							// There is only 1 "Play" button for this time-limited quest.
 							game.findAndClickButton("play_round_button")

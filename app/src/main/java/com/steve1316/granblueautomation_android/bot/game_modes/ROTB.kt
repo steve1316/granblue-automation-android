@@ -112,14 +112,6 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 			var difficulty = ""
 			var formattedMissionName = ""
 			when {
-				missionName.contains("N ") -> {
-					difficulty = "Normal"
-					formattedMissionName = missionName.substring(2)
-				}
-				missionName.contains("H ") -> {
-					difficulty = "Hard"
-					formattedMissionName = missionName.substring(2)
-				}
 				missionName.contains("VH ") -> {
 					difficulty = "Very Hard"
 					formattedMissionName = missionName.substring(3)

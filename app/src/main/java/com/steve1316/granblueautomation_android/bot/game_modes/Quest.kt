@@ -223,10 +223,10 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 		
 		// Check if the bot is already at the island where the mission takes place in. If not, navigate to it.
 		if (game.imageUtils.confirmLocation("map_$formattedMapName", tries = 1)) {
-			game.printToLog("[INFO] Bot is currently on the correct island for the mission.", tag = tag)
+			game.printToLog("[QUEST] Bot is currently on the correct island for the mission.", tag = tag)
 			checkLocation = true
 		} else {
-			game.printToLog("[INFO] Bot is not on the correct island for the mission. Navigating to the correct island...")
+			game.printToLog("[QUEST] Bot is not on the correct island for the mission. Navigating to the correct island...")
 			checkLocation = false
 			
 			// Determine what island the bot is currently at.
@@ -241,7 +241,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				val tempFormattedMapLocation = tempMapLocation.lowercase().replace(" ", "_").replace("-", "_")
 				
 				if (game.imageUtils.confirmLocation("map_${tempFormattedMapLocation}", tries = 1)) {
-					game.printToLog("\n[INFO] Bot's current location is at ${tempFormattedMapLocation}. Now moving to ${mapName}...", tag = tag)
+					game.printToLog("\n[QUEST] Bot's current location is at ${tempFormattedMapLocation}. Now moving to ${mapName}...", tag = tag)
 					currentLocation = tempMapLocation
 					break
 				}
@@ -285,7 +285,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			
 			// Now that the bot is on the correct island, tap on the correct chapter node.
 			if (missionName == "Scattered Cargo") {
-				game.printToLog("[INFO] Moving to Chapter 1 (115) node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 1 (115) node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 227, worldButtonLocation.y + 213, "template_node")
 				} else {
@@ -296,7 +296,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "Lucky Charm Hunt") {
-				game.printToLog("[INFO] Moving to Chapter 6 (122) node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 6 (122) node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 757, worldButtonLocation.y + 43, "template_node")
 				} else {
@@ -307,7 +307,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "Special Op's Request") {
-				game.printToLog("[INFO] Moving to Chapter 8 node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 8 node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 577, worldButtonLocation.y + 343, "template_node")
 				} else {
@@ -318,7 +318,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "Threat to the Fisheries") {
-				game.printToLog("[INFO] Moving to Chapter 9 node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 9 node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 497, worldButtonLocation.y + 258, "template_node")
 				} else {
@@ -329,7 +329,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "The Fruit of Lumacie" || missionName == "Whiff of Danger") {
-				game.printToLog("[INFO] Moving to Chapter 13 (39/52) node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 13 (39/52) node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 197, worldButtonLocation.y + 208, "template_node")
 				} else {
@@ -340,7 +340,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "I Challenge You!") {
-				game.printToLog("[INFO] Moving to Chapter 17 node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 17 node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 262, worldButtonLocation.y + 268, "template_node")
 				} else {
@@ -351,7 +351,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "For Whom the Bell Tolls") {
-				game.printToLog("[INFO] Moving to Chapter 22 node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 22 node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 417, worldButtonLocation.y + 78, "template_node")
 				} else {
@@ -362,7 +362,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "Golonzo's Battles of Old") {
-				game.printToLog("[INFO] Moving to Chapter 25 node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 25 node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 457, worldButtonLocation.y + 18, "template_node")
 				} else {
@@ -373,7 +373,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "The Dungeon Diet") {
-				game.printToLog("[INFO] Moving to Chapter 30 (44/65) node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 30 (44/65) node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 557, worldButtonLocation.y + 48, "template_node")
 				} else {
@@ -384,7 +384,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "Trust Busting Dustup") {
-				game.printToLog("[INFO] Moving to Chapter 36 (123) node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 36 (123) node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 714, worldButtonLocation.y + 30, "template_node")
 				} else {
@@ -395,7 +395,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "Erste Kingdom Episode 4") {
-				game.printToLog("[INFO] Moving to Chapter 70 node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 70 node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 587, worldButtonLocation.y + 318, "template_node")
 				} else {
@@ -406,7 +406,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			} else if (missionName == "Imperial Wanderer's Soul") {
-				game.printToLog("[INFO] Moving to Chapter 55 node...", tag = tag)
+				game.printToLog("[QUEST] Moving to Chapter 55 node...", tag = tag)
 				if (!game.imageUtils.isTablet) {
 					game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 320, "template_node")
 				} else {
@@ -419,7 +419,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			}
 			
 			// Now that the correct chapter node has been selected, scroll down the screen.
-			game.printToLog("[INFO] Now bringing up the Summon Selection screen for \"$missionName\"...", tag = tag)
+			game.printToLog("[QUEST] Now bringing up the Summon Selection screen for \"$missionName\"...", tag = tag)
 			game.gestureUtils.scroll()
 			
 			game.wait(2.0)

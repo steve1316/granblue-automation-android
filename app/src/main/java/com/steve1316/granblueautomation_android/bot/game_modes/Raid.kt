@@ -24,13 +24,13 @@ class Raid(private val game: Game) {
 		
 		val joinedLocations = game.imageUtils.findAll("joined")
 		numberOfRaidsJoined = joinedLocations.size
-		game.printToLog("\n[INFO] There are currently $numberOfRaidsJoined raids joined.", tag = tag)
+		game.printToLog("\n[RAID] There are currently $numberOfRaidsJoined raids joined.", tag = tag)
 	}
 	
 	private fun clearJoinedRaids() {
 		// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
 		while (numberOfRaidsJoined >= 3) {
-			game.printToLog("[INFO] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", tag = tag)
+			game.printToLog("[RAID] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", tag = tag)
 			game.wait(30.0)
 			
 			game.goBackHome(confirmLocationCheck = true)
@@ -161,7 +161,7 @@ class Raid(private val game: Game) {
 			clearJoinedRaids()
 			
 			// Move to the "Enter ID" section of the Backup Requests screen.
-			game.printToLog("[INFO] Moving to the \"Enter ID\" section of the Backup Requests screen...", tag = tag)
+			game.printToLog("[RAID] Moving to the \"Enter ID\" section of the Backup Requests screen...", tag = tag)
 			if (game.findAndClickButton("enter_id")) {
 				joinRaid()
 			}
