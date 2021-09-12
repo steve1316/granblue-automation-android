@@ -115,7 +115,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 			
 			// Remove the difficulty prefix from the mission name.
 			var difficulty = ""
-			var formattedMissionName = ""
+			val formattedMissionName: String
 			when {
 				missionName.contains("N ") -> {
 					difficulty = "Normal"

@@ -110,7 +110,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 		if (game.imageUtils.confirmLocation("rotb")) {
 			// Remove the difficulty prefix from the mission name.
 			var difficulty = ""
-			var formattedMissionName = ""
+			val formattedMissionName: String
 			when {
 				missionName.contains("VH ") -> {
 					difficulty = "Very Hard"
