@@ -863,6 +863,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		) {
 			game.printToLog("[COMBAT] Reloading now.", tag = tag)
 			game.findAndClickButton("reload")
+			game.wait(3.0)
 		}
 	}
 	
@@ -1093,9 +1094,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						if (game.findAndClickButton("attack")) {
 							if (game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
 								game.findAndClickButton("reload")
+								game.wait(3.0)
 							} else {
 								// If the "Cancel" button fails to disappear after 10 tries, reload anyways.
 								game.findAndClickButton("reload")
+								game.wait(3.0)
 							}
 						}
 					}
@@ -1121,6 +1124,45 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
 						
 						turnNumber += 1
+						
+						when {
+							game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+								game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+								game.printToLog("\n############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								return false
+							}
+							game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+								game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+								game.printToLog("\n############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.findAndClickButton("reload")
+								return true
+							}
+							game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+								game.printToLog("\n############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								return true
+							}
+							retreatCheckFlag -> {
+								game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
+								game.printToLog("\n############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								game.printToLog("############################################################", tag = tag)
+								return false
+							}
+						}
 						
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 							game.wait(3.0)
