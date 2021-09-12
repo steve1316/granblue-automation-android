@@ -288,6 +288,9 @@ class ImageUtils(context: Context, private val game: Game) {
 				matchLocation.x += (templateMat.cols() / 2)
 				matchLocation.y += (templateMat.rows() / 2)
 				
+				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
+				Imgproc.rectangle(sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
+				
 				matchLocations.add(matchLocation)
 			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidenceAll) {
 				matchLocation = mmr.maxLoc
@@ -296,6 +299,9 @@ class ImageUtils(context: Context, private val game: Game) {
 				// Center the location coordinates and then save it.
 				matchLocation.x += (templateMat.cols() / 2)
 				matchLocation.y += (templateMat.rows() / 2)
+				
+				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
+				Imgproc.rectangle(sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				
 				matchLocations.add(matchLocation)
 			}
@@ -325,7 +331,8 @@ class ImageUtils(context: Context, private val game: Game) {
 				// Center the location coordinates and then save it.
 				tempMatchLocation.x += (templateMat.cols() / 2)
 				tempMatchLocation.y += (templateMat.rows() / 2)
-				if (!matchLocations.contains(tempMatchLocation)) {
+				if (!matchLocations.contains(tempMatchLocation) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y)) &&
+					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))) {
 					matchLocations.add(tempMatchLocation)
 				}
 			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
@@ -342,7 +349,8 @@ class ImageUtils(context: Context, private val game: Game) {
 				// Center the location coordinates and then save it.
 				tempMatchLocation.x += (templateMat.cols() / 2)
 				tempMatchLocation.y += (templateMat.rows() / 2)
-				if (!matchLocations.contains(tempMatchLocation)) {
+				if (!matchLocations.contains(tempMatchLocation) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y)) &&
+					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))) {
 					matchLocations.add(tempMatchLocation)
 				}
 			} else {
