@@ -1047,6 +1047,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
 						if (game.findAndClickButton("quick_summon")) {
 							game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
+							game.wait(3.0)
 						} else {
 							game.printToLog("[COMBAT] Was not able to quick summon this Turn.", tag = tag)
 						}
