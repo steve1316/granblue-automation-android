@@ -25,14 +25,13 @@ class Game(val myContext: Context) {
 	
 	// Grab all necessary information from SharedPreferences.
 	var farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
-	var mapName: String = sharedPreferences.getString("mapName", "")!!
+	private var mapName: String = sharedPreferences.getString("mapName", "")!!
 	var missionName: String = sharedPreferences.getString("missionName", "")!!
 	var difficulty: String = ""
 	var itemName: String = sharedPreferences.getString("itemName", "")!!
 	var itemAmount: Int = sharedPreferences.getInt("itemAmount", 1)
 	var itemAmountFarmed: Int = 0
 	private var amountOfRuns: Int = 0
-	var combatScriptName: String = sharedPreferences.getString("combatScriptName", "")!!
 	var combatScript: List<String> = sharedPreferences.getString("combatScript", "")!!.split("|")
 	var summonList: List<String> = sharedPreferences.getString("summon", "")!!.split("|")
 	var groupNumber: Int = sharedPreferences.getInt("groupNumber", 1)
