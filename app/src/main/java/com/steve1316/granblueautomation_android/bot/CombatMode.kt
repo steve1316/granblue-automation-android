@@ -878,7 +878,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		// Wait until the "Cancel" button vanishes from the screen.
 		if (game.imageUtils.findButton("combat_cancel") != null) {
-			while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5)) {
+			while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
 				if (debugMode) {
 					game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
 				}
@@ -1106,7 +1106,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						
 						// Wait until the "Cancel" button vanishes from the screen.
 						if (game.imageUtils.findButton("combat_cancel") != null) {
-							while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5)) {
+							while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
 								if (debugMode) {
 									game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
 								}
@@ -1175,7 +1175,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				
 				// Wait until the "Cancel" button vanishes from the screen.
 				if (game.imageUtils.findButton("combat_cancel") != null) {
-					while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5)) {
+					while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
 						if (debugMode) {
 							game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
 						}
