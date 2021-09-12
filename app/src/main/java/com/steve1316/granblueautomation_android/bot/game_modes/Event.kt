@@ -128,7 +128,7 @@ class Event(private val game: Game, private val missionName: String) {
 		
 		// Remove the difficulty prefix from the mission name.
 		var difficulty = ""
-		var formattedMissionName = ""
+		val formattedMissionName: String
 		when {
 			missionName.contains("VH ") -> {
 				difficulty = "Very Hard"
@@ -141,6 +141,9 @@ class Event(private val game: Game, private val missionName: String) {
 			missionName.contains("IM ") -> {
 				difficulty = "Impossible"
 				formattedMissionName = missionName.substring(3)
+			}
+			else -> {
+				formattedMissionName = missionName
 			}
 		}
 		

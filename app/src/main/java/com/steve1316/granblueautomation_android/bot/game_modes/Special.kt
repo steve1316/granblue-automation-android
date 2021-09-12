@@ -133,6 +133,9 @@ class Special(private val game: Game, private val mapName: String, private val m
 					difficulty = "Extreme"
 					formattedMissionName = missionName.substring(3)
 				}
+				else -> {
+					formattedMissionName = missionName
+				}
 			}
 			
 			if (game.imageUtils.confirmLocation("special")) {

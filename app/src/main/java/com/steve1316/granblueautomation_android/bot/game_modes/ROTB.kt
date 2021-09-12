@@ -120,6 +120,9 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 					difficulty = "Extreme"
 					formattedMissionName = missionName.substring(3)
 				}
+				else -> {
+					formattedMissionName = missionName
+				}
 			}
 			
 			// Only Raids are marked with Extreme difficulty.
