@@ -572,21 +572,25 @@ class ImageUtils(context: Context, private val game: Game) {
 					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon.", tag = tag)
 					
 					summonIndex += 1
-					
-					// If it reached the bottom of the Summon Selection page, scroll all the way back up.
-					if (findButton("bottom_of_summon_selection", tries = 1) != null) {
-						game.printToLog("[WARNING] Bot has reached the bottom of the page and found no suitable Summons. Resetting Summons now...", tag = tag)
-						return null
-					}
-					
-					game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
-					game.wait(1.0)
 				}
 			}
+			
+			if (summonLocation != null) {
+				break
+			}
+			
+			// If it reached the bottom of the Summon Selection page, reset summons.
+			if (findButton("bottom_of_summon_selection", tries = 1) != null) {
+				game.printToLog("[WARNING] Bot has reached the bottom of the page and found no suitable Summons. Resetting Summons now...", tag = tag)
+				return null
+			}
+			
+			game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
+			game.wait(1.0)
 		}
 		
-		game.printToLog("[SUCCESS] Found ${summonList[summonIndex].uppercase()} Summon at $matchLocation.")
-		return matchLocation
+		game.printToLog("[SUCCESS] Found ${summonList[summonIndex].uppercase()} Summon at $summonLocation.")
+		return summonLocation
 	}
 	
 	/**
