@@ -742,7 +742,7 @@ class Game(val myContext: Context) {
 				printToLog("[INFO] Mission: $missionName")
 				printToLog("[INFO] Summons: $summonList")
 				printToLog("[INFO] # of $itemName gained this run: $amountGained")
-				printToLog("[INFO] # of $itemName gained in total: $itemAmountFarmed/$itemAmount")
+				printToLog("[INFO] # of $itemName gained in total: ${itemAmountFarmed + amountGained}/$itemAmount")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
@@ -750,9 +750,9 @@ class Game(val myContext: Context) {
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
 					val discordString = if (itemAmountFarmed >= itemAmount) {
-						"> ${amountGained}x __${itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]** :white_check_mark:"
+						"> ${amountGained}x __${itemName}__ gained this run: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]** :white_check_mark:"
 					} else {
-						"> ${amountGained}x __${itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]**"
+						"> ${amountGained}x __${itemName}__ gained this run: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]**"
 					}
 					
 					DiscordUtils.queue.add(discordString)
@@ -784,7 +784,7 @@ class Game(val myContext: Context) {
 				printToLog("[INFO] Mission: $missionName")
 				printToLog("[INFO] Summons: $summonList")
 				printToLog("[INFO] # of $itemName gained from this Pending Battle: $amountGained")
-				printToLog("[INFO] # of $itemName gained in total: $itemAmountFarmed/$itemAmount")
+				printToLog("[INFO] # of $itemName gained in total: ${itemAmountFarmed + amountGained}/$itemAmount")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
@@ -792,10 +792,9 @@ class Game(val myContext: Context) {
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
 					val discordString = if (itemAmountFarmed >= itemAmount) {
-						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]** " +
-								":white_check_mark:"
+						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]** :white_check_mark:"
 					} else {
-						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / $itemAmount]** -> **[$itemAmountFarmed / $itemAmount]**"
+						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]**"
 					}
 					
 					DiscordUtils.queue.add(discordString)
