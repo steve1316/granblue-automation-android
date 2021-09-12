@@ -103,6 +103,8 @@ class Event(private val game: Game, private val missionName: String) {
 	 * Navigates to the specified Event (Token Drawboxes) mission.
 	 */
 	private fun navigateTokenDrawboxes() {
+		game.printToLog("\n[EVENT.TOKEN.DRAWBOXES] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
@@ -206,83 +208,89 @@ class Event(private val game: Game, private val missionName: String) {
 	 * Navigates to the specified Event mission.
 	 */
 	private fun navigate() {
-		// Go to the Home screen.
-		game.goBackHome(confirmLocationCheck = true)
-		
-		game.wait(0.5)
-		
-		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
-		game.findAndClickButton("home_menu")
-		var bannerLocations = game.imageUtils.findAll("event_banner")
-		if (bannerLocations.size == 0) {
-			bannerLocations = game.imageUtils.findAll("event_banner_blue")
-		}
-		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
-		
-		game.wait(3.0)
-		
-		// Check if there is a "Daily Missions" popup and close it.
-		if (game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
-			game.printToLog("\n[EVENT] Detected \"Daily Missions\" popup. Closing it...", tag = tag)
-			game.findAndClickButton("cancel")
-		}
-		
-		// Remove the difficulty prefix from the mission name.
-		var difficulty = ""
-		var formattedMissionName = ""
-		when {
-			missionName.contains("N ") -> {
-				difficulty = "Normal"
-				formattedMissionName = missionName.substring(2)
-			}
-			missionName.contains("H ") -> {
-				difficulty = "Hard"
-				formattedMissionName = missionName.substring(2)
-			}
-			missionName.contains("VH ") -> {
-				difficulty = "Very Hard"
-				formattedMissionName = missionName.substring(3)
-			}
-			missionName.contains("EX ") -> {
-				difficulty = "Extreme"
-				formattedMissionName = missionName.substring(3)
-			}
-		}
-		
-		if (!game.findAndClickButton("event_special_quest")) {
-			throw Exception("Failed to detect layout for this Event. Are you sure this Event has no Token Drawboxes? If not, switch to \"Event (Token Drawboxes)\" Farming Mode.")
-		}
-		
-		if (game.imageUtils.confirmLocation("special")) {
-			// Check if there is a Nightmare already available.
-			val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
-				1
-			} else {
-				0
-			}
+		if (game.farmingMode == "Event (Token Drawboxes)") {
+			navigateTokenDrawboxes()
+		} else {
+			game.printToLog("\n[EVENT] Now beginning process to navigate to the mission: $missionName...", tag = tag)
 			
-			// Find the locations of all the "Select" buttons.
-			val selectButtonLocations = game.imageUtils.findAll("select")
+			// Go to the Home screen.
+			game.goBackHome(confirmLocationCheck = true)
 			
-			// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
-			if (formattedMissionName == "Event Quest") {
-				game.printToLog("[EVENT] Now hosting Event Quest...", tag = tag)
-				game.gestureUtils.tap(selectButtonLocations[0 + nightmareIsAvailable].x, selectButtonLocations[0 + nightmareIsAvailable].y, "select")
-			} else if (formattedMissionName == "Event Raid") {
-				game.printToLog("[EVENT] Now hosting Event Raid...", tag = tag)
-				game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 + nightmareIsAvailable].y, "select")
+			game.wait(0.5)
+			
+			// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
+			game.findAndClickButton("home_menu")
+			var bannerLocations = game.imageUtils.findAll("event_banner")
+			if (bannerLocations.size == 0) {
+				bannerLocations = game.imageUtils.findAll("event_banner_blue")
 			}
+			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 			
 			game.wait(3.0)
 			
-			// Find the locations of all round "Play" buttons.
-			val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
+			// Check if there is a "Daily Missions" popup and close it.
+			if (game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
+				game.printToLog("\n[EVENT] Detected \"Daily Missions\" popup. Closing it...", tag = tag)
+				game.findAndClickButton("cancel")
+			}
 			
-			// Now select the chosen difficulty.
-			if (difficulty == "Very Hard") {
-				game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
-			} else if (difficulty == "Extreme") {
-				game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y, "play_round_button")
+			// Remove the difficulty prefix from the mission name.
+			var difficulty = ""
+			var formattedMissionName = ""
+			when {
+				missionName.contains("N ") -> {
+					difficulty = "Normal"
+					formattedMissionName = missionName.substring(2)
+				}
+				missionName.contains("H ") -> {
+					difficulty = "Hard"
+					formattedMissionName = missionName.substring(2)
+				}
+				missionName.contains("VH ") -> {
+					difficulty = "Very Hard"
+					formattedMissionName = missionName.substring(3)
+				}
+				missionName.contains("EX ") -> {
+					difficulty = "Extreme"
+					formattedMissionName = missionName.substring(3)
+				}
+			}
+			
+			if (!game.findAndClickButton("event_special_quest")) {
+				throw Exception("Failed to detect layout for this Event. Are you sure this Event has no Token Drawboxes? If not, switch to \"Event (Token Drawboxes)\" Farming Mode.")
+			}
+			
+			if (game.imageUtils.confirmLocation("special")) {
+				// Check if there is a Nightmare already available.
+				val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
+					1
+				} else {
+					0
+				}
+				
+				// Find the locations of all the "Select" buttons.
+				val selectButtonLocations = game.imageUtils.findAll("select")
+				
+				// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
+				if (formattedMissionName == "Event Quest") {
+					game.printToLog("[EVENT] Now hosting Event Quest...", tag = tag)
+					game.gestureUtils.tap(selectButtonLocations[0 + nightmareIsAvailable].x, selectButtonLocations[0 + nightmareIsAvailable].y, "select")
+				} else if (formattedMissionName == "Event Raid") {
+					game.printToLog("[EVENT] Now hosting Event Raid...", tag = tag)
+					game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 + nightmareIsAvailable].y, "select")
+				}
+				
+				game.wait(3.0)
+				
+				// Find the locations of all round "Play" buttons.
+				val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
+				
+				// Now select the chosen difficulty.
+				if (difficulty == "Very Hard") {
+					game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
+				} else if (difficulty == "Extreme") {
+					game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y, "play_round_button")
+				}
 			}
 		}
 	}
