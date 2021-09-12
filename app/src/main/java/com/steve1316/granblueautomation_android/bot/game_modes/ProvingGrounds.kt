@@ -14,6 +14,8 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
+		game.printToLog("\n[PROVING.GROUNDS] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		

@@ -136,6 +136,8 @@ class Raid(private val game: Game) {
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
+		game.printToLog("\n[RAID] Now beginning process to navigate to the mission: ${game.missionName}...", tag = tag)
+		
 		// Go to the Home screen and then to the Quests screen.
 		game.goBackHome(confirmLocationCheck = true)
 		game.findAndClickButton("quest")

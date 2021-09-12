@@ -212,6 +212,8 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
+		game.printToLog("\n[QUEST] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		

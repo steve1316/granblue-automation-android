@@ -8,10 +8,18 @@ class CoopException(message: String) : Exception(message)
 class Coop(private val game: Game, private val missionName: String) {
 	private val tag: String = "${MainActivity.loggerTag}_Coop"
 	
+	// The 2nd element of the list of EX1 missions is designated "empty" because it is used to navigate properly to "Lost in the Dark" from "Corridor of Puzzles".
+	private val listForCoopEX1 = arrayListOf("EX1-1 Corridor of Puzzles", "empty", "EX1-3 Lost in the Dark")
+	private val listForCoopEX2 = arrayListOf("EX2-2 Time of Judgement", "EX2-3 Time of Revelation", "EX2-4 Time of Eminence")
+	private val listForCoopEX3 = arrayListOf("EX3-2 Rule of the Tundra", "EX3-3 Rule of the Plains", "EX3-4 Rule of the Twilight")
+	private val listForCoopEX4 = arrayListOf("EX4-2 Amidst the Waves", "EX4-3 Amidst the Petals", "EX4-4 Amidst Severe Cliffs", "EX4-5 Amidst the Flames")
+	
 	/**
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
+		game.printToLog("\n[COOP] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 		
@@ -58,12 +66,6 @@ class Coop(private val game: Game, private val missionName: String) {
 				game.wait(3.0)
 				
 				game.printToLog("[COOP] Extra difficulty for Coop is now selected.", tag = tag)
-				
-				// The 2nd element of the list of EX1 missions is designated "empty" because it is used to navigate properly to "Lost in the Dark" from "Corridor of Puzzles".
-				val listForCoopEX1 = arrayListOf("EX1-1 Corridor of Puzzles", "empty", "EX1-3 Lost in the Dark")
-				val listForCoopEX2 = arrayListOf("EX2-2 Time of Judgement", "EX2-3 Time of Revelation", "EX2-4 Time of Eminence")
-				val listForCoopEX3 = arrayListOf("EX3-2 Rule of the Tundra", "EX3-3 Rule of the Plains", "EX3-4 Rule of the Twilight")
-				val listForCoopEX4 = arrayListOf("EX4-2 Amidst the Waves", "EX4-3 Amidst the Petals", "EX4-4 Amidst Severe Cliffs", "EX4-5 Amidst the Flames")
 				
 				// Select the category for the specified EX mission. For EX2 to EX4, skip past the first missions of each.
 				if (listForCoopEX1.contains(missionName)) {
