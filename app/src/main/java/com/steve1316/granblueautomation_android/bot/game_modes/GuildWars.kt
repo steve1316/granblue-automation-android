@@ -64,21 +64,34 @@ class GuildWars(private val game: Game, private val missionName: String) {
 				// Click on the banner to farm meat.
 				game.findAndClickButton("guild_wars_meat")
 				
+				game.wait(1.0)
+				
 				if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 					// Now tap on the specified Mission to start.
-					val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
-					when (difficulty) {
-						"Very Hard" -> {
-							game.printToLog("Hosting Very Hard now.", tag = tag)
-							game.gestureUtils.tap(meatLocation.x, meatLocation.y, "guild_wars_meat_very_hard")
+					var tries = 10
+					game.printToLog("[GUILD.WARS] Now hosting $difficulty now...", tag = tag)
+					val locations = game.imageUtils.findAll("ap_30")
+					while (!game.imageUtils.waitVanish("ap_30", timeout = 3)) {
+						when (difficulty) {
+							"Very Hard" -> {
+								game.gestureUtils.tap(locations[0].x, locations[0].y, "ap_30")
+							}
+							"Extreme" -> {
+								game.gestureUtils.tap(locations[1].x, locations[1].y, "ap_30")
+							}
+							"Extreme+" -> {
+								game.gestureUtils.tap(locations[2].x, locations[2].y, "ap_30")
+							}
 						}
-						"Extreme" -> {
-							game.printToLog("Hosting Extreme now.", tag = tag)
-							game.gestureUtils.tap(meatLocation.x + 230.0, meatLocation.y, "guild_wars_meat_very_hard")
-						}
-						"Extreme+" -> {
-							game.printToLog("Hosting Extreme+ now.", tag = tag)
-							game.gestureUtils.tap(meatLocation.x + 620.0, meatLocation.y, "guild_wars_meat_very_hard")
+						
+						game.wait(3.0)
+						tries -= 1
+						if (tries <= 0) {
+							if (difficulty == "Extreme+") {
+								throw GuildWarsException("You did not unlock Extreme+ yet!")
+							} else {
+								throw GuildWarsException("There appears to be a deadzone issue that the bot failed 10 times to resolve. Please refresh the page and try again.")
+							}
 						}
 					}
 				}
