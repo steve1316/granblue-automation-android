@@ -1,22 +1,33 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.5.3</latestVersion>
+    <latestVersion>2.5.4</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.5.3 - Changelog
+v2.5.4 - Changelog
+
+New
+---
+- Added support for the "reload" and "quickSummon" commands.
 
 Changed
 ---
-- Updated the Quest and Special button image assets.
-- Added a delay when waiting for the Home screen to appear.
-- Removed number of tries when searching for the Quest button.
-- Fleshed out scales in general and clarified 1080p eligibility.
+- Brought over recent restructure and Combat Mode changes from Python version.
+- Readjusted various image assets.
+- Added a delay after quick summoning.
+- Increased number of tries waiting for the "Cancel" button to vanish during Combat Mode.
+- Adjusted logic of handling deadzones during Guild Wars.
 
 Fixed
 ---
-- Fixed infinite loop when matching multiple images when Debug Mode is turned off.
-- Fixed bug where scales were empty due to not deep copying.
-- Fixed 720p support.
+- Fixed Testing Mode testing a range of scales instead of a single scale.
+- Fixed bot not reloading during Combat Mode for Guild Wars.
+- Fixed only searching one summon at a time before scrolling down.
+- Fixed missing support for Aurora and Oblivion Trial.
+- Added missing connection to navigation for Event (Token Drawboxes).
+- Fixed mission names after formatting for various Farming Modes being empty.
+- Fixed duplicate match locations on matchAll().
+- Fixed not detecting battle end after reloading.
+- Fixed Discord message formatting.
     </releaseNotes>
   </update>
 </AppUpdater>
