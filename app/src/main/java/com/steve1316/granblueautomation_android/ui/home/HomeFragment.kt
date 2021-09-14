@@ -19,20 +19,16 @@ import android.widget.TextView
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.beust.klaxon.JsonReader
 import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.UpdateFrom
-import com.sksamuel.hoplite.ConfigLoader
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
-import com.steve1316.granblueautomation_android.data.ItemData
-import com.steve1316.granblueautomation_android.data.MissionData
+import com.steve1316.granblueautomation_android.utils.JSONParser
 import com.steve1316.granblueautomation_android.utils.MediaProjectionService
 import com.steve1316.granblueautomation_android.utils.MessageLog
 import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
 import java.io.File
-import java.io.StringReader
 
 class HomeFragment : Fragment() {
 	private val loggerTag: String = "${MainActivity.loggerTag}_HomeFragment"
@@ -48,6 +44,8 @@ class HomeFragment : Fragment() {
 		myContext = requireContext()
 		
 		homeFragmentView = inflater.inflate(R.layout.fragment_home, container, false)
+		
+		val jsonParser = JSONParser(myContext)
 		
 		// Start or stop the MediaProjection service via this button.
 		startButton = homeFragmentView.findViewById(R.id.start_button)
@@ -66,84 +64,51 @@ class HomeFragment : Fragment() {
 			}
 		}
 		
-		// Check if the application created the config.yaml file yet and if not, create it.
-		val file = File(myContext.getExternalFilesDir(null), "config.yaml")
+		// Check if the application created the config.json file yet and if not, create it.
+		val file = File(myContext.getExternalFilesDir(null), "config.json")
 		if (!file.exists()) {
 			file.createNewFile()
 			
-			val content = "---\n" +
-					"############################################################\n" +
-					"# Read the instructions on the GitHub repository README.md on how to setup Discord notifications.\n" +
-					"############################################################\n" +
-					"\"discord\":\n" +
-					"  \"discordToken\": \n" +
-					"  \"userID\": 0\n" +
-					"########################################\n" +
-					"# Read the instructions on the GitHub repository README.md on how to get these keys in order to allow the bot to farm Raids via Twitter.\n" +
-					"########################################\n" +
-					"\"twitter\":\n" +
-					"  \"apiKey\": \n" +
-					"  \"apiKeySecret\": \n" +
-					"  \"accessToken\": \n" +
-					"  \"accessTokenSecret\": \n" +
-					"\n" +
-					"########################################\n" +
-					"# Enable using Full Elixir or Soul Balms for refill.\n" +
-					"########################################\n" +
-					"\"refill\":\n" +
-					"  \"fullElixir\": false\n" +
-					"  \"soulBalm\": false\n" +
-					"\n" +
-					"############################################################\n" +
-					"# The following settings below follow pretty much the same template provided. They default to the settings selected for Farming Mode if nothing is set.\n" +
-					"\n" +
-					"# Enables this fight or skip it if false.\n" +
-					"# enable___ =\n" +
-					"\n" +
-					"# Select what Summon(s) separated by commas to use in order from highest priority to least. Example: Shiva, Colossus Omega, Varuna, Agni\n" +
-					"# https://github.com/steve1316/granblue-automation-pyautogui/wiki/Selectable-Summons\n" +
-					"# ___SummonList =\n" +
-					"\n" +
-					"# Set what Party to select and under what Group to run for the specified fight. Accepted values are: Group [1, 2, 3, 4, 5, 6, 7] and Party [1, 2, 3, 4, 5, 6].\n" +
-					"# ___GroupNumber =\n" +
-					"# ___PartyNumber =\n" +
-					"############################################################\n" +
-					"\n" +
-					"########################################\n" +
-					"# Settings for Dimensional Halo.\n" +
-					"########################################\n" +
-					"\"dimensionalHalo\":\n" +
-					"  \"enableDimensionalHalo\": false\n" +
-					"  \"dimensionalHaloSummonList\": []\n" +
-					"  \"dimensionalHaloGroupNumber\": 0\n" +
-					"  \"dimensionalHaloPartyNumber\": 0\n" +
-					"\n" +
-					"########################################\n" +
-					"# Settings for Event Nightmares.\n" +
-					"########################################\n" +
-					"\"event\":\n" +
-					"  \"enableEventNightmare\": false\n" +
-					"  \"eventNightmareSummonList\": []\n" +
-					"  \"eventNightmareGroupNumber\": 0\n" +
-					"  \"eventNightmarePartyNumber\": 0\n" +
-					"\n" +
-					"########################################\n" +
-					"# Settings for Rise of the Beasts Extreme+.\n" +
-					"########################################\n" +
-					"\"rotb\":\n" +
-					"  \"enableROTBExtremePlus\": false\n" +
-					"  \"rotbExtremePlusSummonList\": []\n" +
-					"  \"rotbExtremePlusGroupNumber\": 0\n" +
-					"  \"rotbExtremePlusPartyNumber\": 0\n" +
-					"\n" +
-					"########################################\n" +
-					"# Settings for Xeno Clash Nightmare.\n" +
-					"########################################\n" +
-					"\"xenoClash\":\n" +
-					"  \"enableXenoClashNightmare\": false\n" +
-					"  \"xenoClashNightmareSummonList\": []\n" +
-					"  \"xenoClashNightmareGroupNumber\": 0\n" +
-					"  \"xenoClashNightmarePartyNumber\": 0"
+			val content = "{\n" +
+					"    \"discord\": {\n" +
+					"        \"discordToken\": \"\",\n" +
+					"        \"userID\": \"\"\n" +
+					"    },\n" +
+					"    \"twitter\": {\n" +
+					"        \"apiKey\": \"\",\n" +
+					"        \"apiKeySecret\": \"\",\n" +
+					"        \"accessToken\": \"\",\n" +
+					"        \"accessTokenSecret\": \"\"\n" +
+					"    },\n" +
+					"    \"refill\": {\n" +
+					"        \"fullElixir\": false,\n" +
+					"        \"soulBalm\": false\n" +
+					"    },\n" +
+					"    \"dimensionalHalo\": {\n" +
+					"        \"enableDimensionalHalo\": false,\n" +
+					"        \"dimensionalHaloSummonList\": [],\n" +
+					"        \"dimensionalHaloGroupNumber\": 0,\n" +
+					"        \"dimensionalHaloPartyNumber\": 0\n" +
+					"    },\n" +
+					"    \"event\": {\n" +
+					"        \"enableEventNightmare\": false,\n" +
+					"        \"eventNightmareSummonList\": [],\n" +
+					"        \"eventNightmareGroupNumber\": 0,\n" +
+					"        \"eventNightmarePartyNumber\": 0\n" +
+					"    },\n" +
+					"    \"rotb\": {\n" +
+					"        \"enableROTBExtremePlus\": false,\n" +
+					"        \"rotbExtremePlusSummonList\": [],\n" +
+					"        \"rotbExtremePlusGroupNumber\": 0,\n" +
+					"        \"rotbExtremePlusPartyNumber\": 0\n" +
+					"    },\n" +
+					"    \"xenoClash\": {\n" +
+					"        \"enableXenoClashNightmare\": false,\n" +
+					"        \"xenoClashNightmareSummonList\": [],\n" +
+					"        \"xenoClashNightmareGroupNumber\": 0,\n" +
+					"        \"xenoClashNightmarePartyNumber\": 0\n" +
+					"    }\n" +
+					"}\n"
 			
 			file.writeText(content)
 			
@@ -153,46 +118,34 @@ class HomeFragment : Fragment() {
 			
 			val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 			
-			// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.
+			// Save the Twitter API keys and tokens and every other settings in the config.json to SharedPreferences.
 			try {
 				if (file.exists()) {
-					val config = ConfigLoader().loadConfigOrThrow<ConfigData>(file)
-					
-					if (config.twitter.apiKey != sharedPreferences.getString("apiKey", "")) {
-						sharedPreferences.edit {
-							putString("apiKey", config.twitter.apiKey)
-							putString("apiKeySecret", config.twitter.apiKeySecret)
-							putString("accessToken", config.twitter.accessToken)
-							putString("accessTokenSecret", config.twitter.accessTokenSecret)
-							commit()
-						}
-						
-						Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.")
-					}
+					jsonParser.constructConfigClass()
 					
 					sharedPreferences.edit {
-						putString("discordToken", config.discord.discordToken)
-						putString("userID", config.discord.userID)
+						putString("discordToken", ConfigData.discordToken)
+						putString("userID", ConfigData.userID)
 						
-						putBoolean("enableEventNightmare", config.event.enableEventNightmare)
-						putStringSet("eventNightmareSummonList", config.event.eventNightmareSummonList.toMutableSet())
-						putInt("eventNightmareGroupNumber", config.event.eventNightmareGroupNumber)
-						putInt("eventNightmarePartyNumber", config.event.eventNightmarePartyNumber)
+						putBoolean("enableEventNightmare", ConfigData.enableEventNightmare)
+						putStringSet("eventNightmareSummonList", ConfigData.eventNightmareSummonList.toMutableSet())
+						putInt("eventNightmareGroupNumber", ConfigData.eventNightmareGroupNumber)
+						putInt("eventNightmarePartyNumber", ConfigData.eventNightmarePartyNumber)
 						
-						putBoolean("enableDimensionalHalo", config.dimensionalHalo.enableDimensionalHalo)
-						putStringSet("dimensionalHaloSummonList", config.dimensionalHalo.dimensionalHaloSummonList.toMutableSet())
-						putInt("dimensionalHaloGroupNumber", config.dimensionalHalo.dimensionalHaloGroupNumber)
-						putInt("dimensionalHaloPartyNumber", config.dimensionalHalo.dimensionalHaloPartyNumber)
+						putBoolean("enableDimensionalHalo", ConfigData.enableDimensionalHalo)
+						putStringSet("dimensionalHaloSummonList", ConfigData.dimensionalHaloSummonList.toMutableSet())
+						putInt("dimensionalHaloGroupNumber", ConfigData.dimensionalHaloGroupNumber)
+						putInt("dimensionalHaloPartyNumber", ConfigData.dimensionalHaloPartyNumber)
 						
-						putBoolean("enableROTBExtremePlus", config.rotb.enableROTBExtremePlus)
-						putStringSet("rotbExtremePlusSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
-						putInt("rotbExtremePlusGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
-						putInt("rotbExtremePlusPartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+						putBoolean("enableROTBExtremePlus", ConfigData.enableROTBExtremePlus)
+						putStringSet("rotbExtremePlusSummonList", ConfigData.rotbExtremePlusSummonList.toMutableSet())
+						putInt("rotbExtremePlusGroupNumber", ConfigData.rotbExtremePlusGroupNumber)
+						putInt("rotbExtremePlusPartyNumber", ConfigData.rotbExtremePlusPartyNumber)
 						
-						putBoolean("enableXenoClashNightmare", config.rotb.enableROTBExtremePlus)
-						putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
-						putInt("xenoClashNightmareGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
-						putInt("xenoClashNightmarePartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+						putBoolean("enableXenoClashNightmare", ConfigData.enableXenoClashNightmare)
+						putStringSet("xenoClashNightmareSummonList", ConfigData.xenoClashNightmareSummonList.toMutableSet())
+						putInt("xenoClashNightmareGroupNumber", ConfigData.xenoClashNightmareGroupNumber)
+						putInt("xenoClashNightmarePartyNumber", ConfigData.xenoClashNightmarePartyNumber)
 						commit()
 					}
 					
@@ -358,7 +311,7 @@ class HomeFragment : Fragment() {
 		
 		// Now construct the data files if this is the first time.
 		if (firstRun) {
-			constructDataClasses()
+			jsonParser.constructDataClasses()
 			firstRun = false
 		}
 		
@@ -499,51 +452,5 @@ class HomeFragment : Fragment() {
 		}
 		
 		return false
-	}
-	
-	/**
-	 * Construct the data classes associated with the provided JSON data files.
-	 */
-	private fun constructDataClasses() {
-		// Construct the data class for items and missions.
-		val fileList = arrayListOf("items.json", "missions.json")
-		while (fileList.size > 0) {
-			val fileName = fileList[0]
-			fileList.removeAt(0)
-			val objectString = myContext.assets.open("data/$fileName").bufferedReader().use { it.readText() }
-			
-			JsonReader(StringReader(objectString)).use { reader ->
-				reader.beginObject {
-					while (reader.hasNext()) {
-						// Grab the name.
-						val name = reader.nextName()
-						
-						val contents = mutableMapOf<String, ArrayList<String>>()
-						reader.beginObject {
-							while (reader.hasNext()) {
-								// Grab the event name.
-								val eventName = reader.nextName()
-								contents.putIfAbsent(eventName, arrayListOf())
-								
-								reader.beginArray {
-									// Grab all of the event option rewards for this event and add them to the map.
-									while (reader.hasNext()) {
-										val optionReward = reader.nextString()
-										contents[eventName]?.add(optionReward)
-									}
-								}
-							}
-						}
-						
-						// Finally, put into the MutableMap the key value pair depending on the current category.
-						if (fileName == "items.json") {
-							ItemData.items[name] = contents
-						} else {
-							MissionData.missions[name] = contents
-						}
-					}
-				}
-			}
-		}
 	}
 }

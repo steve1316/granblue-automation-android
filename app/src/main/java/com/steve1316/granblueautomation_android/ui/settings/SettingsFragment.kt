@@ -10,7 +10,6 @@ import android.text.InputType
 import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.*
-import com.sksamuel.hoplite.ConfigLoader
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.R
 import com.steve1316.granblueautomation_android.data.ConfigData
@@ -549,51 +548,49 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		debugModeCheckBox.isChecked = debugMode
 		enableHomeTestCheckBox.isChecked = enableHomeTest
 		
-		// Save the Twitter API keys and tokens and every other settings in the config.yaml to SharedPreferences.
+		// Save the Twitter API keys and tokens and every other settings in the config.json to SharedPreferences.
 		try {
-			val file = File(context?.getExternalFilesDir(null), "config.yaml")
-			if (file.exists()) {
-				val config = ConfigLoader().loadConfigOrThrow<ConfigData>(file)
-				
-				if (config.twitter.apiKey != sharedPreferences.getString("apiKey", "")) {
+			val file = File(context?.getExternalFilesDir(null), "config.json")
+			if (file.exists() && context != null) {
+				if (ConfigData.apiKey != sharedPreferences.getString("apiKey", "")) {
 					sharedPreferences.edit {
-						putString("apiKey", config.twitter.apiKey)
-						putString("apiKeySecret", config.twitter.apiKeySecret)
-						putString("accessToken", config.twitter.accessToken)
-						putString("accessTokenSecret", config.twitter.accessTokenSecret)
+						putString("apiKey", ConfigData.apiKey)
+						putString("apiKeySecret", ConfigData.apiKeySecret)
+						putString("accessToken", ConfigData.accessToken)
+						putString("accessTokenSecret", ConfigData.accessTokenSecret)
 						commit()
 					}
 					
-					Log.d(TAG, "Saved Twitter API credentials to SharedPreferences from config.")
+					Log.d(loggerTag, "Saved Twitter API credentials to SharedPreferences from config.")
 				}
 				
 				sharedPreferences.edit {
-					putBoolean("enableEventNightmare", config.event.enableEventNightmare)
-					putStringSet("eventNightmareSummonList", config.event.eventNightmareSummonList.toMutableSet())
-					putInt("eventNightmareGroupNumber", config.event.eventNightmareGroupNumber)
-					putInt("eventNightmarePartyNumber", config.event.eventNightmarePartyNumber)
+					putBoolean("enableEventNightmare", ConfigData.enableEventNightmare)
+					putStringSet("eventNightmareSummonList", ConfigData.eventNightmareSummonList.toMutableSet())
+					putInt("eventNightmareGroupNumber", ConfigData.eventNightmareGroupNumber)
+					putInt("eventNightmarePartyNumber", ConfigData.eventNightmarePartyNumber)
 					
-					putBoolean("enableDimensionalHalo", config.dimensionalHalo.enableDimensionalHalo)
-					putStringSet("dimensionalHaloSummonList", config.dimensionalHalo.dimensionalHaloSummonList.toMutableSet())
-					putInt("dimensionalHaloGroupNumber", config.dimensionalHalo.dimensionalHaloGroupNumber)
-					putInt("dimensionalHaloPartyNumber", config.dimensionalHalo.dimensionalHaloPartyNumber)
+					putBoolean("enableDimensionalHalo", ConfigData.enableDimensionalHalo)
+					putStringSet("dimensionalHaloSummonList", ConfigData.dimensionalHaloSummonList.toMutableSet())
+					putInt("dimensionalHaloGroupNumber", ConfigData.dimensionalHaloGroupNumber)
+					putInt("dimensionalHaloPartyNumber", ConfigData.dimensionalHaloPartyNumber)
 					
-					putBoolean("enableROTBExtremePlus", config.rotb.enableROTBExtremePlus)
-					putStringSet("rotbExtremePlusSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
-					putInt("rotbExtremePlusGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
-					putInt("rotbExtremePlusPartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+					putBoolean("enableROTBExtremePlus", ConfigData.enableROTBExtremePlus)
+					putStringSet("rotbExtremePlusSummonList", ConfigData.rotbExtremePlusSummonList.toMutableSet())
+					putInt("rotbExtremePlusGroupNumber", ConfigData.rotbExtremePlusGroupNumber)
+					putInt("rotbExtremePlusPartyNumber", ConfigData.rotbExtremePlusPartyNumber)
 					
-					putBoolean("enableXenoClashNightmare", config.rotb.enableROTBExtremePlus)
-					putStringSet("xenoClashNightmareSummonList", config.rotb.rotbExtremePlusSummonList.toMutableSet())
-					putInt("xenoClashNightmareGroupNumber", config.rotb.rotbExtremePlusGroupNumber)
-					putInt("xenoClashNightmarePartyNumber", config.rotb.rotbExtremePlusPartyNumber)
+					putBoolean("enableXenoClashNightmare", ConfigData.enableXenoClashNightmare)
+					putStringSet("xenoClashNightmareSummonList", ConfigData.xenoClashNightmareSummonList.toMutableSet())
+					putInt("xenoClashNightmareGroupNumber", ConfigData.xenoClashNightmareGroupNumber)
+					putInt("xenoClashNightmarePartyNumber", ConfigData.xenoClashNightmarePartyNumber)
 				}
 				
-				Log.d(TAG, "Saved config.ini settings to SharedPreferences.")
+				Log.d(loggerTag, "Saved config.json settings to SharedPreferences.")
 			}
 		} catch (e: Exception) {
-			Log.e(TAG, "Encountered error while saving Twitter API credentials to SharedPreferences from config: ${e.stackTraceToString()}")
-			Log.e(TAG, "Clearing any existing Twitter API credentials from SharedPreferences...")
+			Log.e(loggerTag, "Encountered error while saving Twitter API credentials to SharedPreferences from config: ${e.stackTraceToString()}")
+			Log.e(loggerTag, "Clearing any existing Twitter API credentials from SharedPreferences...")
 			
 			sharedPreferences.edit {
 				remove("apiKey")
