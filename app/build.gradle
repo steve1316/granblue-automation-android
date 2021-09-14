@@ -11,8 +11,8 @@ android {
         applicationId "com.steve1316.granblueautomation_android"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 42
-        versionName "2.5.4"
+        versionCode 43
+        versionName "2.6.0"
     }
 
     buildTypes {
@@ -74,9 +74,6 @@ dependencies {
 
     // Google's Firebase Machine Learning OCR for Text Detection.
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.0'
-
-    // Hoplite to read config.yaml file.
-    implementation 'com.sksamuel.hoplite:hoplite-yaml:1.4.0'
 
     // Twitter4j is used to connect to the Twitter API.
     implementation 'org.twitter4j:twitter4j-stream:4.0.7'

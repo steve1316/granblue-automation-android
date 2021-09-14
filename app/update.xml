@@ -1,33 +1,21 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.5.4</latestVersion>
+    <latestVersion>2.6.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.5.4 - Changelog
+v2.6.0 - Changelog
 
 New
 ---
-- Added support for the "reload" and "quickSummon" commands.
+- Dropped required API from 26 to 24, supporting emulators like Bluestacks and devices at least Android 7.0+ (Nougat).
 
 Changed
 ---
-- Brought over recent restructure and Combat Mode changes from Python version.
-- Readjusted various image assets.
-- Added a delay after quick summoning.
-- Increased number of tries waiting for the "Cancel" button to vanish during Combat Mode.
-- Adjusted logic of handling deadzones during Guild Wars.
+- Removed usage of config.yaml and used config.json instead.
 
 Fixed
 ---
-- Fixed Testing Mode testing a range of scales instead of a single scale.
-- Fixed bot not reloading during Combat Mode for Guild Wars.
-- Fixed only searching one summon at a time before scrolling down.
-- Fixed missing support for Aurora and Oblivion Trial.
-- Added missing connection to navigation for Event (Token Drawboxes).
-- Fixed mission names after formatting for various Farming Modes being empty.
-- Fixed duplicate match locations on matchAll().
-- Fixed not detecting battle end after reloading.
-- Fixed Discord message formatting.
+- Fixed bug where Hard difficulty was mistaken for Very Hard difficulty.
     </releaseNotes>
   </update>
 </AppUpdater>
