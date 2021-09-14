@@ -39,11 +39,11 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 					missionName.contains("N ") -> {
 						difficulty = "Normal"
 					}
-					missionName.contains("H ") -> {
-						difficulty = "Hard"
-					}
 					missionName.contains("VH ") -> {
 						difficulty = "Very Hard"
+					}
+					missionName.contains("H ") -> {
+						difficulty = "Hard"
 					}
 					missionName.contains("EX ") -> {
 						difficulty = "Extreme"

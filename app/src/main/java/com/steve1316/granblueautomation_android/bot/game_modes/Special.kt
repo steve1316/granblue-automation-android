@@ -121,13 +121,13 @@ class Special(private val game: Game, private val mapName: String, private val m
 					difficulty = "Normal"
 					formattedMissionName = missionName.substring(2)
 				}
-				missionName.contains("H ") -> {
-					difficulty = "Hard"
-					formattedMissionName = missionName.substring(2)
-				}
 				missionName.contains("VH ") -> {
 					difficulty = "Very Hard"
 					formattedMissionName = missionName.substring(3)
+				}
+				missionName.contains("H ") -> {
+					difficulty = "Hard"
+					formattedMissionName = missionName.substring(2)
 				}
 				missionName.contains("EX ") -> {
 					difficulty = "Extreme"
