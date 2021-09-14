@@ -19,8 +19,7 @@ import com.steve1316.granblueautomation_android.data.MissionData
 import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
-	private val TAG: String = "${MainActivity.loggerTag}_SettingsFragment"
-	private val OPEN_FILE_PERMISSION = 1001
+	private val loggerTag: String = "${MainActivity.loggerTag}_SettingsFragment"
 	
 	private lateinit var sharedPreferences: SharedPreferences
 	
@@ -326,7 +325,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		
-		if (requestCode == OPEN_FILE_PERMISSION && resultCode == RESULT_OK) {
+		if (requestCode == 1001 && resultCode == RESULT_OK) {
 			// The data contains the URI to the combat script file that the user selected.
 			if (data != null) {
 				val uri: Uri? = data.data
@@ -348,7 +347,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					// SharedPreferences.
 					val newCommandList = commandList.joinToString("|")
 					
-					Log.d(TAG, "Combat Script: $newCommandList")
+					Log.d(loggerTag, "Combat Script: $newCommandList")
 					
 					// Now save the ArrayList of combat script commands into SharedPreferences.
 					sharedPreferences.edit {
@@ -365,19 +364,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						filePicker.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
 								"\nCombat Script Selected: $name"
 						
-						// Now save the file name in the shared preferences.
-						sharedPreferences.edit {
-							putString("combatScriptName", name)
-							apply()
-						}
-						
-						Log.d(TAG, "Combat Script loaded: $uri")
+						Log.d(loggerTag, "Combat Script loaded: $uri")
 					}
 				}
 			}
 		} else {
 			// Clear the saved combat script.
-			Log.d(TAG, "User canceled the file picker intent. Clearing saved combat script information now...")
+			Log.d(loggerTag, "User canceled the file picker intent. Clearing saved combat script information now...")
 			
 			val filePicker: Preference = findPreference("filePicker")!!
 			filePicker.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
@@ -401,7 +394,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
 			intent.addCategory(Intent.CATEGORY_OPENABLE)
 			intent.type = "text/plain"
-			startActivityForResult(intent, OPEN_FILE_PERMISSION)
+			startActivityForResult(intent, 1001)
 			
 			true
 		}
@@ -611,7 +604,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			}
 		}
 		
-		Log.d(TAG, "Preferences created successfully.")
+		Log.d(loggerTag, "Preferences created successfully.")
 	}
 	
 	/**

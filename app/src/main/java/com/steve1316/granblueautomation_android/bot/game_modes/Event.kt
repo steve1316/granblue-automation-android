@@ -163,12 +163,6 @@ class Event(private val game: Game, private val missionName: String) {
 			
 			// Now select the chosen difficulty.
 			when (difficulty) {
-				"Normal" -> {
-					game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
-				}
-				"Hard" -> {
-					game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y, "play_round_button")
-				}
 				"Very Hard" -> {
 					game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y, "play_round_button")
 				}
@@ -241,14 +235,6 @@ class Event(private val game: Game, private val missionName: String) {
 			var difficulty = ""
 			var formattedMissionName = ""
 			when {
-				missionName.contains("N ") -> {
-					difficulty = "Normal"
-					formattedMissionName = missionName.substring(2)
-				}
-				missionName.contains("H ") -> {
-					difficulty = "Hard"
-					formattedMissionName = missionName.substring(2)
-				}
 				missionName.contains("VH ") -> {
 					difficulty = "Very Hard"
 					formattedMissionName = missionName.substring(3)

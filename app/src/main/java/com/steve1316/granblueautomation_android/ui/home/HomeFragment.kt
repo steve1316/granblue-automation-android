@@ -35,8 +35,7 @@ import java.io.File
 import java.io.StringReader
 
 class HomeFragment : Fragment() {
-	private val TAG: String = "${MainActivity.loggerTag}_HomeFragment"
-	private val SCREENSHOT_PERMISSION_REQUEST_CODE: Int = 100
+	private val loggerTag: String = "${MainActivity.loggerTag}_HomeFragment"
 	private var firstBoot = false
 	private var firstRun = true
 	
@@ -148,9 +147,9 @@ class HomeFragment : Fragment() {
 			
 			file.writeText(content)
 			
-			Log.d(TAG, "Created config.yaml in internal storage.")
+			Log.d(loggerTag, "Created config.json in internal storage.")
 		} else {
-			Log.d(TAG, "config.yaml already exists.")
+			Log.d(loggerTag, "config.json already exists.")
 			
 			val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 			
@@ -197,11 +196,11 @@ class HomeFragment : Fragment() {
 						commit()
 					}
 					
-					Log.d(TAG, "Saved config.yaml settings to SharedPreferences.")
+					Log.d(loggerTag, "Saved config.json settings to SharedPreferences.")
 				}
 			} catch (e: Exception) {
-				Log.e(TAG, "Encountered error while saving Twitter API credentials to SharedPreferences from config: ${e.stackTraceToString()}")
-				Log.e(TAG, "Clearing any existing Twitter API credentials from SharedPreferences...")
+				Log.e(loggerTag, "Encountered error while saving Twitter API credentials to SharedPreferences from config: ${e.stackTraceToString()}")
+				Log.e(loggerTag, "Clearing any existing Twitter API credentials from SharedPreferences...")
 				
 				sharedPreferences.edit {
 					remove("apiKey")
@@ -382,7 +381,7 @@ class HomeFragment : Fragment() {
 		firstBoot = false
 		
 		// Now update the Message Log inside the ScrollView with the latest logging messages from the bot.
-		Log.d(TAG, "Now updating the Message Log TextView...")
+		Log.d(loggerTag, "Now updating the Message Log TextView...")
 		val messageLogTextView = homeFragmentView.findViewById<TextView>(R.id.message_log)
 		messageLogTextView.text = ""
 		var index = 0
@@ -403,7 +402,7 @@ class HomeFragment : Fragment() {
 	}
 	
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-		if (requestCode == SCREENSHOT_PERMISSION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+		if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
 			// Start up the MediaProjection service after the user accepts the onscreen prompt.
 			myContext.startService(data?.let { MediaProjectionService.getStartIntent(myContext, resultCode, data) })
 		}
@@ -427,7 +426,7 @@ class HomeFragment : Fragment() {
 	 */
 	private fun startProjection() {
 		val mediaProjectionManager = context?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-		startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREENSHOT_PERMISSION_REQUEST_CODE)
+		startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), 100)
 	}
 	
 	/**
@@ -446,7 +445,7 @@ class HomeFragment : Fragment() {
 	 */
 	private fun checkForOverlayPermission(): Boolean {
 		if (!Settings.canDrawOverlays(requireContext())) {
-			Log.d(TAG, "Application is missing overlay permission.")
+			Log.d(loggerTag, "Application is missing overlay permission.")
 			
 			AlertDialog.Builder(requireContext()).apply {
 				setTitle(R.string.overlay_disabled)
@@ -462,7 +461,7 @@ class HomeFragment : Fragment() {
 			return false
 		}
 		
-		Log.d(TAG, "Application has permission to draw overlay.")
+		Log.d(loggerTag, "Application has permission to draw overlay.")
 		return true
 	}
 	
@@ -481,7 +480,7 @@ class HomeFragment : Fragment() {
 			val enabled = prefString.contains(myContext.packageName.toString() + "/" + MyAccessibilityService::class.java.name)
 			
 			if (enabled) {
-				Log.d(TAG, "This application's Accessibility Service is currently turned on.")
+				Log.d(loggerTag, "This application's Accessibility Service is currently turned on.")
 				return true
 			}
 		}
@@ -491,7 +490,7 @@ class HomeFragment : Fragment() {
 			setTitle(R.string.accessibility_disabled)
 			setMessage(R.string.accessibility_disabled_message)
 			setPositiveButton(R.string.go_to_settings) { _, _ ->
-				Log.d(TAG, "Accessibility Service is not detected. Moving user to Accessibility Settings.")
+				Log.d(loggerTag, "Accessibility Service is not detected. Moving user to Accessibility Settings.")
 				val accessibilitySettingsIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
 				myContext.startActivity(accessibilitySettingsIntent)
 			}
