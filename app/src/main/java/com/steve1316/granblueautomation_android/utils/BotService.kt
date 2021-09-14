@@ -5,7 +5,10 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -40,7 +43,11 @@ class BotService : Service() {
 		
 		// Create the LayoutParams for the floating overlay START/STOP button.
 		private val overlayLayoutParams = WindowManager.LayoutParams().apply {
-			type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+			type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+			} else {
+				WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+			}
 			flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
 			format = PixelFormat.TRANSLUCENT
 			width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -123,9 +130,6 @@ class BotService : Service() {
 										game.goBackHome(confirmLocationCheck = true, testMode = true)
 									}
 									
-									// Reset the overlay button's image.
-									overlayButton.setImageResource(R.drawable.play_circle_filled)
-									
 									performCleanUp()
 								} catch (e: Exception) {
 									if (e.toString() == "java.lang.InterruptedException") {
@@ -155,17 +159,11 @@ class BotService : Service() {
 									
 									game.twitterRoomFinder.disconnect()
 									
-									// Reset the overlay button's image.
-									overlayButton.setImageResource(R.drawable.play_circle_filled)
-									
 									performCleanUp(isException = true)
 								}
 							}
 						} else {
 							game.twitterRoomFinder.disconnect()
-							
-							// Reset the overlay button's image.
-							overlayButton.setImageResource(R.drawable.play_circle_filled)
 							
 							thread.interrupt()
 							performCleanUp()
@@ -228,6 +226,11 @@ class BotService : Service() {
 		// Update the app's notification with the status.
 		if (!isException) {
 			NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
+		}
+		
+		// Reset the overlay button's image on a separate UI thread.
+		Handler(Looper.getMainLooper()).post {
+			overlayButton.setImageResource(R.drawable.play_circle_filled)
 		}
 	}
 }
