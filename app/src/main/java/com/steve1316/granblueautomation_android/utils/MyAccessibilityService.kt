@@ -157,7 +157,11 @@ class MyAccessibilityService : AccessibilityService() {
 		val gesture: GestureDescription = if (longPress) {
 			// Long press for 1000ms.
 			GestureDescription.Builder().apply {
-				addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1000, true))
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1000, true))
+				} else {
+					addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1000))
+				}
 			}.build()
 		} else {
 			GestureDescription.Builder().apply {
@@ -202,19 +206,22 @@ class MyAccessibilityService : AccessibilityService() {
 		val top: Float
 		val middle: Float
 		val bottom: Float
-		if (displayMetrics.widthPixels == 1600) {
-			top = (displayMetrics.heightPixels * 0.60).toFloat()
-			middle = (displayMetrics.widthPixels * 0.20).toFloat()
-			bottom = (displayMetrics.heightPixels * 0.40).toFloat()
-		} else if (displayMetrics.widthPixels == 2650) {
-			top = (displayMetrics.heightPixels * 0.60).toFloat()
-			middle = (displayMetrics.widthPixels * 0.20).toFloat()
-			bottom = (displayMetrics.heightPixels * 0.40).toFloat()
-		}
-		else {
-			top = (displayMetrics.heightPixels * 0.75).toFloat()
-			middle = (displayMetrics.widthPixels / 2).toFloat()
-			bottom = (displayMetrics.heightPixels * 0.25).toFloat()
+		when (displayMetrics.widthPixels) {
+			1600 -> {
+				top = (displayMetrics.heightPixels * 0.60).toFloat()
+				middle = (displayMetrics.widthPixels * 0.20).toFloat()
+				bottom = (displayMetrics.heightPixels * 0.40).toFloat()
+			}
+			2650 -> {
+				top = (displayMetrics.heightPixels * 0.60).toFloat()
+				middle = (displayMetrics.widthPixels * 0.20).toFloat()
+				bottom = (displayMetrics.heightPixels * 0.40).toFloat()
+			}
+			else -> {
+				top = (displayMetrics.heightPixels * 0.75).toFloat()
+				middle = (displayMetrics.widthPixels / 2).toFloat()
+				bottom = (displayMetrics.heightPixels * 0.25).toFloat()
+			}
 		}
 		
 		if (scrollDown) {
