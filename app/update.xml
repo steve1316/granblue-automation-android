@@ -1,21 +1,13 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.6.0</latestVersion>
+    <latestVersion>2.6.1</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.6.0 - Changelog
-
-New
----
-- Dropped required API from 26 to 24, supporting emulators like Bluestacks and devices at least Android 7.0+ (Nougat).
-
-Changed
----
-- Removed usage of config.yaml and used config.json instead.
+v2.6.1 - Changelog
 
 Fixed
 ---
-- Fixed bug where Hard difficulty was mistaken for Very Hard difficulty.
+- Fixed bug for detecting Raid already ended.
     </releaseNotes>
   </update>
 </AppUpdater>
