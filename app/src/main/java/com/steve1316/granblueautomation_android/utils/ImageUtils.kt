@@ -21,7 +21,7 @@ import java.util.*
  * Utility functions for image processing via CV like OpenCV.
  */
 class ImageUtils(context: Context, private val game: Game) {
-	private val tag: String = "${MainActivity.loggerTag}_ImageUtils"
+	private val tag: String = "${MainActivity.loggerTag}ImageUtils"
 	private var myContext = context
 	
 	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -37,6 +37,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	val isTablet: Boolean = (displayWidth == 1600 && displayHeight == 2560) || (displayWidth == 2560 && displayHeight == 1600) // Galaxy Tab S7 1600x2560 Portrait Mode
 	val isLandscape: Boolean = (displayWidth == 2560 && displayHeight == 1600) // Galaxy Tab S7 1600x2560 Landscape Mode
 	
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	// Scales
+	
 	// 720 pixels in width.
 	private val lowerEndScales: MutableList<Double> = mutableListOf(0.60, 0.61, 0.62, 0.63, 0.64, 0.65, 0.67, 0.68, 0.69, 0.70)
 	
@@ -50,6 +54,8 @@ class ImageUtils(context: Context, private val game: Game) {
 	
 	// 2560 pixels in width in Landscape Mode.
 	private val tabletLandscapeScales: MutableList<Double> = mutableListOf(0.55, 0.56, 0.57, 0.58, 0.59, 0.60)
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
 	
 	// Initialize Google's ML OCR.
 	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -99,7 +105,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			sourceBitmap
 		}
 		
-		// Scale images.
+		// Scale images if the device is not 1080p which is supported by default.
 		val scales: MutableList<Double> = when {
 			customScale != 1.0 && !useSingleScale -> {
 				mutableListOf(customScale - 0.02, customScale - 0.01, customScale, customScale + 0.01, customScale + 0.02, customScale + 0.03, customScale + 0.04)
@@ -218,7 +224,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @return ArrayList of Point objects that represents the matches found on the source screenshot.
 	 */
 	private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap): ArrayList<Point> {
-		// Scale images.
+		// Scale images if the device is not 1080p which is supported by default.
 		val scales: MutableList<Double> = when {
 			customScale != 1.0 -> {
 				mutableListOf(customScale - 0.02, customScale - 0.01, customScale, customScale + 0.01, customScale + 0.02, customScale + 0.03, customScale + 0.04)
@@ -453,6 +459,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					}
 				} else {
 					if (testMode) {
+						// Create a range of scales for user recommendation.
 						val scale0: Double = decimalFormat.format(customScale).toDouble()
 						val scale1: Double = decimalFormat.format(scale0 + 0.01).toDouble()
 						val scale2: Double = decimalFormat.format(scale0 + 0.02).toDouble()
@@ -684,13 +691,13 @@ class ImageUtils(context: Context, private val game: Game) {
 						}
 					}
 				}.addOnFailureListener {
-					game.printToLog("[ERROR] Failed to do text detection on bitmap.", tag = tag, isError = true)
+					game.printToLog("[ERROR] Failed to do text detection on bitmap.", tag = tag, isError = true)// Wait a few seconds for the asynchronous operations of Google's OCR to finish.
+					game.wait(3.0)
 				}
 			}
 		}
 		
-		// Wait a few seconds for the asynchronous operations of Google's OCR to finish.
-		game.wait(3.0)
+		
 		
 		return totalItemAmount
 	}

@@ -7,7 +7,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class XenoClashException(message: String): Exception(message)
 
 class XenoClash(private val game: Game, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_XenoClash"
+	private val tag: String = "${MainActivity.loggerTag}XenoClash"
 	
 	private val enableXenoClashNightmare: Boolean
 	private var xenoClashNightmareSummonList: List<String>

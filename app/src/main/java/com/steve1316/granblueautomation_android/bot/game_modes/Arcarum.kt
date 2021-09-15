@@ -9,7 +9,7 @@ class ArcarumException(message: String) : Exception(message)
  * Provides the navigation and any necessary utility functions to handle the Arcarum game mode.
  */
 class Arcarum(private val game: Game, private val mapName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_Arcarum"
+	private val tag: String = "${MainActivity.loggerTag}Arcarum"
 	
 	private var firstRun: Boolean = true
 	

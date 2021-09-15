@@ -17,7 +17,7 @@ import java.util.*
  * This class takes care of notifying users of status updates via Discord private DMs.
  */
 class DiscordUtils(myContext: Context) {
-	private val TAG: String = "${MainActivity.loggerTag}_DiscordUtils"
+	private val tag: String = "${MainActivity.loggerTag}DiscordUtils"
 	
 	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 	private val discordToken: String = sharedPreferences.getString("discordToken", "")!!
@@ -46,7 +46,7 @@ class DiscordUtils(myContext: Context) {
 				val snowflake = Snowflake(userID)
 				val dmChannel = client.getUser(snowflake)?.getDmChannelOrNull()!!
 				
-				Log.d(TAG, "Successful connection to Discord API.")
+				Log.d(tag, "Successful connection to Discord API.")
 				queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
 				
 				// Loop and send any messages inside the Queue.
@@ -61,14 +61,14 @@ class DiscordUtils(myContext: Context) {
 					}
 				}
 				
-				Log.d(TAG, "Terminated connection to Discord API.")
+				Log.d(tag, "Terminated connection to Discord API.")
 				client.logout()
 			}
 			
 			// Login to the Discord API. This will block this Thread but will allow the onReadyEvent listener to continue running.
 			client.login()
 		} catch (e: Exception) {
-			Log.d(TAG, "Failed to initialize Kord client: ${e.stackTraceToString()}")
+			Log.d(tag, "Failed to initialize Kord client: ${e.stackTraceToString()}")
 			disconnectClient()
 		}
 	}

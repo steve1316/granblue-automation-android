@@ -38,7 +38,7 @@ import java.util.*
  * added to suit this application's purposes.
  */
 class MediaProjectionService : Service() {
-	private val TAG: String = "${MainActivity.loggerTag}_MediaProjectionService"
+	private val tag: String = "${MainActivity.loggerTag}MediaProjectionService"
 	
 	private lateinit var myContext: Context
 	private var appName = ""
@@ -183,20 +183,20 @@ class MediaProjectionService : Service() {
 				
 				// If the folder was not able to be created for some reason, log the error and stop the MediaProjection Service.
 				if (!successfullyCreated) {
-					Log.e(TAG, "Failed to create the /files/temp/ folder.")
+					Log.e(tag, "Failed to create the /files/temp/ folder.")
 					stopSelf()
 				} else {
-					Log.d(TAG, "Successfully created /files/temp/ folder.")
+					Log.d(tag, "Successfully created /files/temp/ folder.")
 				}
 			} else {
-				Log.d(TAG, "/files/temp/ folder already exists.")
+				Log.d(tag, "/files/temp/ folder already exists.")
 			}
 		}
 		
 		// Now, start a new Thread to handle processing new screenshots.
 		object : Thread() {
 			override fun run() {
-				Log.d(TAG, "Thread running for MediaProjection service.")
+				Log.d(tag, "Thread running for MediaProjection service.")
 				threadHandler = Handler(Looper.getMainLooper())
 				Looper.prepare()
 				Looper.loop()
@@ -232,11 +232,11 @@ class MediaProjectionService : Service() {
 			}
 		} else if (isStopCommand(intent)) {
 			// Perform cleanup on the MediaProjection service and then stop itself.
-			Log.d(TAG, "Received STOP Intent for MediaProjection. Stopping MediaProjection service.")
+			Log.d(tag, "Received STOP Intent for MediaProjection. Stopping MediaProjection service.")
 			stopMediaProjection()
 			stopSelf()
 		} else {
-			Log.e(TAG, "Encountered unexpected Intent. Shutting down service.")
+			Log.e(tag, "Encountered unexpected Intent. Shutting down service.")
 			stopSelf()
 		}
 		
@@ -244,7 +244,7 @@ class MediaProjectionService : Service() {
 	}
 	
 	private inner class OrientationChangeCallback(context: Context) : OrientationEventListener(context) {
-		private val TAG_OrientationChangeCallback: String = "${MainActivity.loggerTag}_OrientationChangeCallback"
+		private val tagOrientationChangeCallback: String = "${MainActivity.loggerTag}_OrientationChangeCallback"
 		
 		override fun onOrientationChanged(orientation: Int) {
 			val newRotation: Int = (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
@@ -257,7 +257,7 @@ class MediaProjectionService : Service() {
 					// Now re-create the VirtualDisplay based on the new width and height of the rotated screen.
 					createVirtualDisplay()
 				} catch (e: Exception) {
-					Log.e(TAG_OrientationChangeCallback, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.")
+					Log.e(tagOrientationChangeCallback, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.")
 					Toast.makeText(
 						myContext, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.",
 						Toast.LENGTH_SHORT
@@ -271,7 +271,7 @@ class MediaProjectionService : Service() {
 	 * Custom Callback for when it is necessary to stop the MediaProjection.
 	 */
 	private inner class MediaProjectionStopCallback : MediaProjection.Callback() {
-		private val TAG_MediaProjectionStopCallback = "${MainActivity.loggerTag}_MediaProjectionStopCallback"
+		private val tagMediaProjectionStopCallback = "${MainActivity.loggerTag}_MediaProjectionStopCallback"
 		
 		override fun onStop() {
 			threadHandler.post {
@@ -293,7 +293,7 @@ class MediaProjectionService : Service() {
 				// Now set the MediaProjection object to null to eliminate the "Invalid media projection" error.
 				mediaProjection = null
 				
-				Log.d(TAG_MediaProjectionStopCallback, "MediaProjection Service for GAA has stopped.")
+				Log.d(tagMediaProjectionStopCallback, "MediaProjection Service for GAA has stopped.")
 				Toast.makeText(myContext, "MediaProjection Service for GAA has stopped.", Toast.LENGTH_SHORT).show()
 			}
 		}
@@ -329,7 +329,7 @@ class MediaProjectionService : Service() {
 		// Attach the MediaProjectionStopCallback to the MediaProjection object.
 		mediaProjection?.registerCallback(MediaProjectionStopCallback(), threadHandler)
 		
-		Log.d(TAG, "MediaProjection Service for $appName is now running.")
+		Log.d(tag, "MediaProjection Service for $appName is now running.")
 		Toast.makeText(myContext, "MediaProjection Service for $appName is now running.", Toast.LENGTH_SHORT).show()
 	}
 	
@@ -355,7 +355,7 @@ class MediaProjectionService : Service() {
 		displayHeight = metrics.heightPixels
 		displayDPI = metrics.densityDpi
 		
-		Log.d(TAG, "Screen Width: $displayWidth, Screen Height: $displayHeight, Screen DPI: $displayDPI")
+		Log.d(tag, "Screen Width: $displayWidth, Screen Height: $displayHeight, Screen DPI: $displayDPI")
 		
 		// Start the ImageReader.
 		imageReader = ImageReader.newInstance(displayWidth, displayHeight, PixelFormat.RGBA_8888, 2)

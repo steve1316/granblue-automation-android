@@ -9,7 +9,7 @@ import org.opencv.core.Point
 class RaidException(message: String) : Exception(message)
 
 class Raid(private val game: Game) {
-	private val tag: String = "${MainActivity.loggerTag}_Raid"
+	private val tag: String = "${MainActivity.loggerTag}Raid"
 	
 	private var joinRoomButtonLocation: Point = Point()
 	private var roomCodeTextBoxLocation: Point = Point()

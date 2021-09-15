@@ -6,7 +6,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class DreadBarrageException(message: String) : Exception(message)
 
 class DreadBarrage(private val game: Game, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_DreadBarrage"
+	private val tag: String = "${MainActivity.loggerTag}DreadBarrage"
 	
 	/**
 	 * Navigates to the specified mission.

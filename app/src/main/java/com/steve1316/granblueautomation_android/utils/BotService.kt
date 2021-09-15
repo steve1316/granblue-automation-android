@@ -31,7 +31,7 @@ import kotlin.math.roundToInt
  * https://www.tutorialspoint.com/in-android-how-to-register-a-custom-intent-filter-to-a-broadcast-receiver
  */
 class BotService : Service() {
-	private val tag: String = "${MainActivity.loggerTag}_BotService"
+	private val tag: String = "${MainActivity.loggerTag}BotService"
 	private var appName: String = ""
 	private lateinit var myContext: Context
 	private lateinit var overlayView: View

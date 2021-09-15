@@ -55,6 +55,9 @@ class JSONParser(private val myContext: Context) {
 		}
 	}
 	
+	/**
+	 * Construct the ConfigData class associated with the config.json file.
+	 */
 	fun constructConfigClass() {
 		// Now construct the data class for config.
 		val objectString = File(myContext.getExternalFilesDir(null), "config.json").bufferedReader().use { it.readText() }

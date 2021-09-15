@@ -31,7 +31,7 @@ import com.steve1316.granblueautomation_android.utils.MyAccessibilityService
 import java.io.File
 
 class HomeFragment : Fragment() {
-	private val loggerTag: String = "${MainActivity.loggerTag}_HomeFragment"
+	private val loggerTag: String = "${MainActivity.loggerTag}HomeFragment"
 	private var firstBoot = false
 	private var firstRun = true
 	

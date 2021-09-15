@@ -7,7 +7,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class RiseOfTheBeastsException(message: String): Exception(message)
 
 class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_RiseOfTheBeasts"
+	private val tag: String = "${MainActivity.loggerTag}RiseOfTheBeasts"
 	
 	private val enableROTBExtremePlus: Boolean
 	private var rotbExtremePlusSummonList: List<String>

@@ -6,7 +6,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class QuestException(message: String) : Exception(message)
 
 class Quest(private val game: Game, private val mapName: String, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_Quest"
+	private val tag: String = "${MainActivity.loggerTag}Quest"
 	
 	private val listPage1 = listOf("Zinkenstill", "Port Breeze Archipelago", "Valtz Duchy", "Auguste Isles", "Lumacie Archipelago", "Albion Citadel")
 	private val listPage2 = listOf("Mist-Shrouded Isle", "Golonzo Island", "Amalthea Island", "Former Capital Mephorash", "Agastia")

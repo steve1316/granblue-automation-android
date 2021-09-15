@@ -6,7 +6,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class ProvingGroundsException(message: String): Exception(message)
 
 class ProvingGrounds(private val game: Game, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_ProvingGrounds"
+	private val tag: String = "${MainActivity.loggerTag}ProvingGrounds"
 	
 	private var firstTime: Boolean = true
 	

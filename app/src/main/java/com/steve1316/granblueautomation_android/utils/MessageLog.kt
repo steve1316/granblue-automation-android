@@ -15,7 +15,7 @@ import java.util.*
  */
 class MessageLog {
 	companion object {
-		private const val TAG: String = "${MainActivity.loggerTag}_MessageLog"
+		private const val TAG: String = "${MainActivity.loggerTag}MessageLog"
 		var messageLog = arrayListOf<String>()
 		
 		var saveCheck = false

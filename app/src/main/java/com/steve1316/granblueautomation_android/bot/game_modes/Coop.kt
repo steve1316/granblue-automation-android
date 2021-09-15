@@ -6,7 +6,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class CoopException(message: String) : Exception(message)
 
 class Coop(private val game: Game, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_Coop"
+	private val tag: String = "${MainActivity.loggerTag}Coop"
 	
 	// The 2nd element of the list of EX1 missions is designated "empty" because it is used to navigate properly to "Lost in the Dark" from "Corridor of Puzzles".
 	private val listForCoopEX1 = arrayListOf("EX1-1 Corridor of Puzzles", "empty", "EX1-3 Lost in the Dark")

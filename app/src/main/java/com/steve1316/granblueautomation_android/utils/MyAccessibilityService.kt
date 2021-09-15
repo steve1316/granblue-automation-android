@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Path
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -23,7 +24,7 @@ import kotlinx.coroutines.runBlocking
  * Contains the Accessibility service that will allow the bot to programmatically perform gestures on the screen.
  */
 class MyAccessibilityService : AccessibilityService() {
-	private val TAG: String = "${MainActivity.loggerTag}_MyAccessibilityService"
+	private val tag: String = "${MainActivity.loggerTag}MyAccessibilityService"
 	private lateinit var myContext: Context
 	
 	companion object {
@@ -45,20 +46,20 @@ class MyAccessibilityService : AccessibilityService() {
 		instance = this
 		myContext = this
 		
-		Log.d(TAG, "Accessibility Service for GAA is now running.")
+		Log.d(tag, "Accessibility Service for GAA is now running.")
 		Toast.makeText(myContext, "Accessibility Service for GAA is now running.", Toast.LENGTH_SHORT).show()
 	}
 	
 	override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 		if (event?.source != null && RoomCodeData.roomCode != "" && event.source?.className.toString().contains(EditText::class.java.simpleName)) {
-			Log.d(TAG, "Copying ${RoomCodeData.roomCode}")
+			Log.d(tag, "Copying ${RoomCodeData.roomCode}")
 			
 			// Paste the room code.
 			val arguments = Bundle()
 			arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, RoomCodeData.roomCode)
 			event.source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
 			
-			Log.d(TAG, "Pasted ${RoomCodeData.roomCode}")
+			Log.d(tag, "Pasted ${RoomCodeData.roomCode}")
 			
 			// Now reset the room code to prevent looping of onAccessibilityEvent().
 			RoomCodeData.roomCode = ""
@@ -74,7 +75,7 @@ class MyAccessibilityService : AccessibilityService() {
 	override fun onDestroy() {
 		super.onDestroy()
 		
-		Log.d(TAG, "Accessibility Service for GAA is now stopped.")
+		Log.d(tag, "Accessibility Service for GAA is now stopped.")
 		Toast.makeText(myContext, "Accessibility Service for GAA is now stopped.", Toast.LENGTH_SHORT).show()
 	}
 	
@@ -146,7 +147,7 @@ class MyAccessibilityService : AccessibilityService() {
 	fun tap(x: Double, y: Double, buttonName: String, ignoreWait: Boolean = false, longPress: Boolean = false, taps: Int = 1): Boolean {
 		// Randomize the tapping location.
 		val (newX, newY) = randomizeTapLocation(x, y, buttonName)
-		Log.d(TAG, "Tapping $newX, $newY")
+		Log.d(tag, "Tapping $newX, $newY")
 		
 		// Construct the tap gesture.
 		val tapPath = Path().apply {
@@ -240,14 +241,14 @@ class MyAccessibilityService : AccessibilityService() {
 		}
 		
 		if (!dispatchResult) {
-			Log.e(TAG, "Failed to dispatch scroll gesture.")
+			Log.e(tag, "Failed to dispatch scroll gesture.")
 		} else {
 			val direction: String = if (scrollDown) {
 				"down"
 			} else {
 				"up"
 			}
-			Log.d(TAG, "Scrolling $direction.")
+			Log.d(tag, "Scrolling $direction.")
 		}
 		
 		return dispatchResult

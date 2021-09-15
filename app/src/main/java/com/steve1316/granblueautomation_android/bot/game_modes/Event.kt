@@ -7,7 +7,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class EventException(message: String) : Exception(message)
 
 class Event(private val game: Game, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_Event"
+	private val tag: String = "${MainActivity.loggerTag}Event"
 	
 	private val enableEventNightmare: Boolean
 	private var eventNightmareSummonList: List<String>

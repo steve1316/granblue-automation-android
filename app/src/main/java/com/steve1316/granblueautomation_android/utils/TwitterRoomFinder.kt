@@ -10,8 +10,11 @@ import com.steve1316.granblueautomation_android.bot.Game
 import twitter4j.*
 import twitter4j.conf.ConfigurationBuilder
 
+/**
+ * Listener class for the Streaming API.
+ */
 class MyListener(private val game: Game) : StatusListener {
-	private val tag: String = "${MainActivity.loggerTag}_MyListener"
+	private val tag: String = "${MainActivity.loggerTag}MyListener"
 	
 	val tweets: ArrayDeque<Status> = ArrayDeque()
 	
@@ -50,7 +53,7 @@ class MyListener(private val game: Game) : StatusListener {
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
 class TwitterRoomFinder(myContext: Context, private val game: Game) {
-	private val tag: String = "${MainActivity.loggerTag}_TwitterRoomFinder"
+	private val tag: String = "${MainActivity.loggerTag}TwitterRoomFinder"
 	
 	private lateinit var twitter: Twitter
 	private var twitterStream: TwitterStream? = null

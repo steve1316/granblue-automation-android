@@ -9,7 +9,7 @@ import java.util.*
 class SpecialException(message: String) : Exception(message)
 
 class Special(private val game: Game, private val mapName: String, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_Special"
+	private val tag: String = "${MainActivity.loggerTag}Special"
 	
 	private val enableDimensionalHalo: Boolean
 	private var dimensionalHaloSummonList: List<String>

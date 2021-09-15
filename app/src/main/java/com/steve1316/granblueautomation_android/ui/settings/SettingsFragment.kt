@@ -18,7 +18,7 @@ import com.steve1316.granblueautomation_android.data.MissionData
 import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
-	private val loggerTag: String = "${MainActivity.loggerTag}_SettingsFragment"
+	private val loggerTag: String = "${MainActivity.loggerTag}SettingsFragment"
 	
 	private lateinit var sharedPreferences: SharedPreferences
 	

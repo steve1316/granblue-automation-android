@@ -6,7 +6,7 @@ import com.steve1316.granblueautomation_android.bot.Game
 class GuildWarsException(message: String) : Exception(message)
 
 class GuildWars(private val game: Game, private val missionName: String) {
-	private val tag: String = "${MainActivity.loggerTag}_GuildWars"
+	private val tag: String = "${MainActivity.loggerTag}GuildWars"
 	
 	/**
 	 * Navigates to the specified mission.

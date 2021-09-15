@@ -8,7 +8,7 @@ import org.opencv.core.Point
  * This class handles the Combat Mode and offers helper functions to assist it.
  */
 class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
-	private val tag: String = "${MainActivity.loggerTag}_CombatMode"
+	private val tag: String = "${MainActivity.loggerTag}CombatMode"
 	
 	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
 	private val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
