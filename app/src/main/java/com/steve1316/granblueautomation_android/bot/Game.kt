@@ -578,9 +578,8 @@ class Game(val myContext: Context) {
 		wait(2.0)
 		
 		// Detect if a "This raid battle has already ended" popup appeared.
-		if (farmingMode == "Raid" && imageUtils.confirmLocation("raid_just_ended_home_redirect")) {
+		if (farmingMode == "Raid" && findAndClickButton("ok")) {
 			printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
-			findAndClickButton("ok")
 			return false
 		}
 		
