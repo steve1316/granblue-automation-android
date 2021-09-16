@@ -2,7 +2,7 @@
 
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/steve1316/granblue-automation-android?logo=GitHub) ![GitHub last commit](https://img.shields.io/github/last-commit/steve1316/granblue-automation-android?logo=GitHub) ![GitHub issues](https://img.shields.io/github/issues/steve1316/granblue-automation-android?logo=GitHub) ![GitHub pull requests](https://img.shields.io/github/issues-pr/steve1316/granblue-automation-android?logo=GitHub) ![GitHub](https://img.shields.io/github/license/steve1316/granblue-automation-android?logo=GitHub)
 
-> Discord here: https://discord.gg/nmBDMqwr
+> Discord here: https://discord.gg/5Yv4kqjAbm
 
 > Python version here: https://github.com/steve1316/granblue-automation-pyautogui
 
