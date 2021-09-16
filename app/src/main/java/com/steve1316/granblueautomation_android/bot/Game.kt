@@ -149,18 +149,23 @@ class Game(val myContext: Context) {
 					imageUtils.findButton("home", testMode = true)
 					return
 				}
-			} else if (confirmLocationCheck) {
-				wait(2.0)
-				
-				if (!imageUtils.confirmLocation("home")) {
-					throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
-				}
 			}
 		} else {
 			printToLog("[INFO] Bot is already at the Home screen.")
 		}
 		
 		printToLog("\n[INFO] Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, Screen DPI: ${MediaProjectionService.displayDPI}")
+		
+		// Check for any misc popups.
+		findAndClickButton("close")
+		
+		if (confirmLocationCheck) {
+			wait(2.0)
+			
+			if (!imageUtils.confirmLocation("home")) {
+				throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
+			}
+		}
 	}
 	
 	/**
