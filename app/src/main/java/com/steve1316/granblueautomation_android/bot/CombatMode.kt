@@ -1201,6 +1201,16 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			}
 		}
 		
+		// Deal with any the situation where high-profile raids end right when the bot loads in and all it sees is the "Next" button.
+		if (game.farmingMode == "Raid" && game.findAndClickButton("next", tries = 3)) {
+			game.printToLog("\n############################################################", tag = tag)
+			game.printToLog("############################################################", tag = tag)
+			game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+			game.printToLog("############################################################", tag = tag)
+			game.printToLog("############################################################", tag = tag)
+			return true
+		}
+		
 		// When the bot arrives here, all the commands in the combat script has been processed.
 		game.printToLog("[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.", tag = tag)
 		
