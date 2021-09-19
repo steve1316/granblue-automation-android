@@ -219,7 +219,9 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 				navigate()
 			}
 			game.findAndClickButton("play_again") -> {
-				game.checkForPopups()
+				if (game.checkForPopups()) {
+					navigate()
+				}
 			}
 			else -> {
 				// If the bot cannot find the "Play Again" button, check for Pending Battles and then perform navigation again.
