@@ -3,6 +3,8 @@ package com.steve1316.granblueautomation_android.utils
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -52,14 +54,34 @@ class MyAccessibilityService : AccessibilityService() {
 	
 	override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 		if (event?.source != null && RoomCodeData.roomCode != "" && event.source?.className.toString().contains(EditText::class.java.simpleName)) {
-			Log.d(tag, "Copying ${RoomCodeData.roomCode}")
-			
-			// Paste the room code.
-			val arguments = Bundle()
-			arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, RoomCodeData.roomCode)
-			event.source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
-			
-			Log.d(tag, "Pasted ${RoomCodeData.roomCode}")
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				Log.d(tag, "[DEBUG] Copying ${RoomCodeData.roomCode}")
+				
+				// Paste the room code.
+				val arguments = Bundle()
+				arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, RoomCodeData.roomCode)
+				
+				if (event.source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)) {
+					Log.d(tag, "[DEBUG] Pasted ${RoomCodeData.roomCode}")
+				} else {
+					Log.d(tag, "[DEBUG] Failed to paste ${RoomCodeData.roomCode}")
+				}
+			} else {
+				Log.d(tag, "[LEGACY] Copying ${RoomCodeData.roomCode}")
+				event.source.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
+				
+				val clipboard = myContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+				val clip = ClipData.newPlainText("Room Code", RoomCodeData.roomCode)
+				clipboard.setPrimaryClip(clip)
+				
+				Log.d(tag, "[LEGACY] Clipboard contents: ${clipboard.primaryClip}")
+				
+				if (event.source.performAction(AccessibilityNodeInfo.ACTION_PASTE)) {
+					Log.d(tag, "[LEGACY] Pasted ${RoomCodeData.roomCode}")
+				} else {
+					Log.d(tag, "[LEGACY] Failed to paste ${RoomCodeData.roomCode}")
+				}
+			}
 			
 			// Now reset the room code to prevent looping of onAccessibilityEvent().
 			RoomCodeData.roomCode = ""
