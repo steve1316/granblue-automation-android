@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var appBarConfiguration: AppBarConfiguration
 	
 	companion object {
-		const val loggerTag: String = "GAA"
+		const val loggerTag: String = "[GAA]"
 	}
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
