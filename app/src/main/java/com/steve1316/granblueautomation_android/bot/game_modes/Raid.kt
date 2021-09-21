@@ -200,17 +200,17 @@ class Raid(private val game: Game) {
 		if (game.imageUtils.confirmLocation("select_a_summon")) {
 			if (game.selectSummon()) {
 				// Select the Party.
-				game.selectPartyAndStartMission()
-				
-				game.wait(1.0)
-				
-				// Handle the rare case where joining the Raid after selecting the Summon and Party led the bot to the Quest Results screen with no loot to collect.
-				if (game.imageUtils.confirmLocation("no_loot", tries = 1)) {
-					game.printToLog("\n[RAID] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...", tag = tag)
-				} else {
-					// Now start Combat Mode and detect any item drops.
-					if (game.combatMode.startCombatMode(game.combatScript)) {
-						numberOfItemsDropped = game.collectLoot()
+				if (game.selectPartyAndStartMission()) {
+					game.wait(1.0)
+					
+					// Handle the rare case where joining the Raid after selecting the Summon and Party led the bot to the Quest Results screen with no loot to collect.
+					if (game.imageUtils.confirmLocation("no_loot", tries = 1)) {
+						game.printToLog("\n[RAID] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...", tag = tag)
+					} else {
+						// Now start Combat Mode and detect any item drops.
+						if (game.combatMode.startCombatMode(game.combatScript)) {
+							numberOfItemsDropped = game.collectLoot()
+						}
 					}
 				}
 			}
