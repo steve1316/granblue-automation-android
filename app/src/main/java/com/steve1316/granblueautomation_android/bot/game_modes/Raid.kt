@@ -187,8 +187,6 @@ class Raid(private val game: Game) {
 				navigate()
 			}
 			else -> {
-				// Check for Pending Battles and then perform navigation again.
-				game.checkPendingBattles()
 				navigate()
 			}
 		}
