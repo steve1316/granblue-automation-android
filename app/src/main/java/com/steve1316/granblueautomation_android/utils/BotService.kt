@@ -114,10 +114,10 @@ class BotService : Service() {
 									
 									if (!enableHomeTest) {
 										// Run the Discord process on a new Thread.
-										if (PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean("enableDiscord", false)) {
-											val discordUtils = DiscordUtils(myContext)
+										if (sharedPreferences.getBoolean("enableDiscord", false)) {
 											thread {
 												runBlocking {
+													val discordUtils = DiscordUtils(myContext)
 													DiscordUtils.queue.clear()
 													discordUtils.main()
 												}
@@ -130,6 +130,13 @@ class BotService : Service() {
 										game.goBackHome(confirmLocationCheck = true, testMode = true)
 									}
 									
+									thread {
+										runBlocking {
+											DiscordUtils.disconnectClient()
+										}
+									}
+									
+									TwitterRoomFinder.disconnect()
 									performCleanUp()
 								} catch (e: Exception) {
 									if (e.toString() == "java.lang.InterruptedException") {
@@ -157,14 +164,12 @@ class BotService : Service() {
 										}
 									}
 									
-									game.twitterRoomFinder.disconnect()
-									
+									TwitterRoomFinder.disconnect()
 									performCleanUp(isException = true)
 								}
 							}
 						} else {
-							game.twitterRoomFinder.disconnect()
-							
+							TwitterRoomFinder.disconnect()
 							thread.interrupt()
 							performCleanUp()
 						}

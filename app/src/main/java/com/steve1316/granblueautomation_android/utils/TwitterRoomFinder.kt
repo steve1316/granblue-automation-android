@@ -53,10 +53,7 @@ class MyListener(private val game: Game) : StatusListener {
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
 class TwitterRoomFinder(myContext: Context, private val game: Game) {
-	private val tag: String = "${MainActivity.loggerTag}TwitterRoomFinder"
-	
 	private lateinit var twitter: Twitter
-	private var twitterStream: TwitterStream? = null
 	private val listener = MyListener(game)
 	
 	private val alreadyVisitedRoomCodes: ArrayList<String> = arrayListOf()
@@ -171,31 +168,41 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 100 Xeno Diablo" to "Lv100 ゼノ・ディアボロス"
 	)
 	
+	companion object {
+		private const val tag: String = "${MainActivity.loggerTag}TwitterRoomFinder"
+		private var twitterStream: TwitterStream? = null
+		
+		fun disconnect() {
+			twitterStream?.shutdown()
+			Log.d(tag, "[TWITTER] Stream API disconnected.")
+		}
+	}
+	
 	init {
 		if (game.farmingMode == "Raid") {
+			game.printToLog("\n[INFO] Connecting to Twitter API...", tag = tag)
+			
+			// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
+			val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+			StrictMode.setThreadPolicy(policy)
+			
+			game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", tag = tag)
+			
+			// Initialize the Twitter object.
+			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
+			val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
+				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
+				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
+				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
+				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
+			
+			val configurationStreamBuilder: ConfigurationBuilder = ConfigurationBuilder()
+				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
+				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
+				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
+				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
+			
 			try {
-				game.printToLog("\n[INFO] Connecting to Twitter API...", tag = tag)
-				
-				// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
-				val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-				StrictMode.setThreadPolicy(policy)
-				
-				game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", tag = tag)
-				
-				// Initialize the Twitter object.
-				val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-				val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
-					.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
-					.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
-					.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
-					.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
-				
-				val configurationStreamBuilder: ConfigurationBuilder = ConfigurationBuilder()
-					.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
-					.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
-					.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
-					.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
-				
 				// Create the listener and stream objects.
 				twitterStream = TwitterStreamFactory(configurationStreamBuilder.build()).instance
 				twitterStream?.addListener(listener)
@@ -267,10 +274,5 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		}
 		
 		return ""
-	}
-	
-	fun disconnect() {
-		twitterStream?.shutdown()
-		Log.d(tag, "[TWITTER] Stream API disconnected.")
 	}
 }
