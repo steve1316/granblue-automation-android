@@ -90,7 +90,7 @@ class Raid(private val game: Game) {
 					game.gestureUtils.tap(roomCodeTextBoxLocation.x, roomCodeTextBoxLocation.y, "template_room_code_textbox", longPress = true)
 					
 					// Wait several seconds to allow enough time for MyAccessibilityService to paste the code.
-					game.wait(3.0)
+					game.wait(3.5)
 					
 					// Now tap the "Join Room" button.
 					game.gestureUtils.tap(joinRoomButtonLocation.x, joinRoomButtonLocation.y, "join_a_room")
