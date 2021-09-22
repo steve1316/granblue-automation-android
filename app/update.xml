@@ -1,21 +1,13 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.6.2</latestVersion>
+    <latestVersion>2.6.3</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.6.2 - Changelog
-
-Changed
----
-- Removed check for Pending Battles after heading Home for Raid farming.
-- Attempted to fix failing to paste room code on emulators. Note: The first attempt of pasting the first room code has a very high likelihood to fail. But after that, every subsequent code will be pasted correctly.
+v2.6.3 - Changelog
 
 Fixed
 ---
-- Fixed bug where bot getting stuck when high profile Raids die too fast.
-- Fixed restarting mission after Nightmare detected and completed.
-- Fixed case where the bot failed to head back to the Enter ID screen.
-- Addressed case where the raid ended while selecting a summon and party.
+- Fixed connection to Twitter Stream API not actually disconnecting when it was supposed to.
 
     </releaseNotes>
   </update>
