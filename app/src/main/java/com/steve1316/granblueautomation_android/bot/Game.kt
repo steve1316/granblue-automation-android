@@ -401,19 +401,15 @@ class Game(val myContext: Context) {
 				imageUtils.confirmLocation("trial_battles_description")
 			}
 			
-			var imageLocation: Point? = imageUtils.findButton(it)
+			var imageLocation: Point? = imageUtils.findButton(it, tries = 2)
 			
 			while ((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
 				// Keep swiping the screen down until the bot finds the specified button.
-				if (it == "gameplay_extras") {
-					gestureUtils.swipe(500f, 1500f, 500f, 1000f)
-				} else if (it == "trial_battles") {
-					findAndClickButton("gameplay_extras", tries = 1, suppressError = true)
-					gestureUtils.swipe(500f, 1500f, 500f, 1400f)
-				}
-				
-				wait(2.0)
 				imageLocation = imageUtils.findButton(it, tries = 1)
+				if (imageLocation == null) {
+					gestureUtils.scroll()
+					wait(1.0)
+				}
 			}
 			
 			if (it == "choose_a_summon" && imageLocation != null) {
