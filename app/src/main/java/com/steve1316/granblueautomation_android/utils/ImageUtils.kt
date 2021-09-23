@@ -95,14 +95,21 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param sourceBitmap Bitmap from the /files/temp/ folder.
 	 * @param templateBitmap Bitmap from the assets folder.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
+	 * @param customConfidence Specify a custom confidence. Defaults to the confidence set in the app's settings.
 	 * @return True if a match was found. False otherwise.
 	 */
-	private fun match(sourceBitmap: Bitmap, templateBitmap: Bitmap, region: IntArray = intArrayOf(0, 0, 0, 0), useSingleScale: Boolean = false): Boolean {
+	private fun match(sourceBitmap: Bitmap, templateBitmap: Bitmap, region: IntArray = intArrayOf(0, 0, 0, 0), useSingleScale: Boolean = false, customConfidence: Double = 0.0): Boolean {
 		// If a custom region was specified, crop the source screenshot.
 		val srcBitmap = if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
 			Bitmap.createBitmap(sourceBitmap, region[0], region[1], region[2], region[3])
 		} else {
 			sourceBitmap
+		}
+		
+		val setConfidence: Double = if (customConfidence == 0.0) {
+			confidence
+		} else {
+			customConfidence
 		}
 		
 		// Scale images if the device is not 1080p which is supported by default.
@@ -166,24 +173,24 @@ class ImageUtils(context: Context, private val game: Game) {
 			val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
 			
 			// Depending on which matching method was used, the algorithms determine which location was the best.
-			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
+			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
 				matchLocation = mmr.minLoc
 				matchCheck = true
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation using scale: $newScale.", tag = tag)
+					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - setConfidence} at Point $matchLocation using scale: $newScale.", tag = tag)
 				}
-			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
+			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
 				matchLocation = mmr.maxLoc
 				matchCheck = true
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation using scale: $newScale.", tag = tag)
+					game.printToLog("[DEBUG] Match found with $maxVal >= $setConfidence at Point $matchLocation using scale: $newScale.", tag = tag)
 				}
 			} else {
 				if (debugMode) {
 					if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
-						game.printToLog("[DEBUG] Match not found with $maxVal not >= $confidence at Point ${mmr.maxLoc} using scale $newScale.", tag = tag)
+						game.printToLog("[DEBUG] Match not found with $maxVal not >= $setConfidence at Point ${mmr.maxLoc} using scale $newScale.", tag = tag)
 					} else {
-						game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - confidence} at Point ${mmr.minLoc} using scale $newScale.", tag = tag)
+						game.printToLog("[DEBUG] Match not found with $minVal not <= ${1.0 - setConfidence} at Point ${mmr.minLoc} using scale $newScale.", tag = tag)
 					}
 				}
 			}
@@ -221,9 +228,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	 *
 	 * @param sourceBitmap Bitmap from the /files/temp/ folder.
 	 * @param templateBitmap Bitmap from the assets folder.
+	 * @param customConfidence Specify a custom confidence. Defaults to the confidence set in the app's settings.
 	 * @return ArrayList of Point objects that represents the matches found on the source screenshot.
 	 */
-	private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap): ArrayList<Point> {
+	private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap, customConfidence: Double = 0.0): ArrayList<Point> {
 		// Scale images if the device is not 1080p which is supported by default.
 		val scales: MutableList<Double> = when {
 			customScale != 1.0 -> {
@@ -244,6 +252,12 @@ class ImageUtils(context: Context, private val game: Game) {
 			else -> {
 				mutableListOf(1.0)
 			}
+		}
+		
+		val setConfidence: Double = if (customConfidence == 0.0) {
+			confidenceAll
+		} else {
+			customConfidence
 		}
 		
 		var matchCheck = false
@@ -286,7 +300,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			matchLocation = Point()
 			
 			// Depending on which matching method was used, the algorithms determine which location was the best.
-			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidenceAll)) {
+			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
 				matchLocation = mmr.minLoc
 				matchCheck = true
 				
@@ -298,7 +312,7 @@ class ImageUtils(context: Context, private val game: Game) {
 				Imgproc.rectangle(sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				
 				matchLocations.add(matchLocation)
-			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidenceAll) {
+			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
 				matchLocation = mmr.maxLoc
 				matchCheck = true
 				
@@ -323,14 +337,14 @@ class ImageUtils(context: Context, private val game: Game) {
 			val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
 			val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
 			
-			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - confidence)) {
+			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
 				val tempMatchLocation: Point = mmr.minLoc
 				
 				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
 				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - confidence} at Point $matchLocation with scale: $newScale.", tag = tag)
+					game.printToLog("[DEBUG] Match found with $minVal <= ${1.0 - setConfidence} at Point $matchLocation with scale: $newScale.", tag = tag)
 					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				}
 				
@@ -341,14 +355,14 @@ class ImageUtils(context: Context, private val game: Game) {
 					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))) {
 					matchLocations.add(tempMatchLocation)
 				}
-			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= confidence) {
+			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
 				val tempMatchLocation: Point = mmr.maxLoc
 				
 				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
 				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + templateMat.cols(), tempMatchLocation.y + templateMat.rows()), Scalar(255.0, 255.0, 255.0), 5)
 				
 				if (debugMode) {
-					game.printToLog("[DEBUG] Match found with $maxVal >= $confidence at Point $matchLocation with scale: $newScale.", tag = tag)
+					game.printToLog("[DEBUG] Match found with $maxVal >= $setConfidence at Point $matchLocation with scale: $newScale.", tag = tag)
 					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
 				}
 				
@@ -580,7 +594,7 @@ class ImageUtils(context: Context, private val game: Game) {
 				val summonName = summonList[summonIndex]
 				val (sourceBitmap, templateBitmap) = getBitmaps(summonName, folderName)
 				
-				if (sourceBitmap != null && templateBitmap != null && match(sourceBitmap, templateBitmap)) {
+				if (sourceBitmap != null && templateBitmap != null && match(sourceBitmap, templateBitmap, customConfidence = 0.7)) {
 					summonLocation = matchLocation
 					break
 				} else {
