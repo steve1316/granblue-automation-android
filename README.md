@@ -50,6 +50,7 @@ By downloading this application, you consent to your account potentially getting
     1. APK available to download is for devices that support arm64-v8a ABI. For devices that use a different ABI, follow the instructions below on how to build your own APK.
     2. (Experimental) Tablets supported with minimum 1600 pixel width like the Galaxy Tab S7. If oriented portrait, Chrome needs to have Desktop Mode turned off and situated on the left half of the tablet. If landscape, Chrome needs to have Desktop Mode turned on and situated on the left half of the tablet.
     3. Tested emulator was Bluestacks 5. Make sure to have the device be in Portrait Mode BEFORE starting the bot as emulators do not have a way to tell the bot that it rotated.
+        - In addition, use SkyLeap instead of Google Chrome. Room codes are not able to be properly pasted into Google Chrome while Raid farming on emulators.
 2. [Granblue Fantasy account](http://game.granbluefantasy.jp/)
 3. [Twitter Developer account (optional, needed to farm Raids)](https://developer.twitter.com/en)
 
