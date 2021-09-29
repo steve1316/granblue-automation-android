@@ -1,15 +1,13 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.6.4</latestVersion>
+    <latestVersion>2.6.5</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.6.4 - Changelog
+v2.6.5 - Changelog
 
-Changed
+Fixes
 ---
-- Adjusted logic for resetting summons.
-- Reduced confidence of finding support summons from 0.80 to 0.70.
-- Updated README to clarify that the bot only works 100% on SkyLeap (from previous testing) while playing on emulator and not on Google Chrome.
+- Set application's default locale to "en" to prevent cases where user's country uses commas instead of dots for decimal numbers.
 
     </releaseNotes>
   </update>
