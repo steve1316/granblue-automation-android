@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import org.opencv.android.OpenCVLoader
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 	private lateinit var appBarConfiguration: AppBarConfiguration
@@ -24,6 +25,13 @@ class MainActivity : AppCompatActivity() {
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		
+		// Set application locale to combat cases where user's language uses commas instead of decimal points for floating numbers.
+		val config = resources.configuration
+		val locale = Locale("en")
+		Locale.setDefault(locale)
+		resources.updateConfiguration(config, resources.displayMetrics)
+		
 		setContentView(R.layout.activity_main)
 		val toolbar: Toolbar = findViewById(R.id.toolbar)
 		setSupportActionBar(toolbar)
