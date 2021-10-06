@@ -95,6 +95,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param sourceBitmap Bitmap from the /files/temp/ folder.
 	 * @param templateBitmap Bitmap from the assets folder.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
+	 * @param useSingleScale Whether to use only the single custom scale or to use a range based off of it.
 	 * @param customConfidence Specify a custom confidence. Defaults to the confidence set in the app's settings.
 	 * @return True if a match was found. False otherwise.
 	 */
