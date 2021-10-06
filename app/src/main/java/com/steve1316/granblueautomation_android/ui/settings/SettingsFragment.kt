@@ -614,9 +614,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val missionPicker: ListPreference = findPreference("missionPicker")!!
 		
 		// Get the item entries based on the selected Farming Mode.
-		MissionData.missions[farmingMode]?.forEach { (_, missionArrayList) ->
-			missionArrayList.forEach {
-				newEntries.add(it)
+		if (farmingMode == "Coop") {
+			ItemData.items[farmingMode]?.forEach { (key, _) ->
+				newEntries.add(key)
+			}
+		} else {
+			MissionData.missions[farmingMode]?.forEach { (_, missionArrayList) ->
+				missionArrayList.forEach {
+					newEntries.add(it)
+				}
 			}
 		}
 		
