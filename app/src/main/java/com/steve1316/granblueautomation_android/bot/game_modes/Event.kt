@@ -191,10 +191,10 @@ class Event(private val game: Game, private val missionName: String) {
 			}
 			
 			// If the user does not have enough Treasures to host a Extreme or Impossible Raid, host a Very Hard Raid instead.
-			if (difficulty == "Extreme" && !game.imageUtils.waitVanish("event_raid_extreme", timeout = 3)) {
+			if (difficulty == "Extreme" && !game.imageUtils.waitVanish("event_raid_extreme", timeout = 10)) {
 				game.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...", tag = tag)
 				game.findAndClickButton("event_raid_very_hard")
-			} else if (difficulty == "Impossible" && !game.imageUtils.waitVanish("event_raid_impossible", timeout = 3)) {
+			} else if (difficulty == "Impossible" && !game.imageUtils.waitVanish("event_raid_impossible", timeout = 10)) {
 				game.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...", tag = tag)
 				game.findAndClickButton("event_raid_very_hard")
 			}
