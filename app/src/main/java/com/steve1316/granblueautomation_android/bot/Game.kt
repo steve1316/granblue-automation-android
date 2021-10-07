@@ -682,30 +682,35 @@ class Game(val myContext: Context) {
 	/**
 	 * Detect any dropped loot from the Loot Collected screen while clicking away any dialog popups.
 	 *
+	 * @param isCompleted Allows incrementing of number of runs completed. This is for Farming Modes who have multi-part sections to them to prevent unnecessary incrementing of runs when it wasn't
+	 * finished with 1 yet.
 	 * @param isPendingBattle Skip the incrementation of runs attempted if this was a Pending Battle. Defaults to false.
 	 * @param isEventNightmare Skip the incrementation of runs attempted if this was a Event Nightmare. Defaults to false.
-	 * @param skipInfo Skip printing the information of the run. Defaults to False.
+	 * @param skipInfo Skip printing the information of the run. Defaults to false.
+	 * @param skipPopupCheck Skip checking for popups to get to the Loot Collected screen. Defaults to false
 	 * @return Number of specified items dropped.
 	 */
-	fun collectLoot(isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false): Int {
+	fun collectLoot(isCompleted: Boolean, isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false, skipPopupCheck: Boolean = false): Int {
 		var amountGained = 0
 		
 		// Close all popups until the bot reaches the Loot Collected screen.
-		var tries = 5
-		while (!imageUtils.confirmLocation("loot_collected", tries = 1)) {
-			findAndClickButton("close", tries = 1, suppressError = true)
-			findAndClickButton("cancel", tries = 1, suppressError = true)
-			findAndClickButton("ok", tries = 1, suppressError = true)
-			findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
-			
-			tries -= 1
-			if (tries <= 0) {
-				break
+		if (!skipPopupCheck) {
+			var tries = 5
+			while (!imageUtils.confirmLocation("loot_collected", tries = 1)) {
+				findAndClickButton("ok", tries = 1, suppressError = true)
+				findAndClickButton("close", tries = 1, suppressError = true)
+				findAndClickButton("cancel", tries = 1, suppressError = true)
+				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
+				
+				tries -= 1
+				if (tries <= 0) {
+					break
+				}
 			}
 		}
 		
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
-		if (!isPendingBattle && !isEventNightmare) {
+		if (isCompleted && !isPendingBattle && !isEventNightmare) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this run...")
 			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
 				imageUtils.findFarmedItems(itemName)
@@ -713,16 +718,7 @@ class Game(val myContext: Context) {
 				1
 			}
 			
-			// Only increment number of runs for Proving Grounds when the bot acquires the Completion Rewards.
-			// Currently for Proving Grounds, completing 2 battles per difficulty nets you the Completion Rewards.
-			if (farmingMode == "Proving Grounds") {
-				if (itemAmountFarmed != 0 && itemAmountFarmed % 2 == 0) {
-					itemAmountFarmed = 0
-					amountOfRuns += 1
-				}
-			} else {
-				amountOfRuns += 1
-			}
+			amountOfRuns += 1
 		} else if (isPendingBattle) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this Pending Battle...")
 			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
@@ -734,7 +730,7 @@ class Game(val myContext: Context) {
 			itemAmountFarmed += amountGained
 		}
 		
-		if (!isPendingBattle && !isEventNightmare && !skipInfo) {
+		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
 				printToLog("\n************************************************************")
 				printToLog("************************************************************")
@@ -897,9 +893,9 @@ class Game(val myContext: Context) {
 			} else {
 				// Start loot detection if there it is available.
 				if (farmingMode == "Raid") {
-					collectLoot()
+					collectLoot(isCompleted = true)
 				} else {
-					collectLoot(isPendingBattle = true)
+					collectLoot(isCompleted = false, isPendingBattle = true)
 				}
 				
 				findAndClickButton("close", tries = 1)

@@ -4,7 +4,7 @@ import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.bot.Game
 
-class RiseOfTheBeastsException(message: String): Exception(message)
+class RiseOfTheBeastsException(message: String) : Exception(message)
 
 class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 	private val tag: String = "${MainActivity.loggerTag}RiseOfTheBeasts"
@@ -74,7 +74,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 				
 				// Once preparations are completed, start Combat Mode.
 				if (startCheck && game.combatMode.startCombatMode(game.combatScript)) {
-					game.collectLoot()
+					game.collectLoot(isCompleted = false, isEventNightmare = true)
 					return true
 				}
 			}
@@ -211,7 +211,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 	 * @return Number of items detected.
 	 */
 	fun start(firstRun: Boolean): Int {
-		var numberOfItemsDropped = 0
+		var runsCompleted = 0
 		
 		// Start the navigation process.
 		when {
@@ -243,13 +243,13 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 				
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode(game.combatScript)) {
-					numberOfItemsDropped = game.collectLoot()
+					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}
 		} else {
 			throw RiseOfTheBeastsException("Failed to arrive at the Summon Selection screen.")
 		}
 		
-		return numberOfItemsDropped
+		return runsCompleted
 	}
 }

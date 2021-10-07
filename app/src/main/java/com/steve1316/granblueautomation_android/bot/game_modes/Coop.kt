@@ -191,14 +191,14 @@ class Coop(private val game: Game, private val missionName: String) {
 			
 			// Now start Combat Mode and detect any item drops.
 			if (game.combatMode.startCombatMode(game.combatScript)) {
-				numberOfItemsDropped = game.collectLoot()
+				numberOfItemsDropped = game.collectLoot(isCompleted = true)
 			}
 		} else if (!firstRun) {
 			game.printToLog("\n[COOP] Starting Coop mission again.", tag = tag)
 			
 			// Now start Combat Mode and detect any item drops.
 			if (game.combatMode.startCombatMode(game.combatScript)) {
-				numberOfItemsDropped = game.collectLoot()
+				numberOfItemsDropped = game.collectLoot(isCompleted = true)
 			}
 		} else {
 			throw CoopException("Failed to arrive at the Summon Selection screen.")

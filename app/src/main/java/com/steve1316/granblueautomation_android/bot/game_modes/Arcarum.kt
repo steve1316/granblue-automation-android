@@ -192,7 +192,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 						
 						game.wait(3.0)
 						if (game.combatMode.startCombatMode(game.combatScript)) {
-							game.collectLoot(skipInfo = true)
+							game.collectLoot(isCompleted = false, skipInfo = true)
 							game.findAndClickButton("expedition")
 						}
 					}

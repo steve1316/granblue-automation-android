@@ -3,7 +3,7 @@ package com.steve1316.granblueautomation_android.bot.game_modes
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.bot.Game
 
-class ProvingGroundsException(message: String): Exception(message)
+class ProvingGroundsException(message: String) : Exception(message)
 
 class ProvingGrounds(private val game: Game, private val missionName: String) {
 	private val tag: String = "${MainActivity.loggerTag}ProvingGrounds"
@@ -56,7 +56,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 	 * @return Number of items detected.
 	 */
 	fun start(firstRun: Boolean): Int {
-		var numberOfItemsDropped = 0
+		var runsCompleted = 0
 		
 		// Start the navigation process.
 		when {
@@ -86,7 +86,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 				
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode(game.combatScript)) {
-					numberOfItemsDropped = game.collectLoot()
+					game.collectLoot(isCompleted = false)
 					
 					// Tap the "Next Battle" button if there are any battles left.
 					if (game.findAndClickButton("proving_grounds_next_battle")) {
@@ -99,7 +99,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 		} else if (!firstRun && !firstTime) {
 			// No need to select a Summon again as it is reused.
 			if (game.combatMode.startCombatMode(game.combatScript)) {
-				numberOfItemsDropped = game.collectLoot()
+				game.collectLoot(isCompleted = false)
 				
 				// Tap the "Next Battle" button if there are any battles left.
 				if (game.findAndClickButton("proving_grounds_next_battle")) {
@@ -119,6 +119,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 					
 					if (game.imageUtils.confirmLocation("proving_grounds_completion_loot")) {
 						game.printToLog("\n[PROVING.GROUNDS] Completion rewards has been acquired.", tag = tag)
+						runsCompleted = game.collectLoot(isCompleted = true, skipPopupCheck = true)
 						
 						// Reset the First Time flag so the bot can select a Summon and select the Mission again.
 						if (game.itemAmountFarmed < game.itemAmount) {
@@ -133,6 +134,6 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 			throw ProvingGroundsException("Failed to arrive at the Summon Selection screen.")
 		}
 		
-		return numberOfItemsDropped
+		return runsCompleted
 	}
 }

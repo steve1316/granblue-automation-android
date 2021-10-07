@@ -4,7 +4,7 @@ import androidx.preference.PreferenceManager
 import com.steve1316.granblueautomation_android.MainActivity
 import com.steve1316.granblueautomation_android.bot.Game
 
-class XenoClashException(message: String): Exception(message)
+class XenoClashException(message: String) : Exception(message)
 
 class XenoClash(private val game: Game, private val missionName: String) {
 	private val tag: String = "${MainActivity.loggerTag}XenoClash"
@@ -51,7 +51,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
-				game.collectLoot(isEventNightmare = true)
+				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
 			} else {
 				game.printToLog("\n[XENO] Detected Event Nightmare. Starting it now...", tag = tag)
@@ -83,7 +83,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 					
 					// Once preparations are completed, start Combat Mode.
 					if (startCheck && game.combatMode.startCombatMode(game.combatScript)) {
-						game.collectLoot()
+						game.collectLoot(isCompleted = false, isEventNightmare = true)
 						return true
 					}
 				}
@@ -92,7 +92,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
-				game.collectLoot(isEventNightmare = true)
+				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
 			} else {
 				game.printToLog("\n[XENO] Xeno Clash Nightmare detected but user opted to not run it. Moving on...", tag = tag)
@@ -164,7 +164,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 	 * @return Number of items detected.
 	 */
 	fun start(firstRun: Boolean): Int {
-		var numberOfItemsDropped = 0
+		var runsCompleted = 0
 		
 		// Start the navigation process.
 		when {
@@ -196,13 +196,13 @@ class XenoClash(private val game: Game, private val missionName: String) {
 				
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode(game.combatScript)) {
-					numberOfItemsDropped = game.collectLoot()
+					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}
 		} else {
 			throw XenoClashException("Failed to arrive at the Summon Selection screen.")
 		}
 		
-		return numberOfItemsDropped
+		return runsCompleted
 	}
 }

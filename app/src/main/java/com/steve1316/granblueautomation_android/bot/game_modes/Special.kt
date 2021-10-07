@@ -76,7 +76,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 				
 				// Once preparations are completed, start Combat Mode.
 				if (startCheck && game.combatMode.startCombatMode(game.combatScript)) {
-					game.collectLoot()
+					game.collectLoot(isCompleted = false, isEventNightmare = true)
 					return true
 				}
 			}
@@ -358,7 +358,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 				
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode(game.combatScript)) {
-					numberOfItemsDropped = game.collectLoot()
+					numberOfItemsDropped = game.collectLoot(isCompleted = true)
 				}
 			}
 		} else {

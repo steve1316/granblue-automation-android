@@ -165,7 +165,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 	 * @return Number of items detected.
 	 */
 	fun start(firstRun: Boolean): Int {
-		var numberOfItemsDropped = 0
+		var runsCompleted = 0
 		
 		// Start the navigation process.
 		when {
@@ -195,13 +195,13 @@ class GuildWars(private val game: Game, private val missionName: String) {
 				
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode(game.combatScript)) {
-					numberOfItemsDropped = game.collectLoot()
+					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}
 		} else {
 			throw GuildWarsException("Failed to arrive at the Summon Selection screen.")
 		}
 		
-		return numberOfItemsDropped
+		return runsCompleted
 	}
 }
