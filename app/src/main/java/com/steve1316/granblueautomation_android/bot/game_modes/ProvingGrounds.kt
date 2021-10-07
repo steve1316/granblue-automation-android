@@ -34,26 +34,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 			if (game.findAndClickButton("proving_grounds_missions")) {
 				val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
 				
-				var difficulty = ""
-				when {
-					missionName.contains("N ") -> {
-						difficulty = "Normal"
-					}
-					missionName.contains("VH ") -> {
-						difficulty = "Very Hard"
-					}
-					missionName.contains("H ") -> {
-						difficulty = "Hard"
-					}
-					missionName.contains("EX ") -> {
-						difficulty = "Extreme"
-					}
-				}
-				
-				when (difficulty) {
-					"Very Hard" -> {
-						game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
-					}
+				when (missionName) {
 					"Extreme" -> {
 						game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y, "play_round_button")
 					}
@@ -98,6 +79,8 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 				// No need to select a Party. Just click "OK" to start the mission and confirming the selected summon.
 				game.findAndClickButton("ok")
 				
+				game.wait(1.0)
+				
 				game.printToLog("\n[PROVING.GROUNDS] Now starting Mission for Proving Grounds...", tag = tag)
 				game.findAndClickButton("proving_grounds_start")
 				
@@ -127,7 +110,11 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 					game.printToLog("\n[PROVING.GROUNDS] Proving Grounds Mission has been completed.", tag = tag)
 					game.findAndClickButton("event")
 					
+					// Check for trophy.
+					game.findAndClickButton("close", tries = 1, suppressError = true)
+					
 					game.wait(2.0)
+					game.findAndClickButton("proving_grounds_open_chest")
 					game.findAndClickButton("proving_grounds_open_chest")
 					
 					if (game.imageUtils.confirmLocation("proving_grounds_completion_loot")) {
