@@ -1,13 +1,14 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.6.5</latestVersion>
+    <latestVersion>2.6.6</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.6.5 - Changelog
+v2.6.6 - Changelog
 
 Fixes
 ---
-- Set application's default locale to "en" to prevent cases where user's country uses commas instead of dots for decimal numbers.
+- Fixed cases where bot will stop due to not thinking it arrived at the Summon Selection screen.
+- Fixed Coop missions dropdown menu being empty in the Settings page.
 
     </releaseNotes>
   </update>
