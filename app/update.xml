@@ -1,14 +1,17 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.6.6</latestVersion>
+    <latestVersion>2.7.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.6.6 - Changelog
+v2.7.0 - Changelog
+
+Changed
+---
+- Redid logic for incrementing runs to not include Nightmares.
 
 Fixes
 ---
-- Fixed cases where bot will stop due to not thinking it arrived at the Summon Selection screen.
-- Fixed Coop missions dropdown menu being empty in the Settings page.
+- Fixed unable to start Proving Grounds.
 
     </releaseNotes>
   </update>
