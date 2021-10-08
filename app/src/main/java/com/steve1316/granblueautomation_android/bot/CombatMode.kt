@@ -1046,7 +1046,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					}
 					command == "quicksummon" -> {
 						game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
-						if (game.findAndClickButton("quick_summon")) {
+						if (game.findAndClickButton("quick_summon1") || game.findAndClickButton("quick_summon2")) {
 							game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
 							game.wait(3.0)
 						} else {
