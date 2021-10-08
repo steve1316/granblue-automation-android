@@ -113,6 +113,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					
 					// Finally, enable the Item picker.
 					itemPicker.isEnabled = true
+					
+					// Disable the Group/Party selectors if Farming Mode is Proving Grounds.
+					val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
+					val groupPicker: ListPreference = findPreference("groupPicker")!!
+					val partyPicker: ListPreference = findPreference("partyPicker")!!
+					if (farmingModePicker.value == "Proving Grounds") {
+						groupPicker.isEnabled = false
+						partyPicker.isEnabled = false
+					} else {
+						groupPicker.isEnabled = true
+						partyPicker.isEnabled = true
+					}
 				}
 				"itemPicker" -> {
 					val itemPicker: ListPreference = findPreference("itemPicker")!!
