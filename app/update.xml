@@ -1,17 +1,17 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.7.0</latestVersion>
+    <latestVersion>2.7.1</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.7.0 - Changelog
+v2.7.1 - Changelog
 
 Changed
 ---
-- Redid logic for incrementing runs to not include Nightmares.
+- Disabled Group/Party selectors if Proving Grounds is selected in Settings
 
 Fixes
 ---
-- Fixed unable to start Proving Grounds.
+- Fixed image assets for Quick Summon for both non-V2 and V2 battles
 
     </releaseNotes>
   </update>
