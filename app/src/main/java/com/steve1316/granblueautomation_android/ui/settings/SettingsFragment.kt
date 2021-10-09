@@ -375,6 +375,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						filePicker.summary = "Select the combat script in .txt format that will be used for Combat Mode.\n" +
 								"\nCombat Script Selected: $name"
 						
+						sharedPreferences.edit {
+							putString("combatScriptName", name)
+							commit()
+						}
+						
 						Log.d(loggerTag, "Combat Script loaded: $uri")
 					}
 				}
