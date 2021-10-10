@@ -1,17 +1,14 @@
 <AppUpdater>
   <update>
-    <latestVersion>2.7.1</latestVersion>
+    <latestVersion>2.7.2</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v2.7.1 - Changelog
-
-Changed
----
-- Disabled Group/Party selectors if Proving Grounds is selected in Settings
+v2.7.2 - Changelog
 
 Fixes
 ---
-- Fixed image assets for Quick Summon for both non-V2 and V2 battles
+- Fixed Combat Script selector showing none selected after moving away from the Settings page after selecting a combat script.
+- Fixed crashing after completing a PG run due to friend request popup.
 
     </releaseNotes>
   </update>
