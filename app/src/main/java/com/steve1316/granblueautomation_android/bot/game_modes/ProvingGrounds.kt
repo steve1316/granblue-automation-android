@@ -110,6 +110,9 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 					game.printToLog("\n[PROVING.GROUNDS] Proving Grounds Mission has been completed.", tag = tag)
 					game.findAndClickButton("event")
 					
+					// Check for friend request.
+					game.findAndClickButton("cancel", tries = 1, suppressError = true)
+					
 					// Check for trophy.
 					game.findAndClickButton("close", tries = 1, suppressError = true)
 					
