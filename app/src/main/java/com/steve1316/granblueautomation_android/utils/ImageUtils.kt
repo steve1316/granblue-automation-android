@@ -394,7 +394,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		
 		// Keep swiping a little bit up and down to trigger a new image for ImageReader to grab.
 		while (sourceBitmap == null) {
-			sourceBitmap = MediaProjectionService.takeScreenshotNow()
+			sourceBitmap = MediaProjectionService.takeScreenshotNow(saveImage = debugMode)
 			
 			if (sourceBitmap == null) {
 				game.gestureUtils.swipe(500f, 500f, 500f, 400f, 100L)
@@ -420,6 +420,27 @@ class ImageUtils(context: Context, private val game: Game) {
 			
 			Pair(sourceBitmap, templateBitmap)
 		}
+	}
+	
+	/**
+	 * Acquire the Bitmap for only the source screenshot.
+	 *
+	 * @return Bitmap of the source screenshot.
+	 */
+	private fun getSourceBitmap(): Bitmap {
+		// Keep swiping a little bit up and down to trigger a new image for ImageReader to grab.
+		var sourceBitmap: Bitmap? = null
+		while (sourceBitmap == null) {
+			sourceBitmap = MediaProjectionService.takeScreenshotNow(saveImage = debugMode)
+			
+			if (sourceBitmap == null) {
+				game.gestureUtils.swipe(500f, 500f, 500f, 400f, 100L)
+				game.gestureUtils.swipe(500f, 400f, 500f, 500f, 100L)
+				game.wait(0.5)
+			}
+		}
+		
+		return sourceBitmap
 	}
 	
 	/**
