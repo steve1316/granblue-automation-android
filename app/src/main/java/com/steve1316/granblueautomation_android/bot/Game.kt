@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 class Game(val myContext: Context) {
 	private val tag: String = "${MainActivity.loggerTag}Game"
 	
-	private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
+	val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 	
 	// Grab all necessary information from SharedPreferences.
 	var farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
@@ -41,6 +41,8 @@ class Game(val myContext: Context) {
 	private var enableRandomizedDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
 	private var randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
 	private var enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enabledSkipAutoRestore", true)
+	val enableAdditionalDelayTap: Boolean = sharedPreferences.getBoolean("enableAdditionalDelayTap", false)
+	val additionalDelayTapRange: Int = sharedPreferences.getInt("additionalDelayTapRange", 1000)
 	var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 	
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
@@ -245,6 +247,15 @@ class Game(val myContext: Context) {
 		}
 		
 		return if (tempLocation != null) {
+			val enableAdditionalDelayTap: Boolean = sharedPreferences.getBoolean("enableAdditionalDelayTap", false)
+			if (enableAdditionalDelayTap) {
+				val additionalDelayTapRange: Int = sharedPreferences.getInt("additionalDelayTapRange", 1000)
+				val newDelay: Double = ((additionalDelayTapRange - 100)..(additionalDelayTapRange + 100)).random().toDouble() / 1000
+				if (debugMode) printToLog("[DEBUG] Adding an additional delay of ${newDelay}s...")
+				wait(newDelay)
+			}
+			
+			Log.d(tag, "Found and going to tap: $newButtonName")
 			gestureUtils.tap(tempLocation.x, tempLocation.y, newButtonName)
 		} else {
 			false

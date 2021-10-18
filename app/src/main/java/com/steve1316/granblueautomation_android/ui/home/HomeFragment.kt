@@ -194,6 +194,9 @@ class HomeFragment : Fragment() {
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableHomeTest", false)
+		val enableNoTimeout: Boolean = sharedPreferences.getBoolean("enableNoTimeout", false)
+		val enableAdditionalDelayTap: Boolean = sharedPreferences.getBoolean("enableAdditionalDelayTap", false)
+		val additionalDelayTapRange: Int = sharedPreferences.getInt("additionalDelayTapRange", 1000)
 		
 		startButton.isEnabled = (farmingMode != "" && missionName != "" && itemName != "" && ((farmingMode != "Coop" && summon.isNotEmpty() && summon[0] != "") ||
 				((farmingMode == "Coop" || farmingMode == "Arcarum") && summon.isNotEmpty() && summon[0] == "")))
@@ -284,9 +287,28 @@ class HomeFragment : Fragment() {
 			"Disabled"
 		}
 		
+		val enableNoTimeoutString: String = if (farmingMode == "Raid" && enableNoTimeout) {
+			"Enable No Timeout: Enabled\n"
+		} else {
+			""
+		}
+		
+		val enableAdditionalDelayTapString: String = if (enableAdditionalDelayTap) {
+			"Enabled"
+		} else {
+			"Disabled"
+		}
+		
+		val additionalDelayTapRangeString: String = if (enableAdditionalDelayTap) {
+			"Base Point for Additional Delay: ${additionalDelayTapRange}ms\n"
+		} else {
+			""
+		}
+		
 		settingsStatusTextView.setTextColor(Color.WHITE)
 		settingsStatusTextView.text = "---------- Farming Mode Settings ----------\n" +
 				"Mode: $farmingMode\n" +
+				enableNoTimeoutString +
 				mapString +
 				"Mission: $missionName\n" +
 				"Item: x$itemAmount $itemName\n" +
@@ -304,6 +326,8 @@ class HomeFragment : Fragment() {
 				"Confidence for Single Image Matching: $confidence%\n" +
 				"Confidence for Multiple Image Matching: $confidenceAll%\n" +
 				"Scale: $customScaleString\n" +
+				"Enable Additional Delay Before Tap: $enableAdditionalDelayTapString\n" +
+				additionalDelayTapRangeString +
 				"Discord Notifications: $enableDiscordString\n" +
 				"Enable Skip checks for AP/EP: $enableSkipAutoRestoreString\n" +
 				"Debug Mode: $enableDebugModeString\n" +

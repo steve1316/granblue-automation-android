@@ -11,6 +11,8 @@ class RaidException(message: String) : Exception(message)
 class Raid(private val game: Game) {
 	private val tag: String = "${MainActivity.loggerTag}Raid"
 	
+	private val enableNoTimeout: Boolean = game.sharedPreferences.getBoolean("enableNoTimeout", false)
+	
 	private var joinRoomButtonLocation: Point = Point()
 	private var roomCodeTextBoxLocation: Point = Point()
 	private var numberOfRaidsJoined = 0
@@ -129,7 +131,12 @@ class Raid(private val game: Game) {
 			}
 			
 			tries -= 1
-			game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again with $tries tries left before exiting.", tag = tag)
+			if (enableNoTimeout) {
+				tries += 1
+				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again...", tag = tag)
+			} else {
+				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again with $tries tries left before exiting...", tag = tag)
+			}
 			game.wait(recoveryTime)
 		}
 	}

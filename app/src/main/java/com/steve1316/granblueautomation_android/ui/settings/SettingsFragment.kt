@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
+import android.widget.SeekBar
 import androidx.core.content.edit
 import androidx.preference.*
 import com.steve1316.granblueautomation_android.MainActivity
@@ -71,6 +72,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						// Build the Summon Selection AlertDialog.
 						summonPicker.isEnabled = true
 						createSummonDialog()
+						
+						val enableNoTimeoutCheckBox: CheckBoxPreference = findPreference("enableNoTimeout")!!
+						enableNoTimeoutCheckBox.isVisible = (farmingModePicker.value == "Raid")
 					}
 					
 					// Populate the Mission picker with the missions associated with the newly chosen Farming Mode.
@@ -317,6 +321,29 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						commit()
 					}
 				}
+				"enableNoTimeout" -> {
+					val enableNoTimeoutCheckBox: CheckBoxPreference = findPreference("enableNoTimeout")!!
+					sharedPreferences.edit {
+						putBoolean("enableNoTimeout", enableNoTimeoutCheckBox.isChecked)
+						commit()
+					}
+				}
+				"enableAdditionalDelayTap" -> {
+					val enableAdditionalDelayTapCheckBox: CheckBoxPreference = findPreference("enableAdditionalDelayTap")!!
+					val additionalDelayTapRangeSeekBar: SeekBarPreference = findPreference("additionalDelayTapRange")!!
+					additionalDelayTapRangeSeekBar.isVisible = enableAdditionalDelayTapCheckBox.isChecked
+					sharedPreferences.edit {
+						putBoolean("enableAdditionalDelayTap", enableAdditionalDelayTapCheckBox.isChecked)
+						commit()
+					}
+				}
+				"additionalDelayTapRange" -> {
+					val additionalDelayTapRangeSeekBar: SeekBarPreference = findPreference("additionalDelayTapRange")!!
+					sharedPreferences.edit {
+						putInt("additionalDelayTapRange", additionalDelayTapRangeSeekBar.value)
+						commit()
+					}
+				}
 			}
 		}
 	}
@@ -440,6 +467,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enableSkipAutoRestore", true)
 		val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 		val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableHomeTest", false)
+		val enableNoTimeout: Boolean = sharedPreferences.getBoolean("enableNoTimeout", false)
+		val enableAdditionalDelayTap: Boolean = sharedPreferences.getBoolean("enableAdditionalDelayTap", false)
+		val additionalDelayTapRange: Int = sharedPreferences.getInt("additionalDelayTapRange", 1000)
 		
 		// Get references to the Preference components.
 		val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
@@ -461,6 +491,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val enableSkipAutoRestoreCheckBox: CheckBoxPreference = findPreference("enableSkipAutoRestore")!!
 		val debugModeCheckBox: CheckBoxPreference = findPreference("debugModeCheckBox")!!
 		val enableHomeTestCheckBox: CheckBoxPreference = findPreference("enableHomeTestCheckBox")!!
+		val enableNoTimeoutCheckBox: CheckBoxPreference = findPreference("enableNoTimeout")!!
+		val enableAdditionalDelayTapCheckBox: CheckBoxPreference = findPreference("enableAdditionalDelayTap")!!
+		val additionalDelayTapRangeSeekBar: SeekBarPreference = findPreference("additionalDelayTapRange")!!
 		
 		customScaleEditText.setOnBindEditTextListener(editTextListener)
 		
@@ -486,6 +519,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			// Populate and enable the Mission picker as the next step for the user.
 			populateMissionListPreference()
 			missionPicker.isEnabled = true
+			
+			enableNoTimeoutCheckBox.isVisible = (farmingMode == "Raid")
+			if (enableNoTimeoutCheckBox.isVisible) {
+				enableNoTimeoutCheckBox.isChecked = enableNoTimeout
+			}
 		}
 		
 		if (missionName.isNotEmpty()) {
@@ -564,6 +602,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		enableSkipAutoRestoreCheckBox.isChecked = enableSkipAutoRestore
 		debugModeCheckBox.isChecked = debugMode
 		enableHomeTestCheckBox.isChecked = enableHomeTest
+		
+		enableAdditionalDelayTapCheckBox.isChecked = enableAdditionalDelayTap
+		additionalDelayTapRangeSeekBar.isVisible = enableAdditionalDelayTap
+		additionalDelayTapRangeSeekBar.value = additionalDelayTapRange
 		
 		// Save the Twitter API keys and tokens and every other settings in the config.json to SharedPreferences.
 		try {

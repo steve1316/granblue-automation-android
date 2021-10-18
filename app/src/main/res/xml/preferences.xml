@@ -11,6 +11,12 @@
             app:title="Select Farming Mode*"
             app:useSimpleSummaryProvider="true" />
 
+        <CheckBoxPreference
+            android:summary="Enable no timeout when attempting to farm raids that appear infrequently."
+            app:isPreferenceVisible="false"
+            app:key="enableNoTimeout"
+            app:title="Enable No Timeout" />
+
         <ListPreference
             android:enabled="false"
             app:entries="@array/empty_list"
@@ -146,6 +152,22 @@
             android:summary="Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape) in width.\n\nScale: 1.0 (Default)"
             android:title="Set Custom Scale"
             app:key="customScale" />
+
+        <CheckBoxPreference
+            android:summary="Enables a range of delay before each tap in milliseconds (ms)."
+            app:key="enableAdditionalDelayTap"
+            app:title="Enable Additional Delay Before Each Tap" />
+
+        <SeekBarPreference
+            android:defaultValue="1000"
+            android:max="5000"
+            app:title="Set Base Point for Additional Delay"
+            android:summary="Set the base point of an additional delay in milliseconds. The bot will then create a range from -100ms to +100ms using that base point for the additional delay."
+            app:isPreferenceVisible="false"
+            app:key="additionalDelayTapRange"
+            app:min="100"
+            app:showSeekBarValue="true" />
+
 
         <CheckBoxPreference
             app:key="enableDiscord"
