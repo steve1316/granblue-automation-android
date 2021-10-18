@@ -187,7 +187,7 @@ class Game(val myContext: Context) {
 	 * @param suppressError Whether or not to suppress saving error messages to the log in failing to find the button.
 	 * @return True if the button was found and clicked. False otherwise.
 	 */
-	fun findAndClickButton(buttonName: String, tries: Int = 2, suppressError: Boolean = false): Boolean {
+	fun findAndClickButton(buttonName: String, tries: Int = 5, suppressError: Boolean = false): Boolean {
 		if (debugMode) {
 			printToLog("[DEBUG] Now attempting to find and click the \"$buttonName\" button.")
 		}
