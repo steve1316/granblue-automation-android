@@ -14,6 +14,9 @@ class Event(private val game: Game, private val missionName: String) {
 	private var eventNightmareGroupNumber: Int
 	private var eventNightmarePartyNumber: Int
 	
+	private val moveOneDown: Boolean = true
+	private val fallback: Boolean = true
+	
 	init {
 		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
 		enableEventNightmare = sharedPreferences.getBoolean("enableEventNightmare", false)
@@ -212,24 +215,21 @@ class Event(private val game: Game, private val missionName: String) {
 			
 			// Go to the Home screen.
 			game.goBackHome(confirmLocationCheck = true)
-			
 			game.wait(0.5)
 			
-			// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
-			game.findAndClickButton("home_menu")
-			var bannerLocations = game.imageUtils.findAll("event_banner")
-			if (bannerLocations.size == 0) {
-				bannerLocations = game.imageUtils.findAll("event_banner_blue")
-			}
-			game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
+			game.findAndClickButton("quest")
 			
+			// Check for the "You retreated from the raid battle" popup.
+			if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+				game.findAndClickButton("ok")
+			}
+			
+			// Go to the Special screen.
+			game.findAndClickButton("special")
 			game.wait(3.0)
 			
-			// Check if there is a "Daily Missions" popup and close it.
-			if (game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
-				game.printToLog("\n[EVENT] Detected \"Daily Missions\" popup. Closing it...", tag = tag)
-				game.findAndClickButton("cancel")
-			}
+			// Go to the Event section of the Special screen.
+			game.findAndClickButton("special_event")
 			
 			// Remove the difficulty prefix from the mission name.
 			var difficulty = ""
@@ -245,10 +245,6 @@ class Event(private val game: Game, private val missionName: String) {
 				}
 			}
 			
-			if (!game.findAndClickButton("event_special_quest")) {
-				throw Exception("Failed to detect layout for this Event. Are you sure this Event has no Token Drawboxes? If not, switch to \"Event (Token Drawboxes)\" Farming Mode.")
-			}
-			
 			if (game.imageUtils.confirmLocation("special")) {
 				// Check if there is a Nightmare already available.
 				val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
@@ -259,14 +255,19 @@ class Event(private val game: Game, private val missionName: String) {
 				
 				// Find the locations of all the "Select" buttons.
 				val selectButtonLocations = game.imageUtils.findAll("select")
+				val position = if (moveOneDown) {
+					1
+				} else {
+					0
+				}
 				
 				// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
 				if (formattedMissionName == "Event Quest") {
 					game.printToLog("[EVENT] Now hosting Event Quest...", tag = tag)
-					game.gestureUtils.tap(selectButtonLocations[0 + nightmareIsAvailable].x, selectButtonLocations[0 + nightmareIsAvailable].y, "select")
+					game.gestureUtils.tap(selectButtonLocations[position + nightmareIsAvailable].x, selectButtonLocations[position + nightmareIsAvailable].y, "select")
 				} else if (formattedMissionName == "Event Raid") {
 					game.printToLog("[EVENT] Now hosting Event Raid...", tag = tag)
-					game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 + nightmareIsAvailable].y, "select")
+					game.gestureUtils.tap(selectButtonLocations[(position + 1) + nightmareIsAvailable].x, selectButtonLocations[(position + 1) + nightmareIsAvailable].y, "select")
 				}
 				
 				game.wait(3.0)
