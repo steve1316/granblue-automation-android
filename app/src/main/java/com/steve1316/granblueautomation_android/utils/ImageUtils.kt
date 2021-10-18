@@ -570,6 +570,14 @@ class ImageUtils(context: Context, private val game: Game) {
 						break
 					}
 					
+					// Attempt to fix the issue where the Summon Selection page loaded in at the bottom of the view.
+					if (templateName == "select_a_summon") {
+						game.wait(0.5)
+						if (game.imageUtils.findButton("bottom_of_summon_selection") != null) {
+							game.findAndClickButton("reload")
+						}
+					}
+					
 					game.wait(0.1)
 					sourceBitmap = getSourceBitmap()
 				} else {
