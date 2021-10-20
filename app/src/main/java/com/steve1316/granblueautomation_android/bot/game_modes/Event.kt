@@ -243,6 +243,10 @@ class Event(private val game: Game, private val missionName: String) {
 					difficulty = "Extreme"
 					formattedMissionName = missionName.substring(3)
 				}
+				missionName.contains("EX+ ") -> {
+					difficulty = "Extreme+"
+					formattedMissionName = missionName.substring(4)
+				}
 			}
 			
 			if (game.imageUtils.confirmLocation("special")) {
@@ -280,6 +284,8 @@ class Event(private val game: Game, private val missionName: String) {
 					game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
 				} else if (difficulty == "Extreme") {
 					game.gestureUtils.tap(playRoundButtonLocations[1].x, playRoundButtonLocations[1].y, "play_round_button")
+				} else if (difficulty == "Extreme+") {
+					game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y, "play_round_button")
 				}
 			}
 		}

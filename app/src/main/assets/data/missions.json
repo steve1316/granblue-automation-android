@@ -295,11 +295,13 @@
   },
   "Event": {
     "Event Quest": [
-      "EX Event Quest"
+      "EX Event Quest",
+      "EX+ Event Quest"
     ],
     "Event Raid": [
       "VH Event Raid",
-      "EX Event Raid"
+      "EX Event Raid",
+      "EX+ Event Raid"
     ]
   },
   "Event (Token Drawboxes)": {
