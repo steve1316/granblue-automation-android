@@ -165,7 +165,11 @@ class Game(val myContext: Context) {
 			wait(2.0)
 			
 			if (!imageUtils.confirmLocation("home")) {
-				throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
+				findAndClickButton("reload")
+				wait(2.0)
+				if (!imageUtils.confirmLocation("home")) {
+					throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
+				}
 			}
 		}
 	}
