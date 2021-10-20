@@ -1,27 +1,17 @@
 <AppUpdater>
   <update>
-    <latestVersion>3.0.0</latestVersion>
+    <latestVersion>3.0.1</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v3.0.0 - Changelog
-
-New
----
-- Added a new setting to enable no timeout when farming Raids that appear infrequently.
-- Added a new setting to add an additional delay before taps.
+v3.0.1 - Changelog
 
 Changed
 ---
-- `IMPORTANT` Significantly sped up the entire bot process by having the creation of the source screenshot in the /temp/ folder be tied to having Debug Mode being enabled. Previously, the bot always saved the source screenshot file and thus added about 500ms every single time it was called. As a result of this change, the bot is now going lightning fast. I did not have much time to fully test out how this change affects everything else, so please report any issues by opening up a GitHub issue and/or hop into the Discord server (link is in the README).
-- Brought over various minor changes from UAA for ImageUtils.
-- Increased number of attempts for findAndClickButton() from 2 to 5.
-- Decreased delay to regenerate source images for ImageReader.
+- Updated bot to support 2nd part of Gintama collab.
 
 Fixes
 ---
-- Fixed matching functions putting the bounding box at the wrong point.
-- Stopgap fix for Gintama event support.
-- Attempted to fix Summon Selection page loading in at the bottom.
+- Attempted to fix Home page loading in at the bottom.
 
     </releaseNotes>
   </update>
