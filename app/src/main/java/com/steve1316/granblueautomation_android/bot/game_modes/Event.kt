@@ -180,26 +180,28 @@ class Event(private val game: Game, private val missionName: String) {
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 			game.wait(0.5)
 			
+			val apLocations = game.imageUtils.findAll("ap")
+			
 			// Now select the chosen difficulty.
 			when (difficulty) {
 				"Very Hard" -> {
-					game.findAndClickButton("event_raid_very_hard")
+					game.gestureUtils.tap(apLocations[0].x, apLocations[0].y, "ap")
 				}
 				"Extreme" -> {
-					game.findAndClickButton("event_raid_extreme")
+					game.gestureUtils.tap(apLocations[1].x, apLocations[1].y, "ap")
 				}
 				"Impossible" -> {
-					game.findAndClickButton("event_raid_impossible")
+					game.gestureUtils.tap(apLocations[2].x, apLocations[2].y, "ap")
 				}
 			}
 			
 			// If the user does not have enough Treasures to host a Extreme or Impossible Raid, host a Very Hard Raid instead.
-			if (difficulty == "Extreme" && !game.imageUtils.waitVanish("event_raid_extreme", timeout = 10)) {
+			if (difficulty == "Extreme" && !game.imageUtils.waitVanish("ap", timeout = 10)) {
 				game.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...", tag = tag)
-				game.findAndClickButton("event_raid_very_hard")
-			} else if (difficulty == "Impossible" && !game.imageUtils.waitVanish("event_raid_impossible", timeout = 10)) {
+				game.gestureUtils.tap(apLocations[0].x, apLocations[0].y, "ap")
+			} else if (difficulty == "Impossible" && !game.imageUtils.waitVanish("ap", timeout = 10)) {
 				game.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...", tag = tag)
-				game.findAndClickButton("event_raid_very_hard")
+				game.gestureUtils.tap(apLocations[0].x, apLocations[0].y, "ap")
 			}
 		}
 	}
