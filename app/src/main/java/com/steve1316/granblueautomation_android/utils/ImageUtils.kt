@@ -421,7 +421,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			if (sourceBitmap == null) {
 				game.gestureUtils.swipe(500f, 500f, 500f, 400f, 100L)
 				game.gestureUtils.swipe(500f, 400f, 500f, 500f, 100L)
-				game.wait(0.25)
+				game.wait(0.1)
 			}
 		}
 		
@@ -458,7 +458,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			if (sourceBitmap == null) {
 				game.gestureUtils.swipe(500f, 500f, 500f, 400f, 100L)
 				game.gestureUtils.swipe(500f, 400f, 500f, 500f, 100L)
-				game.wait(0.25)
+				game.wait(0.1)
 			}
 		}
 		
