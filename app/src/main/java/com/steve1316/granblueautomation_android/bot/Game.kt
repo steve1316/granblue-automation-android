@@ -874,7 +874,7 @@ class Game(val myContext: Context) {
 	 * Detects any "Friend Request" popups and close them.
 	 */
 	private fun checkFriendRequest() {
-		if (imageUtils.confirmLocation("friend_request")) {
+		if (imageUtils.confirmLocation("friend_request", tries = 3)) {
 			findAndClickButton("cancel")
 		}
 	}
@@ -883,7 +883,7 @@ class Game(val myContext: Context) {
 	 * Detects Skyscope popup and close it.
 	 */
 	fun checkSkyscope() {
-		if (imageUtils.confirmLocation("skyscope")) {
+		if (imageUtils.confirmLocation("skyscope", tries = 3)) {
 			findAndClickButton("close")
 			wait(1.0)
 		}
