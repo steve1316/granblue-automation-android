@@ -1216,106 +1216,15 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		// Skip this entire section if combat already ended as dictated in the waitForAttack() function.
 		if (!expGainedLocationCheck) {
-			// Until the bot reaches the Quest Results screen, keep pressing the "Attack" and "Next" buttons if not Semi Auto or Full Auto.
-			while (!retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
-				// Clear any detected dialog popups that might obstruct the "Attack" button.
-				findCombatDialog()
+			// If Semi or Full Auto is not enabled at the end of the combat script, enable one or the other.
+			if (!semiAutoCheckFlag && !fullAutoCheckFlag) {
+				game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
+				fullAutoCheckFlag = game.findAndClickButton("full_auto")
 				
-				// Tap the "Attack" button once every command inside the Turn Block has been processed.
-				game.printToLog("[COMBAT] Ending Turn $turnNumber")
-				game.findAndClickButton("attack", tries = 10)
-				
-				// Wait until the "Cancel" button vanishes from the screen.
-				if (game.imageUtils.findButton("combat_cancel") != null) {
-					while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
-						if (debugMode) {
-							game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
-						}
-						
-						game.wait(1.0)
-					}
-				}
-				
-				reloadAfterAttack()
-				waitForAttack()
-				
-				game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-				
-				turnNumber += 1
-				
-				var sleepPreventionTimer = 0
-				
-				if ((semiAutoCheckFlag || fullAutoCheckFlag) && enableAutoExitCombat) {
-					autoExitStartTime = System.currentTimeMillis()
-				}
-				
-				when {
-					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
-						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
-						game.printToLog("\n############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						return false
-					}
-					game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
-						game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
-						game.printToLog("\n############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.findAndClickButton("reload")
-						return true
-					}
-					game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
-						game.printToLog("\n############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						return true
-					}
-					retreatCheckFlag -> {
-						game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
-						game.printToLog("\n############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						game.printToLog("############################################################", tag = tag)
-						return false
-					}
-					
-					// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-					else -> {
-						autoExitEndTime = System.currentTimeMillis()
-						if (enableAutoExitCombat && (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes)) {
-							game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", tag = tag)
-							game.printToLog("\n############################################################", tag = tag)
-							game.printToLog("############################################################", tag = tag)
-							game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-							game.printToLog("############################################################", tag = tag)
-							game.printToLog("############################################################", tag = tag)
-							return false
-						}
-						
-						// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-						if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
-							game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", tag = tag)
-							game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
-							game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
-						}
-						
-						partyWipeCheck()
-						game.wait(1.0)
-						
-						sleepPreventionTimer += 1
-					}
-				}
-				
-				if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-					game.wait(3.0)
+				// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
+				if (!fullAutoCheckFlag) {
+					game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
+					semiAutoCheckFlag = true
 				}
 			}
 			
