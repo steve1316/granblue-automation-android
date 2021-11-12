@@ -445,6 +445,8 @@ class Game(val myContext: Context) {
 	 */
 	fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
 		if (partySelectionFirstRun) {
+			wait(1.0)
+			
 			var setLocation: Point? = null
 			var numberOfTries = tries
 			
