@@ -1,17 +1,25 @@
 <AppUpdater>
   <update>
-    <latestVersion>3.0.1</latestVersion>
+    <latestVersion>3.0.2</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v3.0.1 - Changelog
+v3.0.2 - Changelog
+
+New
+---
+- Bot will now activate Full Auto/Semi Auto if they are available at the end of the script instead of repeatedly tapping the Attack button until battle end.
 
 Changed
 ---
-- Updated bot to support 2nd part of Gintama collab.
+- Generalized Event image asset and selection.
+- Various delay adjustments.
+- Added 1s delay before starting process to select group and party to potentially prevent bot going too fast and selecting the wrong setup.
 
-Fixes
+Fixed
 ---
-- Attempted to fix Home page loading in at the bottom.
+- Added missing image assets for ROTB Raid farming.
+- Added missing image assets for Raid farming.
+- Fixed typos in some image assets.
 
     </releaseNotes>
   </update>
