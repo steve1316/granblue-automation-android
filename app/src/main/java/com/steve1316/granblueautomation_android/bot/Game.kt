@@ -823,13 +823,13 @@ class Game(val myContext: Context) {
 		printToLog("\n[INFO] Now beginning process to check for popups...")
 		
 		var tries = 5
-		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon")) {
-			if (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
+		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+			if (!enableSkipAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
 				break
 			}
 			
 			// Break out of the loop if the bot detected the "Not Enough AP" popup.
-			if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+			if (!enableSkipAutoRestore && imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 				break
 			}
 			
@@ -861,7 +861,6 @@ class Game(val myContext: Context) {
 			// Attempt to scroll up to counteract bug where entering the Summon Selection screen led to being brought to the bottom of the page.
 			gestureUtils.scroll(scrollDown = false)
 			
-			wait(1.0)
 			tries -= 1
 		}
 		
@@ -896,7 +895,7 @@ class Game(val myContext: Context) {
 		if (findAndClickButton("tap_here_to_see_rewards")) {
 			wait(1.0)
 			
-			if (imageUtils.confirmLocation("no_loot", tries = 1)) {
+			if (imageUtils.confirmLocation("no_loot", tries = 2)) {
 				printToLog("[INFO] No loot can be collected. Backing out...")
 				
 				// Navigate back to the Quests screen.
@@ -911,8 +910,8 @@ class Game(val myContext: Context) {
 					collectLoot(isCompleted = false, isPendingBattle = true)
 				}
 				
-				findAndClickButton("close", tries = 1)
-				findAndClickButton("ok", tries = 1)
+				findAndClickButton("close", tries = 2)
+				findAndClickButton("ok", tries = 2)
 				
 				return true
 			}
