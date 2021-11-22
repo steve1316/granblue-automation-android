@@ -591,7 +591,7 @@ class Game(val myContext: Context) {
 		
 		// Start the mission by clicking "OK".
 		findAndClickButton("ok")
-		wait(2.0)
+		wait(5.0)
 		
 		// Detect if a "This raid battle has already ended" popup appeared.
 		if (farmingMode == "Raid" && findAndClickButton("ok")) {
