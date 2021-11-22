@@ -825,7 +825,7 @@ class Game(val myContext: Context) {
 		printToLog("\n[INFO] Now beginning process to check for popups...")
 		
 		var tries = 5
-		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 5)) {
 			if (!enableSkipAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
 				break
 			}
@@ -859,9 +859,6 @@ class Game(val myContext: Context) {
 			if (!findAndClickButton("close", tries = 1, suppressError = true)) {
 				findAndClickButton("cancel", tries = 1, suppressError = true)
 			}
-			
-			// Attempt to scroll up to counteract bug where entering the Summon Selection screen led to being brought to the bottom of the page.
-			gestureUtils.scroll(scrollDown = false)
 			
 			tries -= 1
 		}
