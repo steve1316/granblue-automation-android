@@ -552,10 +552,12 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			
 			// Double tap the Skill to avoid any popups caused by other Raid participants.
 			game.wait(0.5)
-			game.gestureUtils.tap(x, y, "template_skill", taps = 2)
+			game.gestureUtils.tap(x, y, "template_skill")
+			
+			game.wait(1.0)
 			
 			// Check if the Skill requires a target.
-			if (game.imageUtils.confirmLocation("use_skill", tries = 2)) {
+			if (game.imageUtils.confirmLocation("use_skill", tries = 3)) {
 				val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
 				
 				if (selectCharacterLocation != null) {
