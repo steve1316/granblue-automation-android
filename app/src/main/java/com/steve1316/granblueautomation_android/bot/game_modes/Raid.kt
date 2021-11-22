@@ -57,6 +57,7 @@ class Raid(private val game: Game) {
 		
 		// Save the locations of the "Join Room" button and the "Room Code" text box.
 		if (firstInitialization) {
+			game.wait(2.0)
 			joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
 			roomCodeTextBoxLocation = if (!game.imageUtils.isTablet) {
 				if (game.imageUtils.isLowerEnd) {
