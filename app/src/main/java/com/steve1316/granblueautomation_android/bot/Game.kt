@@ -941,7 +941,7 @@ class Game(val myContext: Context) {
 			
 			findAndClickButton("ok", tries = 1)
 			
-			wait(1.0)
+			wait(3.0)
 			
 			if (imageUtils.confirmLocation("pending_battles", tries = 1)) {
 				// Process the current Pending Battle.
