@@ -103,7 +103,10 @@ class Arcarum(private val game: Game, private val mapName: String) {
 			}
 			
 			// Prioritise any enemies/chests/thorns that are available on the current node.
-			if (game.findAndClickButton("arcarum_action", tries = 1)) {
+			val arcarumActions = game.imageUtils.findAll("arcarum_action")
+			if (arcarumActions.size > 0) {
+				game.gestureUtils.tap(arcarumActions[0].x, arcarumActions[0].y, "arcarum_action")
+				
 				game.wait(2.0)
 				
 				game.checkForCAPTCHA()
