@@ -44,20 +44,22 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 		
 		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 1, suppressError = true)
-		if (partyWipeIndicatorLocation != null) {
-			// Tap on the blue indicator to get rid of the overlay.
-			game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y, "party_wipe_indicator")
-			
+		if (partyWipeIndicatorLocation != null || game.imageUtils.confirmLocation("salute_participants", tries = 1, suppressError = true)) {
 			if (game.farmingMode != "Raid" && game.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
-				game.printToLog("[WARNING] Party has wiped during Combat Mode. Retreating now...", tag = tag)
+				// Tap on the blue indicator to get rid of the overlay.
+				if (partyWipeIndicatorLocation != null) {
+					game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y, "party_wipe_indicator")
+				}
+				
+				game.printToLog("[WARNING] Party has wiped during Combat Mode for this non-Raid battle. Retreating now...", tag = tag)
 				
 				// Close the popup that asks if you want to use a Full Elixir. Then tap the red "Retreat" button.
 				game.findAndClickButton("cancel")
 				game.wait(1.0)
 				game.findAndClickButton("retreat_confirmation")
 				retreatCheckFlag = true
-			} else if ((game.farmingMode == "Raid" || game.farmingMode == "Dread Barrage")) {
-				game.printToLog("[WARNING] Party has wiped during Combat Mode. Backing out now without retreating...", tag = tag)
+			} else if (game.farmingMode == "Raid" || game.farmingMode == "Dread Barrage" || game.farmingMode == "Guild Wars" || game.missionName.contains("Raid")) {
+				game.printToLog("[WARNING] Party has wiped during Combat Mode for this Raid battle. Backing out now without retreating...", tag = tag)
 				
 				// Head back to the Home screen.
 				game.goBackHome(confirmLocationCheck = true)
