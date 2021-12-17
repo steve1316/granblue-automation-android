@@ -1,19 +1,20 @@
 <AppUpdater>
   <update>
-    <latestVersion>3.0.3</latestVersion>
+    <latestVersion>3.0.4</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v3.0.3 - Changelog
+v3.0.4 - Changelog
 
 Changed
 ---
-- Added a delay when attempting to join a Raid.
-- Adjusted delay before checking if Raid already ended during party select.
+- Adjust when Home location check occurs.
+- Add more delay when checking Pending Battles.
+- Fix possible stuck loop on Treasure and Do or Die events in Arcarum.
+- Add more clarity to Arcarum log message for a specific action.
 
 Fixed
 ---
-- Fixed accidentally bypassing target popup when using a skill.
-- Fixed bot getting stuck due to scrolling up during check for popups.
+- Fix retreat bug for Guild Wars and any Raid-related battles.
 
     </releaseNotes>
   </update>
