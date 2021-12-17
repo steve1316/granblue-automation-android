@@ -119,7 +119,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 						"Claimed Treasure/Keythorn"
 					}
 					else -> {
-						"Claimed Spirethorn"
+						"Claimed Spirethorn/No Action"
 					}
 				}
 			}
