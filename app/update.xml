@@ -1,21 +1,17 @@
 <AppUpdater>
   <update>
-    <latestVersion>3.0.4</latestVersion>
+    <latestVersion>3.0.5</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v3.0.4 - Changelog
+v3.0.5 - Changelog
+
+Added
+---
+* Added new option in Setttings page for Event alternative UI setups.
 
 Changed
 ---
-- Adjust when Home location check occurs.
-- Add more delay when checking Pending Battles.
-- Fix possible stuck loop on Treasure and Do or Die events in Arcarum.
-- Add more clarity to Arcarum log message for a specific action.
-
-Fixed
----
-- Fix retreat bug for Guild Wars and any Raid-related battles.
-
+* Adjust when Combat Mode checks if battle ended when Full Auto is on.
     </releaseNotes>
   </update>
 </AppUpdater>
