@@ -827,10 +827,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * Wait several tries until the bot sees either the "Attack" or the "Next" button before starting a new turn.
 	 */
 	private fun waitForAttack() {
-		game.printToLog("[COMBAT] Attack ended.", tag = tag)
+		game.printToLog("[COMBAT] Waiting for attack to end...", tag = tag)
 		var tries = 10
 		
-		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1) != null && game.imageUtils.findButton("next", tries = 1) != null) {
+		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1) == null && game.imageUtils.findButton("next", tries = 1) == null) {
 			// Stagger the checks for dialog popups during Combat Mode.
 			if (tries % 2 == 0) {
 				findCombatDialog()
@@ -838,9 +838,13 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				// Check if the Party wiped after attacking.
 				partyWipeCheck()
 				
-				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1) || game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
+				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1)) {
 					break
 				}
+			}
+			
+			if (game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
+				break
 			}
 			
 			tries -= 1
@@ -1222,38 +1226,118 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		if (!expGainedLocationCheck) {
 			// If Semi or Full Auto is not enabled at the end of the combat script, enable one or the other.
 			if (!semiAutoCheckFlag && !fullAutoCheckFlag) {
-				game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
-				fullAutoCheckFlag = game.findAndClickButton("full_auto")
-				
-				// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
-				if (!fullAutoCheckFlag) {
-					game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
-					semiAutoCheckFlag = true
+				when {
+					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						return false
+					}
+					game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.findAndClickButton("reload")
+						return true
+					}
+					game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						return true
+					}
+					retreatCheckFlag -> {
+						game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						return false
+					}
+					else -> {
+						game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
+						fullAutoCheckFlag = game.findAndClickButton("full_auto")
+						
+						// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
+						if (!fullAutoCheckFlag) {
+							game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
+							semiAutoCheckFlag = true
+						}
+					}
 				}
 			}
 			
 			// Double check to see if Semi Auto is turned on. Note that the "Semi Auto" button only appears while the Party is attacking.
 			if (!retreatCheckFlag && semiAutoCheckFlag && !fullAutoCheckFlag) {
-				game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", tag = tag)
-				
-				val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
-				if (enabledSemiAutoButtonLocation == null) {
-					// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
-					game.findAndClickButton("attack")
-					
-					game.wait(2.0)
-					
-					semiAutoCheckFlag = game.findAndClickButton("semi_auto", tries = 5)
-					
-					// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the screen instead.
-					if (!semiAutoCheckFlag) {
-						game.printToLog("[COMBAT] Failed to enable Semi Auto. Falling back to Full Auto.", tag = tag)
-						fullAutoCheckFlag = true
+				when {
+					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						return false
+					}
+					game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.findAndClickButton("reload")
+						return true
+					}
+					game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						return true
+					}
+					retreatCheckFlag -> {
+						game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
+						game.printToLog("\n############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						game.printToLog("############################################################", tag = tag)
+						return false
+					}
+					else -> {
+						game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", tag = tag)
 						
-						// Enable Full Auto.
-						game.findAndClickButton("full_auto")
-					} else {
-						game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
+						val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
+						if (enabledSemiAutoButtonLocation == null) {
+							// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
+							game.findAndClickButton("attack")
+							
+							game.wait(2.0)
+							
+							semiAutoCheckFlag = game.findAndClickButton("semi_auto", tries = 5)
+							
+							// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the screen instead.
+							if (!semiAutoCheckFlag) {
+								game.printToLog("[COMBAT] Failed to enable Semi Auto. Falling back to Full Auto.", tag = tag)
+								fullAutoCheckFlag = true
+								
+								// Enable Full Auto.
+								game.findAndClickButton("full_auto")
+							} else {
+								game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
+							}
+						}
 					}
 				}
 			}
