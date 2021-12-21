@@ -66,6 +66,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 							commit()
 						}
 					} else {
+						// Reveal this checkbox if the farming mode is set to "Event".
+						val eventAlternativeUINavigationCheckBox: CheckBoxPreference = findPreference("enableEventAlternativeUINavigation")!!
+						eventAlternativeUINavigationCheckBox.isVisible = farmingModePicker.value == "Event"
+						
 						val summonPicker: Preference = findPreference("summonPicker")!!
 						summonPicker.title = "Select Summon(s)*"
 						
@@ -95,6 +99,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 					
 					// Finally, enable the Mission picker.
 					missionPicker.isEnabled = true
+				}
+				"enableEventAlternativeUINavigation" -> {
+					val eventAlternativeUINavigationCheckBox: CheckBoxPreference = findPreference("enableEventAlternativeUINavigation")!!
+					sharedPreferences.edit {
+						putBoolean("eventAlternativeUINavigation", eventAlternativeUINavigationCheckBox.isChecked)
+						commit()
+					}
 				}
 				"missionPicker" -> {
 					val missionPicker: ListPreference = findPreference("missionPicker")!!
@@ -447,6 +458,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		
 		// Grab the saved preferences from the previous time the user used the app.
 		val farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
+		val eventAlternativeUINavigation: Boolean = sharedPreferences.getBoolean("eventAlternativeUINavigation", false)
 		val missionName: String = sharedPreferences.getString("missionName", "")!!
 		val itemName: String = sharedPreferences.getString("itemName", "")!!
 		val itemAmount: Int = sharedPreferences.getInt("itemAmount", 1)
@@ -473,6 +485,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		
 		// Get references to the Preference components.
 		val farmingModePicker: ListPreference = findPreference("farmingModePicker")!!
+		val eventAlternativeUINavigationCheckBox: CheckBoxPreference = findPreference("enableEventAlternativeUINavigation")!!
 		val missionPicker: ListPreference = findPreference("missionPicker")!!
 		val itemPicker: ListPreference = findPreference("itemPicker")!!
 		val itemAmountPicker: SeekBarPreference = findPreference("itemAmountPicker")!!
@@ -508,6 +521,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			
 			// Build the AlertDialog for Summons or disable it if its Coop.
 			if (farmingMode != "Coop" && farmingMode != "Arcarum") {
+				eventAlternativeUINavigationCheckBox.isVisible = farmingMode == "Event"
+				eventAlternativeUINavigationCheckBox.isChecked = eventAlternativeUINavigation
+				
 				createSummonDialog()
 			} else {
 				val summonPicker: Preference = findPreference("summonPicker")!!

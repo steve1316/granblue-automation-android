@@ -14,11 +14,11 @@ class Event(private val game: Game, private val missionName: String) {
 	private var eventNightmareGroupNumber: Int
 	private var eventNightmarePartyNumber: Int
 	
-	private val moveOneDown: Boolean = true
-	private val fallback: Boolean = true
+	private val moveOneDown: Boolean
 	
 	init {
 		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
+		moveOneDown = sharedPreferences.getBoolean("eventAlternativeUINavigation", false)
 		enableEventNightmare = sharedPreferences.getBoolean("enableEventNightmare", false)
 		eventNightmareSummonList = sharedPreferences.getStringSet("eventNightmareSummonList", setOf<String>())!!.toList()
 		eventNightmareGroupNumber = sharedPreferences.getInt("eventNightmareGroupNumber", 0)

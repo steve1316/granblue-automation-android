@@ -12,6 +12,12 @@
             app:useSimpleSummaryProvider="true" />
 
         <CheckBoxPreference
+            android:summary="Enable alternative navigation for UI setup introduced in the Gintama collab event. In other words, enable this if there are 3 'Select' buttons under the Event tab in the Special page."
+            app:isPreferenceVisible="false"
+            app:key="enableEventAlternativeUINavigation"
+            app:title="Enable Alternative UI navigation" />
+
+        <CheckBoxPreference
             android:summary="Enable no timeout when attempting to farm raids that appear infrequently."
             app:isPreferenceVisible="false"
             app:key="enableNoTimeout"
