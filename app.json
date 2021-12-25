@@ -2,6 +2,7 @@
     "expo": {
         "name": "granblue-automation-android",
         "slug": "granblue-automation-android",
+        "entryPoint": "./src/App.tsx",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
