@@ -1,6 +1,4 @@
-import { StyleSheet, View, Alert } from "react-native"
-import Button from "../../components/Button"
-import MessageLog from "../../components/MessageLog"
+import { StyleSheet, Pressable, Text, StyleProp, ViewStyle, GestureResponderEvent } from "react-native"
 
 const styles = StyleSheet.create({
     container: {
@@ -30,13 +28,22 @@ const styles = StyleSheet.create({
     },
 })
 
-const Home = () => {
+const Button = ({
+    text,
+    buttonStyle,
+    textStyle,
+    onPress,
+}: {
+    text: string
+    buttonStyle?: StyleProp<ViewStyle> | null
+    textStyle?: StyleProp<ViewStyle> | null
+    onPress?: (event: GestureResponderEvent) => void | null
+}) => {
     return (
-        <View style={styles.container}>
-            <Button text="Start" onPress={() => Alert.alert("Pressed")} />
-            <MessageLog />
-        </View>
+        <Pressable style={buttonStyle == null ? styles.button : buttonStyle} onPress={onPress}>
+            <Text style={textStyle == null ? styles.buttonText : textStyle}>{text}</Text>
+        </Pressable>
     )
 }
 
-export default Home
+export default Button
