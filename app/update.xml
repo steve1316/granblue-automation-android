@@ -1,17 +1,13 @@
 <AppUpdater>
   <update>
-    <latestVersion>3.0.5</latestVersion>
+    <latestVersion>3.1.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v3.0.5 - Changelog
+v3.1.0 - Changelog
 
 Added
 ---
-* Added new option in Setttings page for Event alternative UI setups.
-
-Changed
----
-* Adjust when Combat Mode checks if battle ended when Full Auto is on.
+* Added Generic Farming Mode for missions with "Play Again" functionality. Bot must start either at the Combat screen with the "Attack" button visible or the Loot Collection screen with the "Play Again" button visible.
     </releaseNotes>
   </update>
 </AppUpdater>
