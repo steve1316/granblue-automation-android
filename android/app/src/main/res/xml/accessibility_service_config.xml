@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--Configuration for what the Accessibility Service is allowed to do. The flags "canPerformGestures" and "canRetrieveWindowContent" are critical
+to the operations performed by the bot.-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackSpoken"
+    android:accessibilityFlags="flagDefault"
+    android:canPerformGestures="true"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_service_description"
+    android:notificationTimeout="1000"
+    android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity" />
