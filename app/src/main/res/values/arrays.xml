@@ -16,6 +16,7 @@
         <item>Proving Grounds</item>
         <item>Xeno Clash</item>
         <item>Arcarum</item>
+        <item>Generic</item>
     </string-array>
 
     <string-array name="summon_list">

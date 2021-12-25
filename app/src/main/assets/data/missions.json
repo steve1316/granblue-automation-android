@@ -370,5 +370,10 @@
       "Point Bellator",
       "Point Celsus"
     ]
+  },
+  "Generic": {
+    "None": [
+      "Any"
+    ]
   }
 }

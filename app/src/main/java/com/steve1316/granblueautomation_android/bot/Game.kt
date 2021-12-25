@@ -61,6 +61,7 @@ class Game(val myContext: Context) {
 	private lateinit var provingGrounds: ProvingGrounds
 	private lateinit var xenoClash: XenoClash
 	private lateinit var arcarum: Arcarum
+	private lateinit var generic: Generic
 	
 	private val startTime: Long = System.currentTimeMillis()
 	
@@ -89,6 +90,8 @@ class Game(val myContext: Context) {
 			xenoClash = XenoClash(this, missionName)
 		} else if (farmingMode == "Arcarum") {
 			arcarum = Arcarum(this, missionName)
+		} else if (farmingMode == "Generic") {
+			generic = Generic(this)
 		}
 	}
 	
@@ -1031,6 +1034,8 @@ class Game(val myContext: Context) {
 				itemAmountFarmed += xenoClash.start(firstRun)
 			} else if (farmingMode == "Arcarum") {
 				itemAmountFarmed += arcarum.start()
+			} else if (farmingMode == "Generic") {
+				itemAmountFarmed += generic.start()
 			}
 			
 			if (itemAmountFarmed < itemAmount) {

@@ -70,6 +70,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 						val eventAlternativeUINavigationCheckBox: CheckBoxPreference = findPreference("enableEventAlternativeUINavigation")!!
 						eventAlternativeUINavigationCheckBox.isVisible = farmingModePicker.value == "Event"
 						
+						val groupPicker: ListPreference = findPreference("groupPicker")!!
+						val partyPicker: ListPreference = findPreference("partyPicker")!!
+						groupPicker.isVisible = farmingModePicker.value != "Generic"
+						partyPicker.isVisible = farmingModePicker.value != "Generic"
+						
 						val summonPicker: Preference = findPreference("summonPicker")!!
 						summonPicker.title = "Select Summon(s)*"
 						
@@ -523,6 +528,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			if (farmingMode != "Coop" && farmingMode != "Arcarum") {
 				eventAlternativeUINavigationCheckBox.isVisible = farmingMode == "Event"
 				eventAlternativeUINavigationCheckBox.isChecked = eventAlternativeUINavigation
+				
+				groupPicker.isVisible = farmingMode != "Generic"
+				partyPicker.isVisible = farmingMode != "Generic"
 				
 				createSummonDialog()
 			} else {
