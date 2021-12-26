@@ -5,7 +5,6 @@ import MessageLog from "../../components/MessageLog"
 
 const styles = StyleSheet.create({
     root: {
-        height: "100%",
         flex: 1,
         flexDirection: "column",
         alignItems: "center",
@@ -25,7 +24,6 @@ const Home = () => {
                 }}
                 containerStyle={{
                     width: 100,
-                    marginHorizontal: 50,
                     marginVertical: 10,
                 }}
                 raised
