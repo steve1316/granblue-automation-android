@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react"
-import { StyleSheet, View, ScrollView } from "react-native"
+import { StyleSheet, View, Text, ScrollView } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
 import { Button } from "react-native-elements/dist/buttons/Button"
 import DocumentPicker, { DirectoryPickerResponse, DocumentPickerResponse } from "react-native-document-picker"
 import data from "../../data/data.json"
 import { BotStateContext } from "../../context/BotStateContext"
+import { Picker } from "@react-native-picker/picker"
 
 const styles = StyleSheet.create({
     root: {
@@ -87,6 +88,7 @@ const Settings = () => {
             },
         })
 
+        // Reset Item and Mission in local state.
         setItem("")
         setMission("")
     }, [farmingMode])
@@ -101,6 +103,9 @@ const Settings = () => {
     useEffect(() => {
         console.log("Item populate callback is called")
         populateItemList()
+
+        // Reset Mission in local state.
+        setMission("")
     }, [farmingMode])
 
     useEffect(() => {
@@ -171,10 +176,6 @@ const Settings = () => {
         const filteredNewMissionList = Array.from(new Set(newMissionList))
         setMissionList(filteredNewMissionList)
     }
-
-    useEffect(() => {
-        console.log("AMOUNT: ", itemAmount)
-    }, [itemAmount])
 
     return (
         <View style={styles.root}>
@@ -264,6 +265,17 @@ const Settings = () => {
                             zIndex={9997}
                         />
                     ) : null}
+
+                    <View>
+                        <Text>Item Amount:</Text>
+                        <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown">
+                            {[...Array(999 - 1 + 1).keys()]
+                                .map((x) => x + 1)
+                                .map((value) => {
+                                    return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                })}
+                        </Picker>
+                    </View>
                 </View>
             </ScrollView>
         </View>
