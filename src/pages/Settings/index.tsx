@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { StyleSheet, View, Text, ScrollView } from "react-native"
+import { StyleSheet, View, Text, ScrollView, Modal, Dimensions } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
 import { Button } from "react-native-elements/dist/buttons/Button"
@@ -30,6 +30,7 @@ const Settings = () => {
     const [open, setOpen] = useState<boolean>(false)
     const [open2, setOpen2] = useState<boolean>(false)
     const [open3, setOpen3] = useState<boolean>(false)
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
 
     const [itemList, setItemList] = useState<Item[]>([])
     const [missionList, setMissionList] = useState<Item[]>([])
@@ -276,6 +277,44 @@ const Settings = () => {
                                 })}
                         </Picker>
                     </View>
+
+                    <Button
+                        title="Select Summons"
+                        buttonStyle={{
+                            backgroundColor: "rgba(78, 116, 289, 1)",
+                            borderRadius: 3,
+                        }}
+                        containerStyle={{
+                            width: 100,
+                            marginHorizontal: 50,
+                            marginVertical: 10,
+                        }}
+                        raised
+                        onPress={() => setModalOpen(true)}
+                    />
+                    <Modal transparent={true} animationType="fade" visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
+                        <View
+                            style={{
+                                flex: 1,
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: "rgba(80,80,80,0.3)",
+                            }}
+                            onTouchEnd={() => setModalOpen(false)}
+                        >
+                            <View
+                                style={{
+                                    width: Dimensions.get("window").width * 0.5,
+                                    height: Dimensions.get("window").height * 0.5,
+                                    backgroundColor: "#fff",
+                                    padding: 20,
+                                }}
+                            >
+                                <Text>Hello</Text>
+                            </View>
+                        </View>
+                    </Modal>
                 </View>
             </ScrollView>
         </View>
