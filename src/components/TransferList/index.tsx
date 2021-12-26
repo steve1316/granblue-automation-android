@@ -175,7 +175,7 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
             setLeftList(newLeftList)
 
             // Move the element to the right list.
-            newRightList = [...rightList, { label: value, uri: summonData[index].uri }]
+            newRightList = [...rightList, { label: value, uri: leftList[index].uri }]
             setRightList(newRightList)
         } else {
             // Handle the right list
@@ -184,8 +184,11 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
             newRightList.splice(index, 1)
             setRightList(newRightList)
 
+            // Get the index of the summon from the original untouched list.
+            const newIndex = summonData.findIndex((summon) => summon.label === value)
+
             // Move the element to the left list.
-            const newLeftList = [...leftList, { label: value, uri: summonData[index].uri }]
+            const newLeftList = [...leftList, { label: value, uri: summonData[newIndex].uri }]
             setLeftList(newLeftList)
         }
 
