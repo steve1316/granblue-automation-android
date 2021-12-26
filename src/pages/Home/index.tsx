@@ -1,5 +1,6 @@
 import { StyleSheet, View, Alert } from "react-native"
-import Button from "../../components/Button"
+import { Button } from "react-native-elements/dist/buttons/Button"
+
 import MessageLog from "../../components/MessageLog"
 
 const styles = StyleSheet.create({
@@ -33,7 +34,20 @@ const styles = StyleSheet.create({
 const Home = () => {
     return (
         <View style={styles.container}>
-            <Button text="Start" onPress={() => Alert.alert("Pressed")} />
+            <Button
+                title="Start"
+                buttonStyle={{
+                    backgroundColor: "rgba(78, 116, 289, 1)",
+                    borderRadius: 3,
+                }}
+                containerStyle={{
+                    width: 100,
+                    marginHorizontal: 50,
+                    marginVertical: 10,
+                }}
+                raised
+                onPress={() => Alert.alert("Pressed!")}
+            />
             <MessageLog />
         </View>
     )
