@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { StyleSheet, View, Text, ScrollView, Dimensions, Modal, TouchableOpacity } from "react-native"
+import { StyleSheet, View, Text, ScrollView, Dimensions } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
 import { Button } from "react-native-elements/dist/buttons/Button"

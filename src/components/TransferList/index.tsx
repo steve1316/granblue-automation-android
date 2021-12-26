@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Dimensions } from "react-native"
-import { StyleSheet, View, FlatList, ScrollView, Text, Image, ImageSourcePropType } from "react-native"
-import { Card, Button, Icon, Divider, ListItem, Avatar } from "react-native-elements"
+import { View, FlatList, Text, Image, ImageSourcePropType } from "react-native"
+import { Card } from "react-native-elements"
 import { BotStateContext } from "../../context/BotStateContext"
 
 interface Summon {

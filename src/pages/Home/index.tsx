@@ -1,4 +1,4 @@
-import { StyleSheet, View, Alert } from "react-native"
+import { StyleSheet, View } from "react-native"
 import { Button } from "react-native-elements/dist/buttons/Button"
 
 import MessageLog from "../../components/MessageLog"
