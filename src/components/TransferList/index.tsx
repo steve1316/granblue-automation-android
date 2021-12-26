@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
+import { Dimensions } from "react-native"
 import { StyleSheet, View, FlatList, ScrollView, Text, Image, ImageSourcePropType } from "react-native"
 import { Card, Button, Icon, Divider, ListItem, Avatar } from "react-native-elements"
 import { BotStateContext } from "../../context/BotStateContext"
@@ -121,7 +122,7 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
     // Populate the Support Summon List.
     useEffect(() => {
         // Populate the left list.
-        let oldLeftList: Summon[] = leftList
+        let oldLeftList: Summon[] = []
 
         Object.entries(summonData).forEach((key) => {
             oldLeftList = [...oldLeftList, key[1]]
@@ -150,11 +151,18 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
         }
 
         // Filter out summons from the left list that are already selected.
-        const filteredList = oldLeftList.filter((summon) => !oldRightList.includes(summon))
+        const filteredList = oldLeftList.filter((leftSummon) =>
+            oldRightList.every((rightSummon) => {
+                if (leftSummon.label === rightSummon.label) {
+                    return false
+                } else {
+                    return true
+                }
+            })
+        )
 
         setLeftList(filteredList)
         setRightList(oldRightList)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const handleChecked = (value: string, isLeftList: boolean) => () => {
@@ -194,19 +202,21 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
     }
 
     const customList = (items: Summon[], isLeftList: boolean) => (
-        <Card containerStyle={{ height: "100%" }}>
+        <Card containerStyle={{ flex: 1 }}>
             <Text>{isLeftList ? "Available Support Summons" : "Selected Support Summons"}</Text>
-
-            <Divider />
 
             <FlatList
                 data={items}
+                style={{ height: "95%" }}
+                contentContainerStyle={{ paddingBottom: 20 }}
                 renderItem={(item) => {
                     return (
-                        <Card>
-                            <Card.Title>{item.item.label}</Card.Title>
-                            <Image source={item.item.uri} />
-                        </Card>
+                        <View onTouchEnd={handleChecked(item.item.label, isLeftList)}>
+                            <Card containerStyle={{ alignItems: "center" }}>
+                                <Card.Title>{item.item.label}</Card.Title>
+                                <Image source={item.item.uri} />
+                            </Card>
+                        </View>
                     )
                 }}
                 keyExtractor={(item) => `key-${item.label}`}
@@ -215,10 +225,9 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
     )
 
     return (
-        <View>
+        <View style={{ flex: 1, flexDirection: "column" }}>
             {customList(leftList, true)}
-            {/* <FlatList data={leftList} renderItem={() => customList(leftList, true)} keyExtractor={(item) => item} />
-            <FlatList data={rightList} renderItem={() => customList(rightList, true)} keyExtractor={(item) => item} /> */}
+            {customList(rightList, false)}
         </View>
     )
 }

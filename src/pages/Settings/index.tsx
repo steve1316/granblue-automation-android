@@ -306,9 +306,7 @@ const Settings = () => {
                             <View
                                 style={{
                                     width: Dimensions.get("window").width * 0.8,
-                                    height: Dimensions.get("window").height * 0.8,
-                                    backgroundColor: "#fff",
-                                    padding: 20,
+                                    height: Dimensions.get("window").height * 0.9,
                                 }}
                             >
                                 <TransferList isNightmare={false} />
