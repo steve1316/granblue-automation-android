@@ -268,50 +268,56 @@ const Settings = () => {
                         />
                     ) : null}
 
-                    <View>
-                        <Text>Item Amount:</Text>
-                        <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown">
-                            {[...Array(999 - 1 + 1).keys()]
-                                .map((x) => x + 1)
-                                .map((value) => {
-                                    return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
-                                })}
-                        </Picker>
-                    </View>
-
-                    <Button
-                        title="Select Summons"
-                        buttonStyle={{
-                            backgroundColor: "rgba(78, 116, 289, 1)",
-                            borderRadius: 3,
-                        }}
-                        containerStyle={{
-                            alignSelf: "center",
-                        }}
-                        raised
-                        onPress={() => setModalOpen(true)}
-                    />
-                    <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
-                        <View
-                            style={{
-                                flex: 1,
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: "rgba(80,80,80,0.3)",
-                            }}
-                        >
-                            <TouchableOpacity style={{ position: "absolute", height: "100%", width: "100%" }} onPress={() => setModalOpen(false)} />
-                            <View
-                                style={{
-                                    width: Dimensions.get("window").width * 0.7,
-                                    height: Dimensions.get("window").height * 0.9,
-                                }}
-                            >
-                                <TransferList isNightmare={false} />
-                            </View>
+                    {mission !== "" ? (
+                        <View>
+                            <Text>Item Amount:</Text>
+                            <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown">
+                                {[...Array(999 - 1 + 1).keys()]
+                                    .map((x) => x + 1)
+                                    .map((value) => {
+                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                    })}
+                            </Picker>
                         </View>
-                    </Modal>
+                    ) : null}
+
+                    {mission !== "" && farmingMode !== "Coop" && farmingMode !== "Arcarum" ? (
+                        <View>
+                            <Button
+                                title="Select Summons"
+                                buttonStyle={{
+                                    backgroundColor: "rgba(78, 116, 289, 1)",
+                                    borderRadius: 3,
+                                }}
+                                containerStyle={{
+                                    alignSelf: "center",
+                                }}
+                                raised
+                                onPress={() => setModalOpen(true)}
+                            />
+                            <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        backgroundColor: "rgba(80,80,80,0.3)",
+                                    }}
+                                >
+                                    <TouchableOpacity style={{ position: "absolute", height: "100%", width: "100%" }} onPress={() => setModalOpen(false)} />
+                                    <View
+                                        style={{
+                                            width: Dimensions.get("window").width * 0.7,
+                                            height: Dimensions.get("window").height * 0.9,
+                                        }}
+                                    >
+                                        <TransferList isNightmare={false} />
+                                    </View>
+                                </View>
+                            </Modal>
+                        </View>
+                    ) : null}
                 </View>
             </ScrollView>
         </View>
