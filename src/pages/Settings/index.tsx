@@ -286,14 +286,12 @@ const Settings = () => {
                             borderRadius: 3,
                         }}
                         containerStyle={{
-                            width: 100,
-                            marginHorizontal: 50,
-                            marginVertical: 10,
+                            alignSelf: "center",
                         }}
                         raised
                         onPress={() => setModalOpen(true)}
                     />
-                    <Modal transparent={true} animationType="fade" visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
+                    <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
                         <View
                             style={{
                                 flex: 1,
@@ -306,7 +304,7 @@ const Settings = () => {
                             <TouchableOpacity style={{ position: "absolute", height: "100%", width: "100%" }} onPress={() => setModalOpen(false)} />
                             <View
                                 style={{
-                                    width: Dimensions.get("window").width * 0.8,
+                                    width: Dimensions.get("window").width * 0.7,
                                     height: Dimensions.get("window").height * 0.9,
                                 }}
                             >
