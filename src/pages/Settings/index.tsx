@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { StyleSheet, View, Text, ScrollView, Modal, Dimensions } from "react-native"
+import { StyleSheet, View, Text, ScrollView, Dimensions, Modal } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
 import { Button } from "react-native-elements/dist/buttons/Button"
@@ -7,6 +7,7 @@ import DocumentPicker, { DirectoryPickerResponse, DocumentPickerResponse } from 
 import data from "../../data/data.json"
 import { BotStateContext } from "../../context/BotStateContext"
 import { Picker } from "@react-native-picker/picker"
+import TransferList from "../../components/TransferList"
 
 const styles = StyleSheet.create({
     root: {
@@ -301,17 +302,16 @@ const Settings = () => {
                                 alignItems: "center",
                                 backgroundColor: "rgba(80,80,80,0.3)",
                             }}
-                            onTouchEnd={() => setModalOpen(false)}
                         >
                             <View
                                 style={{
-                                    width: Dimensions.get("window").width * 0.5,
-                                    height: Dimensions.get("window").height * 0.5,
+                                    width: Dimensions.get("window").width * 0.8,
+                                    height: Dimensions.get("window").height * 0.8,
                                     backgroundColor: "#fff",
                                     padding: 20,
                                 }}
                             >
-                                <Text>Hello</Text>
+                                <TransferList isNightmare={false} />
                             </View>
                         </View>
                     </Modal>
