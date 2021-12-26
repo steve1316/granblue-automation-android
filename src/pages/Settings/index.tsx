@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { StyleSheet, View, Text, ScrollView, Dimensions, Modal } from "react-native"
+import { StyleSheet, View, Text, ScrollView, Dimensions, Modal, TouchableOpacity } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
 import { Button } from "react-native-elements/dist/buttons/Button"
@@ -303,6 +303,7 @@ const Settings = () => {
                                 backgroundColor: "rgba(80,80,80,0.3)",
                             }}
                         >
+                            <TouchableOpacity style={{ position: "absolute", height: "100%", width: "100%" }} onPress={() => setModalOpen(false)} />
                             <View
                                 style={{
                                     width: Dimensions.get("window").width * 0.8,
