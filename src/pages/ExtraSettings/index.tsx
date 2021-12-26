@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text } from "react-native"
 
 const styles = StyleSheet.create({
-    container: {
+    root: {
         flex: 1,
         backgroundColor: "#fff",
         alignItems: "center",
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 
 const ExtraSettings = () => {
     return (
-        <View style={styles.container}>
+        <View style={styles.root}>
             <Text>Hello Extra Settings</Text>
         </View>
     )
