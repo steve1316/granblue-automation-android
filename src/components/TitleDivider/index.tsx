@@ -5,14 +5,14 @@ import MIcon from "react-native-vector-icons/MaterialCommunityIcons"
 
 interface Props {
     title: string
-    subtitle: string
+    subtitle?: string
     hasIcon?: boolean
     iconName?: string
     iconSize?: number
     iconColor?: string
 }
 
-const TitleDivider: FC<Props> = ({ title, subtitle, hasIcon = false, iconName = "android", iconSize = 25, iconColor = "#000" }) => {
+const TitleDivider: FC<Props> = ({ title, subtitle = "", hasIcon = false, iconName = "android", iconSize = 25, iconColor = "#000" }) => {
     const styles = StyleSheet.create({
         title: {
             marginBottom: 10,
@@ -20,6 +20,9 @@ const TitleDivider: FC<Props> = ({ title, subtitle, hasIcon = false, iconName = 
         divider: {
             marginTop: -5,
             marginBottom: 5,
+        },
+        subtitle: {
+            marginBottom: 10,
         },
     })
 
@@ -29,7 +32,7 @@ const TitleDivider: FC<Props> = ({ title, subtitle, hasIcon = false, iconName = 
                 {title} {hasIcon ? <MIcon name={iconName} size={iconSize} color={iconColor} /> : null}
             </Text>
             <Divider style={styles.divider} />
-            <Text style={{ marginBottom: 5 }}>{subtitle}</Text>
+            {subtitle !== "" ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
     )
 }
