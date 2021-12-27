@@ -4,9 +4,9 @@ import BouncyCheckbox from "react-native-bouncy-checkbox"
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
+        flexDirection: "column",
         justifyContent: "center",
+        marginHorizontal: 10,
     },
 })
 

@@ -12,7 +12,9 @@ import TransferList from "../../components/TransferList"
 const styles = StyleSheet.create({
     root: {
         flex: 1,
+        flexDirection: "column",
         justifyContent: "center",
+        marginHorizontal: 10,
     },
     picker: {
         marginVertical: 20,
