@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         justifyContent: "center",
-        marginHorizontal: 10,
+        margin: 10,
     },
 })
 

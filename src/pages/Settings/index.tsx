@@ -14,10 +14,10 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         justifyContent: "center",
-        marginHorizontal: 10,
+        marginVertical: 10,
     },
     picker: {
-        marginVertical: 20,
+        marginVertical: 10,
     },
     dropdown: {
         marginTop: 20,
