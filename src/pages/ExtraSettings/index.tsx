@@ -35,10 +35,16 @@ const ExtraSettings = () => {
                     iconName="twitter"
                     iconColor="#1da1f2"
                 />
-                <Input label="Twitter API Key" multiline value={twitterAPIKey} onChangeText={(value: string) => setTwitterAPIKey(value)} />
-                <Input label="Twitter API Key Secret" multiline value={twitterAPIKeySecret} onChangeText={(value: string) => setTwitterAPIKeySecret(value)} />
-                <Input label="Twitter Access Token" multiline value={twitterAccessToken} onChangeText={(value: string) => setTwitterAccessToken(value)} />
-                <Input label="Twitter Access Token Secret" multiline value={twitterAccessTokenSecret} onChangeText={(value: string) => setTwitterAccessTokenSecret(value)} />
+                <Input label="Twitter API Key" multiline containerStyle={{ marginLeft: -10 }} value={twitterAPIKey} onChangeText={(value: string) => setTwitterAPIKey(value)} />
+                <Input label="Twitter API Key Secret" multiline containerStyle={{ marginLeft: -10 }} value={twitterAPIKeySecret} onChangeText={(value: string) => setTwitterAPIKeySecret(value)} />
+                <Input label="Twitter Access Token" multiline containerStyle={{ marginLeft: -10 }} value={twitterAccessToken} onChangeText={(value: string) => setTwitterAccessToken(value)} />
+                <Input
+                    label="Twitter Access Token Secret"
+                    multiline
+                    containerStyle={{ marginLeft: -10 }}
+                    value={twitterAccessTokenSecret}
+                    onChangeText={(value: string) => setTwitterAccessTokenSecret(value)}
+                />
 
                 <TitleDivider
                     title="Discord Settings"
