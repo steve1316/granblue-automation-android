@@ -56,6 +56,8 @@ const Settings = () => {
     const [item, setItem] = useState<string>("")
     const [mission, setMission] = useState<string>("")
     const [itemAmount, setItemAmount] = useState<number>(1)
+    const [groupNumber, setGroupNumber] = useState<number>(1)
+    const [partyNumber, setPartyNumber] = useState<number>(1)
 
     const [result, setResult] = useState<Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null>()
 
@@ -294,6 +296,11 @@ const Settings = () => {
                                         return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
                                     })}
                             </Picker>
+                        </View>
+                    ) : null}
+
+                    {mission !== "" && farmingMode !== "Coop" && farmingMode !== "Arcarum" ? (
+                        <View>
                             <CustomButton title="Select Summons" width={"100%"} onPress={() => setModalOpen(true)} />
                             <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
                                 <View style={styles.modal}>
@@ -303,6 +310,31 @@ const Settings = () => {
                                     </View>
                                 </View>
                             </Modal>
+                        </View>
+                    ) : null}
+
+                    {mission !== "" ? (
+                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                            <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                                <Text>Group #:</Text>
+                                <Picker selectedValue={groupNumber} onValueChange={(value) => setGroupNumber(value)} mode="dropdown">
+                                    {[...Array(7 - 1 + 1).keys()]
+                                        .map((x) => x + 1)
+                                        .map((value) => {
+                                            return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                        })}
+                                </Picker>
+                            </View>
+                            <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                                <Text>Party #:</Text>
+                                <Picker selectedValue={partyNumber} onValueChange={(value) => setPartyNumber(value)} mode="dropdown">
+                                    {[...Array(6 - 1 + 1).keys()]
+                                        .map((x) => x + 1)
+                                        .map((value) => {
+                                            return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                        })}
+                                </Picker>
+                            </View>
                         </View>
                     ) : null}
                 </View>
