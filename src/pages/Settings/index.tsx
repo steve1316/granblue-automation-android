@@ -202,7 +202,7 @@ const Settings = () => {
     return (
         <View style={styles.root}>
             <ScrollView nestedScrollEnabled={true}>
-                <View style={{ height: 1000, marginHorizontal: 20 }}>
+                <View style={{ height: Dimensions.get("screen").height * 0.5, marginHorizontal: 20 }}>
                     {/* <Button
                         title="Select Combat Script"
                         buttonStyle={{
