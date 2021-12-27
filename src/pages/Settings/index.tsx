@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react"
-import { StyleSheet, View, Text, ScrollView, Dimensions } from "react-native"
+import { StyleSheet, View, Text, ScrollView, Dimensions, TouchableOpacity, Modal } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
-import { Button } from "react-native-elements/dist/buttons/Button"
 import DocumentPicker, { DirectoryPickerResponse, DocumentPickerResponse } from "react-native-document-picker"
 import data from "../../data/data.json"
 import { BotStateContext } from "../../context/BotStateContext"
 import { Picker } from "@react-native-picker/picker"
+import CustomButton from "../../components/CustomButton"
 import TransferList from "../../components/TransferList"
 
 const styles = StyleSheet.create({
@@ -19,6 +19,22 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         marginTop: 20,
+    },
+    modal: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(80,80,80,0.3)",
+    },
+    outsideModal: {
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+    },
+    componentContainer: {
+        width: Dimensions.get("window").width * 0.7,
+        height: Dimensions.get("window").height * 0.9,
     },
 })
 
@@ -278,40 +294,11 @@ const Settings = () => {
                                         return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
                                     })}
                             </Picker>
-                        </View>
-                    ) : null}
-
-                    {mission !== "" && farmingMode !== "Coop" && farmingMode !== "Arcarum" ? (
-                        <View>
-                            <Button
-                                title="Select Summons"
-                                buttonStyle={{
-                                    backgroundColor: "rgba(78, 116, 289, 1)",
-                                    borderRadius: 3,
-                                }}
-                                containerStyle={{
-                                    alignSelf: "center",
-                                }}
-                                raised
-                                onPress={() => setModalOpen(true)}
-                            />
+                            <CustomButton title="Select Summons" width={"100%"} onPress={() => setModalOpen(true)} />
                             <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        flexDirection: "column",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        backgroundColor: "rgba(80,80,80,0.3)",
-                                    }}
-                                >
-                                    <TouchableOpacity style={{ position: "absolute", height: "100%", width: "100%" }} onPress={() => setModalOpen(false)} />
-                                    <View
-                                        style={{
-                                            width: Dimensions.get("window").width * 0.7,
-                                            height: Dimensions.get("window").height * 0.9,
-                                        }}
-                                    >
+                                <View style={styles.modal}>
+                                    <TouchableOpacity style={styles.outsideModal} onPress={() => setModalOpen(false)} />
+                                    <View style={styles.componentContainer}>
                                         <TransferList isNightmare={false} />
                                     </View>
                                 </View>

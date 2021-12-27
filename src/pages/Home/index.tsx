@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native"
-import { Button } from "react-native-elements/dist/buttons/Button"
+import CustomButton from "../../components/CustomButton"
 
 import MessageLog from "../../components/MessageLog"
 
@@ -16,19 +16,7 @@ const styles = StyleSheet.create({
 const Home = () => {
     return (
         <View style={styles.root}>
-            <Button
-                title="Start"
-                buttonStyle={{
-                    backgroundColor: "rgba(78, 116, 289, 1)",
-                    borderRadius: 3,
-                }}
-                containerStyle={{
-                    width: 100,
-                    marginVertical: 10,
-                }}
-                raised
-                onPress={() => Alert.alert("Pressed!")}
-            />
+            <CustomButton title="Start" width={200} borderRadius={20} />
             <MessageLog />
         </View>
     )
