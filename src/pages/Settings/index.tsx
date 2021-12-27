@@ -300,7 +300,7 @@ const Settings = () => {
                     ) : null}
 
                     {mission !== "" && farmingMode !== "Coop" && farmingMode !== "Arcarum" ? (
-                        <View>
+                        <View style={{ zIndex: 9996 }}>
                             <CustomButton title="Select Summons" width={"100%"} onPress={() => setModalOpen(true)} />
                             <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
                                 <View style={styles.modal}>
