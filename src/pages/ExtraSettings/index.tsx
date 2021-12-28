@@ -37,7 +37,7 @@ const ExtraSettings = () => {
     const [autoExitRaidMinutes, setAutoExitRaidsMinutes] = useState<number>(1)
     const [enableNoTimeout, setEnableNoTimeout] = useState<boolean>(false)
     const [enableDelayTap, setEnableDelayTap] = useState<boolean>(false)
-    const [delayTapMilliseconds, setDelayTapMilliseconds] = useState<number>(100)
+    const [delayTapMilliseconds, setDelayTapMilliseconds] = useState<number>(1000)
 
     // Device Settings
     const [confidence, setConfidence] = useState<number>(1)
@@ -199,6 +199,31 @@ const ExtraSettings = () => {
                             inboundColor="black"
                             thumbTintColor="red"
                             thumbSize={30}
+                            trackHeight={10}
+                            style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                        />
+                    </View>
+                ) : null}
+
+                <Checkbox
+                    text="Enable Additional Delay Before Tap"
+                    subtitle="Enables a range of delay before each tap in milliseconds (ms). The base point will be used to create a range from -100ms to +100ms using it to determine the additional delay."
+                    state={enableDelayTap}
+                    updateState={setEnableDelayTap}
+                />
+                {enableDelayTap ? (
+                    <View>
+                        <Text style={{ marginBottom: 10 }}>Set Base Point for Additional Delay: {delayTapMilliseconds} milliseconds</Text>
+                        <Slider
+                            value={delayTapMilliseconds}
+                            minimumValue={100}
+                            maximumValue={5000}
+                            step={50}
+                            onSlidingComplete={(value) => setDelayTapMilliseconds(value)}
+                            minimumTrackTintColor="black"
+                            maximumTrackTintColor="gray"
+                            thumbTintColor="red"
+                            thumbSize={20}
                             trackHeight={10}
                             style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
                         />
