@@ -73,8 +73,18 @@ const ExtraSettings = () => {
                     iconName="discord"
                     iconColor="#7289d9"
                 />
-                <Input label="Discord Token" multiline containerStyle={{ marginLeft: -10 }} value={discordToken} onChangeText={(value: string) => setDiscordToken(value)} />
-                <Input label="Discord User ID" multiline containerStyle={{ marginLeft: -10 }} value={discordUserID} onChangeText={(value: string) => setDiscordUserID(value)} />
+                <Checkbox
+                    text="Enable Discord Notifications"
+                    subtitle="Enable notifications of loot drops and errors encountered by the bot via Discord DMs."
+                    state={enableDiscord}
+                    updateState={setEnableDiscord}
+                />
+                {enableDiscord ? (
+                    <View>
+                        <Input label="Discord Token" multiline containerStyle={{ marginLeft: -10 }} value={discordToken} onChangeText={(value: string) => setDiscordToken(value)} />
+                        <Input label="Discord User ID" multiline containerStyle={{ marginLeft: -10 }} value={discordUserID} onChangeText={(value: string) => setDiscordUserID(value)} />
+                    </View>
+                ) : null}
 
                 <TitleDivider title="Configuration Settings" hasIcon={true} iconName="tune" />
                 <Checkbox text="Enable Debug Mode" subtitle="Enables debugging messages to show up in the log." state={debugMode} updateState={setDebugMode} />
