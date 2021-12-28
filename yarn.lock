@@ -1438,6 +1438,11 @@
   dependencies:
     nanoid "^3.1.23"
 
+"@sharcoux/slider@^5.6.1":
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/@sharcoux/slider/-/slider-5.6.1.tgz#2c68938a7cfdd7e83233141d9a3b5f94452b2e5c"
+  integrity sha512-B0BMsFdlb4keLYZQHsdA9vvaF8F4tHIg2eg+/SFFalGbh+nRoSQtX/tfH17rYlsS4Ew35y2d03xfIEXKcYgPMg==
+
 "@sideway/address@^4.1.3":
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/@sideway/address/-/address-4.1.3.tgz#d93cce5d45c5daec92ad76db492cc2ee3c64ab27"

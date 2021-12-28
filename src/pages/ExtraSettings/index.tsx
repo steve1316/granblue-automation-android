@@ -4,6 +4,7 @@ import { Input, Text } from "react-native-elements"
 import Checkbox from "../../components/Checkbox"
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import TitleDivider from "../../components/TitleDivider"
+import { Slider, RangeSlider } from "@sharcoux/slider"
 
 const styles = StyleSheet.create({
     root: {
@@ -23,6 +24,8 @@ const ExtraSettings = () => {
     const [discordToken, setDiscordToken] = useState<string>("")
     const [discordUserID, setDiscordUserID] = useState<string>("")
     const [enableDelayBetweenRuns, setEnableDelayBetweenRuns] = useState<boolean>(false)
+    const [delayBetweenRuns, setDelayBetweenRuns] = useState<number>(5)
+    const [randomizedDelayBetweenRuns, setRandomizedDelayBetweenRuns] = useState<[number, number]>([5, 15])
     const [enableRandomizedDelayBetweenRuns, setEnableRandomizedDelayBetweenRuns] = useState<boolean>(false)
 
     return (
@@ -84,13 +87,32 @@ const ExtraSettings = () => {
                     </View>
                 ) : null}
 
+                {enableDelayBetweenRuns ? (
+                    <View>
+                        <Text style={{ marginBottom: 10 }}>Delay: {delayBetweenRuns}</Text>
+                        <Slider
+                            value={delayBetweenRuns}
+                            minimumValue={5}
+                            maximumValue={60}
+                            step={1}
+                            onSlidingComplete={(value) => setDelayBetweenRuns(value)}
+                            minimumTrackTintColor="black"
+                            maximumTrackTintColor="gray"
+                            thumbTintColor="red"
+                            thumbSize={20}
+                            trackHeight={10}
+                            style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                        />
+                    </View>
+                ) : null}
+
                 {!enableDelayBetweenRuns ? (
                     <View>
                         <BouncyCheckbox
                             size={30}
                             fillColor={"red"}
                             unfillColor={"white"}
-                            text="Enable Randomized Delay Between Runs"
+                            text={`Enable Randomized Delay Between\nRuns`}
                             iconStyle={{ borderColor: "red" }}
                             textStyle={{
                                 textDecorationLine: "none",
@@ -106,6 +128,28 @@ const ExtraSettings = () => {
                             }}
                         />
                         <Text style={{ marginBottom: 5 }}>Enable randomized delay in seconds between runs to serve as a resting period.</Text>
+                    </View>
+                ) : null}
+
+                {enableRandomizedDelayBetweenRuns ? (
+                    <View>
+                        <Text style={{ marginBottom: 10 }}>
+                            Delay between {randomizedDelayBetweenRuns[0]}-{randomizedDelayBetweenRuns[1]} seconds
+                        </Text>
+                        <RangeSlider
+                            range={randomizedDelayBetweenRuns}
+                            minimumValue={5}
+                            maximumValue={60}
+                            step={1}
+                            minimumRange={1}
+                            onSlidingComplete={(values) => setRandomizedDelayBetweenRuns(values)}
+                            outboundColor="gray"
+                            inboundColor="black"
+                            thumbTintColor="red"
+                            thumbSize={30}
+                            trackHeight={10}
+                            style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                        />
                     </View>
                 ) : null}
             </ScrollView>
