@@ -17,11 +17,14 @@ interface Props {
 const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBorderColor = "red", iconCheckedColor = "red", iconUncheckedColor = "white", state, updateState }) => {
     const styles = StyleSheet.create({
         checkboxContainer: {
-            marginVertical: 10,
+            marginVertical: 5,
             marginLeft: 2,
         },
         subtitle: {
             marginBottom: 5,
+            marginLeft: 2,
+            fontSize: 12,
+            opacity: 0.7,
         },
     })
 
@@ -48,7 +51,7 @@ const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBord
                 isChecked={state}
                 onPress={handleStateChange}
             />
-            <Text style={styles.subtitle}>{subtitle}</Text>
+            {subtitle !== "" ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
     )
 }
