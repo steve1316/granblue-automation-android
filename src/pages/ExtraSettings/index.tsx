@@ -88,6 +88,30 @@ const ExtraSettings = () => {
 
                 <TitleDivider title="Configuration Settings" hasIcon={true} iconName="tune" />
                 <Checkbox text="Enable Debug Mode" subtitle="Enables debugging messages to show up in the log." state={debugMode} updateState={setDebugMode} />
+                <Checkbox
+                    text="Enable Auto Exit Raid"
+                    subtitle="Enables backing out of a Raid without retreating while under Semi/Full Auto after a certain period of time has passed."
+                    state={enableAutoExitRaid}
+                    updateState={setEnableAutoExitRaid}
+                />
+                {enableAutoExitRaid ? (
+                    <View>
+                        <Text style={{ marginBottom: 10 }}>Max Time Allowed for Semi/Full Auto: {autoExitRaidMinutes} minutes</Text>
+                        <Slider
+                            value={autoExitRaidMinutes}
+                            minimumValue={1}
+                            maximumValue={15}
+                            step={1}
+                            onSlidingComplete={(value) => setAutoExitRaidsMinutes(value)}
+                            minimumTrackTintColor="black"
+                            maximumTrackTintColor="gray"
+                            thumbTintColor="red"
+                            thumbSize={20}
+                            trackHeight={10}
+                            style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                        />
+                    </View>
+                ) : null}
 
                 {!enableRandomizedDelayBetweenRuns ? (
                     <View>
