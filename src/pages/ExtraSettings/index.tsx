@@ -40,8 +40,8 @@ const ExtraSettings = () => {
     const [delayTapMilliseconds, setDelayTapMilliseconds] = useState<number>(1000)
 
     // Device Settings
-    const [confidence, setConfidence] = useState<number>(1)
-    const [confidenceAll, setConfidenceAll] = useState<number>(1)
+    const [confidence, setConfidence] = useState<number>(80)
+    const [confidenceAll, setConfidenceAll] = useState<number>(80)
     const [customScale, setCustomScale] = useState<number>(1.0)
     const [enableTestForHomeScreen, setEnableTestForHomeScreen] = useState<boolean>(false)
 
@@ -218,8 +218,8 @@ const ExtraSettings = () => {
                             value={delayTapMilliseconds}
                             minimumValue={100}
                             maximumValue={5000}
-                            step={50}
-                            onSlidingComplete={(value) => setDelayTapMilliseconds(value)}
+                            step={100}
+                            onValueChange={(value) => setDelayTapMilliseconds(value)}
                             minimumTrackTintColor="black"
                             maximumTrackTintColor="gray"
                             thumbTintColor="red"
@@ -229,6 +229,65 @@ const ExtraSettings = () => {
                         />
                     </View>
                 ) : null}
+
+                <TitleDivider
+                    title="Device Settings"
+                    subtitle={`Adjust and fine-tune settings related to device setups and image processing optimizations.`}
+                    hasIcon={true}
+                    iconName="tablet-cellphone"
+                />
+                <Text style={{ marginBottom: 10 }}>Set Confidence Level: {confidence}%</Text>
+                <Slider
+                    value={confidence}
+                    minimumValue={1}
+                    maximumValue={100}
+                    step={1}
+                    onValueChange={(value) => setConfidence(value)}
+                    minimumTrackTintColor="black"
+                    maximumTrackTintColor="gray"
+                    thumbTintColor="red"
+                    thumbSize={20}
+                    trackHeight={10}
+                    style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                />
+                <Text style={{ marginBottom: 10 }}>Set Confidence Level for Multiple Matching: {confidenceAll}%</Text>
+                <Slider
+                    value={confidenceAll}
+                    minimumValue={1}
+                    maximumValue={100}
+                    step={1}
+                    onValueChange={(value) => setConfidenceAll(value)}
+                    minimumTrackTintColor="black"
+                    maximumTrackTintColor="gray"
+                    thumbTintColor="red"
+                    thumbSize={20}
+                    trackHeight={10}
+                    style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                />
+                <Text>Set Custom Scale: {customScale % 1 === 0 ? `${customScale}.0` : customScale}</Text>
+                <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>
+                    Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape)
+                    mode.
+                </Text>
+                <Slider
+                    value={customScale}
+                    minimumValue={0.1}
+                    maximumValue={5.0}
+                    step={0.1}
+                    onValueChange={(value) => setCustomScale(value)}
+                    minimumTrackTintColor="black"
+                    maximumTrackTintColor="gray"
+                    thumbTintColor="red"
+                    thumbSize={20}
+                    trackHeight={10}
+                    style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                />
+                <Checkbox
+                    text="Enable Test for Home Screen"
+                    subtitle={`Enables test for getting to the Home screen instead of the regular bot process. If the test fails, then it will run a different test to find which scale is appropriate for your device.\n\nUseful for troubleshooting working confidences and scales for device compatibility.`}
+                    state={enableAutoExitRaid}
+                    updateState={setEnableAutoExitRaid}
+                />
             </ScrollView>
         </View>
     )
