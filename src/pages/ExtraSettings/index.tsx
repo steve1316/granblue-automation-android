@@ -112,6 +112,7 @@ const ExtraSettings = () => {
                         />
                     </View>
                 ) : null}
+                <Checkbox text="Enable No Timeout" subtitle="Enable no timeouts when attempting to farm Raids that appear infrequently." state={enableNoTimeout} updateState={setEnableNoTimeout} />
 
                 {!enableRandomizedDelayBetweenRuns ? (
                     <View>
