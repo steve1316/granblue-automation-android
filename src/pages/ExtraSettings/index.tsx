@@ -16,17 +16,34 @@ const styles = StyleSheet.create({
 })
 
 const ExtraSettings = () => {
-    const [debugMode, setDebugMode] = useState<boolean>(false)
+    // Twitter Settings
     const [twitterAPIKey, setTwitterAPIKey] = useState<string>("")
     const [twitterAPIKeySecret, setTwitterAPIKeySecret] = useState<string>("")
     const [twitterAccessToken, setTwitterAccessToken] = useState<string>("")
     const [twitterAccessTokenSecret, setTwitterAccessTokenSecret] = useState<string>("")
+
+    // Discord Settings
+    const [enableDiscord, setEnableDiscord] = useState<boolean>(false)
     const [discordToken, setDiscordToken] = useState<string>("")
     const [discordUserID, setDiscordUserID] = useState<string>("")
+
+    // Configuration Settings
+    const [debugMode, setDebugMode] = useState<boolean>(false)
     const [enableDelayBetweenRuns, setEnableDelayBetweenRuns] = useState<boolean>(false)
     const [delayBetweenRuns, setDelayBetweenRuns] = useState<number>(5)
     const [randomizedDelayBetweenRuns, setRandomizedDelayBetweenRuns] = useState<[number, number]>([5, 15])
     const [enableRandomizedDelayBetweenRuns, setEnableRandomizedDelayBetweenRuns] = useState<boolean>(false)
+    const [enableAutoExitRaid, setEnableAutoExitRaid] = useState<boolean>(false)
+    const [autoExitRaidMinutes, setAutoExitRaidsMinutes] = useState<number>(1)
+    const [enableNoTimeout, setEnableNoTimeout] = useState<boolean>(false)
+    const [enableDelayTap, setEnableDelayTap] = useState<boolean>(false)
+    const [delayTapMilliseconds, setDelayTapMilliseconds] = useState<number>(100)
+
+    // Device Settings
+    const [confidence, setConfidence] = useState<number>(1)
+    const [confidenceAll, setConfidenceAll] = useState<number>(1)
+    const [customScale, setCustomScale] = useState<number>(1.0)
+    const [enableTestForHomeScreen, setEnableTestForHomeScreen] = useState<boolean>(false)
 
     return (
         <View style={styles.root}>
