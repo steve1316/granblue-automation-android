@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react"
-import { StyleSheet, View, ScrollView } from "react-native"
+import React, { useState, useEffect } from "react"
+import { StyleSheet, View, ScrollView, Dimensions } from "react-native"
 import { Input, Text } from "react-native-elements"
 import Checkbox from "../../components/Checkbox"
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import TitleDivider from "../../components/TitleDivider"
 import { Slider, RangeSlider } from "@sharcoux/slider"
+import NumericInput from "react-native-numeric-input"
 
 const styles = StyleSheet.create({
     root: {
@@ -97,18 +98,19 @@ const ExtraSettings = () => {
                 {enableAutoExitRaid ? (
                     <View>
                         <Text style={{ marginBottom: 10 }}>Max Time Allowed for Semi/Full Auto: {autoExitRaidMinutes} minutes</Text>
-                        <Slider
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={15}
                             value={autoExitRaidMinutes}
-                            minimumValue={1}
-                            maximumValue={15}
-                            step={1}
-                            onSlidingComplete={(value) => setAutoExitRaidsMinutes(value)}
-                            minimumTrackTintColor="black"
-                            maximumTrackTintColor="gray"
-                            thumbTintColor="red"
-                            thumbSize={20}
-                            trackHeight={10}
-                            style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                            onChange={(value) => setAutoExitRaidsMinutes(value)}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
                         />
                     </View>
                 ) : null}
@@ -135,7 +137,7 @@ const ExtraSettings = () => {
                                 setEnableDelayBetweenRuns(checked)
                             }}
                         />
-                        <Text style={{ marginBottom: 5 }}>Enable delay in seconds between runs to serve as a resting period.</Text>
+                        <Text style={{ marginBottom: 5, marginLeft: 2, fontSize: 12, opacity: 0.7 }}>Enable delay in seconds between runs to serve as a resting period.</Text>
                     </View>
                 ) : null}
 
@@ -179,7 +181,7 @@ const ExtraSettings = () => {
                                 setEnableRandomizedDelayBetweenRuns(checked)
                             }}
                         />
-                        <Text style={{ marginBottom: 5 }}>Enable randomized delay in seconds between runs to serve as a resting period.</Text>
+                        <Text style={{ marginBottom: 5, marginLeft: 2, fontSize: 12, opacity: 0.7 }}>Enable randomized delay in seconds between runs to serve as a resting period.</Text>
                     </View>
                 ) : null}
 
@@ -237,56 +239,60 @@ const ExtraSettings = () => {
                     iconName="tablet-cellphone"
                 />
                 <Text style={{ marginBottom: 10 }}>Set Confidence Level: {confidence}%</Text>
-                <Slider
+                <NumericInput
+                    type="plus-minus"
+                    leftButtonBackgroundColor="#eb5056"
+                    rightButtonBackgroundColor="#EA3788"
+                    rounded
+                    valueType="integer"
+                    minValue={1}
+                    maxValue={100}
                     value={confidence}
-                    minimumValue={1}
-                    maximumValue={100}
-                    step={1}
-                    onValueChange={(value) => setConfidence(value)}
-                    minimumTrackTintColor="black"
-                    maximumTrackTintColor="gray"
-                    thumbTintColor="red"
-                    thumbSize={20}
-                    trackHeight={10}
-                    style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                    onChange={(value) => setConfidence(value)}
+                    containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                    totalWidth={Dimensions.get("screen").width * 0.9}
+                    totalHeight={50}
                 />
                 <Text style={{ marginBottom: 10 }}>Set Confidence Level for Multiple Matching: {confidenceAll}%</Text>
-                <Slider
+                <NumericInput
+                    type="plus-minus"
+                    leftButtonBackgroundColor="#eb5056"
+                    rightButtonBackgroundColor="#EA3788"
+                    rounded
+                    valueType="integer"
+                    minValue={1}
+                    maxValue={100}
                     value={confidenceAll}
-                    minimumValue={1}
-                    maximumValue={100}
-                    step={1}
-                    onValueChange={(value) => setConfidenceAll(value)}
-                    minimumTrackTintColor="black"
-                    maximumTrackTintColor="gray"
-                    thumbTintColor="red"
-                    thumbSize={20}
-                    trackHeight={10}
-                    style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                    onChange={(value) => setConfidenceAll(value)}
+                    containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                    totalWidth={Dimensions.get("screen").width * 0.9}
+                    totalHeight={50}
                 />
                 <Text>Set Custom Scale: {customScale % 1 === 0 ? `${customScale}.0` : customScale}</Text>
                 <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>
                     Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape)
                     mode.
                 </Text>
-                <Slider
-                    value={customScale}
-                    minimumValue={0.1}
-                    maximumValue={5.0}
+                <NumericInput
+                    type="plus-minus"
+                    leftButtonBackgroundColor="#eb5056"
+                    rightButtonBackgroundColor="#EA3788"
+                    rounded
+                    valueType="real"
+                    minValue={0.1}
+                    maxValue={5.0}
                     step={0.1}
-                    onValueChange={(value) => setCustomScale(value)}
-                    minimumTrackTintColor="black"
-                    maximumTrackTintColor="gray"
-                    thumbTintColor="red"
-                    thumbSize={20}
-                    trackHeight={10}
-                    style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                    value={customScale}
+                    onChange={(value) => setCustomScale(value)}
+                    containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                    totalWidth={Dimensions.get("screen").width * 0.9}
+                    totalHeight={50}
                 />
                 <Checkbox
                     text="Enable Test for Home Screen"
                     subtitle={`Enables test for getting to the Home screen instead of the regular bot process. If the test fails, then it will run a different test to find which scale is appropriate for your device.\n\nUseful for troubleshooting working confidences and scales for device compatibility.`}
-                    state={enableAutoExitRaid}
-                    updateState={setEnableAutoExitRaid}
+                    state={enableTestForHomeScreen}
+                    updateState={setEnableTestForHomeScreen}
                 />
             </ScrollView>
         </View>

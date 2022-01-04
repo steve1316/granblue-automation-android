@@ -1,4 +1,4 @@
-import { createContext, useState } from "react"
+import React, { createContext, useEffect, useState } from "react"
 
 export interface Settings {
     // Game settings.
@@ -173,6 +173,10 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
         settings,
         setSettings,
     }
+
+    // useEffect(() => {
+    //     console.log("Settings has been updated: ", settings)
+    // }, [settings])
 
     return <BotStateContext.Provider value={providerValues}>{children}</BotStateContext.Provider>
 }

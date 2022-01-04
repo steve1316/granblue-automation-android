@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">GAA</string>
+    <string name="app_name">MyApplication</string>
 
     <!-- This is the name of the app that will appear right below its icon on the Android Home screen. -->
-    <string name="title_activity_main">GAA</string>
+    <string name="title_activity_main">MyApplication</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_settings">Settings</string>

@@ -1,3 +1,4 @@
+import React from "react"
 import { StyleSheet, View, ScrollView, Text } from "react-native"
 
 const styles = StyleSheet.create({

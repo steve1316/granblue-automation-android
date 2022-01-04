@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { StyleSheet, View, Text, ScrollView, Dimensions, TouchableOpacity, Modal } from "react-native"
-import DropDownPicker from "react-native-dropdown-picker"
+import DropDownPicker, { ValueType } from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
 import DocumentPicker, { DirectoryPickerResponse, DocumentPickerResponse } from "react-native-document-picker"
 import data from "../../data/data.json"
@@ -54,9 +54,10 @@ const Settings = () => {
     const [itemList, setItemList] = useState<Item[]>([])
     const [missionList, setMissionList] = useState<Item[]>([])
 
-    const [farmingMode, setFarmingMode] = useState<string>("")
-    const [item, setItem] = useState<string>("")
-    const [mission, setMission] = useState<string>("")
+    const [farmingMode, setFarmingMode] = useState<ValueType | null>("")
+    const [item, setItem] = useState<ValueType | null>("")
+    const [mission, setMission] = useState<ValueType | null>("")
+    const [map, setMap] = useState<string>("")
     const [itemAmount, setItemAmount] = useState<number>(1)
     const [groupNumber, setGroupNumber] = useState<number>(1)
     const [partyNumber, setPartyNumber] = useState<number>(1)
@@ -91,50 +92,91 @@ const Settings = () => {
     // }, [result])
 
     //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
     // Callbacks to save current settings.
+
     useEffect(() => {
-        // Reset selected Item and Mission.
-        bsc.setSettings({
-            ...bsc.settings,
-            game: { ...bsc.settings.game, farmingMode: farmingMode, item: "", mission: "", map: "" },
-            nightmare: {
-                ...bsc.settings.nightmare,
-                enableNightmare: false,
-                enableCustomNightmareSettings: false,
-                nightmareCombatScriptName: "",
-                nightmareCombatScript: [],
-                nightmareSummons: [],
-                nightmareSummonElements: [],
-                nightmareGroupNumber: 1,
-                nightmarePartyNumber: 1,
-            },
-        })
+        if (farmingMode) {
+            // Reset selected Item and Mission and save the farming mode.
+            bsc.setSettings({
+                ...bsc.settings,
+                game: { ...bsc.settings.game, farmingMode: farmingMode.toString(), item: "", mission: "", map: "" },
+                nightmare: {
+                    ...bsc.settings.nightmare,
+                    enableNightmare: false,
+                    enableCustomNightmareSettings: false,
+                    nightmareCombatScriptName: "",
+                    nightmareCombatScript: [],
+                    nightmareSummons: [],
+                    nightmareSummonElements: [],
+                    nightmareGroupNumber: 1,
+                    nightmarePartyNumber: 1,
+                },
+            })
+        }
 
         // Reset Item and Mission in local state.
         setItem("")
         setMission("")
     }, [farmingMode])
 
+    // Fetch the map that corresponds to the selected mission if applicable. Not for Coop.
     useEffect(() => {
-        bsc.setSettings({
-            ...bsc.settings,
-            game: { ...bsc.settings.game, farmingMode: farmingMode, item: item, mission: mission, map: "" },
-        })
-    }, [item, mission])
+        if (
+            farmingMode === "Quest" ||
+            farmingMode === "Special" ||
+            farmingMode === "Raid" ||
+            farmingMode === "Event" ||
+            farmingMode === "Event (Token Drawboxes)" ||
+            farmingMode === "Rise of the Beasts" ||
+            farmingMode === "Guild Wars" ||
+            farmingMode === "Dread Barrage" ||
+            farmingMode === "Proving Grounds" ||
+            farmingMode === "Xeno Clash" ||
+            farmingMode === "Arcarum" ||
+            farmingMode === "Generic"
+        ) {
+            Object.entries(data[farmingMode]).every((obj) => {
+                if (obj[0] === mission) {
+                    bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, map: obj[1].map } })
+                    return false
+                } else {
+                    return true
+                }
+            })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mission])
+
+    // Save every other settings.
+    useEffect(() => {
+        if (farmingMode && item && mission) {
+            bsc.setSettings({
+                ...bsc.settings,
+                game: {
+                    ...bsc.settings.game,
+                    farmingMode: farmingMode.toString(),
+                    item: item.toString(),
+                    mission: mission.toString(),
+                    map: map,
+                    itemAmount: itemAmount,
+                    groupNumber: groupNumber,
+                    partyNumber: partyNumber,
+                },
+            })
+        }
+    }, [item, mission, map, itemAmount, groupNumber, partyNumber])
 
     useEffect(() => {
-        console.log("Item populate callback is called")
         populateItemList()
-
-        // Reset Mission in local state.
-        setMission("")
+        setMission("") // Reset Mission in local state.
     }, [farmingMode])
 
     useEffect(() => {
-        console.log("Mission populate callback is called")
         populateMissionList()
     }, [item])
 
+    // Populates the item list based on farming mode.
     const populateItemList = () => {
         let newItemList: Item[] = []
 
@@ -160,43 +202,41 @@ const Settings = () => {
             })
         }
 
+        // Remove any duplicates.
         const filteredNewItemList = newItemList.filter((v, i, a) => a.findIndex((t) => t.label === v.label) === i)
         setItemList(filteredNewItemList)
     }
 
+    // Populate the mission list based on item.
     const populateMissionList = () => {
-        let newMissionList: Item[] = []
+        if (item) {
+            let newMissionList: Item[] = []
 
-        if (
-            farmingMode === "Quest" ||
-            farmingMode === "Special" ||
-            farmingMode === "Coop" ||
-            farmingMode === "Raid" ||
-            farmingMode === "Event" ||
-            farmingMode === "Event (Token Drawboxes)" ||
-            farmingMode === "Rise of the Beasts" ||
-            farmingMode === "Guild Wars" ||
-            farmingMode === "Dread Barrage" ||
-            farmingMode === "Proving Grounds" ||
-            farmingMode === "Xeno Clash" ||
-            farmingMode === "Arcarum" ||
-            farmingMode === "Generic"
-        ) {
-            Object.entries(data[farmingMode]).forEach((obj) => {
-                if (obj[1].items.indexOf(item) !== -1) {
-                    newMissionList = newMissionList.concat({ label: obj[0], value: obj[0] })
-                }
-            })
-        } else {
-            Object.entries(data["Coop"]).forEach((obj) => {
-                if (obj[1].items.indexOf(item) !== -1) {
-                    newMissionList = newMissionList.concat({ label: obj[0], value: obj[0] })
-                }
-            })
+            if (
+                farmingMode === "Quest" ||
+                farmingMode === "Special" ||
+                farmingMode === "Coop" ||
+                farmingMode === "Raid" ||
+                farmingMode === "Event" ||
+                farmingMode === "Event (Token Drawboxes)" ||
+                farmingMode === "Rise of the Beasts" ||
+                farmingMode === "Guild Wars" ||
+                farmingMode === "Dread Barrage" ||
+                farmingMode === "Proving Grounds" ||
+                farmingMode === "Xeno Clash" ||
+                farmingMode === "Arcarum" ||
+                farmingMode === "Generic"
+            ) {
+                Object.entries(data[farmingMode]).forEach((obj) => {
+                    if (obj[1].items.indexOf(item.toString()) !== -1) {
+                        newMissionList = newMissionList.concat({ label: obj[0], value: obj[0] })
+                    }
+                })
+            }
+
+            const filteredNewMissionList = Array.from(new Set(newMissionList))
+            setMissionList(filteredNewMissionList)
         }
-
-        const filteredNewMissionList = Array.from(new Set(newMissionList))
-        setMissionList(filteredNewMissionList)
     }
 
     return (

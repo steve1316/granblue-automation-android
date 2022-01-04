@@ -1,4 +1,4 @@
-import { FC } from "react"
+import React, { FC } from "react"
 import { StyleSheet, View } from "react-native"
 import { Divider, Text } from "react-native-elements"
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons"
