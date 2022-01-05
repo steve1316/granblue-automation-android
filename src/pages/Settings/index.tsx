@@ -48,7 +48,7 @@ interface Item {
 
 interface CombatScript {
     name: string
-    script: string
+    script: string[]
 }
 
 const Settings = () => {
@@ -67,8 +67,7 @@ const Settings = () => {
     const [itemAmount, setItemAmount] = useState<number>(1)
     const [groupNumber, setGroupNumber] = useState<number>(1)
     const [partyNumber, setPartyNumber] = useState<number>(1)
-
-    const [combatScript, setCombatScript] = useState<CombatScript>({ name: "", script: "" })
+    const [combatScript, setCombatScript] = useState<CombatScript>({ name: "", script: [] })
 
     const bsc = useContext(BotStateContext)
 
@@ -164,10 +163,12 @@ const Settings = () => {
                     itemAmount: itemAmount,
                     groupNumber: groupNumber,
                     partyNumber: partyNumber,
+                    combatScriptName: combatScript.name,
+                    combatScript: combatScript.script,
                 },
             })
         }
-    }, [item, mission, map, itemAmount, groupNumber, partyNumber])
+    }, [item, mission, map, itemAmount, groupNumber, partyNumber, combatScript])
 
     useEffect(() => {
         populateItemList()
@@ -266,14 +267,21 @@ const Settings = () => {
 
                                     // Now read the file using the newly converted file uri.
                                     await RNFS.readFile("file://" + destPath).then((data) => {
-                                        console.log(data)
+                                        console.log("Read combat script: ", data)
 
-                                        setCombatScript({ name: pickerResult.name, script: data })
+                                        const newCombatScript: string[] = data
+                                            .replace(/\r\n/g, "\n") // Replace LF with CRLF.
+                                            .replace(/[\r\n]/g, "\n")
+                                            .replace("\t", "") // Replace tab characters.
+                                            .replace(/\t/g, "")
+                                            .split("\n")
+
+                                        setCombatScript({ name: pickerResult.name, script: newCombatScript })
                                     })
                                 }
                             } catch (e) {
                                 console.warn(e)
-                                setCombatScript({ name: "", script: "" })
+                                setCombatScript({ name: "", script: [] })
                             }
                         }}
                     />
