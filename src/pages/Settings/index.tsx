@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react"
 import { StyleSheet, View, Text, ScrollView, Dimensions, TouchableOpacity, Modal } from "react-native"
 import DropDownPicker, { ValueType } from "react-native-dropdown-picker"
 import { Divider } from "react-native-elements"
-import DocumentPicker, { DirectoryPickerResponse, DocumentPickerResponse } from "react-native-document-picker"
+import DocumentPicker from "react-native-document-picker"
+import RNFS from "react-native-fs"
 import data from "../../data/data.json"
 import { BotStateContext } from "../../context/BotStateContext"
 import { Picker } from "@react-native-picker/picker"
@@ -45,6 +46,11 @@ interface Item {
     value: string
 }
 
+interface CombatScript {
+    name: string
+    script: string
+}
+
 const Settings = () => {
     const [open, setOpen] = useState<boolean>(false)
     const [open2, setOpen2] = useState<boolean>(false)
@@ -62,7 +68,7 @@ const Settings = () => {
     const [groupNumber, setGroupNumber] = useState<number>(1)
     const [partyNumber, setPartyNumber] = useState<number>(1)
 
-    const [result, setResult] = useState<Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null>()
+    const [combatScript, setCombatScript] = useState<CombatScript>({ name: "", script: "" })
 
     const bsc = useContext(BotStateContext)
 
@@ -86,10 +92,6 @@ const Settings = () => {
         setOpen(false)
         setOpen2(false)
     }
-
-    // useEffect(() => {
-    //     console.log(JSON.stringify(result, null, 2))
-    // }, [result])
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -243,29 +245,38 @@ const Settings = () => {
         <View style={styles.root}>
             <ScrollView nestedScrollEnabled={true}>
                 <View style={{ height: Dimensions.get("screen").height * 0.5, marginHorizontal: 20 }}>
-                    {/* <Button
+                    <CustomButton
                         title="Select Combat Script"
-                        buttonStyle={{
-                            backgroundColor: "rgba(78, 116, 289, 1)",
-                            borderRadius: 3,
-                        }}
-                        containerStyle={{
-                            width: 100,
-                            marginHorizontal: 50,
-                            marginVertical: 10,
-                        }}
-                        raised
+                        width={200}
+                        borderRadius={20}
                         onPress={async () => {
                             try {
                                 const pickerResult = await DocumentPicker.pickSingle({
-                                    presentationStyle: "fullScreen",
+                                    type: "text/plain",
                                 })
-                                setResult([pickerResult])
+
+                                const uri = pickerResult.uri
+                                if (uri.startsWith("content://")) {
+                                    // Convert content uri to file uri.
+                                    // Source: https://stackoverflow.com/a/62677483
+                                    const uriComponents = uri.split("/")
+                                    const fileNameAndExtension = uriComponents[uriComponents.length - 1]
+                                    const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`
+                                    await RNFS.copyFile(uri, destPath)
+
+                                    // Now read the file using the newly converted file uri.
+                                    await RNFS.readFile("file://" + destPath).then((data) => {
+                                        console.log(data)
+
+                                        setCombatScript({ name: pickerResult.name, script: data })
+                                    })
+                                }
                             } catch (e) {
-                                console.error(e)
+                                console.warn(e)
+                                setCombatScript({ name: "", script: "" })
                             }
                         }}
-                    /> */}
+                    />
 
                     <Divider />
 
