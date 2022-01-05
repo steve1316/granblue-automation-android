@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react"
+import RNFS from "react-native-fs"
 
 export interface Settings {
     // Game settings.
@@ -174,9 +175,19 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
         setSettings,
     }
 
-    // useEffect(() => {
-    //     console.log("Settings has been updated: ", settings)
-    // }, [settings])
+    useEffect(() => {
+        // Save settings to local settings.json file in internal storage.
+        const path = RNFS.ExternalDirectoryPath + "/settings.json"
+
+        const toSave = JSON.stringify(settings, null, 4)
+        RNFS.writeFile(path, toSave)
+            .then(() => {
+                console.log("Settings saved to ", path)
+            })
+            .catch((e) => {
+                console.warn(`Error writing settings to path ${path}: ${e}`)
+            })
+    }, [settings])
 
     return <BotStateContext.Provider value={providerValues}>{children}</BotStateContext.Provider>
 }
