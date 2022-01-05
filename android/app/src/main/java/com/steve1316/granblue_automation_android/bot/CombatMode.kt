@@ -1,21 +1,21 @@
 package com.steve1316.granblue_automation_android.bot
 
 import androidx.preference.PreferenceManager
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import org.opencv.core.Point
-import java.util.*
 
 /**
  * This class handles the Combat Mode and offers helper functions to assist it.
  */
-class CombatMode(private val game: com.steve1316.granblue_automation_android.bot.Game, private val debugMode: Boolean = false) {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}CombatMode"
-	
+class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
+	private val tag: String = "${loggerTag}CombatMode"
+
 	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
 	private val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
 	private val autoExitCombatMinutes: Long = sharedPreferences.getInt("autoExitCombatMinutes", 5).toLong() * 60L * 1000L
 	private var autoExitStartTime: Long = 0L
 	private var autoExitEndTime: Long = 0L
-	
+
 	private var healingItemCommands = listOf(
 		"usegreenpotion.target(1)",
 		"usegreenpotion.target(2)",
@@ -30,11 +30,11 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 		"useclarityherb.target(4)",
 		"userevivalpotion"
 	)
-	
+
 	private var retreatCheckFlag = false
 	private var attackButtonLocation: Point? = null
 	private var expGainedLocationCheck = false
-	
+
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
 	 */
@@ -42,7 +42,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 		if (debugMode) {
 			game.printToLog("[INFO] Checking to see if Party wiped.", tag = tag)
 		}
-		
+
 		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 1, suppressError = true)
 		if (partyWipeIndicatorLocation != null || game.imageUtils.confirmLocation("salute_participants", tries = 1, suppressError = true)) {
 			if (game.farmingMode != "Raid" && game.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
@@ -50,9 +50,9 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				if (partyWipeIndicatorLocation != null) {
 					game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y, "party_wipe_indicator")
 				}
-				
+
 				game.printToLog("[WARNING] Party has wiped during Combat Mode for this non-Raid battle. Retreating now...", tag = tag)
-				
+
 				// Close the popup that asks if you want to use a Full Elixir. Then tap the red "Retreat" button.
 				game.findAndClickButton("cancel")
 				game.wait(1.0)
@@ -60,30 +60,30 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				retreatCheckFlag = true
 			} else if (game.farmingMode == "Raid" || game.farmingMode == "Dread Barrage" || game.farmingMode == "Guild Wars" || game.missionName.contains("Raid")) {
 				game.printToLog("[WARNING] Party has wiped during Combat Mode for this Raid battle. Backing out now without retreating...", tag = tag)
-				
+
 				// Head back to the Home screen.
 				game.goBackHome(confirmLocationCheck = true)
 				retreatCheckFlag = true
 			} else if (game.farmingMode == "Coop" && game.imageUtils.confirmLocation("salute_participants")) {
 				// Salute the participants.
 				game.printToLog("[WARNING] Party has wiped during Coop Combat Mode. Leaving the Coop Room...", tag = tag)
-				
+
 				game.findAndClickButton("salute")
 				game.wait(1.0)
 				game.findAndClickButton("ok")
-				
+
 				// Then cancel the popup that asks if you want to use a Full Elixir and then tap the "Leave" button.
 				game.findAndClickButton("cancel")
 				game.wait(1.0)
 				game.findAndClickButton("leave")
-				
+
 				retreatCheckFlag = true
 			}
 		} else if (debugMode) {
 			game.printToLog("[INFO] Party has not wiped.", tag = tag)
 		}
 	}
-	
+
 	/**
 	 * Checks if there are any dialog popups during Combat Mode from either Lyria or Vyrn and close them.
 	 */
@@ -94,7 +94,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
 		}
-		
+
 		// Then check for Vyrn dialog popup next.
 		combatDialogLocation = game.imageUtils.findButton("dialog_vyrn", tries = 1)
 		if (combatDialogLocation != null) {
@@ -102,7 +102,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			return
 		}
 	}
-	
+
 	/**
 	 * Uses the specified healing item during Combat Mode with an optional target if the item requires one.
 	 *
@@ -112,14 +112,14 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 		if (debugMode) {
 			game.printToLog("\n[DEBUG] Using item: $command", tag = tag)
 		}
-		
+
 		var target = 0
-		
+
 		// Grab the healing command.
 		val healingItemCommandList = command.split(".")
 		val healingItemCommand = healingItemCommandList[0]
 		healingItemCommandList.drop(1)
-		
+
 		// Parse the target if the user is using a Green Potion or a Clarity Herb.
 		if ((healingItemCommand == "usegreenpotion" || healingItemCommand == "useclarityherb") && healingItemCommandList[0].contains("target")) {
 			when (healingItemCommandList[0]) {
@@ -137,13 +137,13 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				}
 			}
 		}
-		
+
 		// Open up the "Use Item" popup.
 		game.findAndClickButton("heal")
-		
+
 		// Format the item name.
-		val formattedCommand = command.toLowerCase(Locale.ROOT).replace(" ", "_")
-		
+		val formattedCommand = command.lowercase().replace(" ", "_")
+
 		// Tap the specified item.
 		if (formattedCommand == "usebluepotion" || formattedCommand == "usesupportpotion") {
 			// Blue and Support Potions share the same image but they are at different positions on the screen.
@@ -156,7 +156,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 		} else {
 			game.findAndClickButton(formattedCommand)
 		}
-		
+
 		// After the initial popup vanishes to reveal a new popup, either select a Character target or tap the confirmation button.
 		if (game.imageUtils.waitVanish("tap_the_item_to_use", timeout = 5)) {
 			when (formattedCommand) {
@@ -185,10 +185,10 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					game.findAndClickButton("ok")
 				}
 			}
-			
+
 			// Wait for the healing animation to finish.
 			game.wait(1.0)
-			
+
 			if (!game.imageUtils.confirmLocation("use_item", tries = 1)) {
 				game.printToLog("[SUCCESS] Successfully used healing item.", tag = tag)
 			} else {
@@ -199,19 +199,19 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			game.findAndClickButton("cancel")
 		}
 	}
-	
+
 	/**
 	 * Request backup during Combat mode for this Raid.
 	 */
 	private fun requestBackup() {
 		game.printToLog("\n[COMBAT] Now requesting Backup for this Raid.", tag = tag)
-		
+
 		// Scroll the screen down a little bit to have the "Request Backup" button visible on all screen sizes. Then tap the button.
 		game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
 		game.findAndClickButton("request_backup")
-		
+
 		game.wait(1.0)
-		
+
 		// Find the location of the "Cancel" button and tap the "Request Backup" button to the right of it. This is to ensure that the bot always
 		// taps the button no matter the appearance of the "Request Backup" button, which changes frequently.
 		val cancelButtonLocation = game.imageUtils.findButton("cancel")
@@ -230,9 +230,9 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				}
 			}
 		}
-		
+
 		game.wait(1.0)
-		
+
 		// If requesting backup was successful, close the popup.
 		if (game.imageUtils.confirmLocation("request_backup_success", tries = 1)) {
 			game.printToLog("[COMBAT] Successfully requested Backup.", tag = tag)
@@ -241,30 +241,30 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			game.printToLog("[COMBAT] Unable to request Backup. Possibly because it is still on cooldown.", tag = tag)
 			game.findAndClickButton("cancel")
 		}
-		
+
 		// Now scroll back up to reset the view.
 		game.gestureUtils.swipe(500f, 400f, 500f, 1000f)
 	}
-	
+
 	/**
 	 * Request backup during Combat mode for this Raid by using the Twitter feature.
 	 */
 	private fun tweetBackup() {
 		game.printToLog("\n[COMBAT] Now requesting Backup for this Raid via Twitter.", tag = tag)
-		
+
 		// Scroll the screen down a little bit to have the "Request Backup" button visible on all screen sizes. Then tap the button.
 		game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
 		game.findAndClickButton("request_backup")
-		
+
 		game.wait(1.0)
-		
+
 		// Now tap the "Tweet" button.
 		game.findAndClickButton("request_backup_tweet")
 		game.wait(1.0)
 		game.findAndClickButton("ok")
-		
+
 		game.wait(1.0)
-		
+
 		// If requesting backup was successful, close the popup.
 		if (game.imageUtils.confirmLocation("request_backup_tweet_success", tries = 1)) {
 			game.printToLog("[COMBAT] Successfully requested Backup via Twitter.", tag = tag)
@@ -273,11 +273,11 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			game.printToLog("[COMBAT] Unable to request Backup via Twitter. Possibly because it is still on cooldown.", tag = tag)
 			game.findAndClickButton("cancel")
 		}
-		
+
 		// Now scroll back up to reset the view.
 		game.gestureUtils.swipe(500f, 400f, 500f, 1000f)
 	}
-	
+
 	/**
 	 * Selects the portrait of the specified character during Combat Mode.
 	 *
@@ -350,7 +350,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				}
 			}
 		}
-		
+
 		val y = if (!game.imageUtils.isTablet) {
 			if (game.imageUtils.isLowerEnd) {
 				attackButtonLocation!!.y + 185.0
@@ -364,12 +364,12 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				attackButtonLocation!!.y + 170.0
 			}
 		}
-		
+
 		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
 		game.gestureUtils.tap(x, y, "template_character", ignoreWait = true)
 		game.gestureUtils.tap(x, y, "template_character")
 	}
-	
+
 	/**
 	 * Selects the targeted enemy.
 	 *
@@ -379,7 +379,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 		for (target in 1..3) {
 			if (command == "targetenemy(${target})") {
 				val x: Double
-				
+
 				// Select the enemy target on the screen.
 				when (target) {
 					1 -> {
@@ -428,7 +428,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 						}
 					}
 				}
-				
+
 				val y: Double = if (!game.imageUtils.isTablet) {
 					if (game.imageUtils.isLowerEnd) {
 						430.0
@@ -442,14 +442,14 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 						378.0
 					}
 				}
-				
+
 				game.gestureUtils.tap(attackButtonLocation!!.x - x, attackButtonLocation!!.y - y, "template_enemy_target")
 				game.findAndClickButton("set_target")
 				game.printToLog("[COMBAT] Targeted Enemy #${target}.", tag = tag)
 			}
 		}
 	}
-	
+
 	/**
 	 * Activate the specified Skill for the already selected Character.
 	 *
@@ -458,12 +458,12 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 	 */
 	private fun useCharacterSkill(characterNumber: Int, skillCommandList: List<String>) {
 		var tempSkillCommandList: List<String> = skillCommandList
-		
+
 		// Drop the first element if its the Character command.
 		if (tempSkillCommandList[0].contains("character")) {
 			tempSkillCommandList = tempSkillCommandList.drop(1)
 		}
-		
+
 		while (tempSkillCommandList.isNotEmpty()) {
 			val x = when (tempSkillCommandList[0]) {
 				"useskill(1)" -> {
@@ -535,9 +535,9 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					return
 				}
 			}
-			
+
 			tempSkillCommandList = tempSkillCommandList.drop(1)
-			
+
 			val y = if (!game.imageUtils.isTablet) {
 				if (game.imageUtils.isLowerEnd) {
 					attackButtonLocation!!.y + 255.0
@@ -551,22 +551,22 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					attackButtonLocation!!.y + 230.0
 				}
 			}
-			
+
 			// Double tap the Skill to avoid any popups caused by other Raid participants.
 			game.wait(0.5)
 			game.gestureUtils.tap(x, y, "template_skill")
-			
+
 			game.wait(1.0)
-			
+
 			// Check if the Skill requires a target.
 			if (game.imageUtils.confirmLocation("use_skill", tries = 3)) {
 				val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
-				
+
 				if (selectCharacterLocation != null) {
 					game.printToLog("[COMBAT] Skill is awaiting a target.", tag = tag)
-					
+
 					game.wait(0.5)
-					
+
 					if (tempSkillCommandList.isNotEmpty()) {
 						// Select the targeted Character.
 						when (tempSkillCommandList[0]) {
@@ -671,7 +671,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 								game.findAndClickButton("cancel")
 							}
 						}
-						
+
 						tempSkillCommandList = tempSkillCommandList.drop(1)
 					}
 				} else if (game.imageUtils.confirmLocation("skill_unusable", tries = 2)) {
@@ -680,11 +680,11 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				}
 			}
 		}
-		
+
 		// Once all commands for the selected Character have been processed, tap the "Back" button to return.
 		game.findAndClickButton("back")
 	}
-	
+
 	/**
 	 * Activate the specified Summon.
 	 *
@@ -696,9 +696,9 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				// Bring up the available Summons.
 				game.printToLog("[COMBAT] Invoking Summon $j.", tag = tag)
 				game.findAndClickButton("summon", tries = 5)
-				
+
 				game.wait(1.0)
-				
+
 				var tries = 2
 				while (tries > 0) {
 					// Now tap on the specified Summon.
@@ -794,25 +794,25 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 							}
 						}
 					}
-					
+
 					game.wait(1.0)
-					
+
 					if (game.imageUtils.confirmLocation("summon_details")) {
 						val okButtonLocation = game.imageUtils.findButton("ok")
-						
+
 						if (okButtonLocation != null) {
 							game.gestureUtils.tap(okButtonLocation.x, okButtonLocation.y, "ok")
-							
+
 							// Now wait for the Summon animation to complete.
 							game.wait(7.0)
 						} else {
 							game.printToLog("[COMBAT] Summon $j cannot be invoked due to current restrictions.", tag = tag)
 							game.findAndClickButton("cancel")
-							
+
 							// Tap the "Back" button to return.
 							game.findAndClickButton("back")
 						}
-						
+
 						break
 					} else {
 						// Try to tap on the Summon again if a popup from the Raid absorbed the tap event.
@@ -822,37 +822,37 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			}
 		}
 	}
-	
+
 	/**
 	 * Wait several tries until the bot sees either the "Attack" or the "Next" button before starting a new turn.
 	 */
 	private fun waitForAttack() {
 		game.printToLog("[COMBAT] Waiting for attack to end...", tag = tag)
 		var tries = 10
-		
+
 		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1) == null && game.imageUtils.findButton("next", tries = 1) == null) {
 			// Stagger the checks for dialog popups during Combat Mode.
 			if (tries % 2 == 0) {
 				findCombatDialog()
-				
+
 				// Check if the Party wiped after attacking.
 				partyWipeCheck()
-				
+
 				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1)) {
 					break
 				}
 			}
-			
+
 			if (game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
 				break
 			}
-			
+
 			tries -= 1
 		}
-		
+
 		game.printToLog("[COMBAT] Attack ended.", tag = tag)
 	}
-	
+
 	/**
 	 * Determine whether or not to reload after an Attack.
 	 */
@@ -863,7 +863,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 		val provingGroundsRaids = arrayListOf("Extreme", "Extreme+")
 		val guildWarsRaids = arrayListOf("Very Hard", "Extreme", "Extreme+", "NM90", "NM95", "NM100", "NM150")
 		val xenoClashRaids = arrayListOf("Xeno Clash Raid")
-		
+
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
 		if (game.farmingMode == "Raid" || eventRaids.contains(game.missionName) || rotbRaids.contains(game.missionName) || dreadBarrageRaids.contains(game.missionName) ||
 			game.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.missionName) || game.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.missionName) ||
@@ -874,40 +874,40 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			game.wait(3.0)
 		}
 	}
-	
+
 	private fun processIncorrectTurn(turnNumber: Int): Int {
 		game.printToLog("\n[COMBAT] Starting Turn $turnNumber.", tag = tag)
-		
+
 		// Clear any detected dialog popups that might obstruct the "Attack" button.
 		findCombatDialog()
-		
+
 		// Tap the "Attack" button.
 		game.printToLog("[COMBAT] Ending Turn $turnNumber")
 		game.findAndClickButton("attack", tries = 10)
-		
+
 		// Wait until the "Cancel" button vanishes from the screen.
 		if (game.imageUtils.findButton("combat_cancel") != null) {
 			while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
 				if (debugMode) {
 					game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
 				}
-				
+
 				game.wait(1.0)
 			}
 		}
-		
+
 		reloadAfterAttack()
 		waitForAttack()
-		
+
 		game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-		
+
 		if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 			game.wait(3.0)
 		}
-		
+
 		return turnNumber + 1
 	}
-	
+
 	/**
 	 * Start Combat Mode with the provided combat script.
 	 *
@@ -920,30 +920,30 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 		game.printToLog("[COMBAT] Starting Combat Mode.", tag = tag)
 		game.printToLog("############################################################", tag = tag)
 		game.printToLog("############################################################", tag = tag)
-		
+
 		val commandList = combatScript.toMutableList()
-		
+
 		// Current Turn number for script execution.
 		var commandTurnNumber = 1
 		var turnNumber = 1
-		
+
 		// Reset the Retreat, Semi Auto, and Full Auto flags.
 		retreatCheckFlag = false
 		expGainedLocationCheck = false
 		var semiAutoCheckFlag = false
 		var fullAutoCheckFlag = false
-		
+
 		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
 		if (game.farmingMode == "Arcarum") {
 			game.findAndClickButton("arcarum_stage_effect_active", tries = 5)
 		}
-		
+
 		attackButtonLocation = game.imageUtils.findButton("attack", tries = 30)
 		if (attackButtonLocation == null) {
 			game.printToLog("\n[ERROR] Cannot find Attack button. Raid must have just ended.", tag = tag, isError = true)
 			return false
 		}
-		
+
 		// The following is the primary loop workflow for Combat Mode.
 		while (combatScript.isNotEmpty() && commandList.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
 			// Check if the Battle has ended.
@@ -985,23 +985,23 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					return true
 				}
 			}
-			
+
 			// The commands are already preprocessed to remove all comments back in SettingsFragment.
-			val command = commandList.removeAt(0).toLowerCase(Locale.ROOT)
-			
+			val command = commandList.removeAt(0).lowercase()
+
 			game.printToLog("\n[COMBAT] Reading command: \"$command\"", tag = tag)
-			
+
 			if (command.contains("turn")) {
 				// Clear any detected dialog popups that might obstruct the "Attack" button.
 				findCombatDialog()
-				
+
 				// Parse the Turn's number.
 				commandTurnNumber = (command.split(":")[0].split(" ")[1]).toInt()
-				
+
 				// If the command is a "Turn #:" and it is currently not the correct Turn, attack until the Turn numbers match.
 				if (!retreatCheckFlag && turnNumber != commandTurnNumber) {
 					game.printToLog("[COMBAT] Attacking until the bot reaches Turn $commandTurnNumber.", tag = tag)
-					
+
 					while (turnNumber != commandTurnNumber) {
 						turnNumber = processIncorrectTurn(turnNumber)
 					}
@@ -1010,7 +1010,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 				}
 			} else if (turnNumber == commandTurnNumber) {
 				// Proceed to process each command inside this Turn block until the "end" command is reached.
-				
+
 				// Determine which Character to take action.
 				val characterSelected = when {
 					command.contains("character1") -> {
@@ -1029,15 +1029,15 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 						0
 					}
 				}
-				
+
 				when {
 					characterSelected != 0 -> {
 						// Select the specified Character.
 						selectCharacter(characterSelected)
-						
+
 						// Now execute each Skill command starting from left to right for this Character.
 						val skillCommandList: List<String> = command.split(".").drop(1)
-						
+
 						useCharacterSkill(characterSelected, skillCommandList)
 					}
 					command == "requestbackup" -> {
@@ -1069,13 +1069,13 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					command == "enablefullauto" -> {
 						game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
 						fullAutoCheckFlag = game.findAndClickButton("full_auto", tries = 3)
-						
+
 						// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
 						if (!fullAutoCheckFlag) {
 							game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
 							semiAutoCheckFlag = true
 						}
-						
+
 						break
 					}
 					command.contains("targetenemy") -> {
@@ -1085,19 +1085,19 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					command.contains("back") && game.findAndClickButton("home_back", tries = 1) -> {
 						game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
 						waitForAttack()
-						
+
 						game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-						
+
 						// Advance the Turn number by 1.
 						turnNumber += 1
-						
+
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 							game.wait(3.0)
 						}
 					}
 					command.contains("reload") -> {
 						game.printToLog("[COMBAT] Bot will now attempt to manually reload.", tag = tag)
-						
+
 						// Press the "Attack" button in order to show the "Cancel" button. Once that disappears, manually reload the page.
 						if (game.findAndClickButton("attack")) {
 							if (game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
@@ -1114,25 +1114,25 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 						// Tap the "Attack" button once every command inside the Turn Block has been processed.
 						game.printToLog("[COMBAT] Ending Turn $turnNumber")
 						game.findAndClickButton("attack", tries = 10)
-						
+
 						// Wait until the "Cancel" button vanishes from the screen.
 						if (game.imageUtils.findButton("combat_cancel") != null) {
 							while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
 								if (debugMode) {
 									game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
 								}
-								
+
 								game.wait(1.0)
 							}
 						}
-						
+
 						reloadAfterAttack()
 						waitForAttack()
-						
+
 						game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-						
+
 						turnNumber += 1
-						
+
 						when {
 							game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
 								game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
@@ -1171,7 +1171,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 								return false
 							}
 						}
-						
+
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
 							game.wait(3.0)
 						}
@@ -1189,7 +1189,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					}
 				}
 			}
-			
+
 			// Handle certain commands that could be present outside of a Turn block.
 			if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablesemiauto") {
 				game.printToLog("[COMBAT] Enabling Semi Auto.", tag = tag)
@@ -1198,17 +1198,17 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			} else if (!semiAutoCheckFlag && !fullAutoCheckFlag && command == "enablefullauto") {
 				game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
 				fullAutoCheckFlag = game.findAndClickButton("full_auto")
-				
+
 				// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
 				if (!fullAutoCheckFlag) {
 					game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
 					semiAutoCheckFlag = true
 				}
-				
+
 				break
 			}
 		}
-		
+
 		// Deal with any the situation where high-profile raids end right when the bot loads in and all it sees is the "Next" button.
 		if (game.farmingMode == "Raid" && game.findAndClickButton("next", tries = 3)) {
 			game.printToLog("\n############################################################", tag = tag)
@@ -1218,10 +1218,10 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 			game.printToLog("############################################################", tag = tag)
 			return true
 		}
-		
+
 		// When the bot arrives here, all the commands in the combat script has been processed.
 		game.printToLog("[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.", tag = tag)
-		
+
 		// Skip this entire section if combat already ended as dictated in the waitForAttack() function.
 		if (!expGainedLocationCheck) {
 			// If Semi or Full Auto is not enabled at the end of the combat script, enable one or the other.
@@ -1266,7 +1266,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					else -> {
 						game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
 						fullAutoCheckFlag = game.findAndClickButton("full_auto")
-						
+
 						// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
 						if (!fullAutoCheckFlag) {
 							game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
@@ -1275,7 +1275,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					}
 				}
 			}
-			
+
 			// Double check to see if Semi Auto is turned on. Note that the "Semi Auto" button only appears while the Party is attacking.
 			if (!retreatCheckFlag && semiAutoCheckFlag && !fullAutoCheckFlag) {
 				when {
@@ -1317,21 +1317,21 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					}
 					else -> {
 						game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", tag = tag)
-						
+
 						val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
 						if (enabledSemiAutoButtonLocation == null) {
 							// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
 							game.findAndClickButton("attack")
-							
+
 							game.wait(2.0)
-							
+
 							semiAutoCheckFlag = game.findAndClickButton("semi_auto", tries = 5)
-							
+
 							// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the screen instead.
 							if (!semiAutoCheckFlag) {
 								game.printToLog("[COMBAT] Failed to enable Semi Auto. Falling back to Full Auto.", tag = tag)
 								fullAutoCheckFlag = true
-								
+
 								// Enable Full Auto.
 								game.findAndClickButton("full_auto")
 							} else {
@@ -1341,13 +1341,13 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 					}
 				}
 			}
-			
+
 			var sleepPreventionTimer = 0
-			
+
 			if ((semiAutoCheckFlag || fullAutoCheckFlag) && enableAutoExitCombat) {
 				autoExitStartTime = System.currentTimeMillis()
 			}
-			
+
 			// Primary loop workflow for both Semi Auto Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
 			while (!retreatCheckFlag && (fullAutoCheckFlag || semiAutoCheckFlag)) {
 				when {
@@ -1387,7 +1387,7 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 						game.printToLog("############################################################", tag = tag)
 						return false
 					}
-					
+
 					// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
 					else -> {
 						autoExitEndTime = System.currentTimeMillis()
@@ -1400,29 +1400,29 @@ class CombatMode(private val game: com.steve1316.granblue_automation_android.bot
 							game.printToLog("############################################################", tag = tag)
 							return false
 						}
-						
+
 						// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
 						if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
 							game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", tag = tag)
 							game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
 							game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
 						}
-						
+
 						partyWipeCheck()
 						game.wait(1.0)
-						
+
 						sleepPreventionTimer += 1
 					}
 				}
 			}
 		}
-		
+
 		game.printToLog("\n############################################################", tag = tag)
 		game.printToLog("############################################################", tag = tag)
 		game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
 		game.printToLog("############################################################", tag = tag)
 		game.printToLog("############################################################", tag = tag)
-		
+
 		return if (!retreatCheckFlag) {
 			game.printToLog("\n[INFO] Bot has reached the Quest Results screen.", tag = tag)
 			true

@@ -1,15 +1,16 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
 class QuestException(message: String) : Exception(message)
 
 class Quest(private val game: Game, private val mapName: String, private val missionName: String) {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}Quest"
-	
+	private val tag: String = "${loggerTag}Quest"
+
 	private val listPage1 = listOf("Zinkenstill", "Port Breeze Archipelago", "Valtz Duchy", "Auguste Isles", "Lumacie Archipelago", "Albion Citadel")
 	private val listPage2 = listOf("Mist-Shrouded Isle", "Golonzo Island", "Amalthea Island", "Former Capital Mephorash", "Agastia")
-	
+
 	/**
 	 * Helper function to assist selectMap() in navigating to the correct island for Quest Farming Mode.
 	 *
@@ -24,11 +25,11 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			if (listPage2.contains(currentLocation)) {
 				game.findAndClickButton("world_left_arrow")
 			}
-			
+
 			// Use a manual way to tap on the correct island if image matching for the island name failed.
 			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
 				val arrowLocation = game.imageUtils.findButton("world_right_arrow") ?: throw Exception("Unable to find the location of the right arrow for the World.")
-				
+
 				when (mapName) {
 					"Port Breeze Archipelago" -> {
 						if (!game.imageUtils.isTablet) {
@@ -107,21 +108,21 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			}
-			
+
 			return true
 		}
-		
+
 		// Phantagrande Skydom Page 2
 		else if (listPage2.contains(mapName)) {
 			// Switch pages if needed.
 			if (listPage1.contains(currentLocation)) {
 				game.findAndClickButton("world_right_arrow")
 			}
-			
+
 			// Use a manual way to tap on the correct island if image matching for the island name failed.
 			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
 				val arrowLocation = game.imageUtils.findButton("world_left_arrow") ?: throw Exception("Unable to find the location of the left arrow for the World.")
-				
+
 				when (mapName) {
 					"Mist-Shrouded Isle" -> {
 						if (!game.imageUtils.isTablet) {
@@ -200,28 +201,28 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			}
-			
+
 			return true
 		}
-		
+
 		return false
 	}
-	
+
 	/**
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
 		game.printToLog("\n[QUEST] Now beginning process to navigate to the mission: $missionName...", tag = tag)
-		
+
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
-		
+
 		// Format the map name.
 		val formattedMapName = mapName.lowercase().replace(" ", "_").replace("-", "_")
-		
+
 		val checkLocation: Boolean
 		var currentLocation = ""
-		
+
 		// Check if the bot is already at the island where the mission takes place in. If not, navigate to it.
 		if (game.imageUtils.confirmLocation("map_$formattedMapName", tries = 1)) {
 			game.printToLog("[QUEST] Bot is currently on the correct island for the mission.", tag = tag)
@@ -229,61 +230,61 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 		} else {
 			game.printToLog("[QUEST] Bot is not on the correct island for the mission. Navigating to the correct island...")
 			checkLocation = false
-			
+
 			// Determine what island the bot is currently at.
 			val locationList = listOf(
 				"Zinkenstill", "Port Breeze Archipelago", "Valtz Duchy", "Auguste Isles", "Lumacie Archipelago", "Albion Citadel", "Mist-Shrouded Isle",
 				"Golonzo Island", "Amalthea Island", "Former Capital Mephorash", "Agastia"
 			)
-			
+
 			var locationIndex = 0
 			while (locationIndex < locationList.size) {
 				val tempMapLocation = locationList[locationIndex]
 				val tempFormattedMapLocation = tempMapLocation.lowercase().replace(" ", "_").replace("-", "_")
-				
+
 				if (game.imageUtils.confirmLocation("map_${tempFormattedMapLocation}", tries = 1)) {
 					game.printToLog("\n[QUEST] Bot's current location is at ${tempFormattedMapLocation}. Now moving to ${mapName}...", tag = tag)
 					currentLocation = tempMapLocation
 					break
 				}
-				
+
 				locationIndex += 1
 			}
 		}
-		
+
 		// Once the bot has determined where it is, go to the Quest screen.
 		game.findAndClickButton("quest", suppressError = true)
-		
+
 		game.wait(3.0)
-		
+
 		// Check for the "You retreated from the raid battle" popup.
 		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
 			game.findAndClickButton("ok")
 		}
-		
+
 		if (game.imageUtils.confirmLocation("quest")) {
 			// If the bot is currently not at the correct island, move to it.
 			if (!checkLocation) {
 				// Tap the "World" button.
 				game.findAndClickButton("world")
-				
+
 				// Now on the World screen, tap the specified coordinates of the screen to move to that island. Switch pages if necessary.
 				navigateToMap(mapName, currentLocation)
-				
+
 				// Tap the "Go" button on the popup after tapping the map node.
 				game.findAndClickButton("go")
 			}
-			
+
 			// Find the "World" button.
 			var worldButtonLocation = game.imageUtils.findButton("world", tries = 2)
 			if (worldButtonLocation == null) {
 				worldButtonLocation = game.imageUtils.findButton("world2", tries = 2)
 			}
-			
+
 			if (worldButtonLocation == null) {
 				throw Exception("Unable to find the location of the World button.")
 			}
-			
+
 			// Now that the bot is on the correct island, tap on the correct chapter node.
 			if (missionName == "Scattered Cargo") {
 				game.printToLog("[QUEST] Moving to Chapter 1 (115) node...", tag = tag)
@@ -418,24 +419,24 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 				}
 			}
-			
+
 			// Now that the correct chapter node has been selected, scroll down the screen.
 			game.printToLog("[QUEST] Now bringing up the Summon Selection screen for \"$missionName\"...", tag = tag)
 			game.gestureUtils.scroll()
-			
+
 			game.wait(2.0)
-			
+
 			// Now tap on the mission node to start.
 			val formattedMissionName = missionName.lowercase().replace(" ", "_")
 			if (!game.findAndClickButton(formattedMissionName)) {
 				// If the bot failed to find and click on the mission node the first time, scroll down the screen again.
 				game.gestureUtils.scroll()
-				
+
 				game.wait(2.0)
-				
+
 				game.findAndClickButton(formattedMissionName)
 			}
-			
+
 			// If the mission name is "Erste Kingdom Episode 4", select the "Ch. 70 - Erste Kingdom" option.
 			if (missionName == "Erste Kingdom Episode 4") {
 				game.findAndClickButton("episode_4")
@@ -443,7 +444,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			}
 		}
 	}
-	
+
 	/**
 	 * Starts the process to complete a run for this Farming Mode and returns the number of items detected.
 	 *
@@ -452,7 +453,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 */
 	fun start(firstRun: Boolean): Int {
 		var numberOfItemsDropped = 0
-		
+
 		// Start the navigation process.
 		when {
 			firstRun -> {
@@ -467,23 +468,23 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				navigate()
 			}
 		}
-		
+
 		// Check for AP.
 		game.checkAP()
-		
+
 		// Check if the bot is at the Summon Selection screen.
 		if (game.imageUtils.confirmLocation("select_a_summon")) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
-				
+
 				game.wait(1.0)
-				
+
 				// Close the "Items Picked Up" popup.
 				if (game.imageUtils.confirmLocation("items_picked_up")) {
 					game.findAndClickButton("ok")
 				}
-				
+
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode(game.combatScript)) {
 					numberOfItemsDropped = game.collectLoot(isCompleted = true)
@@ -492,7 +493,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 		} else {
 			throw QuestException("Failed to arrive at the Summon Selection screen.")
 		}
-		
+
 		return numberOfItemsDropped
 	}
 }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import android.util.Log
 import androidx.preference.PreferenceManager
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.game_modes.*
 import com.steve1316.granblue_automation_android.data.SummonData
 import com.steve1316.granblue_automation_android.utils.*
@@ -18,10 +19,10 @@ import java.util.concurrent.TimeUnit
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
 class Game(val myContext: Context) {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}Game"
-	
+	private val tag: String = "${loggerTag}Game"
+
 	val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-	
+
 	// Grab all necessary information from SharedPreferences.
 	var farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
 	private var mapName: String = sharedPreferences.getString("mapName", "")!!
@@ -42,12 +43,12 @@ class Game(val myContext: Context) {
 	private val enableAdditionalDelayTap: Boolean = sharedPreferences.getBoolean("enableAdditionalDelayTap", false)
 	private val additionalDelayTapRange: Int = sharedPreferences.getInt("additionalDelayTapRange", 1000)
 	var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
-	
+
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext, this)
 	val combatMode: CombatMode = CombatMode(this, debugMode)
-	
+
 	private lateinit var quest: Quest
 	private lateinit var special: Special
 	private lateinit var coop: Coop
@@ -60,11 +61,11 @@ class Game(val myContext: Context) {
 	private lateinit var xenoClash: XenoClash
 	private lateinit var arcarum: Arcarum
 	private lateinit var generic: Generic
-	
+
 	private val startTime: Long = System.currentTimeMillis()
-	
+
 	private var partySelectionFirstRun: Boolean = true
-	
+
 	init {
 		if (farmingMode == "Quest") {
 			quest = Quest(this, mapName, missionName)
@@ -92,7 +93,7 @@ class Game(val myContext: Context) {
 			generic = Generic(this)
 		}
 	}
-	
+
 	/**
 	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
 	 *
@@ -102,7 +103,7 @@ class Game(val myContext: Context) {
 	 */
 	private fun printTime(): String {
 		val elapsedMillis: Long = System.currentTimeMillis() - startTime
-		
+
 		return String.format(
 			"%02d:%02d:%02d",
 			TimeUnit.MILLISECONDS.toHours(elapsedMillis),
@@ -110,7 +111,7 @@ class Game(val myContext: Context) {
 			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
 		)
 	}
-	
+
 	/**
 	 * Print the specified message to debug console and then saves the message to the log.
 	 *
@@ -124,7 +125,7 @@ class Game(val myContext: Context) {
 		} else {
 			Log.e(tag, message)
 		}
-		
+
 		// Remove the newline prefix if needed and place it where it should be.
 		if (message.startsWith("\n")) {
 			val newMessage = message.removePrefix("\n")
@@ -133,7 +134,7 @@ class Game(val myContext: Context) {
 			MessageLog.messageLog.add(printTime() + " " + message)
 		}
 	}
-	
+
 	/**
 	 * Go back to the Home screen by tapping the "Home" button.
 	 *
@@ -143,7 +144,7 @@ class Game(val myContext: Context) {
 	fun goBackHome(confirmLocationCheck: Boolean = false, testMode: Boolean = false) {
 		if (!imageUtils.confirmLocation("home")) {
 			printToLog("[INFO] Moving back to the Home screen...")
-			
+
 			if (!findAndClickButton("home")) {
 				if (!testMode) {
 					throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
@@ -153,18 +154,18 @@ class Game(val myContext: Context) {
 					return
 				}
 			}
-			
+
 			// Wait a few seconds for the page to load and to prevent the bot from prematurely scrolling all the way to the bottom.
 			wait(2.0)
-			
+
 			printToLog("\n[INFO] Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, Screen DPI: ${MediaProjectionService.displayDPI}")
-			
+
 			// Check for any misc popups.
 			findAndClickButton("close", tries = 2)
-			
+
 			if (confirmLocationCheck) {
 				wait(2.0)
-				
+
 				if (!imageUtils.confirmLocation("home")) {
 					findAndClickButton("reload")
 					wait(2.0)
@@ -177,7 +178,7 @@ class Game(val myContext: Context) {
 			printToLog("[INFO] Bot is already at the Home screen.")
 		}
 	}
-	
+
 	/**
 	 * Wait the specified seconds to account for ping or loading.
 	 *
@@ -188,7 +189,7 @@ class Game(val myContext: Context) {
 			delay((seconds * 1000).toLong())
 		}
 	}
-	
+
 	/**
 	 * Find and click button
 	 *
@@ -201,73 +202,73 @@ class Game(val myContext: Context) {
 		if (debugMode) {
 			printToLog("[DEBUG] Now attempting to find and click the \"$buttonName\" button.")
 		}
-		
+
 		var tempLocation: Point?
 		var newButtonName = buttonName
-		
+
 		if (buttonName.lowercase() == "quest") {
 			tempLocation = imageUtils.findButton("quest_blue", suppressError = suppressError)
 			newButtonName = "quest_blue"
-			
+
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("quest_red", suppressError = suppressError)
 				newButtonName = "quest_red"
 			}
-			
+
 		} else if (buttonName.lowercase() == "raid") {
 			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
 			newButtonName = "raid_flat"
-			
+
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("raid_bouncing", tries = tries, suppressError = suppressError)
 				newButtonName = "raid_bouncing"
 			}
-			
+
 		} else if (buttonName.lowercase() == "coop_start") {
 			tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError)
 			newButtonName = "coop_start_flat"
-			
+
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("coop_start_faded", tries = tries, suppressError = suppressError)
 				newButtonName = "coop_start_faded"
 			}
-			
+
 		} else if (buttonName.lowercase() == "event_special_quest") {
 			tempLocation = imageUtils.findButton("event_special_quest_flat", tries = tries, suppressError = suppressError)
 			newButtonName = "event_special_quest_flat"
-			
+
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("event_special_quest_bouncing", tries = tries, suppressError = suppressError)
 				newButtonName = "event_special_quest_bouncing"
 			}
-			
+
 		} else if (buttonName.lowercase() == "world") {
 			tempLocation = imageUtils.findButton("world", tries = tries, suppressError = suppressError)
 			newButtonName = "world"
-			
+
 			if (tempLocation == null) {
 				tempLocation = imageUtils.findButton("world2", tries = tries, suppressError = suppressError)
 				newButtonName = "world2"
 			}
-			
+
 		} else {
 			tempLocation = imageUtils.findButton(buttonName, tries = tries, suppressError = suppressError)
 		}
-		
+
 		return if (tempLocation != null) {
 			if (enableAdditionalDelayTap) {
 				val newDelay: Double = ((additionalDelayTapRange - 100)..(additionalDelayTapRange + 100)).random().toDouble() / 1000
 				if (debugMode) printToLog("[DEBUG] Adding an additional delay of ${newDelay}s...")
 				wait(newDelay)
 			}
-			
+
 			Log.d(tag, "Found and going to tap: $newButtonName")
 			gestureUtils.tap(tempLocation.x, tempLocation.y, newButtonName)
 		} else {
 			false
 		}
 	}
-	
+
 	/**
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
@@ -278,7 +279,7 @@ class Game(val myContext: Context) {
 			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
 		}
 	}
-	
+
 	/**
 	 * Execute a delay after every run completed based on user settings from config.yaml.
 	 */
@@ -289,9 +290,9 @@ class Game(val myContext: Context) {
 				printToLog("\n[INFO] Provided delay in seconds for the resting period is not valid. Defaulting to 15 seconds.")
 				delayBetweenRuns = 15
 			}
-			
+
 			printToLog("\n[INFO] Now waiting for $delayBetweenRuns seconds as the resting period. Please do not navigate from the current screen.")
-			
+
 			wait(delayBetweenRuns.toDouble())
 		} else if (!enableDelayBetweenRuns && enableRandomizedDelayBetweenRuns) {
 			// Check if the lower and upper bounds are valid.
@@ -299,24 +300,24 @@ class Game(val myContext: Context) {
 				printToLog("\n[INFO] Provided lower bound delay in seconds for the resting period is not valid. Defaulting to 15 seconds.")
 				delayBetweenRuns = 15
 			}
-			
+
 			if (randomizedDelayBetweenRuns < 0 || randomizedDelayBetweenRuns < delayBetweenRuns) {
 				printToLog("\n[INFO] Provided upper bound delay in seconds for the resting period is not valid. Defaulting to 60 seconds.")
 				randomizedDelayBetweenRuns = 60
 			}
-			
+
 			val newSeconds = Random().nextInt(randomizedDelayBetweenRuns - delayBetweenRuns) + delayBetweenRuns
 			printToLog(
 				"\n[INFO] Given the bounds of ($delayBetweenRuns, $randomizedDelayBetweenRuns), bot will now wait for $newSeconds seconds as a resting period. Please do not navigate from the " +
 						"current screen."
 			)
-			
+
 			wait(newSeconds.toDouble())
 		}
-		
+
 		printToLog("\n[INFO] Resting period complete.")
 	}
-	
+
 	/**
 	 * Find and select the specified Summon based on the current index on the Summon Selection screen. It will then check for CAPTCHA right
 	 * afterwards.
@@ -332,12 +333,12 @@ class Game(val myContext: Context) {
 		} else {
 			summonList
 		}
-		
+
 		unformattedSummonList.forEach {
 			val newSummonName = it.lowercase().replace(" ", "_")
 			newSummonList.add(newSummonName)
 		}
-		
+
 		// Set up the list of Summon elements.
 		val summonElementList = arrayListOf<String>()
 		unformattedSummonList.forEach {
@@ -365,61 +366,61 @@ class Game(val myContext: Context) {
 				}
 			}
 		}
-		
+
 		printToLog("Summon list: $newSummonList")
 		printToLog("Summon Element list: $summonElementList")
-		
+
 		// Find the location of one of the Summons.
 		val summonLocation = imageUtils.findSummon(newSummonList, summonElementList)
-		
+
 		return if (summonLocation != null) {
 			// Select the Summon.
 			gestureUtils.tap(summonLocation.x, summonLocation.y, "template_summon")
-			
+
 			// Check for CAPTCHA.
 			checkForCAPTCHA()
-			
+
 			true
 		} else {
 			// Reset Summons if not found.
 			resetSummons()
-			
+
 			false
 		}
 	}
-	
+
 	/**
 	 * Reset the available Summons by starting and then retreating from an Old Lignoid Trial Battle.
 	 */
 	private fun resetSummons() {
 		printToLog("[INFO] Resetting Summons...")
-		
+
 		// Go back Home.
 		goBackHome(confirmLocationCheck = true)
-		
+
 		// Scroll the screen down to attempt to see the "Gameplay Extras" button.
 		gestureUtils.swipe(500f, 1000f, 500f, 400f)
-		
+
 		val listOfSteps: ArrayList<String> = arrayListOf(
 			"gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
 			"choose_a_summon", "ok", "close", "menu", "retreat", "retreat_confirmation", "next"
 		)
-		
+
 		listOfSteps.forEach {
 			if (it == "trial_battles_old_lignoid") {
 				// Make sure to confirm that the bot arrived at the Trial Battles screen.
 				wait(2.0)
 				imageUtils.confirmLocation("trial_battles")
 			}
-			
+
 			if (it == "close") {
 				// Wait a few seconds and then confirm its location.
 				wait(5.0)
 				imageUtils.confirmLocation("trial_battles_description")
 			}
-			
+
 			var imageLocation: Point? = imageUtils.findButton(it, tries = 2)
-			
+
 			while ((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
 				// Keep swiping the screen down until the bot finds the specified button.
 				imageLocation = imageUtils.findButton(it, tries = 1)
@@ -428,17 +429,17 @@ class Game(val myContext: Context) {
 					wait(1.0)
 				}
 			}
-			
+
 			if (it == "choose_a_summon" && imageLocation != null) {
 				gestureUtils.tap(imageLocation.x, imageLocation.y + 400, "template_summon")
 			} else if (it != "choose_a_summon" && imageLocation != null) {
 				gestureUtils.tap(imageLocation.x, imageLocation.y, it)
 			}
-			
+
 			wait(2.0)
 		}
 	}
-	
+
 	/**
 	 * Selects the specified Group and Party. It will then start the mission.
 	 *
@@ -450,22 +451,22 @@ class Game(val myContext: Context) {
 	fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
 		if (partySelectionFirstRun) {
 			wait(1.0)
-			
+
 			var setLocation: Point? = null
 			var numberOfTries = tries
-			
+
 			val selectedGroupNumber = if (optionalGroupNumber == 0) {
 				groupNumber
 			} else {
 				optionalGroupNumber
 			}
-			
+
 			val selectedPartyNumber = if (optionalPartyNumber == 0) {
 				partyNumber
 			} else {
 				optionalPartyNumber
 			}
-			
+
 			// Search for the location of the "Set" button based on the Group number.
 			while (setLocation == null) {
 				setLocation = if (selectedGroupNumber < 8) {
@@ -473,10 +474,10 @@ class Game(val myContext: Context) {
 				} else {
 					imageUtils.findButton("party_set_b", tries = 1)
 				}
-				
+
 				if (setLocation == null) {
 					numberOfTries -= 1
-					
+
 					if (numberOfTries <= 0) {
 						if (selectedGroupNumber < 8) {
 							throw(Resources.NotFoundException("Could not find Set A."))
@@ -484,7 +485,7 @@ class Game(val myContext: Context) {
 							throw(Resources.NotFoundException("Could not find Set B."))
 						}
 					}
-					
+
 					// Switch over and search for the other Set.
 					setLocation = if (selectedGroupNumber < 8) {
 						imageUtils.findButton("party_set_b", tries = 1)
@@ -493,7 +494,7 @@ class Game(val myContext: Context) {
 					}
 				}
 			}
-			
+
 			// Select the Group.
 			var equation: Double = if (!imageUtils.isTablet) {
 				if (selectedGroupNumber == 1) {
@@ -524,7 +525,7 @@ class Game(val myContext: Context) {
 					}
 				}
 			}
-			
+
 			if (!imageUtils.isTablet) {
 				if (imageUtils.isLowerEnd) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 80.0, "template_group")
@@ -538,9 +539,9 @@ class Game(val myContext: Context) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 70.0, "template_group")
 				}
 			}
-			
+
 			wait(1.0)
-			
+
 			// Select the Party.
 			equation = if (!imageUtils.isTablet) {
 				if (selectedPartyNumber == 1) {
@@ -571,7 +572,7 @@ class Game(val myContext: Context) {
 					}
 				}
 			}
-			
+
 			if (!imageUtils.isTablet) {
 				if (imageUtils.isLowerEnd) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 490.0, "template_party")
@@ -585,27 +586,27 @@ class Game(val myContext: Context) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 425.0, "template_party")
 				}
 			}
-			
+
 			wait(1.0)
-			
+
 			partySelectionFirstRun = false
 		}
-		
+
 		printToLog("[SUCCESS] Selected Group and Party successfully.")
-		
+
 		// Start the mission by clicking "OK".
 		findAndClickButton("ok")
 		wait(5.0)
-		
+
 		// Detect if a "This raid battle has already ended" popup appeared.
 		if (farmingMode == "Raid" && findAndClickButton("ok")) {
 			printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
 			return false
 		}
-		
+
 		return true
 	}
-	
+
 	/**
 	 * Checks if the user has available AP. If not, then it will refill it.
 	 *
@@ -615,9 +616,9 @@ class Game(val myContext: Context) {
 	fun checkAP(useFullElixir: Boolean = false, tries: Int = 3) {
 		if (!enableSkipAutoRestore) {
 			var numberOfTries = tries
-			
+
 			wait(2.0)
-			
+
 			if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1) && !imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
 				while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
 					(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))
@@ -631,9 +632,9 @@ class Game(val myContext: Context) {
 							printToLog("[INFO] AP ran out! Using Full Elixir...")
 							gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
 						}
-						
+
 						wait(1.0)
-						
+
 						// Press the "OK" button to confirm the item usage.
 						findAndClickButton("ok")
 					} else {
@@ -646,13 +647,13 @@ class Game(val myContext: Context) {
 			} else {
 				findAndClickButton("ok")
 			}
-			
+
 			printToLog("[INFO] AP is available.")
 		}
-		
+
 		printToLog("[INFO] AP was auto-restored.")
 	}
-	
+
 	/**
 	 * Checks if the user has available EP. If not, then it will refill it.
 	 *
@@ -662,9 +663,9 @@ class Game(val myContext: Context) {
 	fun checkEP(useSoulBalm: Boolean = false, tries: Int = 3) {
 		if (!enableSkipAutoRestore) {
 			var numberOfTries = tries
-			
+
 			wait(2.0)
-			
+
 			if (!imageUtils.confirmLocation("auto_ep_recovered", tries = 1)) {
 				while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
 					if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
@@ -676,13 +677,13 @@ class Game(val myContext: Context) {
 							printToLog("[INFO] EP ran out! Using Soul Balm...")
 							gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
 						}
-						
+
 						wait(1.0)
-						
+
 						// Press the "OK" button to confirm the item usage.
 						findAndClickButton("ok")
 					}
-					
+
 					numberOfTries -= 1
 					if (numberOfTries <= 0) {
 						break
@@ -691,13 +692,13 @@ class Game(val myContext: Context) {
 			} else {
 				findAndClickButton("ok")
 			}
-			
+
 			printToLog("[INFO] EP is available.")
 		}
-		
+
 		printToLog("[INFO] EP was auto-restored.")
 	}
-	
+
 	/**
 	 * Detect any dropped loot from the Loot Collected screen while clicking away any dialog popups.
 	 *
@@ -711,7 +712,7 @@ class Game(val myContext: Context) {
 	 */
 	fun collectLoot(isCompleted: Boolean, isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false, skipPopupCheck: Boolean = false): Int {
 		var amountGained = 0
-		
+
 		// Close all popups until the bot reaches the Loot Collected screen.
 		if (!skipPopupCheck) {
 			var tries = 5
@@ -720,14 +721,14 @@ class Game(val myContext: Context) {
 				findAndClickButton("close", tries = 1, suppressError = true)
 				findAndClickButton("cancel", tries = 1, suppressError = true)
 				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
-				
+
 				tries -= 1
 				if (tries <= 0) {
 					break
 				}
 			}
 		}
-		
+
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
 		if (isCompleted && !isPendingBattle && !isEventNightmare) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this run...")
@@ -736,7 +737,7 @@ class Game(val myContext: Context) {
 			} else {
 				1
 			}
-			
+
 			amountOfRuns += 1
 		} else if (isPendingBattle) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this Pending Battle...")
@@ -745,10 +746,10 @@ class Game(val myContext: Context) {
 			} else {
 				1
 			}
-			
+
 			itemAmountFarmed += amountGained
 		}
-		
+
 		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
 				printToLog("\n************************************************************")
@@ -761,7 +762,7 @@ class Game(val myContext: Context) {
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
-				
+
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
 					val discordString = if (itemAmountFarmed >= itemAmount) {
@@ -769,7 +770,7 @@ class Game(val myContext: Context) {
 					} else {
 						"> ${amountGained}x __${itemName}__ gained this run: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]**"
 					}
-					
+
 					DiscordUtils.queue.add(discordString)
 				}
 			} else {
@@ -781,14 +782,14 @@ class Game(val myContext: Context) {
 				printToLog("[INFO] # of runs completed: $amountOfRuns / $itemAmount")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
-				
+
 				// Construct the message for the Discord private DM.
 				val discordString = if (amountOfRuns >= itemAmount) {
 					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]** :white_check_mark:"
 				} else {
 					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]**"
 				}
-				
+
 				DiscordUtils.queue.add(discordString)
 			}
 		} else if (isPendingBattle && amountGained > 0 && !skipInfo) {
@@ -803,7 +804,7 @@ class Game(val myContext: Context) {
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
-				
+
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
 					val discordString = if (itemAmountFarmed >= itemAmount) {
@@ -811,15 +812,15 @@ class Game(val myContext: Context) {
 					} else {
 						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]**"
 					}
-					
+
 					DiscordUtils.queue.add(discordString)
 				}
 			}
 		}
-		
+
 		return amountGained
 	}
-	
+
 	/**
 	 * Detect any popups and attempt to close them all with the final destination being the Summon Selection screen.
 	 *
@@ -827,23 +828,23 @@ class Game(val myContext: Context) {
 	 */
 	fun checkForPopups(): Boolean {
 		printToLog("\n[INFO] Now beginning process to check for popups...")
-		
+
 		var tries = 5
 		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 5)) {
 			if (!enableSkipAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
 				break
 			}
-			
+
 			// Break out of the loop if the bot detected the "Not Enough AP" popup.
 			if (!enableSkipAutoRestore && imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 				break
 			}
-			
+
 			if (farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("rotb_proud_solo_quest", tries = 1)) {
 				// Scroll down the screen a little bit because the popup itself is too long.
 				gestureUtils.scroll()
 			}
-			
+
 			// Check for certain popups for certain Farming Modes.
 			if ((farmingMode == "Rise of the Beasts" && riseOfTheBeasts.checkROTBExtremePlus()) ||
 				(farmingMode == "Special" && missionName == "VH Angel Halo" && itemName == "Angel Halo Weapons" && special.checkDimensionalHalo()) ||
@@ -852,24 +853,24 @@ class Game(val myContext: Context) {
 			) {
 				return true
 			}
-			
+
 			// If the bot tried to repeat a Extreme/Impossible difficulty Event Raid and it lacked the treasures to host it, go back to the Mission again.
 			if ((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
 				findAndClickButton("ok")
 				return true
 			}
-			
+
 			// Attempt to close the popup by clicking on any detected "Close" and "Cancel" buttons.
 			if (!findAndClickButton("close", tries = 1, suppressError = true)) {
 				findAndClickButton("cancel", tries = 1, suppressError = true)
 			}
-			
+
 			tries -= 1
 		}
-		
+
 		return false
 	}
-	
+
 	/**
 	 * Detects any "Friend Request" popups and close them.
 	 */
@@ -878,7 +879,7 @@ class Game(val myContext: Context) {
 			findAndClickButton("cancel")
 		}
 	}
-	
+
 	/**
 	 * Detects Skyscope popup and close it.
 	 */
@@ -888,7 +889,7 @@ class Game(val myContext: Context) {
 			wait(1.0)
 		}
 	}
-	
+
 	/**
 	 * Process a Pending Battle.
 	 *
@@ -897,13 +898,13 @@ class Game(val myContext: Context) {
 	private fun clearPendingBattle(): Boolean {
 		if (findAndClickButton("tap_here_to_see_rewards")) {
 			wait(1.0)
-			
+
 			if (imageUtils.confirmLocation("no_loot", tries = 2)) {
 				printToLog("[INFO] No loot can be collected. Backing out...")
-				
+
 				// Navigate back to the Quests screen.
 				findAndClickButton("quests")
-				
+
 				return true
 			} else {
 				// Start loot detection if there it is available.
@@ -912,17 +913,17 @@ class Game(val myContext: Context) {
 				} else {
 					collectLoot(isCompleted = false, isPendingBattle = true)
 				}
-				
+
 				findAndClickButton("close", tries = 2)
 				findAndClickButton("ok", tries = 2)
-				
+
 				return true
 			}
 		}
-		
+
 		return false
 	}
-	
+
 	/**
 	 * Check and collect any pending rewards and free up slots for the bot to join more Raids.
 	 *
@@ -931,7 +932,7 @@ class Game(val myContext: Context) {
 	fun checkPendingBattles(): Boolean {
 		printToLog("\n[INFO] Starting process of checking for Pending Battles...")
 		wait(1.0)
-		
+
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
 		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 1) ||
@@ -939,11 +940,11 @@ class Game(val myContext: Context) {
 			findAndClickButton("quest_results_pending_battles", tries = 1)
 		) {
 			printToLog("[INFO] Found Pending Battles that need collecting from.")
-			
+
 			findAndClickButton("ok", tries = 1)
-			
+
 			wait(3.0)
-			
+
 			if (imageUtils.confirmLocation("pending_battles", tries = 1)) {
 				// Process the current Pending Battle.
 				while (clearPendingBattle()) {
@@ -961,15 +962,15 @@ class Game(val myContext: Context) {
 					}
 				}
 			}
-			
+
 			printToLog("[INFO] Pending Battles have been cleared.")
 			return true
 		}
-		
+
 		printToLog("[INFO] No Pending Battles needed to be cleared.")
 		return false
 	}
-	
+
 	/**
 	 * Start Farming Mode with the provided parameters from the user's choices in the settings.
 	 *
@@ -980,7 +981,7 @@ class Game(val myContext: Context) {
 		if (farmingMode != "Coop" && farmingMode != "Arcarum" && summonList[0] == "") {
 			throw Exception("You have no summons selected for this Farming Mode.")
 		}
-		
+
 		if (itemName != "EXP") {
 			printToLog("\n############################################################")
 			printToLog("############################################################")
@@ -996,18 +997,18 @@ class Game(val myContext: Context) {
 			printToLog("############################################################")
 			printToLog("############################################################")
 		}
-		
+
 		// If the user did not select a combat script, use the default Full Auto combat script.
 		if (combatScript.isEmpty() || combatScript[0] == "") {
 			printToLog("\n[INFO] User did not provide their own combat script. Defaulting to Full Auto combat script.")
-			
+
 			combatScript = listOf(
 				"Turn 1:",
 				"enableFullAuto",
 				"end"
 			)
 		}
-		
+
 		var firstRun = true
 		while (itemAmountFarmed < itemAmount) {
 			if (farmingMode == "Quest") {
@@ -1035,20 +1036,20 @@ class Game(val myContext: Context) {
 			} else if (farmingMode == "Generic") {
 				itemAmountFarmed += generic.start()
 			}
-			
+
 			if (itemAmountFarmed < itemAmount) {
 				// Generate a resting period if the user enabled it.
 				delayBetweenRuns()
 				firstRun = false
 			}
 		}
-		
+
 		printToLog("\n************************************************************")
 		printToLog("************************************************************")
 		printToLog("[INFO] Farming Mode has ended")
 		printToLog("************************************************************")
 		printToLog("************************************************************")
-		
+
 		return true
 	}
 }

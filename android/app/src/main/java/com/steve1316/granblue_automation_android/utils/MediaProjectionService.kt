@@ -38,28 +38,28 @@ import java.util.*
  * added to suit this application's purposes.
  */
 class MediaProjectionService : Service() {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}MediaProjectionService"
-	
+	private val tag: String = "${loggerTag}MediaProjectionService"
+
 	private lateinit var myContext: Context
 	private var appName = ""
-	
+
 	companion object {
 		private var mediaProjection: MediaProjection? = null
 		private var orientationChangeCallback: OrientationEventListener? = null
 		private lateinit var tempDirectory: String
 		private lateinit var threadHandler: Handler
-		
+
 		var displayWidth: Int = 0
 		var displayHeight: Int = 0
 		var displayDPI: Int = 0
-		
+
 		private lateinit var virtualDisplay: VirtualDisplay
 		private lateinit var defaultDisplay: Display
 		private lateinit var windowManager: WindowManager
 		private var oldRotation: Int = 0
 		private lateinit var imageReader: ImageReader
 		var isRunning: Boolean = false
-		
+
 		/**
 		 * Tell the ImageReader to grab the latest acquired screenshot and process it into a Bitmap.
 		 *
@@ -69,20 +69,20 @@ class MediaProjectionService : Service() {
 		 */
 		fun takeScreenshotNow(saveImage: Boolean = false, isException: Boolean = false): Bitmap? {
 			var sourceBitmap: Bitmap? = null
-			
+
 			val image: Image? = imageReader.acquireLatestImage()
-			
+
 			if (image != null) {
 				val planes: Array<Plane> = image.planes
 				val buffer = planes[0].buffer
 				val pixelStride = planes[0].pixelStride
 				val rowStride = planes[0].rowStride
 				val rowPadding: Int = rowStride - pixelStride * displayWidth
-				
+
 				// Create the Bitmap.
 				sourceBitmap = Bitmap.createBitmap(displayWidth + rowPadding / pixelStride, displayHeight, Bitmap.Config.ARGB_8888)
 				sourceBitmap.copyPixelsFromBuffer(buffer)
-				
+
 				// Now write the Bitmap to the specified file inside the /files/temp/ folder. This adds about 500-600ms to runtime every time this is called when Debug Mode is on.
 				if (saveImage) {
 					val fos = if (isException) {
@@ -91,7 +91,7 @@ class MediaProjectionService : Service() {
 						FileOutputStream("$tempDirectory/source.png")
 					}
 					sourceBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-					
+
 					// Perform cleanup by closing streams and freeing up memory.
 					try {
 						fos.close()
@@ -99,13 +99,13 @@ class MediaProjectionService : Service() {
 						ioe.printStackTrace()
 					}
 				}
-				
+
 				image.close()
 			}
-			
+
 			return sourceBitmap
 		}
-		
+
 		/**
 		 * Create a new Intent to start this service.
 		 *
@@ -121,7 +121,7 @@ class MediaProjectionService : Service() {
 				putExtra("DATA", data)
 			}
 		}
-		
+
 		/**
 		 * Create a new Intent to stop this service.
 		 *
@@ -133,7 +133,7 @@ class MediaProjectionService : Service() {
 				putExtra("ACTION", "STOP")
 			}
 		}
-		
+
 		/**
 		 * Checks whether the Intent is a START command.
 		 *
@@ -146,7 +146,7 @@ class MediaProjectionService : Service() {
 				intent.getStringExtra("ACTION"), "START"
 			))
 		}
-		
+
 		/**
 		 * Checks whether the Intent is a STOP command.
 		 *
@@ -157,7 +157,7 @@ class MediaProjectionService : Service() {
 			isRunning = false
 			return (intent.hasExtra("ACTION") && Objects.equals(intent.getStringExtra("ACTION"), "STOP"))
 		}
-		
+
 		/**
 		 * Gets the public flag for the initialization of the VirtualDisplay, whether or not it can allow applications to open their own displays on
 		 * it.
@@ -168,22 +168,22 @@ class MediaProjectionService : Service() {
 			return DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY or DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC
 		}
 	}
-	
+
 	override fun onCreate() {
 		super.onCreate()
 
 		Log.d(loggerTag, "HELLO")
-		
+
 		// Creates a temporary folder if it does not already exist to store source images.
 		val externalFilesDir: File? = getExternalFilesDir(null)
 		if (externalFilesDir != null) {
 			tempDirectory = externalFilesDir.absolutePath + "/temp/"
 			val newTempDirectory = File(tempDirectory)
-			
+
 			// If the /files/temp/ folder does not exist, create it.
 			if (!newTempDirectory.exists()) {
 				val successfullyCreated: Boolean = newTempDirectory.mkdirs()
-				
+
 				// If the folder was not able to be created for some reason, log the error and stop the MediaProjection Service.
 				if (!successfullyCreated) {
 					Log.e(tag, "Failed to create the /files/temp/ folder.")
@@ -195,7 +195,7 @@ class MediaProjectionService : Service() {
 				Log.d(tag, "/files/temp/ folder already exists.")
 			}
 		}
-		
+
 		// Now, start a new Thread to handle processing new screenshots.
 		object : Thread() {
 			override fun run() {
@@ -206,29 +206,29 @@ class MediaProjectionService : Service() {
 			}
 		}.start()
 	}
-	
+
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
 	}
-	
+
 	@RequiresApi(Build.VERSION_CODES.R)
 	@SuppressLint("ClickableViewAccessibility", "InflateParams")
 	override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 		// Save a reference to the context.
 		myContext = this
 		appName = myContext.getString(R.string.app_name)
-		
+
 		if (isStartCommand(intent)) {
 			// Create a new Notification in the foreground telling users that the MediaProjection Service is now active.
 			val (notification, notificationID) = NotificationUtils.getNewNotification(this)
 			startForeground(notificationID, notification)
-			
+
 			val resultCode = intent.getIntExtra("RESULT_CODE", Activity.RESULT_CANCELED)
 			val data: Intent? = intent.getParcelableExtra("DATA")
 			if (data != null) {
 				// Start the MediaProjection service.
 				startMediaProjection(resultCode, data)
-				
+
 				// Finally, start the Bot Service.
 				val botStartIntent = Intent(this, BotService::class.java)
 				startService(botStartIntent)
@@ -242,13 +242,13 @@ class MediaProjectionService : Service() {
 			Log.e(tag, "Encountered unexpected Intent. Shutting down service.")
 			stopSelf()
 		}
-		
+
 		return START_NOT_STICKY
 	}
-	
+
 	private inner class OrientationChangeCallback(context: Context) : OrientationEventListener(context) {
-		private val tagOrientationChangeCallback: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}_OrientationChangeCallback"
-		
+		private val tagOrientationChangeCallback: String = "${loggerTag}OrientationChangeCallback"
+
 		override fun onOrientationChanged(orientation: Int) {
 			val newRotation: Int = (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
 			if (newRotation != oldRotation) {
@@ -256,7 +256,7 @@ class MediaProjectionService : Service() {
 				try {
 					// Perform cleanup.
 					virtualDisplay.release()
-					
+
 					// Now re-create the VirtualDisplay based on the new width and height of the rotated screen.
 					createVirtualDisplay()
 				} catch (e: Exception) {
@@ -269,39 +269,39 @@ class MediaProjectionService : Service() {
 			}
 		}
 	}
-	
+
 	/**
 	 * Custom Callback for when it is necessary to stop the MediaProjection.
 	 */
 	private inner class MediaProjectionStopCallback : MediaProjection.Callback() {
-		private val tagMediaProjectionStopCallback = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}_MediaProjectionStopCallback"
-		
+		private val tagMediaProjectionStopCallback = "${loggerTag}MediaProjectionStopCallback"
+
 		override fun onStop() {
 			threadHandler.post {
 				isRunning = false
-				
+
 				// Destroy the VirtualDisplay.
 				virtualDisplay.release()
-				
+
 				// Disable the OrientationChangeCallback.
 				orientationChangeCallback?.disable()
-				
+
 				// Then remove this listener from the MediaProjection object.
 				mediaProjection?.unregisterCallback(this@MediaProjectionStopCallback)
-				
+
 				// Finally, stop the Bot Service.
 				val botStopIntent = Intent(myContext, BotService::class.java)
 				stopService(botStopIntent)
-				
+
 				// Now set the MediaProjection object to null to eliminate the "Invalid media projection" error.
 				mediaProjection = null
-				
+
 				Log.d(tagMediaProjectionStopCallback, "MediaProjection Service for GAA has stopped.")
 				Toast.makeText(myContext, "MediaProjection Service for GAA has stopped.", Toast.LENGTH_SHORT).show()
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates and starts the MediaProjection.
 	 *
@@ -315,31 +315,31 @@ class MediaProjectionService : Service() {
 		if (mediaProjection == null) {
 			mediaProjection = (getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager).getMediaProjection(resultCode, data)
 		}
-		
+
 		// Get the WindowManager object.
 		windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-		
+
 		// Get the DefaultDisplay object.
 		defaultDisplay = windowManager.defaultDisplay
-		
+
 		// Create the VirtualDisplay and start reading in screenshots.
 		createVirtualDisplay()
 
 		Log.d(loggerTag, "Finished creating the Virtual Display")
-		
+
 		// Attach the OrientationChangeCallback.
 		orientationChangeCallback = OrientationChangeCallback(this)
 		if ((orientationChangeCallback as OrientationChangeCallback).canDetectOrientation()) {
 			(orientationChangeCallback as OrientationChangeCallback).enable()
 		}
-		
+
 		// Attach the MediaProjectionStopCallback to the MediaProjection object.
 		mediaProjection?.registerCallback(MediaProjectionStopCallback(), threadHandler)
-		
+
 		Log.d(tag, "MediaProjection Service for $appName is now running.")
 		Toast.makeText(myContext, "MediaProjection Service for $appName is now running.", Toast.LENGTH_SHORT).show()
 	}
-	
+
 	/**
 	 * Stops the MediaProjection.
 	 */
@@ -348,7 +348,7 @@ class MediaProjectionService : Service() {
 			mediaProjection?.stop()
 		}
 	}
-	
+
 	/**
 	 * Creates the VirtualDisplay and the ImageReader to start reading in screenshots.
 	 */
@@ -361,12 +361,12 @@ class MediaProjectionService : Service() {
 		displayWidth = metrics.widthPixels
 		displayHeight = metrics.heightPixels
 		displayDPI = metrics.densityDpi
-		
+
 		Log.d(tag, "Screen Width: $displayWidth, Screen Height: $displayHeight, Screen DPI: $displayDPI")
-		
+
 		// Start the ImageReader.
 		imageReader = ImageReader.newInstance(displayWidth, displayHeight, PixelFormat.RGBA_8888, 2)
-		
+
 		// Now create the VirtualDisplay.
 		virtualDisplay = mediaProjection?.createVirtualDisplay(
 			"$appName's Virtual Display", displayWidth, displayHeight,

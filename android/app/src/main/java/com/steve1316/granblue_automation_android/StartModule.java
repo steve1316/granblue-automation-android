@@ -5,7 +5,6 @@ import static com.steve1316.granblue_automation_android.MainActivity.loggerTag;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
@@ -14,13 +13,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.steve1316.granblue_automation_android.R;
-import com.steve1316.granblue_automation_android.utils.MediaProjectionService;
-import com.steve1316.granblue_automation_android.utils.MyAccessibilityService;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.steve1316.granblue_automation_android.utils.MediaProjectionService;
+import com.steve1316.granblue_automation_android.utils.MyAccessibilityService;
 
 import java.util.Objects;
 
@@ -60,13 +58,10 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
             builder.setTitle(R.string.overlay_disabled);
             builder.setMessage(R.string.overlay_disabled_message);
 
-            builder.setPositiveButton(R.string.go_to_settings, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // Send the user to the Overlay Settings.
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${myContext.getPackageName()}"));
-                    Objects.requireNonNull(getCurrentActivity()).startActivity(intent);
-                }
+            builder.setPositiveButton(R.string.go_to_settings, (dialogInterface, i) -> {
+                // Send the user to the Overlay Settings.
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${myContext.getPackageName()}"));
+                Objects.requireNonNull(getCurrentActivity()).startActivity(intent);
             });
 
             builder.setNegativeButton(android.R.string.cancel, null);
@@ -97,13 +92,10 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
         builder.setTitle(R.string.accessibility_disabled);
         builder.setMessage(R.string.accessibility_disabled_message);
 
-        builder.setPositiveButton(R.string.go_to_settings, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d(loggerTag, "Accessibility Service is not detected. Moving user to Accessibility Settings.");
-                Intent accessibilitySettingsIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                Objects.requireNonNull(getCurrentActivity()).startActivity(accessibilitySettingsIntent);
-            }
+        builder.setPositiveButton(R.string.go_to_settings, (dialogInterface, i) -> {
+            Log.d(loggerTag, "Accessibility Service is not detected. Moving user to Accessibility Settings.");
+            Intent accessibilitySettingsIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            Objects.requireNonNull(getCurrentActivity()).startActivity(accessibilitySettingsIntent);
         });
 
         builder.setNegativeButton(android.R.string.cancel, null);

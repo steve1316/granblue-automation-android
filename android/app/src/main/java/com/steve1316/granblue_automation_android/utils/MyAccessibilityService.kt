@@ -17,6 +17,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.EditText
 import android.widget.Toast
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.data.RoomCodeData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -25,14 +26,14 @@ import kotlinx.coroutines.runBlocking
  * Contains the Accessibility service that will allow the bot to programmatically perform gestures on the screen.
  */
 class MyAccessibilityService : AccessibilityService() {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}MyAccessibilityService"
+	private val tag: String = "${loggerTag}MyAccessibilityService"
 	private lateinit var myContext: Context
-	
+
 	companion object {
 		// Other classes need this static reference to this service as calling dispatchGesture() would not work.
 		@SuppressLint("StaticFieldLeak")
 		private lateinit var instance: MyAccessibilityService
-		
+
 		/**
 		 * Returns a static reference to this class.
 		 *
@@ -42,24 +43,24 @@ class MyAccessibilityService : AccessibilityService() {
 			return instance
 		}
 	}
-	
+
 	override fun onServiceConnected() {
 		instance = this
 		myContext = this
-		
+
 		Log.d(tag, "Accessibility Service for GAA is now running.")
 		Toast.makeText(myContext, "Accessibility Service for GAA is now running.", Toast.LENGTH_SHORT).show()
 	}
-	
+
 	override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 		if (event?.source != null && RoomCodeData.roomCode != "" && event.source?.className.toString().contains(EditText::class.java.simpleName)) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				Log.d(tag, "[DEBUG] Copying ${RoomCodeData.roomCode}")
-				
+
 				// Paste the room code.
 				val arguments = Bundle()
 				arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, RoomCodeData.roomCode)
-				
+
 				if (event.source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)) {
 					Log.d(tag, "[DEBUG] Pasted ${RoomCodeData.roomCode}")
 				} else {
@@ -68,38 +69,38 @@ class MyAccessibilityService : AccessibilityService() {
 			} else {
 				Log.d(tag, "[LEGACY] Copying ${RoomCodeData.roomCode}")
 				event.source.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
-				
+
 				val clipboard = myContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 				val clip = ClipData.newPlainText("Room Code", RoomCodeData.roomCode)
 				clipboard.setPrimaryClip(clip)
-				
+
 				Log.d(tag, "[LEGACY] Clipboard contents: ${clipboard.primaryClip}")
-				
+
 				if (event.source.performAction(AccessibilityNodeInfo.ACTION_PASTE)) {
 					Log.d(tag, "[LEGACY] Pasted ${RoomCodeData.roomCode}")
 				} else {
 					Log.d(tag, "[LEGACY] Failed to paste ${RoomCodeData.roomCode}")
 				}
 			}
-			
+
 			// Now reset the room code to prevent looping of onAccessibilityEvent().
 			RoomCodeData.roomCode = ""
 		}
-		
+
 		return
 	}
-	
+
 	override fun onInterrupt() {
 		return
 	}
-	
+
 	override fun onDestroy() {
 		super.onDestroy()
-		
+
 		Log.d(tag, "Accessibility Service for GAA is now stopped.")
 		Toast.makeText(myContext, "Accessibility Service for GAA is now stopped.", Toast.LENGTH_SHORT).show()
 	}
-	
+
 	/**
 	 * This receiver will wait the specified seconds to account for ping or loading.
 	 */
@@ -108,7 +109,7 @@ class MyAccessibilityService : AccessibilityService() {
 			delay((this@wait * 1000).toLong())
 		}
 	}
-	
+
 	/**
 	 * Randomizes the tap location to be within the dimensions of the specified image.
 	 *
@@ -124,36 +125,36 @@ class MyAccessibilityService : AccessibilityService() {
 			// Get the Bitmap from the template image file and then start matching.
 			templateBitmap = BitmapFactory.decodeStream(inputStream)
 		}
-		
+
 		val width = templateBitmap.width
 		val height = templateBitmap.height
-		
+
 		// Randomize the tapping location.
 		val x0: Int = (x - (width / 2)).toInt()
 		val x1: Int = (x + (width / 2)).toInt()
 		val y0: Int = (y - (height / 2)).toInt()
 		val y1: Int = (y + (height / 2)).toInt()
-		
+
 		var newX: Int
 		var newY: Int
-		
+
 		while (true) {
 			// Start acquiring randomized coordinates at least 30% and at most 60% of the width and height until a valid set of coordinates has been acquired.
 			val newWidth: Int = ((width * 0.3).toInt()..(width * 0.6).toInt()).random()
 			val newHeight: Int = ((height * 0.3).toInt()..(height * 0.6).toInt()).random()
-			
+
 			newX = x0 + newWidth
 			newY = y0 + newHeight
-			
+
 			// If the new coordinates are within the bounds of the template image, break out of the loop.
 			if (newX > x0 || newX < x1 || newY > y0 || newY < y1) {
 				break
 			}
 		}
-		
+
 		return Pair(newX, newY)
 	}
-	
+
 	/**
 	 * Creates a tap gesture on the specified point on the screen.
 	 *
@@ -169,12 +170,12 @@ class MyAccessibilityService : AccessibilityService() {
 		// Randomize the tapping location.
 		val (newX, newY) = randomizeTapLocation(x, y, buttonName)
 		Log.d(tag, "Tapping $newX, $newY")
-		
+
 		// Construct the tap gesture.
 		val tapPath = Path().apply {
 			moveTo(newX.toFloat(), newY.toFloat())
 		}
-		
+
 		val gesture: GestureDescription = if (longPress) {
 			// Long press for 1000ms.
 			GestureDescription.Builder().apply {
@@ -189,26 +190,26 @@ class MyAccessibilityService : AccessibilityService() {
 				addStroke(GestureDescription.StrokeDescription(tapPath, 0, 1))
 			}.build()
 		}
-		
+
 		val dispatchResult = dispatchGesture(gesture, null, null)
 		var tries = taps - 1
-		
+
 		while (tries > 0) {
 			dispatchGesture(gesture, null, null)
 			if (!ignoreWait) {
 				0.5.wait()
 			}
-			
+
 			tries -= 1
 		}
-		
+
 		if (!ignoreWait) {
 			0.5.wait()
 		}
-		
+
 		return dispatchResult
 	}
-	
+
 	/**
 	 * Creates a scroll gesture either scrolling up or down the screen depending on the given action.
 	 *
@@ -219,10 +220,10 @@ class MyAccessibilityService : AccessibilityService() {
 	 */
 	fun scroll(scrollDown: Boolean = true, duration: Long = 500L, ignoreWait: Boolean = false): Boolean {
 		val scrollPath = Path()
-		
+
 		// Get certain portions of the screen's dimensions.
 		val displayMetrics = Resources.getSystem().displayMetrics
-		
+
 		// Set different scroll paths for different screen sizes.
 		val top: Float
 		val middle: Float
@@ -244,7 +245,7 @@ class MyAccessibilityService : AccessibilityService() {
 				bottom = (displayMetrics.heightPixels * 0.25).toFloat()
 			}
 		}
-		
+
 		if (scrollDown) {
 			// Create a Path to scroll the screen down starting from the top and swiping to the bottom.
 			scrollPath.apply {
@@ -258,16 +259,16 @@ class MyAccessibilityService : AccessibilityService() {
 				lineTo(middle, top)
 			}
 		}
-		
+
 		val gesture = GestureDescription.Builder().apply {
 			addStroke(GestureDescription.StrokeDescription(scrollPath, 0, duration))
 		}.build()
-		
+
 		val dispatchResult = dispatchGesture(gesture, null, null)
 		if (!ignoreWait) {
 			0.5.wait()
 		}
-		
+
 		if (!dispatchResult) {
 			Log.e(tag, "Failed to dispatch scroll gesture.")
 		} else {
@@ -278,10 +279,10 @@ class MyAccessibilityService : AccessibilityService() {
 			}
 			Log.d(tag, "Scrolling $direction.")
 		}
-		
+
 		return dispatchResult
 	}
-	
+
 	/**
 	 * Creates a swipe gesture from the old coordinates to the new coordinates on the screen.
 	 *
@@ -299,16 +300,16 @@ class MyAccessibilityService : AccessibilityService() {
 			moveTo(oldX, oldY)
 			lineTo(newX, newY)
 		}
-		
+
 		val gesture = GestureDescription.Builder().apply {
 			addStroke(GestureDescription.StrokeDescription(swipePath, 0, duration))
 		}.build()
-		
+
 		val dispatchResult = dispatchGesture(gesture, null, null)
 		if (!ignoreWait) {
 			0.5.wait()
 		}
-		
+
 		return dispatchResult
 	}
 }

@@ -1,5 +1,6 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
 class ArcarumException(message: String) : Exception(message)
@@ -8,7 +9,7 @@ class ArcarumException(message: String) : Exception(message)
  * Provides the navigation and any necessary utility functions to handle the Arcarum game mode.
  */
 class Arcarum(private val game: Game, private val mapName: String) {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}Arcarum"
+	private val tag: String = "${loggerTag}Arcarum"
 
 	private var firstRun: Boolean = true
 

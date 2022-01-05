@@ -17,6 +17,7 @@ import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.preference.PreferenceManager
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.R
 import com.steve1316.granblue_automation_android.bot.Game
 import kotlinx.coroutines.runBlocking
@@ -30,16 +31,16 @@ import kotlin.math.roundToInt
  * https://www.tutorialspoint.com/in-android-how-to-register-a-custom-intent-filter-to-a-broadcast-receiver
  */
 class BotService : Service() {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}BotService"
+	private val tag: String = "${loggerTag}BotService"
 	private var appName: String = ""
 	private lateinit var myContext: Context
 	private lateinit var overlayView: View
 	private lateinit var overlayButton: ImageButton
-	
+
 	companion object {
 		private lateinit var thread: Thread
 		private lateinit var windowManager: WindowManager
-		
+
 		// Create the LayoutParams for the floating overlay START/STOP button.
 		private val overlayLayoutParams = WindowManager.LayoutParams().apply {
 			type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -53,22 +54,22 @@ class BotService : Service() {
 			height = WindowManager.LayoutParams.WRAP_CONTENT
 			windowAnimations = android.R.style.Animation_Toast
 		}
-		
+
 		var isRunning = false
 	}
-	
+
 	@SuppressLint("ClickableViewAccessibility", "InflateParams")
 	override fun onCreate() {
 		super.onCreate()
-		
+
 		myContext = this
 		appName = myContext.getString(R.string.app_name)
-		
+
 		// Display the overlay view layout on the screen.
 		overlayView = LayoutInflater.from(this).inflate(R.layout.bot_actions, null)
 		windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 		windowManager.addView(overlayView, overlayLayoutParams)
-		
+
 		// This button is able to be moved around the screen and clicking it will start/stop the game automation.
 		overlayButton = overlayView.findViewById(R.id.bot_actions_overlay_button)
 		overlayButton.setOnTouchListener(object : View.OnTouchListener {
@@ -76,41 +77,41 @@ class BotService : Service() {
 			private var initialY: Int = 0
 			private var initialTouchX: Float = 0F
 			private var initialTouchY: Float = 0F
-			
+
 			override fun onTouch(v: View?, event: MotionEvent?): Boolean {
 				val action = event?.action
-				
+
 				if (action == MotionEvent.ACTION_DOWN) {
 					// Get the initial position.
 					initialX = overlayLayoutParams.x
 					initialY = overlayLayoutParams.y
-					
+
 					// Now get the new position.
 					initialTouchX = event.rawX
 					initialTouchY = event.rawY
-					
+
 					return false
 				} else if (action == MotionEvent.ACTION_UP) {
 					val elapsedTime: Long = event.eventTime - event.downTime
 					if (elapsedTime < 100L) {
 						val game = Game(myContext)
-						
+
 						if (!isRunning) {
 							Log.d(tag, "Bot Service for $appName is now running.")
 							Toast.makeText(myContext, "Bot Service for $appName is now running.", Toast.LENGTH_SHORT).show()
 							isRunning = true
 							NotificationUtils.updateNotification(myContext, isRunning)
 							overlayButton.setImageResource(R.drawable.stop_circle_filled)
-							
+
 							thread = thread {
 								try {
 									// Clear the Message Log.
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
-									
+
 									val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 									val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableHomeTest", false)
-									
+
 									if (!enableHomeTest) {
 										// Run the Discord process on a new Thread.
 										if (sharedPreferences.getBoolean("enableDiscord", false)) {
@@ -122,13 +123,13 @@ class BotService : Service() {
 												}
 											}
 										}
-										
+
 										// Start Farming Mode with the provided settings from SharedPreferences.
 										game.startFarmingMode()
 									} else {
 										game.goBackHome(confirmLocationCheck = true, testMode = true)
 									}
-									
+
 									thread {
 										runBlocking {
 											DiscordUtils.disconnectClient()
@@ -143,19 +144,19 @@ class BotService : Service() {
 									} else {
 										NotificationUtils.updateNotification(myContext, false, "Encountered Exception: ${e}. Tap me to see more details.")
 										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", tag = tag, isError = true)
-										
+
 										if (e.stackTraceToString().length >= 2500) {
 											Log.d(tag, "Splitting Discord message.")
 											val halfLength: Int = e.stackTraceToString().length / 2
 											val message1: String = e.stackTraceToString().substring(0, halfLength)
 											val message2: String = e.stackTraceToString().substring(halfLength)
-											
+
 											DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n$message1")
 											DiscordUtils.queue.add("> $message2")
 										} else {
 											DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n${e.stackTraceToString()}")
 										}
-										
+
 										thread {
 											runBlocking {
 												DiscordUtils.disconnectClient()
@@ -172,47 +173,47 @@ class BotService : Service() {
 							thread.interrupt()
 							performCleanUp()
 						}
-						
+
 						// Returning true here freezes the animation of the click on the button.
 						return false
 					}
 				} else if (action == MotionEvent.ACTION_MOVE) {
 					val xDiff = (event.rawX - initialTouchX).roundToInt()
 					val yDiff = (event.rawY - initialTouchY).roundToInt()
-					
+
 					// Calculate the X and Y coordinates of the view.
 					overlayLayoutParams.x = initialX + xDiff
 					overlayLayoutParams.y = initialY + yDiff
-					
+
 					// Now update the layout.
 					windowManager.updateViewLayout(overlayView, overlayLayoutParams)
 					return false
 				}
-				
+
 				return false
 			}
 		})
 	}
-	
+
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		// Do not attempt to restart the bot service if it crashes.
 		return START_NOT_STICKY
 	}
-	
+
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
 	}
-	
+
 	override fun onDestroy() {
 		super.onDestroy()
-		
+
 		// Remove the overlay View that holds the overlay button.
 		windowManager.removeView(overlayView)
-		
+
 		val service = Intent(myContext, MyAccessibilityService::class.java)
 		myContext.stopService(service)
 	}
-	
+
 	/**
 	 * Perform cleanup upon app completion or encountering an Exception.
 	 *
@@ -220,18 +221,18 @@ class BotService : Service() {
 	 */
 	private fun performCleanUp(isException: Boolean = false) {
 		DiscordUtils.queue.add("```diff\n- Terminated connection to Discord API for Granblue Automation Android\n```")
-		
+
 		// Save the message log.
 		MessageLog.saveLogToFile(myContext)
-		
+
 		Log.d(tag, "Bot Service for $appName is now stopped.")
 		isRunning = false
-		
+
 		// Update the app's notification with the status.
 		if (!isException) {
 			NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
 		}
-		
+
 		// Reset the overlay button's image on a separate UI thread.
 		Handler(Looper.getMainLooper()).post {
 			overlayButton.setImageResource(R.drawable.play_circle_filled)

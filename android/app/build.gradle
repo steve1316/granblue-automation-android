@@ -235,7 +235,7 @@ dependencies {
     }
 
     if (enableHermes) {
-        def hermesPath = "../../node_modules/hermes-engine/android/";
+        def hermesPath = "../../node_modules/hermes-engine/android/"
         debugImplementation files(hermesPath + "hermes-debug.aar")
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
@@ -259,6 +259,8 @@ dependencies {
 
     // Klaxon to parse JSON data files.
     implementation 'com.beust:klaxon:5.5'
+
+    implementation project(':react-native-fs')
 }
 
 // Run this once to be able to run the application with BUCK

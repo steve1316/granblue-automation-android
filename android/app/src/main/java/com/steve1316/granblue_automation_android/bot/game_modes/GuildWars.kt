@@ -1,19 +1,20 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
 class GuildWarsException(message: String) : Exception(message)
 
 class GuildWars(private val game: Game, private val missionName: String) {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}GuildWars"
-	
+	private val tag: String = "${loggerTag}GuildWars"
+
 	/**
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
-		
+
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		var bannerLocations = game.imageUtils.findAll("event_banner")
@@ -21,15 +22,15 @@ class GuildWars(private val game: Game, private val missionName: String) {
 			bannerLocations = game.imageUtils.findAll("event_banner_blue")
 		}
 		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
-		
+
 		game.wait(3.0)
-		
+
 		if (game.imageUtils.confirmLocation("guild_wars")) {
 			// Scroll down the screen a bit.
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
-			
+
 			game.wait(2.0)
-			
+
 			// Remove the difficulty prefix from the mission name.
 			var difficulty = ""
 			when (missionName) {
@@ -55,16 +56,16 @@ class GuildWars(private val game: Game, private val missionName: String) {
 					difficulty = "NM150"
 				}
 			}
-			
+
 			// Perform different navigation actions based on whether the user wants to farm meat or to farm Nightmares.
 			if (difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Extreme+") {
 				game.printToLog("\n[GUILD.WARS] Now proceeding to farm meat.", tag = tag)
-				
+
 				// Click on the banner to farm meat.
 				game.findAndClickButton("guild_wars_meat")
-				
+
 				game.wait(1.0)
-				
+
 				if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 					// Now tap on the specified Mission to start.
 					var tries = 10
@@ -82,7 +83,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 								game.gestureUtils.tap(locations[2].x, locations[2].y, "ap_30")
 							}
 						}
-						
+
 						game.wait(3.0)
 						tries -= 1
 						if (tries <= 0) {
@@ -96,21 +97,21 @@ class GuildWars(private val game: Game, private val missionName: String) {
 				}
 			} else {
 				game.printToLog("\n[GUILD.WARS] Now proceeding to farm Nightmares.", tag = tag)
-				
+
 				var startCheckForNM150 = false
-				
+
 				// Click on the banner to farm Nightmares.
 				if (difficulty != "NM150") {
 					game.findAndClickButton("guild_wars_nightmare")
 				} else {
 					game.printToLog("Hosting NM150 now.", tag = tag)
 					game.findAndClickButton("guild_wars_nightmare_150")
-					
+
 					if (game.imageUtils.confirmLocation("guild_wars_nightmare") && game.findAndClickButton("start")) {
 						startCheckForNM150 = true
 					}
 				}
-				
+
 				if (difficulty != "NM150" && game.imageUtils.confirmLocation("guild_wars_nightmare")) {
 					// If today is the first day of Guild Wars, only NM90 is available.
 					when {
@@ -118,7 +119,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 							game.printToLog("[GUILD.WARS] Today is the first day so hosting NM90.", tag = tag)
 							game.findAndClickButton("ok")
 						}
-						
+
 						// Now click on the specified Mission to start.
 						difficulty == "NM90" -> {
 							game.printToLog("Hosting NM90 now.", tag = tag)
@@ -141,12 +142,12 @@ class GuildWars(private val game: Game, private val missionName: String) {
 					} else {
 						game.findAndClickButton("cancel")
 					}
-					
+
 					game.printToLog("[GUILD.WARS] Hosting Extreme+ now.", tag = tag)
-					
+
 					// Click on the banner to farm meat.
 					game.findAndClickButton("guild_wars_meat")
-					
+
 					if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 						game.printToLog("Hosting Extreme+ now.", tag = tag)
 						val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
@@ -156,7 +157,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 			}
 		}
 	}
-	
+
 	/**
 	 * Starts the process to complete a run for this Farming Mode and returns the number of items detected.
 	 *
@@ -165,7 +166,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 	 */
 	fun start(firstRun: Boolean): Int {
 		var runsCompleted = 0
-		
+
 		// Start the navigation process.
 		when {
 			firstRun -> {
@@ -180,18 +181,18 @@ class GuildWars(private val game: Game, private val missionName: String) {
 				navigate()
 			}
 		}
-		
+
 		// Check for AP.
 		game.checkAP()
-		
+
 		// Check if the bot is at the Summon Selection screen.
 		if (game.imageUtils.confirmLocation("select_a_summon")) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
-				
+
 				game.wait(1.0)
-				
+
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode(game.combatScript)) {
 					runsCompleted = game.collectLoot(isCompleted = true)
@@ -200,7 +201,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 		} else {
 			throw GuildWarsException("Failed to arrive at the Summon Selection screen.")
 		}
-		
+
 		return runsCompleted
 	}
 }

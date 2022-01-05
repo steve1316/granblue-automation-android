@@ -19,20 +19,20 @@ class JSONParser(private val myContext: Context) {
 			val fileName = fileList[0]
 			fileList.removeAt(0)
 			val objectString = myContext.assets.open("data/$fileName").bufferedReader().use { it.readText() }
-			
+
 			JsonReader(StringReader(objectString)).use { reader ->
 				reader.beginObject {
 					while (reader.hasNext()) {
 						// Grab the name.
 						val name = reader.nextName()
-						
+
 						val contents = mutableMapOf<String, ArrayList<String>>()
 						reader.beginObject {
 							while (reader.hasNext()) {
 								// Grab the event name.
 								val eventName = reader.nextName()
 								contents.putIfAbsent(eventName, arrayListOf())
-								
+
 								reader.beginArray {
 									// Grab all of the event option rewards for this event and add them to the map.
 									while (reader.hasNext()) {
@@ -42,7 +42,7 @@ class JSONParser(private val myContext: Context) {
 								}
 							}
 						}
-						
+
 						// Finally, put into the MutableMap the key value pair depending on the current category.
 						if (fileName == "items.json") {
 							ItemData.items[name] = contents
@@ -54,7 +54,7 @@ class JSONParser(private val myContext: Context) {
 			}
 		}
 	}
-	
+
 	/**
 	 * Construct the ConfigData class associated with the config.json file.
 	 */
@@ -71,7 +71,7 @@ class JSONParser(private val myContext: Context) {
 								while (reader.hasNext()) {
 									val key = reader.nextString()
 									val value = reader.nextString()
-									
+
 									if (key == "discordToken") {
 										ConfigData.discordToken = value
 									} else if (key == "userID") {
@@ -85,15 +85,20 @@ class JSONParser(private val myContext: Context) {
 								while (reader.hasNext()) {
 									val key = reader.nextString()
 									val value = reader.nextString()
-									
-									if (key == "apiKey") {
-										ConfigData.apiKey = value
-									} else if (key == "apiKeySecret") {
-										ConfigData.apiKeySecret = value
-									} else if (key == "accessToken") {
-										ConfigData.accessToken = value
-									} else if (key == "accessTokenSecret") {
-										ConfigData.accessTokenSecret = value
+
+									when (key) {
+										"apiKey" -> {
+											ConfigData.apiKey = value
+										}
+										"apiKeySecret" -> {
+											ConfigData.apiKeySecret = value
+										}
+										"accessToken" -> {
+											ConfigData.accessToken = value
+										}
+										"accessTokenSecret" -> {
+											ConfigData.accessTokenSecret = value
+										}
 									}
 								}
 							}
@@ -103,7 +108,7 @@ class JSONParser(private val myContext: Context) {
 								while (reader.hasNext()) {
 									val key = reader.nextString()
 									val value = reader.nextBoolean()
-									
+
 									if (key == "fullElixir") {
 										ConfigData.fullElixir = value
 									} else if (key == "soulBalm") {
@@ -115,20 +120,23 @@ class JSONParser(private val myContext: Context) {
 						"dimensionalHalo" -> {
 							reader.beginObject {
 								while (reader.hasNext()) {
-									val key = reader.nextString()
-									
-									if (key == "enableDimensionalHalo") {
-										val value = reader.nextBoolean()
-										ConfigData.enableDimensionalHalo = value
-									} else if (key == "dimensionalHaloSummonList") {
-										val value = reader.nextArray() as List<String>
-										ConfigData.dimensionalHaloSummonList = value
-									} else if (key == "dimensionalHaloGroupNumber") {
-										val value = reader.nextInt()
-										ConfigData.dimensionalHaloGroupNumber = value
-									} else if (key == "dimensionalHaloPartyNumber") {
-										val value = reader.nextInt()
-										ConfigData.dimensionalHaloPartyNumber = value
+									when (reader.nextString()) {
+										"enableDimensionalHalo" -> {
+											val value = reader.nextBoolean()
+											ConfigData.enableDimensionalHalo = value
+										}
+										"dimensionalHaloSummonList" -> {
+											val value = reader.nextArray() as List<String>
+											ConfigData.dimensionalHaloSummonList = value
+										}
+										"dimensionalHaloGroupNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.dimensionalHaloGroupNumber = value
+										}
+										"dimensionalHaloPartyNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.dimensionalHaloPartyNumber = value
+										}
 									}
 								}
 							}
@@ -136,20 +144,23 @@ class JSONParser(private val myContext: Context) {
 						"event" -> {
 							reader.beginObject {
 								while (reader.hasNext()) {
-									val key = reader.nextString()
-									
-									if (key == "enableEventNightmare") {
-										val value = reader.nextBoolean()
-										ConfigData.enableEventNightmare = value
-									} else if (key == "eventNightmareSummonList") {
-										val value = reader.nextArray() as List<String>
-										ConfigData.eventNightmareSummonList = value
-									} else if (key == "eventNightmareGroupNumber") {
-										val value = reader.nextInt()
-										ConfigData.eventNightmareGroupNumber = value
-									} else if (key == "eventNightmarePartyNumber") {
-										val value = reader.nextInt()
-										ConfigData.eventNightmarePartyNumber = value
+									when (reader.nextString()) {
+										"enableEventNightmare" -> {
+											val value = reader.nextBoolean()
+											ConfigData.enableEventNightmare = value
+										}
+										"eventNightmareSummonList" -> {
+											val value = reader.nextArray() as List<String>
+											ConfigData.eventNightmareSummonList = value
+										}
+										"eventNightmareGroupNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.eventNightmareGroupNumber = value
+										}
+										"eventNightmarePartyNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.eventNightmarePartyNumber = value
+										}
 									}
 								}
 							}
@@ -157,20 +168,23 @@ class JSONParser(private val myContext: Context) {
 						"rotb" -> {
 							reader.beginObject {
 								while (reader.hasNext()) {
-									val key = reader.nextString()
-									
-									if (key == "enableROTBExtremePlus") {
-										val value = reader.nextBoolean()
-										ConfigData.enableROTBExtremePlus = value
-									} else if (key == "rotbExtremePlusSummonList") {
-										val value = reader.nextArray() as List<String>
-										ConfigData.rotbExtremePlusSummonList = value
-									} else if (key == "rotbExtremePlusGroupNumber") {
-										val value = reader.nextInt()
-										ConfigData.rotbExtremePlusGroupNumber = value
-									} else if (key == "rotbExtremePlusPartyNumber") {
-										val value = reader.nextInt()
-										ConfigData.rotbExtremePlusPartyNumber = value
+									when (reader.nextString()) {
+										"enableROTBExtremePlus" -> {
+											val value = reader.nextBoolean()
+											ConfigData.enableROTBExtremePlus = value
+										}
+										"rotbExtremePlusSummonList" -> {
+											val value = reader.nextArray() as List<String>
+											ConfigData.rotbExtremePlusSummonList = value
+										}
+										"rotbExtremePlusGroupNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.rotbExtremePlusGroupNumber = value
+										}
+										"rotbExtremePlusPartyNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.rotbExtremePlusPartyNumber = value
+										}
 									}
 								}
 							}
@@ -178,20 +192,23 @@ class JSONParser(private val myContext: Context) {
 						"xenoClash" -> {
 							reader.beginObject {
 								while (reader.hasNext()) {
-									val key = reader.nextString()
-									
-									if (key == "enableXenoClashNightmare") {
-										val value = reader.nextBoolean()
-										ConfigData.enableXenoClashNightmare = value
-									} else if (key == "xenoClashNightmareSummonList") {
-										val value = reader.nextArray() as List<String>
-										ConfigData.xenoClashNightmareSummonList = value
-									} else if (key == "xenoClashNightmareGroupNumber") {
-										val value = reader.nextInt()
-										ConfigData.xenoClashNightmareGroupNumber = value
-									} else if (key == "xenoClashNightmarePartyNumber") {
-										val value = reader.nextInt()
-										ConfigData.xenoClashNightmarePartyNumber = value
+									when (reader.nextString()) {
+										"enableXenoClashNightmare" -> {
+											val value = reader.nextBoolean()
+											ConfigData.enableXenoClashNightmare = value
+										}
+										"xenoClashNightmareSummonList" -> {
+											val value = reader.nextArray() as List<String>
+											ConfigData.xenoClashNightmareSummonList = value
+										}
+										"xenoClashNightmareGroupNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.xenoClashNightmareGroupNumber = value
+										}
+										"xenoClashNightmarePartyNumber" -> {
+											val value = reader.nextInt()
+											ConfigData.xenoClashNightmarePartyNumber = value
+										}
 									}
 								}
 							}

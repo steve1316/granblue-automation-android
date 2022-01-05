@@ -1,20 +1,5 @@
 <resources>
-    <string name="app_name">MyApplication</string>
-
-    <!-- This is the name of the app that will appear right below its icon on the Android Home screen. -->
-    <string name="title_activity_main">MyApplication</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_settings">Settings</string>
-
-    <string name="nav_header_title">Granblue Automation Android</string>
-    <string name="nav_header_subtitle">It is like Full Auto, but with Full Customization!</string>
-
-    <string name="home_button_start">Start</string>
-    <string name="home_button_stop">Stop</string>
-
-    <string name="bot_start">Start</string>
-    <string name="bot_stop">Stop</string>
+    <string name="app_name">Granblue Automation Android</string>
 
     <string name="accessibility_service_label">Accessibility Service for GAA</string>
     <string name="accessibility_service_description">This is the Accessibility Service that will allow the bot process to interact with the screen
@@ -30,6 +15,4 @@
     Button.</string>
 
     <string name="go_to_settings">Go to Settings</string>
-
-    <string name="go_to_github">Go to GitHub</string>
 </resources>

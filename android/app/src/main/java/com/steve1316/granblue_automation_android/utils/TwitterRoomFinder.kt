@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.StrictMode
 import android.util.Log
 import androidx.preference.PreferenceManager
+import com.steve1316.granblue_automation_android.MainActivity
 import com.steve1316.granblue_automation_android.bot.Game
 import twitter4j.*
 import twitter4j.conf.ConfigurationBuilder
@@ -13,36 +14,36 @@ import twitter4j.conf.ConfigurationBuilder
  * Listener class for the Streaming API.
  */
 class MyListener(private val game: Game) : StatusListener {
-	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}MyListener"
-	
+	private val tag: String = "${MainActivity.loggerTag}MyListener"
+
 	val tweets: ArrayDeque<Status> = ArrayDeque()
-	
+
 	override fun onStatus(status: Status?) {
 		if (status != null) {
 			if (game.debugMode) {
 				Log.d(tag, "[DEBUG] Stream found: ${status.text}")
 			}
-			
+
 			tweets.addFirst(status)
 		}
 	}
-	
+
 	override fun onException(ex: java.lang.Exception?) {
 		return
 	}
-	
+
 	override fun onDeletionNotice(statusDeletionNotice: StatusDeletionNotice?) {
 		return
 	}
-	
+
 	override fun onTrackLimitationNotice(numberOfLimitedStatuses: Int) {
 		return
 	}
-	
+
 	override fun onScrubGeo(userId: Long, upToStatusId: Long) {
 		return
 	}
-	
+
 	override fun onStallWarning(warning: StallWarning?) {
 		return
 	}
@@ -54,9 +55,9 @@ class MyListener(private val game: Game) : StatusListener {
 class TwitterRoomFinder(myContext: Context, private val game: Game) {
 	private lateinit var twitter: Twitter
 	private val listener = MyListener(game)
-	
+
 	private val alreadyVisitedRoomCodes: ArrayList<String> = arrayListOf()
-	
+
 	private val listOfRaids = mapOf(
 		// Omega Raids
 		"Lvl 50 Tiamat Omega" to "Lv50 ティアマト・マグナ",
@@ -71,7 +72,7 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 100 Luminiera Omega" to "Lv100 シュヴァリエ・マグナ",
 		"Lvl 75 Celeste Omega" to "Lv75 セレスト・マグナ",
 		"Lvl 100 Celeste Omega" to "Lv100 セレスト・マグナ",
-		
+
 		// Tier 1 Summon Raids
 		"Lvl 100 Twin Elements" to "Lv100 フラム＝グラス",
 		"Lvl 120 Twin Elements" to "Lv120 フラム＝グラス",
@@ -85,7 +86,7 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 120 Apollo" to "Lv120 アポロン",
 		"Lvl 100 Dark Angel Olivia" to "Lv100 Dエンジェル・オリヴィエ",
 		"Lvl 120 Dark Angel Olivia" to "Lv120 Dエンジェル・オリヴィエ",
-		
+
 		// Tier 2 Summon Raids
 		"Lvl 100 Athena" to "Lv100 アテナ",
 		"Lvl 100 Grani" to "Lv100 グラニ",
@@ -93,18 +94,18 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 100 Garuda" to "Lv100 ガルーダ",
 		"Lvl 100 Odin" to "Lv100 オーディン",
 		"Lvl 100 Lich" to "Lv100 リッチ",
-		
+
 		// Primarch Raids
 		"Lvl 100 Michael" to "Lv100 ミカエル",
 		"Lvl 100 Gabriel" to "Lv100 ガブリエル",
 		"Lvl 100 Uriel" to "Lv100 ウリエル",
 		"Lvl 100 Raphael" to "Lv100 ラファエル",
 		"The Four Primarchs" to "四大天司ＨＬ",
-		
+
 		// Nightmare Raids
 		"Lvl 100 Proto Bahamut" to "Lv100 プロトバハムート",
 		"Lvl 100 Grand Order" to "Lv100 ジ・オーダー・グランデ",
-		
+
 		// Rise of the Beasts Raids
 		"Lvl 60 Zhuque" to "Lv60 朱雀",
 		"Lvl 90 Agni" to "Lv90 アグニス",
@@ -118,7 +119,7 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 100 Qilin" to "Lv100 黒麒麟",
 		"Huanglong & Qilin (Impossible)" to "黄龍・黒麒麟HL",
 		"Lvl 100 Shenxian" to "Lv100 四象瑞神",
-		
+
 		// Impossible Raids
 		"Lvl 110 Rose Queen" to "Lv110 ローズクイーン",
 		"Lvl 120 Shiva" to "Lv120 シヴァ",
@@ -141,14 +142,14 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 150 Lucilius" to "Lv150 ルシファー",
 		"Lvl 250 Lucilius" to "Lv250 ルシファー",
 		"Lvl 200 Lindwurm" to "Lv200 リンドヴルム",
-		
+
 		// Malice Raids
 		"Lvl 150 Tiamat Malice" to "Lv150 ティアマト・マリス",
 		"Lvl 150 Leviathan Malice" to "Lv150 リヴァイアサン・マリス",
 		"Lvl 150 Phronesis" to "Lv150 フロネシス",
 		"Lvl 150 Luminiera Malice" to "Lv150 シュヴァリエ・マリス",
 		"Lvl 150 Anima-Animus Core" to "Lv150 アニマ・アニムス・コア",
-		
+
 		// Six Dragon Raids
 		"Lvl 200 Wilnas" to "Lv200 ウィルナス",
 		"Lvl 200 Wamdus" to "Lv200 ワムデュス",
@@ -157,7 +158,7 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 200 Lu Woh" to "Lv200 ル・オー",
 		"Lvl 200 Fediel" to "Lv200 フェディエル",
 		"Lvl 250 Beelzebub" to "Lv250 ベルゼバブ",
-		
+
 		// Xeno Clash Raids
 		"Lvl 100 Xeno Ifrit" to "Lv100 ゼノ・イフリート",
 		"Lvl 100 Xeno Cocytus" to "Lv100 ゼノ・コキュートス",
@@ -166,27 +167,27 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 100 Xeno Corow" to "Lv100 ゼノ・コロゥ",
 		"Lvl 100 Xeno Diablo" to "Lv100 ゼノ・ディアボロス"
 	)
-	
+
 	companion object {
-		private const val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}TwitterRoomFinder"
+		private const val tag: String = "${MainActivity.loggerTag}TwitterRoomFinder"
 		private var twitterStream: TwitterStream? = null
-		
+
 		fun disconnect() {
 			twitterStream?.shutdown()
 			Log.d(tag, "[TWITTER] Stream API disconnected.")
 		}
 	}
-	
+
 	init {
 		if (game.farmingMode == "Raid") {
 			game.printToLog("\n[INFO] Connecting to Twitter API...", tag = tag)
-			
+
 			// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
 			val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 			StrictMode.setThreadPolicy(policy)
-			
+
 			game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", tag = tag)
-			
+
 			// Initialize the Twitter object.
 			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 			val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
@@ -194,31 +195,31 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
 				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
 				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
-			
+
 			val configurationStreamBuilder: ConfigurationBuilder = ConfigurationBuilder()
 				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
 				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
 				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
 				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
-			
+
 			try {
 				// Create the listener and stream objects.
 				twitterStream = TwitterStreamFactory(configurationStreamBuilder.build()).instance
 				twitterStream?.addListener(listener)
-				
+
 				// Test connection by fetching user's timeline.
 				twitter = TwitterFactory(configurationBuilder.build()).instance
 				twitter.timelines().homeTimeline
-				
+
 				game.printToLog("[SUCCESS] Connection to Twitter API is successful.", tag = tag)
-				
+
 				findMostRecent(game.missionName)
 			} catch (e: Exception) {
 				game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.stackTraceToString()}", tag = tag, isError = true)
 			}
 		}
 	}
-	
+
 	/**
 	 * Start collected tweets containing room codes from EN and JP players.
 	 *
@@ -227,14 +228,14 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 	private fun findMostRecent(raidName: String) {
 		// Grab the Japanese name of the Raid.
 		val jpRaidName = listOfRaids[raidName]!!
-		
+
 		// Construct the combined query for both EN and JP tweets.
 		val queryCombined = FilterQuery("$raidName,$jpRaidName")
-		
+
 		// Start listening to the Stream API.
 		twitterStream?.filter(queryCombined)
 	}
-	
+
 	/**
 	 * Clean the tweets and parse out the room codes from them.
 	 *
@@ -245,21 +246,21 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 			game.printToLog("[TWITTER] There are no recent or detected tweets available for the given raid.", tag = tag)
 			return ""
 		}
-		
+
 		game.printToLog("[TWITTER] Now cleaning up the tweets and parsing for room codes...", tag = tag)
-		
+
 		while (listener.tweets.isNotEmpty()) {
 			val tweet = listener.tweets.removeFirst()
-			
+
 			// Split up the text by whitespaces.
 			val splitText = tweet.text.split(" ")
 			var index = 0
-			
+
 			// For each split element, parse the Room Code and save it.
 			splitText.forEach { text ->
 				if (text.contains(":Battle") || text.contains(":参戦ID")) {
 					val roomCode = splitText[index - 1]
-					
+
 					if (!alreadyVisitedRoomCodes.contains(roomCode)) {
 						alreadyVisitedRoomCodes.add(roomCode)
 						return roomCode
@@ -267,11 +268,11 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 						game.printToLog("[TWITTER] Already visited $roomCode before in this session. Skipping this code...", tag = tag)
 					}
 				}
-				
+
 				index += 1
 			}
 		}
-		
+
 		return ""
 	}
 }
