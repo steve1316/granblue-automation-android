@@ -52,9 +52,9 @@ interface CombatScript {
 }
 
 const Settings = () => {
-    const [open, setOpen] = useState<boolean>(false)
-    const [open2, setOpen2] = useState<boolean>(false)
-    const [open3, setOpen3] = useState<boolean>(false)
+    const [isFarmingModePickerOpen, setIsFarmingModePickerOpen] = useState<boolean>(false)
+    const [isItemPickerOpen, setIsItemPickerOpen] = useState<boolean>(false)
+    const [isMissionPickerOpen, setIsMissionPickerOpen] = useState<boolean>(false)
     const [modalOpen, setModalOpen] = useState<boolean>(false)
 
     const [itemList, setItemList] = useState<Item[]>([])
@@ -87,9 +87,11 @@ const Settings = () => {
         { label: "Generic", value: "Generic" },
     ]
 
+    // Manually close all pickers as react-native-dropdown-picker does not handle that automatically.
     const closeAllPickers = () => {
-        setOpen(false)
-        setOpen2(false)
+        setIsFarmingModePickerOpen(false)
+        setIsItemPickerOpen(false)
+        setIsMissionPickerOpen(false)
     }
 
     //////////////////////////////////////////////////
@@ -139,17 +141,16 @@ const Settings = () => {
         ) {
             Object.entries(data[farmingMode]).every((obj) => {
                 if (obj[0] === mission) {
-                    bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, map: obj[1].map } })
+                    setMap(obj[1].map)
                     return false
                 } else {
                     return true
                 }
             })
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mission])
 
-    // Save every other settings.
+    // Save every other setting.
     useEffect(() => {
         if (farmingMode && item && mission) {
             bsc.setSettings({
@@ -170,19 +171,9 @@ const Settings = () => {
         }
     }, [item, mission, map, itemAmount, groupNumber, partyNumber, combatScript])
 
-    useEffect(() => {
-        populateItemList()
-        setMission("") // Reset Mission in local state.
-    }, [farmingMode])
-
-    useEffect(() => {
-        populateMissionList()
-    }, [item])
-
     // Populates the item list based on farming mode.
-    const populateItemList = () => {
+    useEffect(() => {
         let newItemList: Item[] = []
-
         if (
             farmingMode === "Quest" ||
             farmingMode === "Special" ||
@@ -208,13 +199,14 @@ const Settings = () => {
         // Remove any duplicates.
         const filteredNewItemList = newItemList.filter((v, i, a) => a.findIndex((t) => t.label === v.label) === i)
         setItemList(filteredNewItemList)
-    }
+
+        setMission("") // Reset Mission in local state.
+    }, [farmingMode])
 
     // Populate the mission list based on item.
-    const populateMissionList = () => {
+    useEffect(() => {
         if (item) {
             let newMissionList: Item[] = []
-
             if (
                 farmingMode === "Quest" ||
                 farmingMode === "Special" ||
@@ -240,7 +232,7 @@ const Settings = () => {
             const filteredNewMissionList = Array.from(new Set(newMissionList))
             setMissionList(filteredNewMissionList)
         }
-    }
+    }, [item])
 
     return (
         <View style={styles.root}>
@@ -295,10 +287,10 @@ const Settings = () => {
                         placeholder="Select Farming Mode"
                         searchTextInputStyle={{ fontStyle: "italic" }}
                         items={farmingModes}
-                        open={open}
+                        open={isFarmingModePickerOpen}
                         setOpen={(flag) => {
                             closeAllPickers()
-                            setOpen(flag)
+                            setIsFarmingModePickerOpen(flag)
                         }}
                         value={farmingMode}
                         setValue={setFarmingMode}
@@ -317,10 +309,10 @@ const Settings = () => {
                             searchTextInputStyle={{ fontStyle: "italic" }}
                             searchable={true}
                             items={itemList}
-                            open={open2}
+                            open={isItemPickerOpen}
                             setOpen={(flag) => {
                                 closeAllPickers()
-                                setOpen2(flag)
+                                setIsItemPickerOpen(flag)
                             }}
                             value={item}
                             setValue={setItem}
@@ -336,10 +328,10 @@ const Settings = () => {
                             placeholder="Select Mission"
                             searchTextInputStyle={{ fontStyle: "italic" }}
                             items={missionList}
-                            open={open3}
+                            open={isMissionPickerOpen}
                             setOpen={(flag) => {
                                 closeAllPickers()
-                                setOpen3(flag)
+                                setIsMissionPickerOpen(flag)
                             }}
                             value={mission}
                             setValue={setMission}
