@@ -907,6 +907,32 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		
 		return turnNumber + 1
 	}
+
+	private fun enableAuto(): Boolean {
+		game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
+		var enabledAuto = game.findAndClickButton("full_auto")
+
+		// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
+		if (!enabledAuto) {
+			game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
+			game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", tag = tag)
+
+			val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
+			if (enabledSemiAutoButtonLocation == null) {
+				// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
+				game.findAndClickButton("attack")
+
+				game.wait(2.0)
+
+				enabledAuto = game.findAndClickButton("semi_auto", tries = 5)
+				if (enabledAuto) {
+					game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
+				}
+			}
+		}
+
+		return enabledAuto
+	}
 	
 	/**
 	 * Start Combat Mode with the provided combat script.
@@ -1409,6 +1435,54 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						}
 						
 						partyWipeCheck()
+
+						// Click Next if it is available and enable automation again if combat continues.
+						if (game.findAndClickButton("next")) {
+							waitForAttack()
+
+							when {
+								game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+									game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									return false
+								}
+								game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+									game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.findAndClickButton("reload")
+									return true
+								}
+								game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									return true
+								}
+								retreatCheckFlag -> {
+									game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									return false
+								}
+								else -> {
+									enableAuto()
+								}
+							}
+						}
+
 						game.wait(1.0)
 						
 						sleepPreventionTimer += 1
