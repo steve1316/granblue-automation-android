@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from "react"
-import { StyleSheet, View, ScrollView, Dimensions } from "react-native"
+import React, { useState, useEffect, useContext } from "react"
+import { StyleSheet, View, ScrollView, Dimensions, Modal, TouchableOpacity } from "react-native"
 import { Input, Text } from "react-native-elements"
 import Checkbox from "../../components/Checkbox"
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import TitleDivider from "../../components/TitleDivider"
 import { Slider, RangeSlider } from "@sharcoux/slider"
 import NumericInput from "react-native-numeric-input"
+import { Picker } from "@react-native-picker/picker"
+import { BotStateContext } from "../../context/BotStateContext"
+import { CombatScript } from "../Settings"
+import CustomButton from "../../components/CustomButton"
+import TransferList from "../../components/TransferList"
 
 const styles = StyleSheet.create({
     root: {
@@ -14,9 +19,27 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         margin: 10,
     },
+    modal: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(80,80,80,0.3)",
+    },
+    outsideModal: {
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+    },
+    componentContainer: {
+        width: Dimensions.get("window").width * 0.7,
+        height: Dimensions.get("window").height * 0.9,
+    },
 })
 
 const ExtraSettings = () => {
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
+
     // Twitter Settings
     const [twitterAPIKey, setTwitterAPIKey] = useState<string>("")
     const [twitterAPIKeySecret, setTwitterAPIKeySecret] = useState<string>("")
@@ -40,15 +63,154 @@ const ExtraSettings = () => {
     const [enableDelayTap, setEnableDelayTap] = useState<boolean>(false)
     const [delayTapMilliseconds, setDelayTapMilliseconds] = useState<number>(1000)
 
+    // Nightmare Settings
+    const [enableCustomNightmareSettings, setEnableCustomNightmareSettings] = useState<boolean>(false)
+    const [nightmareCombatScript, setNightmareCombatScript] = useState<CombatScript>({ name: "", script: [] })
+    const [nightmareGroupNumber, setNightmareGroupNumber] = useState<number>(1)
+    const [nightmarePartyNumber, setNightmarePartyNumber] = useState<number>(1)
+
     // Device Settings
     const [confidence, setConfidence] = useState<number>(80)
     const [confidenceAll, setConfidenceAll] = useState<number>(80)
     const [customScale, setCustomScale] = useState<number>(1.0)
     const [enableTestForHomeScreen, setEnableTestForHomeScreen] = useState<boolean>(false)
 
+    const bsc = useContext(BotStateContext)
+
+    // Save every other setting.
+    useEffect(() => {
+        bsc.setSettings({
+            ...bsc.settings,
+            game: {
+                ...bsc.settings.game,
+                debugMode: debugMode,
+            },
+            twitter: {
+                ...bsc.settings.twitter,
+                twitterAPIKey: twitterAPIKey,
+                twitterAPIKeySecret: twitterAPIKeySecret,
+                twitterAccessToken: twitterAccessToken,
+                twitterAccessTokenSecret: twitterAccessTokenSecret,
+            },
+            discord: {
+                ...bsc.settings.discord,
+                discordToken: discordToken,
+                discordUserID: discordUserID,
+            },
+            configuration: {
+                ...bsc.settings.configuration,
+                enableDelayBetweenRuns: enableDelayBetweenRuns,
+                delayBetweenRuns: delayBetweenRuns,
+                enableRandomizedDelayBetweenRuns: enableRandomizedDelayBetweenRuns,
+                delayBetweenRunsLowerBound: randomizedDelayBetweenRuns[0],
+                delayBetweenRunsUpperBound: randomizedDelayBetweenRuns[1],
+            },
+            raid: {
+                ...bsc.settings.raid,
+                enableAutoExitRaid: enableAutoExitRaid,
+                timeAllowedUntilAutoExitRaid: autoExitRaidMinutes,
+                enableNoTimeout: enableNoTimeout,
+            },
+            android: {
+                ...bsc.settings.android,
+                confidence: confidence,
+                confidenceAll: confidenceAll,
+                customScale: customScale,
+                enableTestForHomeScreen: enableTestForHomeScreen,
+            },
+        })
+    }, [
+        twitterAPIKey,
+        twitterAPIKeySecret,
+        twitterAccessToken,
+        twitterAccessTokenSecret,
+        discordToken,
+        discordUserID,
+        enableDelayBetweenRuns,
+        delayBetweenRuns,
+        enableRandomizedDelayBetweenRuns,
+        randomizedDelayBetweenRuns,
+        enableAutoExitRaid,
+        autoExitRaidMinutes,
+        enableNoTimeout,
+        confidence,
+        confidenceAll,
+        customScale,
+        enableTestForHomeScreen,
+    ])
+
+    const renderNightmareSettings = () => {
+        if (
+            bsc.settings.nightmare.enableNightmare &&
+            (bsc.settings.game.farmingMode === "Special" ||
+                bsc.settings.game.farmingMode === "Event" ||
+                bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ||
+                bsc.settings.game.farmingMode === "Xeno Clash" ||
+                bsc.settings.game.farmingMode === "Rise of the Beasts")
+        ) {
+            var title: string = ""
+            if (bsc.settings.game.farmingMode === "Special") {
+                title = "Dimensional Halo"
+            } else if (bsc.settings.game.farmingMode === "Rise of the Beasts") {
+                title = "Extreme+"
+            } else {
+                title = "Nightmare"
+            }
+
+            return (
+                <View>
+                    <TitleDivider title={`${title} Settings`} hasIcon={true} iconName="sword-cross" iconColor="#000" />
+
+                    <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>If none of these settings are changed, then the bot will reuse the settings for the Farming Mode.</Text>
+
+                    <Checkbox text={`Enable Custom Settings for ${title}`} subtitle={`Enable customizing individual settings for ${title}`} state={enableDiscord} updateState={setEnableDiscord} />
+
+                    <View>
+                        <CustomButton title="Select Nightmare Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
+                        <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
+                            <View style={styles.modal}>
+                                <TouchableOpacity style={styles.outsideModal} onPress={() => setModalOpen(false)} />
+                                <View style={styles.componentContainer}>
+                                    <TransferList isNightmare={true} />
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                            <Text>Group #:</Text>
+                            <Picker selectedValue={nightmareGroupNumber} onValueChange={(value) => setNightmareGroupNumber(value)} mode="dropdown">
+                                {[...Array(7 - 1 + 1).keys()]
+                                    .map((x) => x + 1)
+                                    .map((value) => {
+                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                    })}
+                            </Picker>
+                        </View>
+                        <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                            <Text>Party #:</Text>
+                            <Picker selectedValue={nightmarePartyNumber} onValueChange={(value) => setNightmarePartyNumber(value)} mode="dropdown">
+                                {[...Array(6 - 1 + 1).keys()]
+                                    .map((x) => x + 1)
+                                    .map((value) => {
+                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                    })}
+                            </Picker>
+                        </View>
+                    </View>
+                </View>
+            )
+        } else {
+            return null
+        }
+    }
+
     return (
         <View style={styles.root}>
             <ScrollView>
+                {renderNightmareSettings()}
+
                 <TitleDivider
                     title="Twitter Settings"
                     subtitle="Please visit the wiki on the GitHub page for instructions on how to get these keys and tokens."
