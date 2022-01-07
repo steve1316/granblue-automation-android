@@ -71,6 +71,13 @@ export interface Settings {
     arcarum: {
         enableStopOnArcarumBoss: boolean
     }
+
+    android: {
+        confidence: number
+        confidenceAll: number
+        customScale: number
+        enableTestForHomeScreen: boolean
+    }
 }
 
 // Set the default settings.
@@ -130,6 +137,12 @@ export const defaultSettings: Settings = {
     },
     arcarum: {
         enableStopOnArcarumBoss: true,
+    },
+    android: {
+        confidence: 0.8,
+        confidenceAll: 0.8,
+        customScale: 1.0,
+        enableTestForHomeScreen: false,
     },
 }
 
