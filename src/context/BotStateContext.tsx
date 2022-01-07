@@ -173,6 +173,8 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
 
     const [settings, setSettings] = useState<Settings>(defaultSettings)
 
+    const [firstTime, setFirstTime] = useState<boolean>(true)
+
     const providerValues: IProviderProps = {
         readyStatus,
         setReadyStatus,
@@ -188,19 +190,54 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
         setSettings,
     }
 
+    // Load settings if local settings.json file exists in internal storage.
     useEffect(() => {
-        // Save settings to local settings.json file in internal storage.
-        const path = RNFS.ExternalDirectoryPath + "/settings.json"
+        loadSettings()
+    }, [])
 
-        const toSave = JSON.stringify(settings, null, 4)
-        RNFS.writeFile(path, toSave)
-            .then(() => {
-                console.log("Settings saved to ", path)
+    useEffect(() => {
+        saveSettings()
+    }, [settings])
+
+    const saveSettings = async () => {
+        if (!firstTime) {
+            // Grab a local copy of the current settings.
+            const localSettings: Settings = settings
+
+            // Save settings to local settings.json file in internal storage.
+            const path = RNFS.ExternalDirectoryPath + "/settings.json"
+
+            const toSave = JSON.stringify(localSettings, null, 4)
+            console.log(`Saving: ${toSave}`)
+            await RNFS.writeFile(path, toSave)
+                .then(() => {
+                    console.log("Settings saved to ", path)
+                })
+                .catch((e) => {
+                    console.error(`Error writing settings to path ${path}: ${e}`)
+                })
+        } else {
+            setFirstTime(false)
+        }
+    }
+
+    const loadSettings = async () => {
+        const path = RNFS.ExternalDirectoryPath + "/settings.json"
+        let newSettings: Settings = defaultSettings
+        await RNFS.readFile(path)
+            .then((data) => {
+                console.log(`read: \n\n${data}\n\n`)
+
+                const parsed: Settings = JSON.parse(data)
+                newSettings = parsed
             })
             .catch((e) => {
-                console.warn(`Error writing settings to path ${path}: ${e}`)
+                console.error(`Error reading settings from path ${path}: ${e}`)
             })
-    }, [settings])
+            .finally(() => {
+                setSettings(newSettings)
+            })
+    }
 
     return <BotStateContext.Provider value={providerValues}>{children}</BotStateContext.Provider>
 }
