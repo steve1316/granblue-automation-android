@@ -46,7 +46,7 @@ interface Item {
     value: string
 }
 
-interface CombatScript {
+export interface CombatScript {
     name: string
     script: string[]
 }
@@ -56,10 +56,12 @@ const Settings = () => {
     const [isItemPickerOpen, setIsItemPickerOpen] = useState<boolean>(false)
     const [isMissionPickerOpen, setIsMissionPickerOpen] = useState<boolean>(false)
     const [modalOpen, setModalOpen] = useState<boolean>(false)
+    const [firstTime, setFirstTime] = useState<boolean>(true)
 
     const [itemList, setItemList] = useState<Item[]>([])
     const [missionList, setMissionList] = useState<Item[]>([])
 
+    // Individual states are necessary as react-native-dropdown-picker requires its setValue state parameter to be set for DropDownPicker.
     const [farmingMode, setFarmingMode] = useState<ValueType | null>("")
     const [item, setItem] = useState<ValueType | null>("")
     const [mission, setMission] = useState<ValueType | null>("")
@@ -96,10 +98,23 @@ const Settings = () => {
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
-    // Callbacks to save current settings.
+    // Callbacks
+
+    // Load state from context to local.
+    useEffect(() => {
+        setFarmingMode(bsc.settings.game.farmingMode)
+        setItem(bsc.settings.game.item)
+        setMission(bsc.settings.game.mission)
+        setMap(bsc.settings.game.map)
+        setItemAmount(bsc.settings.game.itemAmount)
+        setGroupNumber(bsc.settings.game.groupNumber)
+        setPartyNumber(bsc.settings.game.partyNumber)
+        setCombatScript({ name: bsc.settings.game.combatScriptName, script: bsc.settings.game.combatScript })
+        setFirstTime(false)
+    }, [])
 
     useEffect(() => {
-        if (farmingMode) {
+        if (!firstTime) {
             // Reset selected Item and Mission and save the farming mode.
             bsc.setSettings({
                 ...bsc.settings,
@@ -117,42 +132,11 @@ const Settings = () => {
                 },
             })
         }
-
-        // Reset Item and Mission in local state.
-        setItem("")
-        setMission("")
     }, [farmingMode])
-
-    // Fetch the map that corresponds to the selected mission if applicable. Not for Coop.
-    useEffect(() => {
-        if (
-            farmingMode === "Quest" ||
-            farmingMode === "Special" ||
-            farmingMode === "Raid" ||
-            farmingMode === "Event" ||
-            farmingMode === "Event (Token Drawboxes)" ||
-            farmingMode === "Rise of the Beasts" ||
-            farmingMode === "Guild Wars" ||
-            farmingMode === "Dread Barrage" ||
-            farmingMode === "Proving Grounds" ||
-            farmingMode === "Xeno Clash" ||
-            farmingMode === "Arcarum" ||
-            farmingMode === "Generic"
-        ) {
-            Object.entries(data[farmingMode]).every((obj) => {
-                if (obj[0] === mission) {
-                    setMap(obj[1].map)
-                    return false
-                } else {
-                    return true
-                }
-            })
-        }
-    }, [mission])
 
     // Save every other setting.
     useEffect(() => {
-        if (farmingMode && item && mission) {
+        if (!firstTime) {
             bsc.setSettings({
                 ...bsc.settings,
                 game: {
@@ -199,40 +183,63 @@ const Settings = () => {
         // Remove any duplicates.
         const filteredNewItemList = newItemList.filter((v, i, a) => a.findIndex((t) => t.label === v.label) === i)
         setItemList(filteredNewItemList)
-
-        setMission("") // Reset Mission in local state.
     }, [farmingMode])
 
     // Populate the mission list based on item.
     useEffect(() => {
-        if (item) {
-            let newMissionList: Item[] = []
-            if (
-                farmingMode === "Quest" ||
-                farmingMode === "Special" ||
-                farmingMode === "Coop" ||
-                farmingMode === "Raid" ||
-                farmingMode === "Event" ||
-                farmingMode === "Event (Token Drawboxes)" ||
-                farmingMode === "Rise of the Beasts" ||
-                farmingMode === "Guild Wars" ||
-                farmingMode === "Dread Barrage" ||
-                farmingMode === "Proving Grounds" ||
-                farmingMode === "Xeno Clash" ||
-                farmingMode === "Arcarum" ||
-                farmingMode === "Generic"
-            ) {
-                Object.entries(data[farmingMode]).forEach((obj) => {
-                    if (obj[1].items.indexOf(item.toString()) !== -1) {
-                        newMissionList = newMissionList.concat({ label: obj[0], value: obj[0] })
-                    }
-                })
-            }
-
-            const filteredNewMissionList = Array.from(new Set(newMissionList))
-            setMissionList(filteredNewMissionList)
+        let newMissionList: Item[] = []
+        if (
+            farmingMode === "Quest" ||
+            farmingMode === "Special" ||
+            farmingMode === "Coop" ||
+            farmingMode === "Raid" ||
+            farmingMode === "Event" ||
+            farmingMode === "Event (Token Drawboxes)" ||
+            farmingMode === "Rise of the Beasts" ||
+            farmingMode === "Guild Wars" ||
+            farmingMode === "Dread Barrage" ||
+            farmingMode === "Proving Grounds" ||
+            farmingMode === "Xeno Clash" ||
+            farmingMode === "Arcarum" ||
+            farmingMode === "Generic"
+        ) {
+            Object.entries(data[farmingMode]).forEach((obj) => {
+                if (obj[1].items.indexOf(item.toString()) !== -1) {
+                    newMissionList = newMissionList.concat({ label: obj[0], value: obj[0] })
+                }
+            })
         }
+
+        const filteredNewMissionList = Array.from(new Set(newMissionList))
+        setMissionList(filteredNewMissionList)
     }, [item])
+
+    // Fetch the map that corresponds to the selected mission if applicable. Not for Coop.
+    useEffect(() => {
+        if (
+            farmingMode === "Quest" ||
+            farmingMode === "Special" ||
+            farmingMode === "Raid" ||
+            farmingMode === "Event" ||
+            farmingMode === "Event (Token Drawboxes)" ||
+            farmingMode === "Rise of the Beasts" ||
+            farmingMode === "Guild Wars" ||
+            farmingMode === "Dread Barrage" ||
+            farmingMode === "Proving Grounds" ||
+            farmingMode === "Xeno Clash" ||
+            farmingMode === "Arcarum" ||
+            farmingMode === "Generic"
+        ) {
+            Object.entries(data[farmingMode]).every((obj) => {
+                if (obj[0] === mission) {
+                    setMap(obj[1].map)
+                    return false
+                } else {
+                    return true
+                }
+            })
+        }
+    }, [mission])
 
     return (
         <View style={styles.root}>
@@ -268,12 +275,12 @@ const Settings = () => {
                                             .replace(/\t/g, "")
                                             .split("\n")
 
-                                        setCombatScript({ name: pickerResult.name, script: newCombatScript })
+                                        bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, combatScriptName: pickerResult.name, combatScript: newCombatScript } })
                                     })
                                 }
                             } catch (e) {
                                 console.warn(e)
-                                setCombatScript({ name: "", script: [] })
+                                bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, combatScriptName: "", combatScript: [] } })
                             }
                         }}
                     />
@@ -354,7 +361,7 @@ const Settings = () => {
 
                     {mission !== "" && farmingMode !== "Coop" && farmingMode !== "Arcarum" ? (
                         <View style={{ zIndex: 9996 }}>
-                            <CustomButton title="Select Summons" width={"100%"} onPress={() => setModalOpen(true)} />
+                            <CustomButton title="Select Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
                             <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
                                 <View style={styles.modal}>
                                     <TouchableOpacity style={styles.outsideModal} onPress={() => setModalOpen(false)} />
