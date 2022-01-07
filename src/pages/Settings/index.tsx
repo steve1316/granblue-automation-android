@@ -243,7 +243,7 @@ const Settings = () => {
 
     return (
         <View style={styles.root}>
-            <ScrollView nestedScrollEnabled={true}>
+            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ height: "100%" }}>
                 <View style={{ height: Dimensions.get("screen").height * 0.5, marginHorizontal: 20 }}>
                     <CustomButton
                         title="Select Combat Script"
