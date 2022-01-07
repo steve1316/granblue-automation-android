@@ -163,7 +163,12 @@ const ExtraSettings = () => {
 
                     <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>If none of these settings are changed, then the bot will reuse the settings for the Farming Mode.</Text>
 
-                    <Checkbox text={`Enable Custom Settings for ${title}`} subtitle={`Enable customizing individual settings for ${title}`} state={enableDiscord} updateState={setEnableDiscord} />
+                    <Checkbox
+                        text={`Enable Custom Settings for ${title}`}
+                        subtitle={`Enable customizing individual settings for ${title}`}
+                        state={enableCustomNightmareSettings}
+                        updateState={setEnableCustomNightmareSettings}
+                    />
 
                     <View>
                         <CustomButton title="Select Nightmare Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
