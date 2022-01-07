@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         justifyContent: "center",
-        marginVertical: 10,
+        margin: 10,
     },
     picker: {
         marginVertical: 10,
@@ -348,8 +348,8 @@ const Settings = () => {
 
                     {mission !== "" ? (
                         <View>
-                            <Text>Item Amount:</Text>
-                            <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown">
+                            <Text style={{ color: "#000" }}>Item Amount:</Text>
+                            <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
                                 {[...Array(999 - 1 + 1).keys()]
                                     .map((x) => x + 1)
                                     .map((value) => {
@@ -376,8 +376,8 @@ const Settings = () => {
                     {mission !== "" ? (
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                             <View style={{ width: Dimensions.get("window").width * 0.3 }}>
-                                <Text>Group #:</Text>
-                                <Picker selectedValue={groupNumber} onValueChange={(value) => setGroupNumber(value)} mode="dropdown">
+                                <Text style={{ color: "#000" }}>Group #:</Text>
+                                <Picker selectedValue={groupNumber} onValueChange={(value) => setGroupNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
                                     {[...Array(7 - 1 + 1).keys()]
                                         .map((x) => x + 1)
                                         .map((value) => {
@@ -386,8 +386,8 @@ const Settings = () => {
                                 </Picker>
                             </View>
                             <View style={{ width: Dimensions.get("window").width * 0.3 }}>
-                                <Text>Party #:</Text>
-                                <Picker selectedValue={partyNumber} onValueChange={(value) => setPartyNumber(value)} mode="dropdown">
+                                <Text style={{ color: "#000" }}>Party #:</Text>
+                                <Picker selectedValue={partyNumber} onValueChange={(value) => setPartyNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
                                     {[...Array(6 - 1 + 1).keys()]
                                         .map((x) => x + 1)
                                         .map((value) => {
