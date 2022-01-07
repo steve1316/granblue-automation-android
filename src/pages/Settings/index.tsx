@@ -131,6 +131,9 @@ const Settings = () => {
                     nightmarePartyNumber: 1,
                 },
             })
+
+            // Reset selected mission.
+            setMission("")
         }
     }, [farmingMode])
 
