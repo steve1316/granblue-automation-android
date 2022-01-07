@@ -193,22 +193,28 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
     // Load settings if local settings.json file exists in internal storage.
     useEffect(() => {
         loadSettings()
+        setFirstTime(false)
     }, [])
 
     useEffect(() => {
         saveSettings()
     }, [settings])
 
-    const saveSettings = async () => {
+    const saveSettings = async (newSettings?: Settings) => {
         if (!firstTime) {
             // Grab a local copy of the current settings.
-            const localSettings: Settings = settings
+            const localSettings: Settings = newSettings ? newSettings : settings
 
             // Save settings to local settings.json file in internal storage.
             const path = RNFS.ExternalDirectoryPath + "/settings.json"
 
-            const toSave = JSON.stringify(localSettings, null, 4)
-            console.log(`Saving: ${toSave}`)
+            let toSave = JSON.stringify(localSettings, null, 4)
+            if (toSave.includes("}  }")) {
+                console.warn(`Settings json got corrupted during conversion to JSON string. Attempting to fix...`)
+                toSave = toSave.replace("}  }", "")
+            }
+
+            console.log(`Saving to settings.json: \n\n${toSave}\n\n`)
             await RNFS.writeFile(path, toSave)
                 .then(() => {
                     console.log("Settings saved to ", path)
@@ -216,8 +222,6 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
                 .catch((e) => {
                     console.error(`Error writing settings to path ${path}: ${e}`)
                 })
-        } else {
-            setFirstTime(false)
         }
     }
 
@@ -225,11 +229,25 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
         const path = RNFS.ExternalDirectoryPath + "/settings.json"
         let newSettings: Settings = defaultSettings
         await RNFS.readFile(path)
-            .then((data) => {
+            .then(async (data) => {
                 console.log(`read: \n\n${data}\n\n`)
 
-                const parsed: Settings = JSON.parse(data)
+                let fixedData: string
+                let corruptedSettings: boolean = false
+                if (data.includes("}  }")) {
+                    console.warn(`Settings json got corrupted. Attempting to fix...`)
+                    fixedData = data.replace("}  }", "")
+                    corruptedSettings = true
+                } else {
+                    fixedData = data
+                }
+
+                const parsed: Settings = JSON.parse(fixedData)
                 newSettings = parsed
+
+                if (corruptedSettings) {
+                    await saveSettings(newSettings)
+                }
             })
             .catch((e) => {
                 console.error(`Error reading settings from path ${path}: ${e}`)
