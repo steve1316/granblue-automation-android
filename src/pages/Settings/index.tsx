@@ -9,6 +9,7 @@ import { BotStateContext } from "../../context/BotStateContext"
 import { Picker } from "@react-native-picker/picker"
 import CustomButton from "../../components/CustomButton"
 import TransferList from "../../components/TransferList"
+import Checkbox from "../../components/Checkbox"
 
 const styles = StyleSheet.create({
     root: {
@@ -70,6 +71,7 @@ const Settings = () => {
     const [groupNumber, setGroupNumber] = useState<number>(1)
     const [partyNumber, setPartyNumber] = useState<number>(1)
     const [combatScript, setCombatScript] = useState<CombatScript>({ name: "", script: [] })
+    const [enableNightmare, setEnableNightmare] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
 
@@ -110,6 +112,7 @@ const Settings = () => {
         setGroupNumber(bsc.settings.game.groupNumber)
         setPartyNumber(bsc.settings.game.partyNumber)
         setCombatScript({ name: bsc.settings.game.combatScriptName, script: bsc.settings.game.combatScript })
+        setEnableNightmare(bsc.settings.nightmare.enableNightmare)
         setFirstTime(false)
     }, [])
 
@@ -306,6 +309,19 @@ const Settings = () => {
                         setValue={setFarmingMode}
                         zIndex={9999}
                     />
+
+                    {bsc.settings.game.farmingMode === "Special" ||
+                    bsc.settings.game.farmingMode === "Event" ||
+                    bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ||
+                    bsc.settings.game.farmingMode === "Xeno Clash" ||
+                    bsc.settings.game.farmingMode === "Rise of the Beasts" ? (
+                        <Checkbox
+                            text="Enable Nightmare Settings"
+                            subtitle="Enable additional settings to show up in the Extra Settings page."
+                            state={enableNightmare}
+                            updateState={setEnableNightmare}
+                        />
+                    ) : null}
 
                     {farmingMode !== "" ? (
                         <DropDownPicker
