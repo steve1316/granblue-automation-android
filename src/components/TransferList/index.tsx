@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { View, FlatList, Text, Image, ImageSourcePropType } from "react-native"
 import { Card } from "react-native-elements"
 import { BotStateContext } from "../../context/BotStateContext"
+import summonData from "../../data/summons.json"
 
 interface Summon {
     label: string
@@ -15,7 +16,7 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
     const botStateContext = useContext(BotStateContext)
 
     // Require statements are created statically ahead of time for app bundling to work.
-    const summonData: Summon[] = [
+    const summonDataWithUri: Summon[] = [
         {
             label: "Colossus Omega",
             uri: require("../../images/summons/colossus_omega.png"),
@@ -123,7 +124,7 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
         // Populate the left list.
         let oldLeftList: Summon[] = []
 
-        Object.entries(summonData).forEach((key) => {
+        Object.entries(summonDataWithUri).forEach((key) => {
             oldLeftList = [...oldLeftList, key[1]]
         })
 
@@ -133,7 +134,7 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
         let oldRightList: Summon[] = []
         if (!isNightmare) {
             botStateContext.settings.game.summons.forEach((summon) => {
-                summonData.map((item) => {
+                summonDataWithUri.map((item) => {
                     if (item.label === summon) {
                         oldRightList.push({ label: summon, uri: item.uri })
                     }
@@ -141,7 +142,7 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
             })
         } else {
             botStateContext.settings.nightmare.nightmareSummons.forEach((nightmareSummon) => {
-                summonData.map((item) => {
+                summonDataWithUri.map((item) => {
                     if (item.label === nightmareSummon) {
                         oldRightList.push({ label: nightmareSummon, uri: item.uri })
                     }
@@ -184,10 +185,10 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
             setRightList(newRightList)
 
             // Get the index of the summon from the original untouched list.
-            const newIndex = summonData.findIndex((summon) => summon.label === value)
+            const newIndex = summonDataWithUri.findIndex((summon) => summon.label === value)
 
             // Move the element to the left list.
-            const newLeftList = [...leftList, { label: value, uri: summonData[newIndex].uri }]
+            const newLeftList = [...leftList, { label: value, uri: summonDataWithUri[newIndex].uri }]
             setLeftList(newLeftList)
         }
 
@@ -195,12 +196,39 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
         if (!isNightmare) {
             const newSummons: string[] = []
             newRightList.forEach((summon) => newSummons.push(summon.label))
-            botStateContext.setSettings({ ...botStateContext.settings, game: { ...botStateContext.settings.game, summons: newSummons, summonElements: [] } })
+            botStateContext.setSettings({ ...botStateContext.settings, game: { ...botStateContext.settings.game, summons: newSummons, summonElements: fetchSummonElements(newSummons) } })
         } else {
             const newSummons: string[] = []
             newRightList.forEach((summon) => newSummons.push(summon.label))
-            botStateContext.setSettings({ ...botStateContext.settings, nightmare: { ...botStateContext.settings.nightmare, nightmareSummons: newSummons, nightmareSummonElements: [] } })
+            botStateContext.setSettings({
+                ...botStateContext.settings,
+                nightmare: { ...botStateContext.settings.nightmare, nightmareSummons: newSummons, nightmareSummonElements: fetchSummonElements(newSummons) },
+            })
         }
+    }
+
+    // Grab the Summon elements for the provided list of Support Summons.
+    const fetchSummonElements = (summonList: string[]) => {
+        var newSummonElementsList: string[] = []
+        summonList.forEach((summon) => {
+            if (summonData.Fire.summons.indexOf(summon) !== -1) {
+                newSummonElementsList = newSummonElementsList.concat("Fire")
+            } else if (summonData.Water.summons.indexOf(summon) !== -1) {
+                newSummonElementsList = newSummonElementsList.concat("Water")
+            } else if (summonData.Earth.summons.indexOf(summon) !== -1) {
+                newSummonElementsList = newSummonElementsList.concat("Earth")
+            } else if (summonData.Wind.summons.indexOf(summon) !== -1) {
+                newSummonElementsList = newSummonElementsList.concat("Wind")
+            } else if (summonData.Light.summons.indexOf(summon) !== -1) {
+                newSummonElementsList = newSummonElementsList.concat("Light")
+            } else if (summonData.Dark.summons.indexOf(summon) !== -1) {
+                newSummonElementsList = newSummonElementsList.concat("Dark")
+            } else if (summonData.Misc.summons.indexOf(summon) !== -1) {
+                newSummonElementsList = newSummonElementsList.concat("Misc")
+            }
+        })
+
+        return newSummonElementsList
     }
 
     const customList = (items: Summon[], isLeftList: boolean) => (
