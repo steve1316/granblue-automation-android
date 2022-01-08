@@ -1,13 +1,22 @@
 <AppUpdater>
   <update>
-    <latestVersion>3.1.0</latestVersion>
+    <latestVersion>3.2.0</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v3.1.0 - Changelog
+v3.2.0 - Changelog
 
 Added
 ---
-* Added Generic Farming Mode for missions with "Play Again" functionality. Bot must start either at the Combat screen with the "Attack" button visible or the Loot Collection screen with the "Play Again" button visible.
+- Add Lvl 120 Osiris raid support.
+
+Changed 
+--- 
+- Ensure that Full/Semi Auto is still enabled when clicking Next during combat.
+- Combat Mode will now reload after attack during full/semi auto.
+
+Fixed 
+--- 
+- Fix issue where bot was too fast for Party Selection for Coop to pop up.
     </releaseNotes>
   </update>
 </AppUpdater>
