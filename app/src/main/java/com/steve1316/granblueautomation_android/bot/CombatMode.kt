@@ -855,19 +855,21 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	
 	/**
 	 * Determine whether or not to reload after an Attack.
+	 *
+	 * @param override Override the set checks and reload anyways. Defaults to false.
 	 */
-	private fun reloadAfterAttack() {
+	private fun reloadAfterAttack(override: Boolean = false) {
 		val eventRaids = arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
 		val rotbRaids = arrayListOf("EX Zhuque", "EX Xuanwu", "EX Baihu", "EX Qinglong", "Lvl 100 Shenxian")
 		val dreadBarrageRaids = arrayListOf("1 Star", "2 Star", "3 Star", "4 Star", "5 Star")
 		val provingGroundsRaids = arrayListOf("Extreme", "Extreme+")
 		val guildWarsRaids = arrayListOf("Very Hard", "Extreme", "Extreme+", "NM90", "NM95", "NM100", "NM150")
 		val xenoClashRaids = arrayListOf("Xeno Clash Raid")
-		
+
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
 		if (game.farmingMode == "Raid" || eventRaids.contains(game.missionName) || rotbRaids.contains(game.missionName) || dreadBarrageRaids.contains(game.missionName) ||
 			game.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.missionName) || game.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.missionName) ||
-			xenoClashRaids.contains(game.missionName) || game.farmingMode == "Arcarum"
+			xenoClashRaids.contains(game.missionName) || game.farmingMode == "Arcarum" || override
 		) {
 			game.printToLog("[COMBAT] Reloading now.", tag = tag)
 			game.findAndClickButton("reload")
@@ -1437,7 +1439,53 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						partyWipeCheck()
 
 						// Click Next if it is available and enable automation again if combat continues.
-						if (game.findAndClickButton("next")) {
+						if (game.findAndClickButton("next", tries = 2)) {
+							waitForAttack()
+
+							when {
+								game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+									game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									return false
+								}
+								game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+									game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.findAndClickButton("reload")
+									return true
+								}
+								game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									return true
+								}
+								retreatCheckFlag -> {
+									game.printToLog("\n[COMBAT] Battle ended with the party wiped out.", tag = tag)
+									game.printToLog("\n############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									game.printToLog("############################################################", tag = tag)
+									return false
+								}
+								else -> {
+									enableAuto()
+								}
+							}
+						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
+							reloadAfterAttack(override = true)
+
 							waitForAttack()
 
 							when {
