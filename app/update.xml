@@ -1,22 +1,13 @@
 <AppUpdater>
   <update>
-    <latestVersion>3.2.0</latestVersion>
+    <latestVersion>3.2.1</latestVersion>
     <url>https://github.com/steve1316/granblue-automation-android/releases</url>
     <releaseNotes>
-v3.2.0 - Changelog
-
-Added
----
-- Add Lvl 120 Osiris raid support.
-
-Changed 
---- 
-- Ensure that Full/Semi Auto is still enabled when clicking Next during combat.
-- Combat Mode will now reload after attack during full/semi auto.
+v3.2.1 - Changelog
 
 Fixed 
 --- 
-- Fix issue where bot was too fast for Party Selection for Coop to pop up.
+- Lock reloading during Full/Semi Auto behind Raid-only battles.
     </releaseNotes>
   </update>
 </AppUpdater>
