@@ -70,9 +70,11 @@ const Start = () => {
                 const parsed: Settings = JSON.parse(data)
                 newSettings = parsed
             })
-            .catch((e) => {
-                console.error(`Error reading settings from path ${path}: ${e.name}`)
-                mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings from path ${path}: \n${e}`])
+            .catch((e: Error) => {
+                if (!e.message.includes("No such file or directory")) {
+                    console.error(`Error reading settings from path ${path}: ${e.name}`)
+                    mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings from path ${path}: \n${e}`])
+                }
             })
             .finally(() => {
                 bsc.setSettings(newSettings)
