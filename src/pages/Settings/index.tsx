@@ -136,7 +136,7 @@ const Settings = () => {
             })
 
             // Reset selected mission.
-            setMission("")
+            setMissionList([])
         }
     }, [farmingMode])
 
@@ -323,62 +323,56 @@ const Settings = () => {
                         />
                     ) : null}
 
-                    {farmingMode !== "" ? (
-                        <DropDownPicker
-                            listMode="MODAL"
-                            modalProps={{
-                                animationType: "slide",
-                            }}
-                            style={styles.picker}
-                            dropDownContainerStyle={styles.dropdown}
-                            placeholder="Select Item"
-                            searchTextInputStyle={{ fontStyle: "italic" }}
-                            searchable={true}
-                            items={itemList}
-                            open={isItemPickerOpen}
-                            setOpen={(flag) => {
-                                closeAllPickers()
-                                setIsItemPickerOpen(flag)
-                            }}
-                            value={item}
-                            setValue={setItem}
-                            zIndex={9998}
-                        />
-                    ) : null}
+                    <DropDownPicker
+                        listMode="MODAL"
+                        modalProps={{
+                            animationType: "slide",
+                        }}
+                        style={styles.picker}
+                        dropDownContainerStyle={styles.dropdown}
+                        placeholder="Select Item"
+                        searchTextInputStyle={{ fontStyle: "italic" }}
+                        searchable={true}
+                        items={itemList}
+                        open={isItemPickerOpen}
+                        setOpen={(flag) => {
+                            closeAllPickers()
+                            setIsItemPickerOpen(flag)
+                        }}
+                        value={item}
+                        setValue={setItem}
+                        zIndex={9998}
+                    />
 
-                    {item !== "" ? (
-                        <DropDownPicker
-                            listMode="SCROLLVIEW"
-                            style={styles.picker}
-                            dropDownContainerStyle={styles.dropdown}
-                            placeholder="Select Mission"
-                            searchTextInputStyle={{ fontStyle: "italic" }}
-                            items={missionList}
-                            open={isMissionPickerOpen}
-                            setOpen={(flag) => {
-                                closeAllPickers()
-                                setIsMissionPickerOpen(flag)
-                            }}
-                            value={mission}
-                            setValue={setMission}
-                            zIndex={9997}
-                        />
-                    ) : null}
+                    <DropDownPicker
+                        listMode="SCROLLVIEW"
+                        style={styles.picker}
+                        dropDownContainerStyle={styles.dropdown}
+                        placeholder="Select Mission"
+                        searchTextInputStyle={{ fontStyle: "italic" }}
+                        items={missionList}
+                        open={isMissionPickerOpen}
+                        setOpen={(flag) => {
+                            closeAllPickers()
+                            setIsMissionPickerOpen(flag)
+                        }}
+                        value={mission}
+                        setValue={setMission}
+                        zIndex={9997}
+                    />
 
-                    {mission !== "" ? (
-                        <View>
-                            <Text style={{ color: "#000" }}>Item Amount:</Text>
-                            <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
-                                {[...Array(999 - 1 + 1).keys()]
-                                    .map((x) => x + 1)
-                                    .map((value) => {
-                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
-                                    })}
-                            </Picker>
-                        </View>
-                    ) : null}
+                    <View>
+                        <Text style={{ color: "#000" }}>Item Amount:</Text>
+                        <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
+                            {[...Array(999 - 1 + 1).keys()]
+                                .map((x) => x + 1)
+                                .map((value) => {
+                                    return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                })}
+                        </Picker>
+                    </View>
 
-                    {mission !== "" && farmingMode !== "Coop" && farmingMode !== "Arcarum" ? (
+                    {farmingMode !== "Coop" && farmingMode !== "Arcarum" ? (
                         <View style={{ zIndex: 9996 }}>
                             <CustomButton title="Select Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
                             <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
@@ -392,30 +386,28 @@ const Settings = () => {
                         </View>
                     ) : null}
 
-                    {mission !== "" ? (
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <View style={{ width: Dimensions.get("window").width * 0.3 }}>
-                                <Text style={{ color: "#000" }}>Group #:</Text>
-                                <Picker selectedValue={groupNumber} onValueChange={(value) => setGroupNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
-                                    {[...Array(7 - 1 + 1).keys()]
-                                        .map((x) => x + 1)
-                                        .map((value) => {
-                                            return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
-                                        })}
-                                </Picker>
-                            </View>
-                            <View style={{ width: Dimensions.get("window").width * 0.3 }}>
-                                <Text style={{ color: "#000" }}>Party #:</Text>
-                                <Picker selectedValue={partyNumber} onValueChange={(value) => setPartyNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
-                                    {[...Array(6 - 1 + 1).keys()]
-                                        .map((x) => x + 1)
-                                        .map((value) => {
-                                            return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
-                                        })}
-                                </Picker>
-                            </View>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                            <Text style={{ color: "#000" }}>Group #:</Text>
+                            <Picker selectedValue={groupNumber} onValueChange={(value) => setGroupNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
+                                {[...Array(7 - 1 + 1).keys()]
+                                    .map((x) => x + 1)
+                                    .map((value) => {
+                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                    })}
+                            </Picker>
                         </View>
-                    ) : null}
+                        <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                            <Text style={{ color: "#000" }}>Party #:</Text>
+                            <Picker selectedValue={partyNumber} onValueChange={(value) => setPartyNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
+                                {[...Array(6 - 1 + 1).keys()]
+                                    .map((x) => x + 1)
+                                    .map((value) => {
+                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                    })}
+                            </Picker>
+                        </View>
+                    </View>
                 </View>
             </ScrollView>
         </View>
