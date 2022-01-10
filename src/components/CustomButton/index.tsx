@@ -7,9 +7,10 @@ interface Props {
     width?: number | string
     borderRadius?: number
     onPress?: (event: GestureResponderEvent) => void
+    disabled?: boolean
 }
 
-const CustomButton: FC<Props> = ({ title, width = 100, borderRadius = 5, onPress = () => Alert.alert("Pressed!") }) => {
+const CustomButton: FC<Props> = ({ title, width = 100, borderRadius = 5, disabled = false, onPress = () => Alert.alert("Pressed!") }) => {
     const styles = StyleSheet.create({
         button: {
             backgroundColor: "rgba(78, 116, 289, 1)",
@@ -26,7 +27,7 @@ const CustomButton: FC<Props> = ({ title, width = 100, borderRadius = 5, onPress
         },
     })
 
-    return <Button title={title} buttonStyle={styles.button} containerStyle={styles.buttonContainer} raised onPress={onPress} />
+    return <Button title={title} disabled={disabled} buttonStyle={styles.button} containerStyle={styles.buttonContainer} raised onPress={onPress} />
 }
 
 export default CustomButton
