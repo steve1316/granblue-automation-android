@@ -244,7 +244,7 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
                         <View onTouchEnd={handleChecked(item.item.label, isLeftList)}>
                             <Card containerStyle={{ alignItems: "center" }}>
                                 <Card.Title>{item.item.label}</Card.Title>
-                                <Image source={item.item.uri} />
+                                <Image source={item.item.uri} style={{ alignSelf: "center" }} />
                             </Card>
                         </View>
                     )
