@@ -1,221 +1,131 @@
 package com.steve1316.granblue_automation_android.utils
 
-import android.content.Context
-import com.beust.klaxon.JsonReader
-import com.steve1316.granblue_automation_android.data.ConfigData
-import com.steve1316.granblue_automation_android.data.ItemData
-import com.steve1316.granblue_automation_android.data.MissionData
+import android.content.SharedPreferences
+import android.util.Log
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
+import com.facebook.react.bridge.ReactApplicationContext
+import com.steve1316.granblue_automation_android.MainActivity.loggerTag
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
-import java.io.StringReader
 
-class JSONParser(private val myContext: Context) {
-	/**
-	 * Construct the data classes associated with the provided JSON data files.
-	 */
-	fun constructDataClasses() {
-		// Construct the data class for items and missions.
-		val fileList = arrayListOf("items.json", "missions.json")
-		while (fileList.size > 0) {
-			val fileName = fileList[0]
-			fileList.removeAt(0)
-			val objectString = myContext.assets.open("data/$fileName").bufferedReader().use { it.readText() }
+class JSONParser(private val myContext: ReactApplicationContext) {
+	init {
+		Log.d(loggerTag, "[JSONParser] Loading settings from JSON file to SharedPreferences.")
 
-			JsonReader(StringReader(objectString)).use { reader ->
-				reader.beginObject {
-					while (reader.hasNext()) {
-						// Grab the name.
-						val name = reader.nextName()
+		// Grab the JSON object from the file.
+		val jString = File(myContext.getExternalFilesDir(null), "settings.json").bufferedReader().use { it.readText() }
+		val jObj = JSONObject(jString)
 
-						val contents = mutableMapOf<String, ArrayList<String>>()
-						reader.beginObject {
-							while (reader.hasNext()) {
-								// Grab the event name.
-								val eventName = reader.nextName()
-								contents.putIfAbsent(eventName, arrayListOf())
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+		// Manually save all key-value pairs from JSON object to SharedPreferences.
 
-								reader.beginArray {
-									// Grab all of the event option rewards for this event and add them to the map.
-									while (reader.hasNext()) {
-										val optionReward = reader.nextString()
-										contents[eventName]?.add(optionReward)
-									}
-								}
-							}
-						}
+		val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 
-						// Finally, put into the MutableMap the key value pair depending on the current category.
-						if (fileName == "items.json") {
-							ItemData.items[name] = contents
-						} else {
-							MissionData.missions[name] = contents
-						}
-					}
-				}
-			}
+		val gameObj = jObj.getJSONObject("game")
+		sharedPreferences.edit {
+			putString("combatScriptName", gameObj.getString("combatScriptName"))
+			putString("combatScript", toArrayList(gameObj.getJSONArray("combatScript")).joinToString("|"))
+			putString("farmingMode", gameObj.getString("farmingMode"))
+			putString("item", gameObj.getString("item"))
+			putString("mission", gameObj.getString("mission"))
+			putString("map", gameObj.getString("map"))
+			putInt("itemAmount", gameObj.getInt("itemAmount"))
+			putString("summons", toArrayList(gameObj.getJSONArray("summons")).joinToString("|"))
+			putString("summonElements", toArrayList(gameObj.getJSONArray("summonElements")).joinToString("|"))
+			putInt("groupNumber", gameObj.getInt("groupNumber"))
+			putInt("partyNumber", gameObj.getInt("partyNumber"))
+			putBoolean("debugMode", gameObj.getBoolean("debugMode"))
+			commit()
 		}
+
+		val twitterObj = jObj.getJSONObject("twitter")
+		sharedPreferences.edit {
+			putString("twitterAPIKey", twitterObj.getString("twitterAPIKey"))
+			putString("twitterAPIKeySecret", twitterObj.getString("twitterAPIKeySecret"))
+			putString("twitterAccessToken", twitterObj.getString("twitterAccessToken"))
+			putString("twitterAccessTokenSecret", twitterObj.getString("twitterAccessTokenSecret"))
+			commit()
+		}
+
+		val discordObj = jObj.getJSONObject("discord")
+		sharedPreferences.edit {
+			putBoolean("enableDiscordNotifications", discordObj.getBoolean("enableDiscordNotifications"))
+			putString("discordToken", discordObj.getString("discordToken"))
+			putString("discordUserID", discordObj.getString("discordUserID"))
+			commit()
+		}
+
+		val configurationObj = jObj.getJSONObject("configuration")
+		sharedPreferences.edit {
+			putBoolean("enableAutoRestore", configurationObj.getBoolean("enableAutoRestore"))
+			putBoolean("enableFullElixir", configurationObj.getBoolean("enableFullElixir"))
+			putBoolean("enableSoulBalm", configurationObj.getBoolean("enableSoulBalm"))
+			putBoolean("enableDelayBetweenRuns", configurationObj.getBoolean("enableDelayBetweenRuns"))
+			putInt("delayBetweenRuns", configurationObj.getInt("delayBetweenRuns"))
+			putBoolean("enableRandomizedDelayBetweenRuns", configurationObj.getBoolean("enableRandomizedDelayBetweenRuns"))
+			putInt("delayBetweenRunsLowerBound", configurationObj.getInt("delayBetweenRunsLowerBound"))
+			putInt("delayBetweenRunsUpperBound", configurationObj.getInt("delayBetweenRunsUpperBound"))
+			commit()
+		}
+
+		val nightmareObj = jObj.getJSONObject("nightmare")
+		sharedPreferences.edit {
+			putBoolean("enableNightmare", nightmareObj.getBoolean("enableNightmare"))
+			putString("nightmareCombatScriptName", nightmareObj.getString("nightmareCombatScriptName"))
+			putString("nightmareCombatScript", toArrayList(nightmareObj.getJSONArray("nightmareCombatScript")).joinToString("|"))
+			putString("nightmareSummons", toArrayList(nightmareObj.getJSONArray("nightmareSummons")).joinToString("|"))
+			putString("nightmareSummonElements", toArrayList(nightmareObj.getJSONArray("nightmareSummonElements")).joinToString("|"))
+			putInt("nightmareGroupNumber", nightmareObj.getInt("nightmareGroupNumber"))
+			putInt("nightmarePartyNumber", nightmareObj.getInt("nightmarePartyNumber"))
+			commit()
+		}
+
+		val eventObj = jObj.getJSONObject("event")
+		sharedPreferences.edit {
+			putBoolean("enableLocationIncrementByOne", eventObj.getBoolean("enableLocationIncrementByOne"))
+			commit()
+		}
+
+		val raidObj = jObj.getJSONObject("raid")
+		sharedPreferences.edit {
+			putBoolean("enableAutoExitRaid", raidObj.getBoolean("enableAutoExitRaid"))
+			putInt("timeAllowedUntilAutoExitRaid", raidObj.getInt("timeAllowedUntilAutoExitRaid"))
+			putBoolean("enableNoTimeout", raidObj.getBoolean("enableNoTimeout"))
+			commit()
+		}
+
+		val arcarumObj = jObj.getJSONObject("arcarum")
+		sharedPreferences.edit {
+			putBoolean("enableStopOnArcarumBoss", arcarumObj.getBoolean("enableStopOnArcarumBoss"))
+			commit()
+		}
+
+		val androidObj = jObj.getJSONObject("android")
+		sharedPreferences.edit {
+			putBoolean("enableDelayTap", androidObj.getBoolean("enableDelayTap"))
+			putInt("setDelayTapMilliseconds", androidObj.getInt("setDelayTapMilliseconds"))
+			putFloat("confidence", androidObj.getDouble("confidence").toFloat())
+			putFloat("confidenceAll", androidObj.getDouble("confidenceAll").toFloat())
+			putFloat("customScale", androidObj.getDouble("customScale").toFloat())
+			putBoolean("enableTestForHomeScreen", androidObj.getBoolean("enableTestForHomeScreen"))
+			commit()
+		}
+
+		Log.d(loggerTag, "[JSONParser] Successfully loaded settings into SharedPreferences.")
 	}
 
-	/**
-	 * Construct the ConfigData class associated with the config.json file.
-	 */
-	fun constructConfigClass() {
-		// Now construct the data class for config.
-		val objectString = File(myContext.getExternalFilesDir(null), "config.json").bufferedReader().use { it.readText() }
-		JsonReader(StringReader(objectString)).use { reader ->
-			reader.beginObject {
-				while (reader.hasNext()) {
-					// Grab setting category name.
-					when (reader.nextName()) {
-						"discord" -> {
-							reader.beginObject {
-								while (reader.hasNext()) {
-									val key = reader.nextString()
-									val value = reader.nextString()
+	private fun toArrayList(jsonArray: JSONArray): ArrayList<String> {
+		val newArrayList: ArrayList<String> = arrayListOf()
 
-									if (key == "discordToken") {
-										ConfigData.discordToken = value
-									} else if (key == "userID") {
-										ConfigData.userID = value
-									}
-								}
-							}
-						}
-						"twitter" -> {
-							reader.beginObject {
-								while (reader.hasNext()) {
-									val key = reader.nextString()
-									val value = reader.nextString()
-
-									when (key) {
-										"apiKey" -> {
-											ConfigData.apiKey = value
-										}
-										"apiKeySecret" -> {
-											ConfigData.apiKeySecret = value
-										}
-										"accessToken" -> {
-											ConfigData.accessToken = value
-										}
-										"accessTokenSecret" -> {
-											ConfigData.accessTokenSecret = value
-										}
-									}
-								}
-							}
-						}
-						"refill" -> {
-							reader.beginObject {
-								while (reader.hasNext()) {
-									val key = reader.nextString()
-									val value = reader.nextBoolean()
-
-									if (key == "fullElixir") {
-										ConfigData.fullElixir = value
-									} else if (key == "soulBalm") {
-										ConfigData.soulBalm = value
-									}
-								}
-							}
-						}
-						"dimensionalHalo" -> {
-							reader.beginObject {
-								while (reader.hasNext()) {
-									when (reader.nextString()) {
-										"enableDimensionalHalo" -> {
-											val value = reader.nextBoolean()
-											ConfigData.enableDimensionalHalo = value
-										}
-										"dimensionalHaloSummonList" -> {
-											val value = reader.nextArray() as List<String>
-											ConfigData.dimensionalHaloSummonList = value
-										}
-										"dimensionalHaloGroupNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.dimensionalHaloGroupNumber = value
-										}
-										"dimensionalHaloPartyNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.dimensionalHaloPartyNumber = value
-										}
-									}
-								}
-							}
-						}
-						"event" -> {
-							reader.beginObject {
-								while (reader.hasNext()) {
-									when (reader.nextString()) {
-										"enableEventNightmare" -> {
-											val value = reader.nextBoolean()
-											ConfigData.enableEventNightmare = value
-										}
-										"eventNightmareSummonList" -> {
-											val value = reader.nextArray() as List<String>
-											ConfigData.eventNightmareSummonList = value
-										}
-										"eventNightmareGroupNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.eventNightmareGroupNumber = value
-										}
-										"eventNightmarePartyNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.eventNightmarePartyNumber = value
-										}
-									}
-								}
-							}
-						}
-						"rotb" -> {
-							reader.beginObject {
-								while (reader.hasNext()) {
-									when (reader.nextString()) {
-										"enableROTBExtremePlus" -> {
-											val value = reader.nextBoolean()
-											ConfigData.enableROTBExtremePlus = value
-										}
-										"rotbExtremePlusSummonList" -> {
-											val value = reader.nextArray() as List<String>
-											ConfigData.rotbExtremePlusSummonList = value
-										}
-										"rotbExtremePlusGroupNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.rotbExtremePlusGroupNumber = value
-										}
-										"rotbExtremePlusPartyNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.rotbExtremePlusPartyNumber = value
-										}
-									}
-								}
-							}
-						}
-						"xenoClash" -> {
-							reader.beginObject {
-								while (reader.hasNext()) {
-									when (reader.nextString()) {
-										"enableXenoClashNightmare" -> {
-											val value = reader.nextBoolean()
-											ConfigData.enableXenoClashNightmare = value
-										}
-										"xenoClashNightmareSummonList" -> {
-											val value = reader.nextArray() as List<String>
-											ConfigData.xenoClashNightmareSummonList = value
-										}
-										"xenoClashNightmareGroupNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.xenoClashNightmareGroupNumber = value
-										}
-										"xenoClashNightmarePartyNumber" -> {
-											val value = reader.nextInt()
-											ConfigData.xenoClashNightmarePartyNumber = value
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+		var i = 0
+		while (i < jsonArray.length()) {
+			newArrayList.add(jsonArray.get(i) as String)
+			i++
 		}
+
+		return newArrayList
 	}
 }
