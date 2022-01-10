@@ -1,5 +1,4 @@
-import React, { createContext, useEffect, useState } from "react"
-import RNFS from "react-native-fs"
+import React, { createContext, useState } from "react"
 
 export interface Settings {
     // Game settings.
@@ -73,6 +72,8 @@ export interface Settings {
     }
 
     android: {
+        enableDelayTap: boolean
+        setDelayTapMilliseconds: number
         confidence: number
         confidenceAll: number
         customScale: number
@@ -139,6 +140,8 @@ export const defaultSettings: Settings = {
         enableStopOnArcarumBoss: true,
     },
     android: {
+        enableDelayTap: false,
+        setDelayTapMilliseconds: 1000,
         confidence: 0.8,
         confidenceAll: 0.8,
         customScale: 1.0,
@@ -173,8 +176,6 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
 
     const [settings, setSettings] = useState<Settings>(defaultSettings)
 
-    const [firstTime, setFirstTime] = useState<boolean>(true)
-
     const providerValues: IProviderProps = {
         readyStatus,
         setReadyStatus,
@@ -188,73 +189,6 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
         setRefreshAlert,
         settings,
         setSettings,
-    }
-
-    // Load settings if local settings.json file exists in internal storage.
-    useEffect(() => {
-        loadSettings()
-        setFirstTime(false)
-    }, [])
-
-    useEffect(() => {
-        saveSettings()
-    }, [settings])
-
-    const saveSettings = async (newSettings?: Settings) => {
-        if (!firstTime) {
-            // Grab a local copy of the current settings.
-            const localSettings: Settings = newSettings ? newSettings : settings
-
-            // Save settings to local settings.json file in internal storage.
-            const path = RNFS.ExternalDirectoryPath + "/settings.json"
-
-            let toSave = JSON.stringify(localSettings, null, 4)
-            if (toSave.includes("}  }")) {
-                console.warn(`Settings json got corrupted during conversion to JSON string. Attempting to fix...`)
-                toSave = toSave.replace("}  }", "")
-            }
-
-            console.log(`Saving to settings.json: \n\n${toSave}\n\n`)
-            await RNFS.writeFile(path, toSave)
-                .then(() => {
-                    console.log("Settings saved to ", path)
-                })
-                .catch((e) => {
-                    console.error(`Error writing settings to path ${path}: ${e}`)
-                })
-        }
-    }
-
-    const loadSettings = async () => {
-        const path = RNFS.ExternalDirectoryPath + "/settings.json"
-        let newSettings: Settings = defaultSettings
-        await RNFS.readFile(path)
-            .then(async (data) => {
-                console.log(`read: \n\n${data}\n\n`)
-
-                let fixedData: string
-                let corruptedSettings: boolean = false
-                if (data.includes("}  }")) {
-                    console.warn(`Settings json got corrupted. Attempting to fix...`)
-                    fixedData = data.replace("}  }", "")
-                    corruptedSettings = true
-                } else {
-                    fixedData = data
-                }
-
-                const parsed: Settings = JSON.parse(fixedData)
-                newSettings = parsed
-
-                if (corruptedSettings) {
-                    await saveSettings(newSettings)
-                }
-            })
-            .catch((e) => {
-                console.error(`Error reading settings from path ${path}: ${e}`)
-            })
-            .finally(() => {
-                setSettings(newSettings)
-            })
     }
 
     return <BotStateContext.Provider value={providerValues}>{children}</BotStateContext.Provider>
