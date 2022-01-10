@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useContext } from "react"
 import { StyleSheet, View, ScrollView, Dimensions, Modal, TouchableOpacity } from "react-native"
-import { Input, Text } from "react-native-elements"
+import { Divider, Input, Text } from "react-native-elements"
 import Checkbox from "../../components/Checkbox"
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import TitleDivider from "../../components/TitleDivider"
 import { Slider, RangeSlider } from "@sharcoux/slider"
 import NumericInput from "react-native-numeric-input"
 import { Picker } from "@react-native-picker/picker"
+import RNFS from "react-native-fs"
+import DocumentPicker from "react-native-document-picker"
 import { BotStateContext } from "../../context/BotStateContext"
 import { CombatScript } from "../Settings"
 import CustomButton from "../../components/CustomButton"
 import TransferList from "../../components/TransferList"
+import { MessageLogContext } from "../../context/MessageLogContext"
 
 const styles = StyleSheet.create({
     root: {
@@ -39,6 +42,7 @@ const styles = StyleSheet.create({
 
 const ExtraSettings = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
+    const [firstTime, setFirstTime] = useState<boolean>(true)
 
     // Twitter Settings
     const [twitterAPIKey, setTwitterAPIKey] = useState<string>("")
@@ -76,49 +80,99 @@ const ExtraSettings = () => {
     const [enableTestForHomeScreen, setEnableTestForHomeScreen] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
+    const mlc = useContext(MessageLogContext)
 
-    // Save every other setting.
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // Callbacks
+
+    // Load state from context to local.
     useEffect(() => {
-        bsc.setSettings({
-            ...bsc.settings,
-            game: {
-                ...bsc.settings.game,
-                debugMode: debugMode,
-            },
-            twitter: {
-                ...bsc.settings.twitter,
-                twitterAPIKey: twitterAPIKey,
-                twitterAPIKeySecret: twitterAPIKeySecret,
-                twitterAccessToken: twitterAccessToken,
-                twitterAccessTokenSecret: twitterAccessTokenSecret,
-            },
-            discord: {
-                ...bsc.settings.discord,
-                discordToken: discordToken,
-                discordUserID: discordUserID,
-            },
-            configuration: {
-                ...bsc.settings.configuration,
-                enableDelayBetweenRuns: enableDelayBetweenRuns,
-                delayBetweenRuns: delayBetweenRuns,
-                enableRandomizedDelayBetweenRuns: enableRandomizedDelayBetweenRuns,
-                delayBetweenRunsLowerBound: randomizedDelayBetweenRuns[0],
-                delayBetweenRunsUpperBound: randomizedDelayBetweenRuns[1],
-            },
-            raid: {
-                ...bsc.settings.raid,
-                enableAutoExitRaid: enableAutoExitRaid,
-                timeAllowedUntilAutoExitRaid: autoExitRaidMinutes,
-                enableNoTimeout: enableNoTimeout,
-            },
-            android: {
-                ...bsc.settings.android,
-                confidence: confidence,
-                confidenceAll: confidenceAll,
-                customScale: customScale,
-                enableTestForHomeScreen: enableTestForHomeScreen,
-            },
-        })
+        setTwitterAPIKey(bsc.settings.twitter.twitterAPIKey)
+        setTwitterAPIKeySecret(bsc.settings.twitter.twitterAPIKeySecret)
+        setTwitterAccessToken(bsc.settings.twitter.twitterAccessToken)
+        setTwitterAccessTokenSecret(bsc.settings.twitter.twitterAccessTokenSecret)
+        setEnableDiscord(bsc.settings.discord.enableDiscordNotifications)
+        setDiscordToken(bsc.settings.discord.discordToken)
+        setDiscordUserID(bsc.settings.discord.discordUserID)
+        setDebugMode(bsc.settings.game.debugMode)
+        setEnableDelayBetweenRuns(bsc.settings.configuration.enableDelayBetweenRuns)
+        setDelayBetweenRuns(bsc.settings.configuration.delayBetweenRuns)
+        setEnableRandomizedDelayBetweenRuns(bsc.settings.configuration.enableRandomizedDelayBetweenRuns)
+        setRandomizedDelayBetweenRuns([bsc.settings.configuration.delayBetweenRunsLowerBound, bsc.settings.configuration.delayBetweenRunsUpperBound])
+        setEnableAutoExitRaid(bsc.settings.raid.enableAutoExitRaid)
+        setAutoExitRaidsMinutes(bsc.settings.raid.timeAllowedUntilAutoExitRaid)
+        setEnableNoTimeout(bsc.settings.raid.enableNoTimeout)
+        setEnableDelayTap(bsc.settings.android.enableDelayTap)
+        setDelayTapMilliseconds(bsc.settings.android.setDelayTapMilliseconds)
+        setEnableCustomNightmareSettings(bsc.settings.nightmare.enableCustomNightmareSettings)
+        setNightmareCombatScript({ name: bsc.settings.nightmare.nightmareCombatScriptName, script: bsc.settings.nightmare.nightmareCombatScript })
+        setNightmareGroupNumber(bsc.settings.nightmare.nightmareGroupNumber)
+        setNightmarePartyNumber(bsc.settings.nightmare.nightmarePartyNumber)
+        setConfidence(bsc.settings.android.confidence)
+        setConfidenceAll(bsc.settings.android.confidenceAll)
+        setCustomScale(bsc.settings.android.customScale)
+        setEnableTestForHomeScreen(bsc.settings.android.enableTestForHomeScreen)
+        setFirstTime(false)
+    }, [])
+
+    // Save settings to context state.
+    useEffect(() => {
+        if (!firstTime) {
+            mlc.setMessageLog([])
+            mlc.setAsyncMessages([])
+
+            bsc.setSettings({
+                ...bsc.settings,
+                game: {
+                    ...bsc.settings.game,
+                    debugMode: debugMode,
+                },
+                twitter: {
+                    ...bsc.settings.twitter,
+                    twitterAPIKey: twitterAPIKey,
+                    twitterAPIKeySecret: twitterAPIKeySecret,
+                    twitterAccessToken: twitterAccessToken,
+                    twitterAccessTokenSecret: twitterAccessTokenSecret,
+                },
+                discord: {
+                    ...bsc.settings.discord,
+                    discordToken: discordToken,
+                    discordUserID: discordUserID,
+                },
+                configuration: {
+                    ...bsc.settings.configuration,
+                    enableDelayBetweenRuns: enableDelayBetweenRuns,
+                    delayBetweenRuns: delayBetweenRuns,
+                    enableRandomizedDelayBetweenRuns: enableRandomizedDelayBetweenRuns,
+                    delayBetweenRunsLowerBound: randomizedDelayBetweenRuns[0],
+                    delayBetweenRunsUpperBound: randomizedDelayBetweenRuns[1],
+                },
+                raid: {
+                    ...bsc.settings.raid,
+                    enableAutoExitRaid: enableAutoExitRaid,
+                    timeAllowedUntilAutoExitRaid: autoExitRaidMinutes,
+                    enableNoTimeout: enableNoTimeout,
+                },
+                nightmare: {
+                    ...bsc.settings.nightmare,
+                    enableCustomNightmareSettings: enableCustomNightmareSettings,
+                    nightmareCombatScriptName: nightmareCombatScript.name,
+                    nightmareCombatScript: nightmareCombatScript.script,
+                    nightmareGroupNumber: nightmareGroupNumber,
+                    nightmarePartyNumber: nightmarePartyNumber,
+                },
+                android: {
+                    ...bsc.settings.android,
+                    enableDelayTap: enableDelayTap,
+                    setDelayTapMilliseconds: delayTapMilliseconds,
+                    confidence: confidence,
+                    confidenceAll: confidenceAll,
+                    customScale: customScale,
+                    enableTestForHomeScreen: enableTestForHomeScreen,
+                },
+            })
+        }
     }, [
         twitterAPIKey,
         twitterAPIKeySecret,
@@ -133,6 +187,12 @@ const ExtraSettings = () => {
         enableAutoExitRaid,
         autoExitRaidMinutes,
         enableNoTimeout,
+        enableCustomNightmareSettings,
+        nightmareCombatScript,
+        nightmareGroupNumber,
+        nightmarePartyNumber,
+        enableDelayTap,
+        delayTapMilliseconds,
         confidence,
         confidenceAll,
         customScale,
@@ -169,6 +229,51 @@ const ExtraSettings = () => {
                         state={enableCustomNightmareSettings}
                         updateState={setEnableCustomNightmareSettings}
                     />
+
+                    <CustomButton
+                        title="Select Nightmare Combat Script"
+                        width={200}
+                        borderRadius={20}
+                        onPress={async () => {
+                            try {
+                                const pickerResult = await DocumentPicker.pickSingle({
+                                    type: "text/plain",
+                                })
+
+                                const uri = pickerResult.uri
+                                if (uri.startsWith("content://")) {
+                                    // Convert content uri to file uri.
+                                    // Source: https://stackoverflow.com/a/62677483
+                                    const uriComponents = uri.split("/")
+                                    const fileNameAndExtension = uriComponents[uriComponents.length - 1]
+                                    const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`
+                                    await RNFS.copyFile(uri, destPath)
+
+                                    // Now read the file using the newly converted file uri.
+                                    await RNFS.readFile("file://" + destPath).then((data) => {
+                                        console.log("Read combat script: ", data)
+
+                                        const newCombatScript: string[] = data
+                                            .replace(/\r\n/g, "\n") // Replace LF with CRLF.
+                                            .replace(/[\r\n]/g, "\n")
+                                            .replace("\t", "") // Replace tab characters.
+                                            .replace(/\t/g, "")
+                                            .split("\n")
+
+                                        bsc.setSettings({
+                                            ...bsc.settings,
+                                            nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: pickerResult.name, nightmareCombatScript: newCombatScript },
+                                        })
+                                    })
+                                }
+                            } catch (e) {
+                                console.warn(e)
+                                bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: "", nightmareCombatScript: [] } })
+                            }
+                        }}
+                    />
+
+                    <Divider />
 
                     <View>
                         <CustomButton title="Select Nightmare Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
@@ -236,7 +341,7 @@ const ExtraSettings = () => {
 
                 <TitleDivider
                     title="Discord Settings"
-                    subtitle={`Please visit the wiki on the GitHub page for instructions on how to get the token and user ID.\n\nNote: This does not work on emulators.`}
+                    subtitle={`Please visit the wiki on the GitHub page for instructions on how to get the token and user ID.\n\nNote: This does not work on emulators currently.`}
                     hasIcon={true}
                     iconName="discord"
                     iconColor="#7289d9"
