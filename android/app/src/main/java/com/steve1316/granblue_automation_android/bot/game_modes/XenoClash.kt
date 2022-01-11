@@ -1,6 +1,5 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
@@ -9,45 +8,13 @@ class XenoClashException(message: String) : Exception(message)
 class XenoClash(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}XenoClash"
 
-	private val enableXenoClashNightmare: Boolean
-	private var xenoClashNightmareSummonList: List<String>
-	private var xenoClashNightmareGroupNumber: Int
-	private var xenoClashNightmarePartyNumber: Int
-
-	init {
-		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
-		enableXenoClashNightmare = sharedPreferences.getBoolean("enableXenoClashNightmare", false)
-		xenoClashNightmareSummonList = sharedPreferences.getStringSet("xenoClashNightmareSummonList", setOf<String>())!!.toList()
-		xenoClashNightmareGroupNumber = sharedPreferences.getInt("xenoClashNightmareGroupNumber", 0)
-		xenoClashNightmarePartyNumber = sharedPreferences.getInt("xenoClashNightmarePartyNumber", 0)
-
-		if (game.itemName == "Repeated Runs" && enableXenoClashNightmare) {
-			game.printToLog("\n[XENO.CLASH] Initializing settings for Xeno Clash Nightmare...", tag = tag)
-
-			if (xenoClashNightmareSummonList.isEmpty()) {
-				game.printToLog("[XENO.CLASH] Summons for Xeno Clash Nightmare will reuse the ones for Farming Mode.", tag = tag)
-				xenoClashNightmareSummonList = game.summonList
-			}
-
-			if (xenoClashNightmareGroupNumber == 0) {
-				game.printToLog("[XENO.CLASH] Group Number for Xeno Clash Nightmare will reuse the ones for Farming Mode.", tag = tag)
-				xenoClashNightmareGroupNumber = game.groupNumber
-			}
-
-			if (xenoClashNightmarePartyNumber == 0) {
-				game.printToLog("[XENO.CLASH] Party Number for Xeno Clash Nightmare will reuse the ones for Farming Mode.", tag = tag)
-				xenoClashNightmarePartyNumber = game.partyNumber
-			}
-		}
-	}
-
 	/**
 	 * Checks for Xeno Clash Nightmare and if it appeared and the user enabled it in settings, start it.
 	 *
 	 * @return True if Xeno Clash Nightmare was detected and successfully completed. False otherwise.
 	 */
 	fun checkForXenoClashNightmare(): Boolean {
-		if (enableXenoClashNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
@@ -59,9 +26,9 @@ class XenoClash(private val game: Game, private val missionName: String) {
 				game.printToLog("\n********************************************************************************", tag = tag)
 				game.printToLog("********************************************************************************", tag = tag)
 				game.printToLog("[XENO] Xeno Clash Nightmare", tag = tag)
-				game.printToLog("[XENO] Xeno Clash Nightmare Summons: $xenoClashNightmareSummonList", tag = tag)
-				game.printToLog("[XENO] Xeno Clash Nightmare Group Number: $xenoClashNightmareGroupNumber", tag = tag)
-				game.printToLog("[XENO] Xeno Clash Nightmare Party Number: $xenoClashNightmarePartyNumber", tag = tag)
+				game.printToLog("[XENO] Xeno Clash Nightmare Summons: ${game.configData.nightmareSummons}", tag = tag)
+				game.printToLog("[XENO] Xeno Clash Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
+				game.printToLog("[XENO] Xeno Clash Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
 				game.printToLog("********************************************************************************", tag = tag)
 				game.printToLog("\n********************************************************************************", tag = tag)
 
@@ -78,17 +45,17 @@ class XenoClash(private val game: Game, private val missionName: String) {
 
 				// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
 				if (game.imageUtils.confirmLocation("select_a_summon")) {
-					game.selectSummon(optionalSummonList = xenoClashNightmareSummonList)
-					val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = xenoClashNightmareGroupNumber, optionalPartyNumber = xenoClashNightmarePartyNumber)
+					game.selectSummon(optionalSummonList = game.configData.nightmareSummons)
+					val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = game.configData.nightmareGroupNumber, optionalPartyNumber = game.configData.nightmarePartyNumber)
 
 					// Once preparations are completed, start Combat Mode.
-					if (startCheck && game.combatMode.startCombatMode(game.combatScript)) {
+					if (startCheck && game.combatMode.startCombatMode(optionalCombatScript = game.configData.nightmareCombatScript)) {
 						game.collectLoot(isCompleted = false, isEventNightmare = true)
 						return true
 					}
 				}
 			}
-		} else if (!enableXenoClashNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
@@ -195,7 +162,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}

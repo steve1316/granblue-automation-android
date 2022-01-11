@@ -20,7 +20,7 @@ class MyListener(private val game: Game) : StatusListener {
 
 	override fun onStatus(status: Status?) {
 		if (status != null) {
-			if (game.debugMode) {
+			if (game.configData.debugMode) {
 				Log.d(tag, "[DEBUG] Stream found: ${status.text}")
 			}
 
@@ -179,7 +179,7 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 	}
 
 	init {
-		if (game.farmingMode == "Raid") {
+		if (game.configData.farmingMode == "Raid") {
 			game.printToLog("\n[INFO] Connecting to Twitter API...", tag = tag)
 
 			// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
@@ -213,7 +213,7 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 
 				game.printToLog("[SUCCESS] Connection to Twitter API is successful.", tag = tag)
 
-				findMostRecent(game.missionName)
+				findMostRecent(game.configData.missionName)
 			} catch (e: Exception) {
 				game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.stackTraceToString()}", tag = tag, isError = true)
 			}

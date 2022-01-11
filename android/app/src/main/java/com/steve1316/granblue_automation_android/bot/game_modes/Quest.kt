@@ -486,7 +486,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				}
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					numberOfItemsDropped = game.collectLoot(isCompleted = true)
 				}
 			}

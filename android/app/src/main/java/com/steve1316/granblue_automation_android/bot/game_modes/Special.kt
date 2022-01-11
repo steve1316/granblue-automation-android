@@ -1,6 +1,5 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 import org.opencv.core.Point
@@ -11,56 +10,21 @@ class SpecialException(message: String) : Exception(message)
 class Special(private val game: Game, private val mapName: String, private val missionName: String) {
 	private val tag: String = "${loggerTag}Special"
 
-	private val enableDimensionalHalo: Boolean
-	private var dimensionalHaloSummonList: List<String>
-	private var dimensionalHaloGroupNumber: Int
-	private var dimensionalHaloPartyNumber: Int
-	private var dimensionalHaloAmount: Int = 0
-
-	init {
-		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
-		enableDimensionalHalo = sharedPreferences.getBoolean("enableDimensionalHalo", false)
-		dimensionalHaloSummonList = sharedPreferences.getStringSet("dimensionalHaloSummonList", setOf<String>())!!.toList()
-		dimensionalHaloGroupNumber = sharedPreferences.getInt("dimensionalHaloGroupNumber", 0)
-		dimensionalHaloPartyNumber = sharedPreferences.getInt("dimensionalHaloPartyNumber", 0)
-
-		if (missionName == "VH Angel Halo" && enableDimensionalHalo && (game.itemName == "EXP" || game.itemName == "Angel Halo Weapons")) {
-			game.printToLog("\n[SPECIAL] Initializing settings for Dimensional Halo...", tag = tag)
-
-			if (dimensionalHaloSummonList.isEmpty()) {
-				game.printToLog("[SPECIAL] Summons for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
-				dimensionalHaloSummonList = game.summonList
-			}
-
-			if (dimensionalHaloGroupNumber == 0) {
-				game.printToLog("[SPECIAL] Group Number for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
-				dimensionalHaloGroupNumber = game.groupNumber
-			}
-
-			if (dimensionalHaloPartyNumber == 0) {
-				game.printToLog("[SPECIAL] Party Number for Dimensional Halo will reuse the ones for Farming Mode.", tag = tag)
-				dimensionalHaloPartyNumber = game.partyNumber
-			}
-		}
-	}
-
 	/**
 	 * Checks for Dimensional Halo and if it appeared and the user enabled it in settings, start it.
 	 *
 	 * @return True if Dimensional Halo was detected and successfully completed. False otherwise.
 	 */
 	fun checkDimensionalHalo(): Boolean {
-		if (enableDimensionalHalo && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
 			game.printToLog("\n[D.HALO] Detected Dimensional Halo. Starting it now...", tag = tag)
-			dimensionalHaloAmount += 1
 
 			game.printToLog("\n********************************************************************************", tag = tag)
 			game.printToLog("********************************************************************************", tag = tag)
 			game.printToLog("[D.HALO] Dimensional Halo", tag = tag)
-			game.printToLog("[D.HALO] Dimensional Halo Summons: $dimensionalHaloSummonList", tag = tag)
-			game.printToLog("[D.HALO] Dimensional Halo Group Number: $dimensionalHaloGroupNumber", tag = tag)
-			game.printToLog("[D.HALO] Dimensional Halo Party Number: $dimensionalHaloPartyNumber", tag = tag)
-			game.printToLog("[D.HALO] Amount of Dimensional Halos encountered: $dimensionalHaloAmount", tag = tag)
+			game.printToLog("[D.HALO] Dimensional Halo Summons: ${game.configData.nightmareSummons}", tag = tag)
+			game.printToLog("[D.HALO] Dimensional Halo Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
+			game.printToLog("[D.HALO] Dimensional Halo Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
 			game.printToLog("********************************************************************************", tag = tag)
 			game.printToLog("\n********************************************************************************", tag = tag)
 
@@ -71,16 +35,16 @@ class Special(private val game: Game, private val mapName: String, private val m
 
 			// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
 			if (game.imageUtils.confirmLocation("select_a_summon")) {
-				game.selectSummon(optionalSummonList = dimensionalHaloSummonList)
-				val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = dimensionalHaloGroupNumber, optionalPartyNumber = dimensionalHaloPartyNumber)
+				game.selectSummon(optionalSummonList = game.configData.nightmareSummons)
+				val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = game.configData.nightmareGroupNumber, optionalPartyNumber = game.configData.nightmarePartyNumber)
 
 				// Once preparations are completed, start Combat Mode.
-				if (startCheck && game.combatMode.startCombatMode(game.combatScript)) {
+				if (startCheck && game.combatMode.startCombatMode(optionalCombatScript = game.configData.nightmareCombatScript)) {
 					game.collectLoot(isCompleted = false, isEventNightmare = true)
 					return true
 				}
 			}
-		} else if (!enableDimensionalHalo && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
 			game.printToLog("\n[D.HALO] Dimensional Halo detected but user opted to not run it. Moving on...", tag = tag)
 			game.findAndClickButton("close")
 		} else {
@@ -357,7 +321,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					numberOfItemsDropped = game.collectLoot(isCompleted = true)
 				}
 			}

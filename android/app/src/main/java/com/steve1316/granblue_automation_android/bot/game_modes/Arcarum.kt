@@ -177,7 +177,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 	 */
 	fun start(): Int {
 		var runsCompleted = 0
-		while (runsCompleted < game.itemAmount) {
+		while (runsCompleted < game.configData.itemAmount) {
 			navigate()
 
 			while (true) {
@@ -194,7 +194,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 						}
 
 						game.wait(3.0)
-						if (game.combatMode.startCombatMode(game.combatScript)) {
+						if (game.combatMode.startCombatMode()) {
 							game.collectLoot(isCompleted = false, skipInfo = true)
 							game.findAndClickButton("expedition")
 						}

@@ -94,6 +94,10 @@ class BotService : Service() {
 				} else if (action == MotionEvent.ACTION_UP) {
 					val elapsedTime: Long = event.eventTime - event.downTime
 					if (elapsedTime < 100L) {
+						// Initialize settings.
+						val parser = JSONParser()
+						parser.initializeSettings(myContext)
+
 						val game = Game(myContext)
 
 						if (!isRunning) {
@@ -110,11 +114,11 @@ class BotService : Service() {
 									MessageLog.saveCheck = false
 
 									val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-									val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableHomeTest", false)
+									val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableTestForHomeScreen", false)
 
 									if (!enableHomeTest) {
 										// Run the Discord process on a new Thread.
-										if (sharedPreferences.getBoolean("enableDiscord", false)) {
+										if (sharedPreferences.getBoolean("enableDiscordNotifications", false)) {
 											thread {
 												runBlocking {
 													val discordUtils = DiscordUtils(myContext)

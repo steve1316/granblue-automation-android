@@ -194,7 +194,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}

@@ -85,7 +85,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 				game.findAndClickButton("proving_grounds_start")
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					game.collectLoot(isCompleted = false)
 
 					// Tap the "Next Battle" button if there are any battles left.
@@ -98,7 +98,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 			}
 		} else if (!firstRun && !firstTime) {
 			// No need to select a Summon again as it is reused.
-			if (game.combatMode.startCombatMode(game.combatScript)) {
+			if (game.combatMode.startCombatMode()) {
 				game.collectLoot(isCompleted = false)
 
 				// Tap the "Next Battle" button if there are any battles left.
@@ -125,7 +125,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 						runsCompleted = game.collectLoot(isCompleted = true, skipPopupCheck = true)
 
 						// Reset the First Time flag so the bot can select a Summon and select the Mission again.
-						if (game.itemAmountFarmed < game.itemAmount) {
+						if (game.itemAmountFarmed < game.configData.itemAmount) {
 							firstTime = true
 						}
 					} else {

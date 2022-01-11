@@ -1,6 +1,5 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
@@ -9,56 +8,21 @@ class RiseOfTheBeastsException(message: String) : Exception(message)
 class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}RiseOfTheBeasts"
 
-	private val enableROTBExtremePlus: Boolean
-	private var rotbExtremePlusSummonList: List<String>
-	private var rotbExtremePlusGroupNumber: Int
-	private var rotbExtremePlusPartyNumber: Int
-	private var rotbExtremePlusAmount = 0
-
-	init {
-		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
-		enableROTBExtremePlus = sharedPreferences.getBoolean("enableROTBExtremePlus", false)
-		rotbExtremePlusSummonList = sharedPreferences.getStringSet("rotbExtremePlusSummonList", setOf<String>())!!.toList()
-		rotbExtremePlusGroupNumber = sharedPreferences.getInt("rotbExtremePlusGroupNumber", 0)
-		rotbExtremePlusPartyNumber = sharedPreferences.getInt("rotbExtremePlusPartyNumber", 0)
-
-		if (game.farmingMode == "Rise of the Beasts" && game.itemName == "Repeated Runs" && enableROTBExtremePlus) {
-			game.printToLog("\n[INFO] Initializing settings for Rise of the Beasts Extreme+...", tag = tag)
-
-			if (rotbExtremePlusSummonList.isEmpty()) {
-				game.printToLog("[INFO] Summons for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.", tag = tag)
-				rotbExtremePlusSummonList = game.summonList
-			}
-
-			if (rotbExtremePlusGroupNumber == 0) {
-				game.printToLog("[INFO] Group Number for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.", tag = tag)
-				rotbExtremePlusGroupNumber = game.groupNumber
-			}
-
-			if (rotbExtremePlusPartyNumber == 0) {
-				game.printToLog("[INFO] Party Number for Rise of the Beasts Extreme+ will reuse the ones for Farming Mode.", tag = tag)
-				rotbExtremePlusPartyNumber = game.partyNumber
-			}
-		}
-	}
-
 	/**
 	 * Checks for Extreme Plus during Rise of the Beasts and if it appeared and the user enabled it in settings, start it.
 	 *
 	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
 	 */
 	fun checkROTBExtremePlus(): Boolean {
-		if (enableROTBExtremePlus && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
 			game.printToLog("\n[ROTB] Detected Extreme+. Starting it now...", tag = tag)
-			rotbExtremePlusAmount += 1
 
 			game.printToLog("\n********************************************************************************", tag = tag)
 			game.printToLog("********************************************************************************", tag = tag)
 			game.printToLog("[ROTB] Rise of the Beasts Extreme+", tag = tag)
-			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Summons: $rotbExtremePlusSummonList", tag = tag)
-			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Group Number: $rotbExtremePlusGroupNumber", tag = tag)
-			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Party Number: $rotbExtremePlusPartyNumber", tag = tag)
-			game.printToLog("[ROTB] Amount of Rise of the Beasts Extreme+ encountered: $rotbExtremePlusAmount", tag = tag)
+			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Summons: ${game.configData.nightmareSummons}", tag = tag)
+			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
+			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
 			game.printToLog("********************************************************************************", tag = tag)
 			game.printToLog("\n********************************************************************************", tag = tag)
 
@@ -69,16 +33,16 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 
 			// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
 			if (game.imageUtils.confirmLocation("select_a_summon")) {
-				game.selectSummon(optionalSummonList = rotbExtremePlusSummonList)
-				val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = rotbExtremePlusGroupNumber, optionalPartyNumber = rotbExtremePlusPartyNumber)
+				game.selectSummon(optionalSummonList = game.configData.nightmareSummons)
+				val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = game.configData.nightmareGroupNumber, optionalPartyNumber = game.configData.nightmarePartyNumber)
 
 				// Once preparations are completed, start Combat Mode.
-				if (startCheck && game.combatMode.startCombatMode(game.combatScript)) {
+				if (startCheck && game.combatMode.startCombatMode(optionalCombatScript = game.configData.nightmareCombatScript)) {
 					game.collectLoot(isCompleted = false, isEventNightmare = true)
 					return true
 				}
 			}
-		} else if (!enableROTBExtremePlus && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
 			game.printToLog("\n[ROTB] Rise of the Beasts Extreme+ detected but user opted to not run it. Moving on...", tag = tag)
 			game.findAndClickButton("close")
 		} else {
@@ -242,7 +206,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}

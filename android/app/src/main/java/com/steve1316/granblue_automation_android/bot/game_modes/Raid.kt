@@ -11,8 +11,6 @@ class RaidException(message: String) : Exception(message)
 class Raid(private val game: Game) {
 	private val tag: String = "${loggerTag}Raid"
 
-	private val enableNoTimeout: Boolean = game.sharedPreferences.getBoolean("enableNoTimeout", false)
-
 	private var joinRoomButtonLocation: Point = Point()
 	private var roomCodeTextBoxLocation: Point = Point()
 	private var numberOfRaidsJoined = 0
@@ -132,7 +130,7 @@ class Raid(private val game: Game) {
 			}
 
 			tries -= 1
-			if (enableNoTimeout) {
+			if (game.configData.enableNoTimeout) {
 				tries += 1
 				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again...", tag = tag)
 			} else {
@@ -146,7 +144,7 @@ class Raid(private val game: Game) {
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
-		game.printToLog("\n[RAID] Now beginning process to navigate to the mission: ${game.missionName}...", tag = tag)
+		game.printToLog("\n[RAID] Now beginning process to navigate to the mission: ${game.configData.missionName}...", tag = tag)
 
 		// Go to the Home screen and then to the Quests screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -216,7 +214,7 @@ class Raid(private val game: Game) {
 						game.printToLog("\n[RAID] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...", tag = tag)
 					} else {
 						// Now start Combat Mode and detect any item drops.
-						if (game.combatMode.startCombatMode(game.combatScript)) {
+						if (game.combatMode.startCombatMode()) {
 							numberOfItemsDropped = game.collectLoot(isCompleted = true)
 						}
 					}

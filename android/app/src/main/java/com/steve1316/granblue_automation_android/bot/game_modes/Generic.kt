@@ -22,7 +22,7 @@ class Generic(private val game: Game) {
 		when {
 			game.imageUtils.findButton("attack", tries = 5) != null -> {
 				game.printToLog("\n[GENERIC] Bot is at the Combat screen. Starting Combat Mode now...", tag = tag)
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}
@@ -50,7 +50,7 @@ class Generic(private val game: Game) {
 							game.wait(1.0)
 
 							// Now start Combat Mode and detect any item drops.
-							if (game.combatMode.startCombatMode(game.combatScript)) {
+							if (game.combatMode.startCombatMode()) {
 								runsCompleted = game.collectLoot(isCompleted = true)
 							}
 						} else {

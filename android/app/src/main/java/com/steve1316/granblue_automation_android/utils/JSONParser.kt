@@ -1,18 +1,25 @@
 package com.steve1316.granblue_automation_android.utils
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.facebook.react.bridge.ReactApplicationContext
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-class JSONParser(private val myContext: ReactApplicationContext) {
-	init {
-		Log.d(loggerTag, "[JSONParser] Loading settings from JSON file to SharedPreferences.")
+class JSONParser() {
+	private val tag = "${loggerTag}JSONParser"
+
+	/**
+	 * Initialize settings into SharedPreferences from the JSON file.
+	 *
+	 * @param myContext The application context.
+	 */
+	fun initializeSettings(myContext: Context) {
+		Log.d(tag, "Loading settings from JSON file to SharedPreferences...")
 
 		// Grab the JSON object from the file.
 		val jString = File(myContext.getExternalFilesDir(null), "settings.json").bufferedReader().use { it.readText() }
@@ -106,7 +113,7 @@ class JSONParser(private val myContext: ReactApplicationContext) {
 		val androidObj = jObj.getJSONObject("android")
 		sharedPreferences.edit {
 			putBoolean("enableDelayTap", androidObj.getBoolean("enableDelayTap"))
-			putInt("setDelayTapMilliseconds", androidObj.getInt("setDelayTapMilliseconds"))
+			putInt("delayTapMilliseconds", androidObj.getInt("delayTapMilliseconds"))
 			putFloat("confidence", androidObj.getDouble("confidence").toFloat())
 			putFloat("confidenceAll", androidObj.getDouble("confidenceAll").toFloat())
 			putFloat("customScale", androidObj.getDouble("customScale").toFloat())
@@ -114,9 +121,15 @@ class JSONParser(private val myContext: ReactApplicationContext) {
 			commit()
 		}
 
-		Log.d(loggerTag, "[JSONParser] Successfully loaded settings into SharedPreferences.")
+		Log.d(tag, "Successfully loaded settings into SharedPreferences.")
 	}
 
+	/**
+	 * Convert JSONArray to ArrayList object.
+	 *
+	 * @param jsonArray The JSONArray object to be converted.
+	 * @return The converted ArrayList object.
+	 */
 	private fun toArrayList(jsonArray: JSONArray): ArrayList<String> {
 		val newArrayList: ArrayList<String> = arrayListOf()
 

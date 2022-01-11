@@ -33,11 +33,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	// SharedPreferences
-	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-	private val confidence: Double = sharedPreferences.getInt("confidence", 80).toDouble() / 100
-	private val confidenceAll: Double = sharedPreferences.getInt("confidenceAll", 80).toDouble() / 100
-	private val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
-	private var customScale: Double = sharedPreferences.getString("customScale", "1.0")!!.toDouble()
+	private val confidence: Double = game.configData.confidence
+	private val confidenceAll: Double = game.configData.confidenceAll
+	private val debugMode: Boolean = game.configData.debugMode
+	private var customScale: Double = game.configData.customScale
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////

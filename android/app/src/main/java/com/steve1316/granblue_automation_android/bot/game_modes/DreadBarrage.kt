@@ -134,7 +134,7 @@ class DreadBarrage(private val game: Game, private val missionName: String) {
 				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					numberOfItemsDropped = game.collectLoot(isCompleted = true)
 				}
 			}

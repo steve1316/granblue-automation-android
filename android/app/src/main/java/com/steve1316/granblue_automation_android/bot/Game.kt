@@ -1,12 +1,11 @@
 package com.steve1316.granblue_automation_android.bot
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Resources
 import android.util.Log
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.game_modes.*
+import com.steve1316.granblue_automation_android.data.ConfigData
 import com.steve1316.granblue_automation_android.data.SummonData
 import com.steve1316.granblue_automation_android.utils.*
 import kotlinx.coroutines.delay
@@ -21,33 +20,11 @@ import java.util.concurrent.TimeUnit
 class Game(val myContext: Context) {
 	private val tag: String = "${loggerTag}Game"
 
-	val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-
-	// Grab all necessary information from SharedPreferences.
-	var farmingMode: String = sharedPreferences.getString("farmingMode", "")!!
-	private var mapName: String = sharedPreferences.getString("mapName", "")!!
-	var missionName: String = sharedPreferences.getString("missionName", "")!!
-	var itemName: String = sharedPreferences.getString("itemName", "")!!
-	var itemAmount: Int = sharedPreferences.getInt("itemAmount", 1)
-	var itemAmountFarmed: Int = 0
-	private var amountOfRuns: Int = 0
-	var combatScript: List<String> = sharedPreferences.getString("combatScript", "")!!.split("|")
-	var summonList: List<String> = sharedPreferences.getString("summon", "")!!.split("|")
-	var groupNumber: Int = sharedPreferences.getInt("groupNumber", 1)
-	var partyNumber: Int = sharedPreferences.getInt("partyNumber", 1)
-	private var enableDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
-	private var delayBetweenRuns: Int = sharedPreferences.getInt("delayBetweenRuns", 1)
-	private var enableRandomizedDelayBetweenRuns: Boolean = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
-	private var randomizedDelayBetweenRuns: Int = sharedPreferences.getInt("randomizedDelayBetweenRuns", 1)
-	private var enableSkipAutoRestore: Boolean = sharedPreferences.getBoolean("enabledSkipAutoRestore", true)
-	private val enableAdditionalDelayTap: Boolean = sharedPreferences.getBoolean("enableAdditionalDelayTap", false)
-	private val additionalDelayTapRange: Int = sharedPreferences.getInt("additionalDelayTapRange", 1000)
-	var debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
-
+	val configData: ConfigData = ConfigData(myContext)
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext, this)
-	val combatMode: CombatMode = CombatMode(this, debugMode)
+	val combatMode: CombatMode = CombatMode(this, configData.debugMode)
 
 	private lateinit var quest: Quest
 	private lateinit var special: Special
@@ -62,34 +39,35 @@ class Game(val myContext: Context) {
 	private lateinit var arcarum: Arcarum
 	private lateinit var generic: Generic
 
+	var itemAmountFarmed: Int = 0
+	private var amountOfRuns: Int = 0
 	private val startTime: Long = System.currentTimeMillis()
-
 	private var partySelectionFirstRun: Boolean = true
 
 	init {
-		if (farmingMode == "Quest") {
-			quest = Quest(this, mapName, missionName)
-		} else if (farmingMode == "Special") {
-			special = Special(this, mapName, missionName)
-		} else if (farmingMode == "Coop") {
-			coop = Coop(this, missionName)
-		} else if (farmingMode == "Raid") {
+		if (configData.farmingMode == "Quest") {
+			quest = Quest(this, configData.mapName, configData.missionName)
+		} else if (configData.farmingMode == "Special") {
+			special = Special(this, configData.mapName, configData.missionName)
+		} else if (configData.farmingMode == "Coop") {
+			coop = Coop(this, configData.missionName)
+		} else if (configData.farmingMode == "Raid") {
 			raid = Raid(this)
-		} else if (farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") {
-			event = Event(this, missionName)
-		} else if (farmingMode == "Dread Barrage") {
-			dreadBarrage = DreadBarrage(this, missionName)
-		} else if (farmingMode == "Rise of the Beasts") {
-			riseOfTheBeasts = RiseOfTheBeasts(this, missionName)
-		} else if (farmingMode == "Guild Wars") {
-			guildWars = GuildWars(this, missionName)
-		} else if (farmingMode == "Proving Grounds") {
-			provingGrounds = ProvingGrounds(this, missionName)
-		} else if (farmingMode == "Xeno Clash") {
-			xenoClash = XenoClash(this, missionName)
-		} else if (farmingMode == "Arcarum") {
-			arcarum = Arcarum(this, missionName)
-		} else if (farmingMode == "Generic") {
+		} else if (configData.farmingMode == "Event" || configData.farmingMode == "Event (Token Drawboxes)") {
+			event = Event(this, configData.missionName)
+		} else if (configData.farmingMode == "Dread Barrage") {
+			dreadBarrage = DreadBarrage(this, configData.missionName)
+		} else if (configData.farmingMode == "Rise of the Beasts") {
+			riseOfTheBeasts = RiseOfTheBeasts(this, configData.missionName)
+		} else if (configData.farmingMode == "Guild Wars") {
+			guildWars = GuildWars(this, configData.missionName)
+		} else if (configData.farmingMode == "Proving Grounds") {
+			provingGrounds = ProvingGrounds(this, configData.missionName)
+		} else if (configData.farmingMode == "Xeno Clash") {
+			xenoClash = XenoClash(this, configData.missionName)
+		} else if (configData.farmingMode == "Arcarum") {
+			arcarum = Arcarum(this, configData.missionName)
+		} else if (configData.farmingMode == "Generic") {
 			generic = Generic(this)
 		}
 	}
@@ -199,7 +177,7 @@ class Game(val myContext: Context) {
 	 * @return True if the button was found and clicked. False otherwise.
 	 */
 	fun findAndClickButton(buttonName: String, tries: Int = 5, suppressError: Boolean = false): Boolean {
-		if (debugMode) {
+		if (configData.debugMode) {
 			printToLog("[DEBUG] Now attempting to find and click the \"$buttonName\" button.")
 		}
 
@@ -256,9 +234,9 @@ class Game(val myContext: Context) {
 		}
 
 		return if (tempLocation != null) {
-			if (enableAdditionalDelayTap) {
-				val newDelay: Double = ((additionalDelayTapRange - 100)..(additionalDelayTapRange + 100)).random().toDouble() / 1000
-				if (debugMode) printToLog("[DEBUG] Adding an additional delay of ${newDelay}s...")
+			if (configData.enableDelayTap) {
+				val newDelay: Double = ((configData.delayTapMilliseconds - 100)..(configData.delayTapMilliseconds + 100)).random().toDouble() / 1000
+				if (configData.debugMode) printToLog("[DEBUG] Adding an additional delay of ${newDelay}s...")
 				wait(newDelay)
 			}
 
@@ -284,32 +262,15 @@ class Game(val myContext: Context) {
 	 * Execute a delay after every run completed based on user settings from config.yaml.
 	 */
 	private fun delayBetweenRuns() {
-		if (enableDelayBetweenRuns) {
-			// Check if the provided delay is valid.
-			if (delayBetweenRuns < 0) {
-				printToLog("\n[INFO] Provided delay in seconds for the resting period is not valid. Defaulting to 15 seconds.")
-				delayBetweenRuns = 15
-			}
+		if (configData.enableDelayBetweenRuns) {
+			printToLog("\n[INFO] Now waiting for ${configData.delayBetweenRuns} seconds as the resting period. Please do not navigate from the current screen.")
 
-			printToLog("\n[INFO] Now waiting for $delayBetweenRuns seconds as the resting period. Please do not navigate from the current screen.")
-
-			wait(delayBetweenRuns.toDouble())
-		} else if (!enableDelayBetweenRuns && enableRandomizedDelayBetweenRuns) {
-			// Check if the lower and upper bounds are valid.
-			if (delayBetweenRuns < 0 || delayBetweenRuns > randomizedDelayBetweenRuns) {
-				printToLog("\n[INFO] Provided lower bound delay in seconds for the resting period is not valid. Defaulting to 15 seconds.")
-				delayBetweenRuns = 15
-			}
-
-			if (randomizedDelayBetweenRuns < 0 || randomizedDelayBetweenRuns < delayBetweenRuns) {
-				printToLog("\n[INFO] Provided upper bound delay in seconds for the resting period is not valid. Defaulting to 60 seconds.")
-				randomizedDelayBetweenRuns = 60
-			}
-
-			val newSeconds = Random().nextInt(randomizedDelayBetweenRuns - delayBetweenRuns) + delayBetweenRuns
+			wait(configData.delayBetweenRuns.toDouble())
+		} else if (!configData.enableDelayBetweenRuns && configData.enableRandomizedDelayBetweenRuns) {
+			val newSeconds = Random().nextInt(configData.delayBetweenRunsUpperBound - configData.delayBetweenRunsLowerBound) + configData.delayBetweenRunsLowerBound
 			printToLog(
-				"\n[INFO] Given the bounds of ($delayBetweenRuns, $randomizedDelayBetweenRuns), bot will now wait for $newSeconds seconds as a resting period. Please do not navigate from the " +
-						"current screen."
+				"\n[INFO] Given the bounds of (${configData.delayBetweenRunsLowerBound}, ${configData.delayBetweenRunsUpperBound}), bot will now wait for $newSeconds seconds as a resting " +
+						"period. Please do not navigate from the current screen."
 			)
 
 			wait(newSeconds.toDouble())
@@ -331,7 +292,7 @@ class Game(val myContext: Context) {
 		val unformattedSummonList = if (optionalSummonList.isNotEmpty()) {
 			optionalSummonList
 		} else {
-			summonList
+			configData.summonList
 		}
 
 		unformattedSummonList.forEach {
@@ -456,13 +417,13 @@ class Game(val myContext: Context) {
 			var numberOfTries = tries
 
 			val selectedGroupNumber = if (optionalGroupNumber == 0) {
-				groupNumber
+				configData.groupNumber
 			} else {
 				optionalGroupNumber
 			}
 
 			val selectedPartyNumber = if (optionalPartyNumber == 0) {
-				partyNumber
+				configData.partyNumber
 			} else {
 				optionalPartyNumber
 			}
@@ -599,7 +560,7 @@ class Game(val myContext: Context) {
 		wait(5.0)
 
 		// Detect if a "This raid battle has already ended" popup appeared.
-		if (farmingMode == "Raid" && findAndClickButton("ok")) {
+		if (configData.farmingMode == "Raid" && findAndClickButton("ok")) {
 			printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
 			return false
 		}
@@ -614,14 +575,14 @@ class Game(val myContext: Context) {
 	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
 	fun checkAP(useFullElixir: Boolean = false, tries: Int = 3) {
-		if (!enableSkipAutoRestore) {
+		if (!configData.enableAutoRestore) {
 			var numberOfTries = tries
 
 			wait(2.0)
 
 			if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1) && !imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
-				while ((farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
-					(farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))
+				while ((configData.farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
+					(configData.farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))
 				) {
 					if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 						val useLocations = imageUtils.findAll("use")
@@ -661,13 +622,13 @@ class Game(val myContext: Context) {
 	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
 	fun checkEP(useSoulBalm: Boolean = false, tries: Int = 3) {
-		if (!enableSkipAutoRestore) {
+		if (!configData.enableAutoRestore) {
 			var numberOfTries = tries
 
 			wait(2.0)
 
 			if (!imageUtils.confirmLocation("auto_ep_recovered", tries = 1)) {
-				while (farmingMode == "Raid" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+				while (configData.farmingMode == "Raid" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
 					if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
 						val useLocations = imageUtils.findAll("use")
 						if (!useSoulBalm) {
@@ -732,8 +693,8 @@ class Game(val myContext: Context) {
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
 		if (isCompleted && !isPendingBattle && !isEventNightmare) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this run...")
-			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
-				imageUtils.findFarmedItems(itemName)
+			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
+				imageUtils.findFarmedItems(configData.itemName)
 			} else {
 				1
 			}
@@ -741,8 +702,8 @@ class Game(val myContext: Context) {
 			amountOfRuns += 1
 		} else if (isPendingBattle) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this Pending Battle...")
-			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
-				imageUtils.findFarmedItems(itemName)
+			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
+				imageUtils.findFarmedItems(configData.itemName)
 			} else {
 				1
 			}
@@ -751,24 +712,26 @@ class Game(val myContext: Context) {
 		}
 
 		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo) {
-			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				printToLog("\n************************************************************")
 				printToLog("************************************************************")
-				printToLog("[INFO] Farming Mode: $farmingMode")
-				printToLog("[INFO] Mission: $missionName")
-				printToLog("[INFO] Summons: $summonList")
-				printToLog("[INFO] # of $itemName gained this run: $amountGained")
-				printToLog("[INFO] # of $itemName gained in total: ${itemAmountFarmed + amountGained}/$itemAmount")
+				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
+				printToLog("[INFO] Mission: ${configData.missionName}")
+				printToLog("[INFO] Summons: ${configData.summonList}")
+				printToLog("[INFO] # of ${configData.itemName} gained this run: $amountGained")
+				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed + amountGained}/${configData.itemAmount}")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
 
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
-					val discordString = if (itemAmountFarmed >= itemAmount) {
-						"> ${amountGained}x __${itemName}__ gained this run: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]** :white_check_mark:"
+					val discordString = if (itemAmountFarmed >= configData.itemAmount) {
+						"> ${amountGained}x __${configData.itemName}__ gained this run: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} / " +
+								"${configData.itemAmount}]** :white_check_mark:"
 					} else {
-						"> ${amountGained}x __${itemName}__ gained this run: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]**"
+						"> ${amountGained}x __${configData.itemName}__ gained this run: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} / " +
+								"${configData.itemAmount}]**"
 					}
 
 					DiscordUtils.queue.add(discordString)
@@ -776,41 +739,43 @@ class Game(val myContext: Context) {
 			} else {
 				printToLog("\n************************************************************")
 				printToLog("************************************************************")
-				printToLog("[INFO] Farming Mode: $farmingMode")
-				printToLog("[INFO] Mission: $missionName")
-				printToLog("[INFO] Summons: $summonList")
-				printToLog("[INFO] # of runs completed: $amountOfRuns / $itemAmount")
+				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
+				printToLog("[INFO] Mission: ${configData.missionName}")
+				printToLog("[INFO] Summons: ${configData.summonList}")
+				printToLog("[INFO] # of runs completed: $amountOfRuns / ${configData.itemAmount}")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
 
 				// Construct the message for the Discord private DM.
-				val discordString = if (amountOfRuns >= itemAmount) {
-					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]** :white_check_mark:"
+				val discordString = if (amountOfRuns >= configData.itemAmount) {
+					"> Runs completed for __${configData.missionName}__: **[${amountOfRuns - 1} / ${configData.itemAmount}]** -> **[$amountOfRuns / ${configData.itemAmount}]** :white_check_mark:"
 				} else {
-					"> Runs completed for __${missionName}__: **[${amountOfRuns - 1} / $itemAmount]** -> **[$amountOfRuns / $itemAmount]**"
+					"> Runs completed for __${configData.missionName}__: **[${amountOfRuns - 1} / ${configData.itemAmount}]** -> **[$amountOfRuns / ${configData.itemAmount}]**"
 				}
 
 				DiscordUtils.queue.add(discordString)
 			}
 		} else if (isPendingBattle && amountGained > 0 && !skipInfo) {
-			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(itemName)) {
+			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				printToLog("\n************************************************************")
 				printToLog("************************************************************")
-				printToLog("[INFO] Farming Mode: $farmingMode")
-				printToLog("[INFO] Mission: $missionName")
-				printToLog("[INFO] Summons: $summonList")
-				printToLog("[INFO] # of $itemName gained from this Pending Battle: $amountGained")
-				printToLog("[INFO] # of $itemName gained in total: ${itemAmountFarmed + amountGained}/$itemAmount")
+				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
+				printToLog("[INFO] Mission: ${configData.missionName}")
+				printToLog("[INFO] Summons: ${configData.summonList}")
+				printToLog("[INFO] # of ${configData.itemName} gained from this Pending Battle: $amountGained")
+				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed + amountGained}/${configData.itemAmount}")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("************************************************************")
 				printToLog("************************************************************")
 
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
-					val discordString = if (itemAmountFarmed >= itemAmount) {
-						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]** :white_check_mark:"
+					val discordString = if (itemAmountFarmed >= configData.itemAmount) {
+						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} /" +
+								" ${configData.itemAmount}]** :white_check_mark:"
 					} else {
-						"> ${amountGained}x __${itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / $itemAmount]** -> **[${itemAmountFarmed + amountGained} / $itemAmount]**"
+						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} /" +
+								" ${configData.itemAmount}]**"
 					}
 
 					DiscordUtils.queue.add(discordString)
@@ -831,31 +796,31 @@ class Game(val myContext: Context) {
 
 		var tries = 5
 		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 5)) {
-			if (!enableSkipAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
+			if (!configData.enableAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
 				break
 			}
 
 			// Break out of the loop if the bot detected the "Not Enough AP" popup.
-			if (!enableSkipAutoRestore && imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
+			if (!configData.enableAutoRestore && imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
 				break
 			}
 
-			if (farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("rotb_proud_solo_quest", tries = 1)) {
+			if (configData.farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("rotb_proud_solo_quest", tries = 1)) {
 				// Scroll down the screen a little bit because the popup itself is too long.
 				gestureUtils.scroll()
 			}
 
 			// Check for certain popups for certain Farming Modes.
-			if ((farmingMode == "Rise of the Beasts" && riseOfTheBeasts.checkROTBExtremePlus()) ||
-				(farmingMode == "Special" && missionName == "VH Angel Halo" && itemName == "Angel Halo Weapons" && special.checkDimensionalHalo()) ||
-				(farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") && event.checkEventNightmare() ||
-				(farmingMode == "Xeno Clash" && xenoClash.checkForXenoClashNightmare())
+			if ((configData.farmingMode == "Rise of the Beasts" && riseOfTheBeasts.checkROTBExtremePlus()) ||
+				(configData.farmingMode == "Special" && configData.missionName == "VH Angel Halo" && configData.itemName == "Angel Halo Weapons" && special.checkDimensionalHalo()) ||
+				(configData.farmingMode == "Event" || configData.farmingMode == "Event (Token Drawboxes)") && event.checkEventNightmare() ||
+				(configData.farmingMode == "Xeno Clash" && xenoClash.checkForXenoClashNightmare())
 			) {
 				return true
 			}
 
 			// If the bot tried to repeat a Extreme/Impossible difficulty Event Raid and it lacked the treasures to host it, go back to the Mission again.
-			if ((farmingMode == "Event (Token Drawboxes)" || farmingMode == "Guild Wars") && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
+			if ((configData.farmingMode == "Event (Token Drawboxes)" || configData.farmingMode == "Guild Wars") && imageUtils.confirmLocation("not_enough_treasure", tries = 1)) {
 				findAndClickButton("ok")
 				return true
 			}
@@ -908,7 +873,7 @@ class Game(val myContext: Context) {
 				return true
 			} else {
 				// Start loot detection if there it is available.
-				if (farmingMode == "Raid") {
+				if (configData.farmingMode == "Raid") {
 					collectLoot(isCompleted = true)
 				} else {
 					collectLoot(isCompleted = false, isPendingBattle = true)
@@ -978,66 +943,55 @@ class Game(val myContext: Context) {
 	 */
 	fun startFarmingMode(): Boolean {
 		// Throw an Exception if the user selected Coop or Arcarum that reset Summons and the user started the bot without selecting new Summons.
-		if (farmingMode != "Coop" && farmingMode != "Arcarum" && summonList[0] == "") {
+		if (configData.farmingMode != "Coop" && configData.farmingMode != "Arcarum" && configData.summonList[0] == "") {
 			throw Exception("You have no summons selected for this Farming Mode.")
 		}
 
-		if (itemName != "EXP") {
+		if (configData.itemName != "EXP") {
 			printToLog("\n############################################################")
 			printToLog("############################################################")
-			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
-			printToLog("[FARM] Farming ${itemAmount}x $itemName at $missionName.")
+			printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.")
+			printToLog("[FARM] Farming ${configData.itemAmount}x ${configData.itemName} at ${configData.missionName}.")
 			printToLog("############################################################")
 			printToLog("############################################################")
 		} else {
 			printToLog("\n############################################################")
 			printToLog("############################################################")
-			printToLog("[FARM] Starting Farming Mode for $farmingMode.")
-			printToLog("[FARM] Doing ${itemAmount}x runs for $itemName at $missionName.")
+			printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.")
+			printToLog("[FARM] Doing ${configData.itemAmount}x runs for ${configData.itemName} at ${configData.missionName}.")
 			printToLog("############################################################")
 			printToLog("############################################################")
-		}
-
-		// If the user did not select a combat script, use the default Full Auto combat script.
-		if (combatScript.isEmpty() || combatScript[0] == "") {
-			printToLog("\n[INFO] User did not provide their own combat script. Defaulting to Full Auto combat script.")
-
-			combatScript = listOf(
-				"Turn 1:",
-				"enableFullAuto",
-				"end"
-			)
 		}
 
 		var firstRun = true
-		while (itemAmountFarmed < itemAmount) {
-			if (farmingMode == "Quest") {
+		while (itemAmountFarmed < configData.itemAmount) {
+			if (configData.farmingMode == "Quest") {
 				itemAmountFarmed += quest.start(firstRun)
-			} else if (farmingMode == "Special") {
+			} else if (configData.farmingMode == "Special") {
 				itemAmountFarmed += special.start(firstRun)
-			} else if (farmingMode == "Coop") {
+			} else if (configData.farmingMode == "Coop") {
 				itemAmountFarmed += coop.start(firstRun)
-			} else if (farmingMode == "Raid") {
+			} else if (configData.farmingMode == "Raid") {
 				itemAmountFarmed += raid.start(firstRun)
-			} else if (farmingMode == "Event" || farmingMode == "Event (Token Drawboxes)") {
+			} else if (configData.farmingMode == "Event" || configData.farmingMode == "Event (Token Drawboxes)") {
 				itemAmountFarmed += event.start(firstRun)
-			} else if (farmingMode == "Rise of the Beasts") {
+			} else if (configData.farmingMode == "Rise of the Beasts") {
 				itemAmountFarmed += riseOfTheBeasts.start(firstRun)
-			} else if (farmingMode == "Guild Wars") {
+			} else if (configData.farmingMode == "Guild Wars") {
 				itemAmountFarmed += guildWars.start(firstRun)
-			} else if (farmingMode == "Dread Barrage") {
+			} else if (configData.farmingMode == "Dread Barrage") {
 				itemAmountFarmed += dreadBarrage.start(firstRun)
-			} else if (farmingMode == "Proving Grounds") {
+			} else if (configData.farmingMode == "Proving Grounds") {
 				itemAmountFarmed += provingGrounds.start(firstRun)
-			} else if (farmingMode == "Xeno Clash") {
+			} else if (configData.farmingMode == "Xeno Clash") {
 				itemAmountFarmed += xenoClash.start(firstRun)
-			} else if (farmingMode == "Arcarum") {
+			} else if (configData.farmingMode == "Arcarum") {
 				itemAmountFarmed += arcarum.start()
-			} else if (farmingMode == "Generic") {
+			} else if (configData.farmingMode == "Generic") {
 				itemAmountFarmed += generic.start()
 			}
 
-			if (itemAmountFarmed < itemAmount) {
+			if (itemAmountFarmed < configData.itemAmount) {
 				// Generate a resting period if the user enabled it.
 				delayBetweenRuns()
 				firstRun = false

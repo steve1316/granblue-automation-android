@@ -11,8 +11,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	private val tag: String = "${loggerTag}CombatMode"
 
 	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
-	private val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitCombat", false)
-	private val autoExitCombatMinutes: Long = sharedPreferences.getInt("autoExitCombatMinutes", 5).toLong() * 60L * 1000L
+	private val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitRaid", false)
+	private val autoExitCombatMinutes: Long = sharedPreferences.getInt("timeAllowedUntilAutoExitRaid", 5).toLong() * 60L * 1000L
 	private var autoExitStartTime: Long = 0L
 	private var autoExitEndTime: Long = 0L
 
@@ -45,7 +45,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 1, suppressError = true)
 		if (partyWipeIndicatorLocation != null || game.imageUtils.confirmLocation("salute_participants", tries = 1, suppressError = true)) {
-			if (game.farmingMode != "Raid" && game.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
+			if (game.configData.farmingMode != "Raid" && game.configData.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
 				// Tap on the blue indicator to get rid of the overlay.
 				if (partyWipeIndicatorLocation != null) {
 					game.gestureUtils.tap(partyWipeIndicatorLocation.x, partyWipeIndicatorLocation.y, "party_wipe_indicator")
@@ -58,13 +58,13 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.wait(1.0)
 				game.findAndClickButton("retreat_confirmation")
 				retreatCheckFlag = true
-			} else if (game.farmingMode == "Raid" || game.farmingMode == "Dread Barrage" || game.farmingMode == "Guild Wars" || game.missionName.contains("Raid")) {
+			} else if (game.configData.farmingMode == "Raid" || game.configData.farmingMode == "Dread Barrage" || game.configData.farmingMode == "Guild Wars" || game.configData.missionName.contains("Raid")) {
 				game.printToLog("[WARNING] Party has wiped during Combat Mode for this Raid battle. Backing out now without retreating...", tag = tag)
 
 				// Head back to the Home screen.
 				game.goBackHome(confirmLocationCheck = true)
 				retreatCheckFlag = true
-			} else if (game.farmingMode == "Coop" && game.imageUtils.confirmLocation("salute_participants")) {
+			} else if (game.configData.farmingMode == "Coop" && game.imageUtils.confirmLocation("salute_participants")) {
 				// Salute the participants.
 				game.printToLog("[WARNING] Party has wiped during Coop Combat Mode. Leaving the Coop Room...", tag = tag)
 
@@ -865,9 +865,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		val xenoClashRaids = arrayListOf("Xeno Clash Raid")
 
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-		if (game.farmingMode == "Raid" || eventRaids.contains(game.missionName) || rotbRaids.contains(game.missionName) || dreadBarrageRaids.contains(game.missionName) ||
-			game.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.missionName) || game.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.missionName) ||
-			xenoClashRaids.contains(game.missionName) || game.farmingMode == "Arcarum"
+		if (game.configData.farmingMode == "Raid" || eventRaids.contains(game.configData.missionName) || rotbRaids.contains(game.configData.missionName) ||
+			dreadBarrageRaids.contains(game.configData.missionName) || game.configData.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.configData.missionName) ||
+			game.configData.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.configData.missionName) || xenoClashRaids.contains(game.configData.missionName) ||
+			game.configData.farmingMode == "Arcarum"
 		) {
 			game.printToLog("[COMBAT] Reloading now.", tag = tag)
 			game.findAndClickButton("reload")
@@ -911,17 +912,17 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	/**
 	 * Start Combat Mode with the provided combat script.
 	 *
-	 * @param combatScript ArrayList of all the lines in the text file.
+	 * @param optionalCombatScript ArrayList of a optional combat script to override the one in the settings.
 	 * @return True if Combat Mode ended successfully. False otherwise if the Party wiped or backed out without retreating.
 	 */
-	fun startCombatMode(combatScript: List<String>): Boolean {
+	fun startCombatMode(optionalCombatScript: List<String>? = null): Boolean {
 		game.printToLog("\n############################################################", tag = tag)
 		game.printToLog("############################################################", tag = tag)
 		game.printToLog("[COMBAT] Starting Combat Mode.", tag = tag)
 		game.printToLog("############################################################", tag = tag)
 		game.printToLog("############################################################", tag = tag)
 
-		val commandList = combatScript.toMutableList()
+		val commandList = optionalCombatScript?.toMutableList() ?: game.configData.combatScript.toMutableList()
 
 		// Current Turn number for script execution.
 		var commandTurnNumber = 1
@@ -934,7 +935,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		var fullAutoCheckFlag = false
 
 		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
-		if (game.farmingMode == "Arcarum") {
+		if (game.configData.farmingMode == "Arcarum") {
 			game.findAndClickButton("arcarum_stage_effect_active", tries = 5)
 		}
 
@@ -945,7 +946,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 
 		// The following is the primary loop workflow for Combat Mode.
-		while (combatScript.isNotEmpty() && commandList.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
+		while (commandList.isNotEmpty() && !retreatCheckFlag && !semiAutoCheckFlag && !fullAutoCheckFlag) {
 			// Check if the Battle has ended.
 			when {
 				game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
@@ -1210,7 +1211,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 
 		// Deal with any the situation where high-profile raids end right when the bot loads in and all it sees is the "Next" button.
-		if (game.farmingMode == "Raid" && game.findAndClickButton("next", tries = 3)) {
+		if (game.configData.farmingMode == "Raid" && game.findAndClickButton("next", tries = 3)) {
 			game.printToLog("\n############################################################", tag = tag)
 			game.printToLog("############################################################", tag = tag)
 			game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)

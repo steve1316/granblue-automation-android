@@ -9,48 +9,13 @@ class EventException(message: String) : Exception(message)
 class Event(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}Event"
 
-	private val enableEventNightmare: Boolean
-	private var eventNightmareSummonList: List<String>
-	private var eventNightmareGroupNumber: Int
-	private var eventNightmarePartyNumber: Int
-
-	private val moveOneDown: Boolean
-
-	init {
-		val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
-		moveOneDown = sharedPreferences.getBoolean("eventAlternativeUINavigation", false)
-		enableEventNightmare = sharedPreferences.getBoolean("enableEventNightmare", false)
-		eventNightmareSummonList = sharedPreferences.getStringSet("eventNightmareSummonList", setOf<String>())!!.toList()
-		eventNightmareGroupNumber = sharedPreferences.getInt("eventNightmareGroupNumber", 0)
-		eventNightmarePartyNumber = sharedPreferences.getInt("eventNightmarePartyNumber", 0)
-
-		if (game.itemName == "Repeated Runs" && enableEventNightmare) {
-			game.printToLog("\n[EVENT] Initializing settings for Event Nightmare...", tag = tag)
-
-			if (eventNightmareSummonList.isEmpty()) {
-				game.printToLog("[EVENT] Summons for Event Nightmare will reuse the ones for Farming Mode.", tag = tag)
-				eventNightmareSummonList = game.summonList
-			}
-
-			if (eventNightmareGroupNumber == 0) {
-				game.printToLog("[EVENT] Group Number for Event Nightmare will reuse the ones for Farming Mode.", tag = tag)
-				eventNightmareGroupNumber = game.groupNumber
-			}
-
-			if (eventNightmarePartyNumber == 0) {
-				game.printToLog("[EVENT] Party Number for Event Nightmare will reuse the ones for Farming Mode.", tag = tag)
-				eventNightmarePartyNumber = game.partyNumber
-			}
-		}
-	}
-
 	/**
 	 * Checks for Event Nightmare and if it appeared and the user enabled it in settings, start it.
 	 *
 	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
 	 */
 	fun checkEventNightmare(): Boolean {
-		if (enableEventNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
@@ -62,9 +27,9 @@ class Event(private val game: Game, private val missionName: String) {
 				game.printToLog("\n********************************************************************************", tag = tag)
 				game.printToLog("********************************************************************************", tag = tag)
 				game.printToLog("[EVENT] Event Nightmare", tag = tag)
-				game.printToLog("[EVENT] Event Nightmare Summons: $eventNightmareSummonList", tag = tag)
-				game.printToLog("[EVENT] Event Nightmare Group Number: $eventNightmareGroupNumber", tag = tag)
-				game.printToLog("[EVENT] Event Nightmare Party Number: $eventNightmarePartyNumber", tag = tag)
+				game.printToLog("[EVENT] Event Nightmare Summons: ${game.configData.nightmareSummons}", tag = tag)
+				game.printToLog("[EVENT] Event Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
+				game.printToLog("[EVENT] Event Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
 				game.printToLog("********************************************************************************", tag = tag)
 				game.printToLog("\n********************************************************************************", tag = tag)
 
@@ -75,17 +40,17 @@ class Event(private val game: Game, private val missionName: String) {
 
 				// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
 				if (game.imageUtils.confirmLocation("select_a_summon")) {
-					game.selectSummon(optionalSummonList = eventNightmareSummonList)
-					val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = eventNightmareGroupNumber, optionalPartyNumber = eventNightmarePartyNumber)
+					game.selectSummon(optionalSummonList = game.configData.nightmareSummons)
+					val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = game.configData.nightmareGroupNumber, optionalPartyNumber = game.configData.nightmarePartyNumber)
 
 					// Once preparations are completed, start Combat Mode.
-					if (startCheck && game.combatMode.startCombatMode(game.combatScript)) {
+					if (startCheck && game.combatMode.startCombatMode(optionalCombatScript = game.configData.nightmareCombatScript)) {
 						game.collectLoot(isCompleted = false, isEventNightmare = true)
 						return true
 					}
 				}
 			}
-		} else if (!enableEventNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
@@ -210,7 +175,7 @@ class Event(private val game: Game, private val missionName: String) {
 	 * Navigates to the specified Event mission.
 	 */
 	private fun navigate() {
-		if (game.farmingMode == "Event (Token Drawboxes)") {
+		if (game.configData.farmingMode == "Event (Token Drawboxes)") {
 			navigateTokenDrawboxes()
 		} else {
 			game.printToLog("\n[EVENT] Now beginning process to navigate to the mission: $missionName...", tag = tag)
@@ -261,7 +226,7 @@ class Event(private val game: Game, private val missionName: String) {
 
 				// Find the locations of all the "Select" buttons.
 				val selectButtonLocations = game.imageUtils.findAll("select")
-				val position = if (moveOneDown) {
+				val position = if (game.configData.enableLocationIncrementByOne) {
 					1
 				} else {
 					0
@@ -335,7 +300,7 @@ class Event(private val game: Game, private val missionName: String) {
 				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
-				if (game.combatMode.startCombatMode(game.combatScript)) {
+				if (game.combatMode.startCombatMode()) {
 					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}
