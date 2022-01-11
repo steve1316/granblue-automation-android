@@ -111,17 +111,9 @@ class NotificationUtils {
 		 * Updates the Notification content text.
 		 *
 		 * @param context The application context.
-		 * @param isRunning Boolean for whether or not the bot process is currently running.
-		 * @param message Optional message to append to the Notification text body. Defaults to empty string.
+		 * @param message Message to append to the Notification text body.
 		 */
-		fun updateNotification(context: Context, isRunning: Boolean, message: String = "") {
-			var contentText = "Bot process is stopped"
-			if (isRunning) {
-				contentText = "Bot process is running"
-			} else if (message != "") {
-				contentText = message
-			}
-
+		fun updateNotification(context: Context, message: String) {
 			// Create a PendingIntent to send the user back to the application if they tap the notification itself.
 			val contentIntent = Intent(context, MainActivity::class.java)
 			val contentPendingIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -136,7 +128,7 @@ class NotificationUtils {
 				NotificationCompat.Builder(context, CHANNEL_ID).apply {
 					setSmallIcon(R.drawable.ic_baseline_control_camera)
 					setContentTitle(CONTENT_TITLE)
-					setContentText(contentText)
+					setContentText(message)
 					setContentIntent(contentPendingIntent)
 					addAction(R.drawable.stop_circle_filled, context.getString(R.string.accessibility_service_action), stopPendingIntent)
 					priority = NotificationManager.IMPORTANCE_HIGH
@@ -148,7 +140,7 @@ class NotificationUtils {
 				NotificationCompat.Builder(context, CHANNEL_ID).apply {
 					setSmallIcon(R.drawable.ic_baseline_control_camera)
 					setContentTitle(CONTENT_TITLE)
-					setContentText(contentText)
+					setContentText(message)
 					setContentIntent(contentPendingIntent)
 					priority = NotificationManager.IMPORTANCE_HIGH
 					setCategory(Notification.CATEGORY_SERVICE)

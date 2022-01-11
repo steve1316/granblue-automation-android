@@ -104,7 +104,7 @@ class BotService : Service() {
 							Log.d(tag, "Bot Service for $appName is now running.")
 							Toast.makeText(myContext, "Bot Service for $appName is now running.", Toast.LENGTH_SHORT).show()
 							isRunning = true
-							NotificationUtils.updateNotification(myContext, isRunning)
+							NotificationUtils.updateNotification(myContext, "Bot is now running")
 							overlayButton.setImageResource(R.drawable.stop_circle_filled)
 
 							thread = thread {
@@ -144,9 +144,9 @@ class BotService : Service() {
 									performCleanUp()
 								} catch (e: Exception) {
 									if (e.toString() == "java.lang.InterruptedException") {
-										NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
+										NotificationUtils.updateNotification(myContext, "Bot has completed successfully with no errors.")
 									} else {
-										NotificationUtils.updateNotification(myContext, false, "Encountered Exception: ${e}. Tap me to see more details.")
+										NotificationUtils.updateNotification(myContext, "Encountered Exception: ${e}. Tap me to see more details.")
 										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", tag = tag, isError = true)
 
 										if (e.stackTraceToString().length >= 2500) {
@@ -234,7 +234,7 @@ class BotService : Service() {
 
 		// Update the app's notification with the status.
 		if (!isException) {
-			NotificationUtils.updateNotification(myContext, false, "Bot has completed successfully with no errors.")
+			NotificationUtils.updateNotification(myContext, "Bot has completed successfully with no errors.")
 		}
 
 		// Reset the overlay button's image on a separate UI thread.
