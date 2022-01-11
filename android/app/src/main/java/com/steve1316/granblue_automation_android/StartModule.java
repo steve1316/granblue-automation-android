@@ -116,21 +116,13 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        Log.d(loggerTag, "onActivityResult LISTENER with:");
-        Log.d(loggerTag, String.format("Request code: %d", requestCode));
-        Log.d(loggerTag, String.format("Result code: %d", resultCode));
-        Log.d(loggerTag, String.format("data intent: %s", data.toString()));
-
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             // Start up the MediaProjection service after the user accepts the onscreen prompt.
-            Log.d(loggerTag, "Starting SERVICE here");
             this.reactContext.startService(MediaProjectionService.Companion.getStartIntent(this.reactContext, resultCode, data));
         }
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        Log.d(loggerTag, "onNewIntent LISTENER with:");
-        Log.d(loggerTag, String.format("intent: %s", intent.toString()));
     }
 }
