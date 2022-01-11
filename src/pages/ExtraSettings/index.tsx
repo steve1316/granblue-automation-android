@@ -104,7 +104,7 @@ const ExtraSettings = () => {
         setAutoExitRaidsMinutes(bsc.settings.raid.timeAllowedUntilAutoExitRaid)
         setEnableNoTimeout(bsc.settings.raid.enableNoTimeout)
         setEnableDelayTap(bsc.settings.android.enableDelayTap)
-        setDelayTapMilliseconds(bsc.settings.android.setDelayTapMilliseconds)
+        setDelayTapMilliseconds(bsc.settings.android.delayTapMilliseconds)
         setEnableCustomNightmareSettings(bsc.settings.nightmare.enableCustomNightmareSettings)
         setNightmareCombatScript({ name: bsc.settings.nightmare.nightmareCombatScriptName, script: bsc.settings.nightmare.nightmareCombatScript })
         setNightmareGroupNumber(bsc.settings.nightmare.nightmareGroupNumber)
@@ -165,7 +165,7 @@ const ExtraSettings = () => {
                 android: {
                     ...bsc.settings.android,
                     enableDelayTap: enableDelayTap,
-                    setDelayTapMilliseconds: delayTapMilliseconds,
+                    delayTapMilliseconds: delayTapMilliseconds,
                     confidence: confidence,
                     confidenceAll: confidenceAll,
                     customScale: customScale,

@@ -73,7 +73,7 @@ export interface Settings {
 
     android: {
         enableDelayTap: boolean
-        setDelayTapMilliseconds: number
+        delayTapMilliseconds: number
         confidence: number
         confidenceAll: number
         customScale: number
@@ -141,7 +141,7 @@ export const defaultSettings: Settings = {
     },
     android: {
         enableDelayTap: false,
-        setDelayTapMilliseconds: 1000,
+        delayTapMilliseconds: 1000,
         confidence: 0.8,
         confidenceAll: 0.8,
         customScale: 1.0,
