@@ -35,6 +35,7 @@ const Start = () => {
             // Delete settings.json file first as RNFS.writeFile() does not clear the file first before writing on top of it.
             // This is the reason why there are extra brackets and fields "appended" to the end of the file before.
             // Source: https://github.com/itinance/react-native-fs/issues/869#issuecomment-602067100
+            // Note: It unfortunately still happens.
             await RNFS.unlink(path)
                 .then(() => {
                     console.log("settings.json file successfully deleted.")
@@ -71,7 +72,14 @@ const Start = () => {
                 newSettings = parsed
             })
             .catch((e: Error) => {
-                if (!e.message.includes("No such file or directory")) {
+                if (e.name === "SyntaxError") {
+                    console.error(`Error reading settings from path ${path}: ${e.name}`)
+                    mlc.setMessageLog([
+                        ...mlc.messageLog,
+                        `\n[ERROR] Error reading settings from path ${path}: \n${e}`,
+                        "\nNote that GAA sometimes corrupts the settings.json when saving. You can fix it by redoing the settings all over again.",
+                    ])
+                } else if (!e.message.includes("No such file or directory")) {
                     console.error(`Error reading settings from path ${path}: ${e.name}`)
                     mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings from path ${path}: \n${e}`])
                 }
