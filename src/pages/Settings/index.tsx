@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     },
     picker: {
         marginVertical: 10,
+        backgroundColor: "azure",
     },
     dropdown: {
         marginTop: 20,
