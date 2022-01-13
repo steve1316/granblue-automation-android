@@ -165,7 +165,10 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 		"Lvl 100 Xeno Vohu Manah" to "Lv100 ゼノ・ウォフマナフ",
 		"Lvl 100 Xeno Sagittarius" to "Lv100 ゼノ・サジタリウス",
 		"Lvl 100 Xeno Corow" to "Lv100 ゼノ・コロゥ",
-		"Lvl 100 Xeno Diablo" to "Lv100 ゼノ・ディアボロス"
+		"Lvl 100 Xeno Diablo" to "Lv100 ゼノ・ディアボロス",
+
+		// Ennead Raids
+		"Lvl 120 Osiris" to "Lv120 オシリス"
 	)
 
 	companion object {

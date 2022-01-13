@@ -180,7 +180,9 @@ class Coop(private val game: Game, private val missionName: String) {
 		// Check for AP.
 		game.checkAP()
 
-		if (firstRun && game.imageUtils.confirmLocation("coop_without_support_summon")) {
+		game.wait(3.0)
+
+		if (firstRun && game.imageUtils.confirmLocation("coop_without_support_summon", tries = 10)) {
 			// Select the Party.
 			game.selectPartyAndStartMission()
 
