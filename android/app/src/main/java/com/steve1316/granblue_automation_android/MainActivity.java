@@ -21,7 +21,7 @@ public class MainActivity extends ReactActivity {
         // Set up the app updater to check for the latest update from GitHub.
         new AppUpdater(this)
                 .setUpdateFrom(UpdateFrom.XML)
-                .setUpdateXML("https://raw.githubusercontent.com/steve1316/granblue-automation-android/main/android/update.xml")
+                .setUpdateXML("https://raw.githubusercontent.com/steve1316/granblue-automation-android/main/android/app/update.xml")
                 .start();
 
         // Load OpenCV native library. This will throw a "E/OpenCV/StaticHelper: OpenCV error: Cannot load info library for OpenCV". It is safe to
