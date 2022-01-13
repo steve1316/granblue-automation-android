@@ -331,7 +331,7 @@ const Settings = () => {
 
                     <DropDownPicker
                         listMode="SCROLLVIEW"
-                        style={styles.picker}
+                        style={[styles.picker, { backgroundColor: bsc.settings.game.farmingMode !== "" ? "azure" : "pink" }]}
                         dropDownContainerStyle={styles.dropdown}
                         placeholder="Select Farming Mode"
                         searchTextInputStyle={{ fontStyle: "italic" }}
