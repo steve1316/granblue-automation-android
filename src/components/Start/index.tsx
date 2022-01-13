@@ -62,23 +62,44 @@ const Start = () => {
     const loadSettings = async () => {
         const path = RNFS.ExternalDirectoryPath + "/settings.json"
         let newSettings: Settings = defaultSettings
-        let corruptedData = ""
+        let normalData = ""
+        let corruptionFixed = false
         await RNFS.readFile(path)
             .then(async (data) => {
                 console.log(`Loaded settings from settings.json file.`)
-                corruptedData = data
+                normalData = data
 
                 const parsed: Settings = JSON.parse(data)
                 newSettings = parsed
             })
             .catch((e: Error) => {
                 if (e.name === "SyntaxError") {
-                    console.error(`Error reading settings from path ${path}: ${e.name}`)
-                    mlc.setMessageLog([
-                        ...mlc.messageLog,
-                        `\n[ERROR] Error reading settings from path ${path}: \n${e}`,
-                        "\nNote that GAA sometimes corrupts the settings.json when saving. You can fix it by redoing the settings all over again.",
-                    ])
+                    // If file corruption occurred, attempt to fix by removing the offending characters one by one from the JSON string.
+                    let fixedData = normalData
+                    while (true) {
+                        fixedData = fixedData.substring(0, fixedData.length - 1)
+                        try {
+                            const parsed: Settings = JSON.parse(fixedData)
+                            newSettings = parsed
+                            corruptionFixed = true
+                        } catch {}
+
+                        if (corruptionFixed || fixedData.length === 0) {
+                            break
+                        }
+                    }
+
+                    console.log("Finished attempting to fix corruption.")
+                    if (corruptionFixed) {
+                        console.log("Automatic fix was successful!")
+                    } else {
+                        console.error(`Error reading settings from path ${path}: ${e.name}`)
+                        mlc.setMessageLog([
+                            ...mlc.messageLog,
+                            `\n[ERROR] Error reading settings from path ${path}: \n${e}`,
+                            "\nNote that GAA sometimes corrupts the settings.json when saving. Automatic fix was not successful.",
+                        ])
+                    }
                 } else if (!e.message.includes("No such file or directory")) {
                     console.error(`Error reading settings from path ${path}: ${e.name}`)
                     mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings from path ${path}: \n${e}`])
