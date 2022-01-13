@@ -14,9 +14,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.steve1316.granblue_automation_android.utils.MediaProjectionService;
 import com.steve1316.granblue_automation_android.utils.MyAccessibilityService;
 
@@ -25,6 +28,7 @@ import java.util.Objects;
 public class StartModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private final String tag = loggerTag + "StartModule";
     private final ReactApplicationContext reactContext;
+    private DeviceEventManagerModule.RCTDeviceEventEmitter emitter = null;
 
     public StartModule(ReactApplicationContext reactContext) {
         super(reactContext); //required by React Native
@@ -36,9 +40,23 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
     public void start() {
         if (readyCheck()) {
             startProjection();
-        } else if (MediaProjectionService.Companion.isRunning()) {
-            stopProjection();
         }
+    }
+
+    public void sendEvent(String eventName, String message) {
+        WritableMap params = Arguments.createMap();
+        params.putString("message", message);
+        if (emitter == null) {
+            // Register the event emitter to send messages to JS.
+            emitter = this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
+        }
+
+        emitter.emit(eventName, params);
+    }
+
+    @ReactMethod
+    public void stop() {
+        stopProjection();
     }
 
     @NonNull
@@ -61,7 +79,8 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
 
             builder.setPositiveButton(R.string.go_to_settings, (dialogInterface, i) -> {
                 // Send the user to the Overlay Settings.
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${myContext.getPackageName()}"));
+                String uri = String.format("package:%s", this.reactContext.getPackageName());
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse(uri));
                 Objects.requireNonNull(getCurrentActivity()).startActivity(intent);
             });
 
@@ -113,6 +132,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
 
     private void stopProjection() {
         this.reactContext.startService(MediaProjectionService.Companion.getStopIntent(this.reactContext));
+        sendEvent("MediaProjectionService", "Not Running");
     }
 
     @Override
@@ -120,6 +140,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             // Start up the MediaProjection service after the user accepts the onscreen prompt.
             this.reactContext.startService(MediaProjectionService.Companion.getStartIntent(this.reactContext, resultCode, data));
+            sendEvent("MediaProjectionService", "Running");
         }
     }
 
