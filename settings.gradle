@@ -1,3 +1,0 @@
-include ':opencv'
-include ':app'
-rootProject.name = "GranblueAutomation_Android"

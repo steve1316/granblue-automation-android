@@ -1,0 +1,20 @@
+<AppUpdater>
+    <update>
+        <latestVersion>3.3.0</latestVersion>
+        <url>https://github.com/steve1316/granblue-automation-android/releases</url>
+        <releaseNotes>
+v3.3.0 - Changelog
+
+New
+---
+- UI now using React Native instead of native Android UI with an attempt at mimicking the style and layout of the PC version.
+- `config.json` now renamed to `settings.json` with many of the contents reusable from the PC version.
+- New bootsplash when app is starting up.
+
+Changed
+---
+- Changed how the backend reads the new `settings.json`.
+- Changed package name from `com.steve1316.granblueautomation_android` to `com.steve1316.granblue_automation_android`.
+        </releaseNotes>
+    </update>
+</AppUpdater>

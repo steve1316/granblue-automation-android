@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.steve1316.granblue_automation_android">
+
+    <!--Grants permission for MediaProjection to display a Notification that tells users that it is currently running.-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!--Grants permission to display a floating START/STOP button that persists across any View.-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!--Grants permission to download and update the application's Firebase Machine Learning OCR.-->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name="com.steve1316.granblue_automation_android.MainApplication"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/BootTheme"
+        android:usesCleartextTraffic="true"
+        android:allowBackup="false">
+
+        <!--Application will automatically download the Machine Learning model to the device after the app is installed.-->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr" />
+
+        <activity
+            android:name="com.steve1316.granblue_automation_android.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--The Accessibility Service that controls gestures on the screen.-->
+        <service
+            android:name=".utils.MyAccessibilityService"
+            android:foregroundServiceType="mediaProjection"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!--The MediaProjection service that controls taking screenshots of the screen.-->
+        <service
+            android:name=".utils.MediaProjectionService"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!--Bot Service that will automate the specified workflow.-->
+        <service android:name=".utils.BotService" />
+
+        <!--Receiver that will send the "STOP" Intent to MediaProjection Service when the action button on the Notification is tapped.-->
+        <receiver
+            android:name=".utils.StopServiceReceiver"
+            android:enabled="true"
+            android:process=":remote" />
+    </application>
+
+</manifest>

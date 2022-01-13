@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">GAA</string>
+
+    <string name="accessibility_service_label">Accessibility Service for GAA</string>
+    <string name="accessibility_service_description">This is the Accessibility Service that will allow the bot process to interact with the screen
+        like tapping and swiping via gestures.\n\nFor Developers: If the Toast message does not pop up immediately, disable and enable this
+        again. Seeing the Toast message appear on the screen indicates that the Accessibility Service is now running!</string>
+    <string name="accessibility_service_action">Stop Bot</string>
+    <string name="accessibility_disabled">Accessibility Service Currently Disabled</string>
+    <string name="accessibility_disabled_message">This app requires its Accessibility Service to be turned on to allow the bot to navigate
+        through the game.</string>
+
+    <string name="overlay_disabled">Missing Overlay Permission</string>
+    <string name="overlay_disabled_message">This app requires that it is granted Overlay Permission to display the START/STOP Floating Action
+    Button.</string>
+
+    <string name="go_to_settings">Go to Settings</string>
+</resources>
