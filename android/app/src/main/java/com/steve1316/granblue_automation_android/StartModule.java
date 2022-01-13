@@ -23,6 +23,7 @@ import com.steve1316.granblue_automation_android.utils.MyAccessibilityService;
 import java.util.Objects;
 
 public class StartModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+    private final String tag = loggerTag + "StartModule";
     private final ReactApplicationContext reactContext;
 
     public StartModule(ReactApplicationContext reactContext) {
@@ -52,7 +53,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
 
     private boolean checkForOverlayPermission() {
         if (!Settings.canDrawOverlays(getCurrentActivity())) {
-            Log.d(loggerTag, "Application is missing overlay permission.");
+            Log.d(tag, "Application is missing overlay permission.");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
             builder.setTitle(R.string.overlay_disabled);
@@ -70,7 +71,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
             return false;
         }
 
-        Log.d(loggerTag, "Application has permission to draw overlay.");
+        Log.d(tag, "Application has permission to draw overlay.");
         return true;
     }
 
@@ -82,7 +83,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
             boolean enabled = prefString.contains(this.reactContext.getPackageName() + "/" + MyAccessibilityService.class.getName());
 
             if (enabled) {
-                Log.d(loggerTag, "This application's Accessibility Service is currently turned on.");
+                Log.d(tag, "This application's Accessibility Service is currently turned on.");
                 return true;
             }
         }
@@ -93,7 +94,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
         builder.setMessage(R.string.accessibility_disabled_message);
 
         builder.setPositiveButton(R.string.go_to_settings, (dialogInterface, i) -> {
-            Log.d(loggerTag, "Accessibility Service is not detected. Moving user to Accessibility Settings.");
+            Log.d(tag, "Accessibility Service is not detected. Moving user to Accessibility Settings.");
             Intent accessibilitySettingsIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
             Objects.requireNonNull(getCurrentActivity()).startActivity(accessibilitySettingsIntent);
         });

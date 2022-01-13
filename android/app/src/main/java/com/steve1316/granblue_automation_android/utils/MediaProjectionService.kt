@@ -24,7 +24,6 @@ import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
-import com.steve1316.granblue_automation_android.R
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -41,7 +40,6 @@ class MediaProjectionService : Service() {
 	private val tag: String = "${loggerTag}MediaProjectionService"
 
 	private lateinit var myContext: Context
-	private var appName = ""
 
 	companion object {
 		private var mediaProjection: MediaProjection? = null
@@ -172,8 +170,6 @@ class MediaProjectionService : Service() {
 	override fun onCreate() {
 		super.onCreate()
 
-		Log.d(loggerTag, "HELLO")
-
 		// Creates a temporary folder if it does not already exist to store source images.
 		val externalFilesDir: File? = getExternalFilesDir(null)
 		if (externalFilesDir != null) {
@@ -216,7 +212,6 @@ class MediaProjectionService : Service() {
 	override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 		// Save a reference to the context.
 		myContext = this
-		appName = myContext.getString(R.string.app_name)
 
 		if (isStartCommand(intent)) {
 			// Create a new Notification in the foreground telling users that the MediaProjection Service is now active.
@@ -247,8 +242,6 @@ class MediaProjectionService : Service() {
 	}
 
 	private inner class OrientationChangeCallback(context: Context) : OrientationEventListener(context) {
-		private val tagOrientationChangeCallback: String = "${loggerTag}OrientationChangeCallback"
-
 		override fun onOrientationChanged(orientation: Int) {
 			val newRotation: Int = (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
 			if (newRotation != oldRotation) {
@@ -260,7 +253,7 @@ class MediaProjectionService : Service() {
 					// Now re-create the VirtualDisplay based on the new width and height of the rotated screen.
 					createVirtualDisplay()
 				} catch (e: Exception) {
-					Log.e(tagOrientationChangeCallback, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.")
+					Log.e(tag, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.")
 					Toast.makeText(
 						myContext, "Failed to perform cleanup and recreating the VirtualDisplay after device rotation.",
 						Toast.LENGTH_SHORT
@@ -274,8 +267,6 @@ class MediaProjectionService : Service() {
 	 * Custom Callback for when it is necessary to stop the MediaProjection.
 	 */
 	private inner class MediaProjectionStopCallback : MediaProjection.Callback() {
-		private val tagMediaProjectionStopCallback = "${loggerTag}MediaProjectionStopCallback"
-
 		override fun onStop() {
 			threadHandler.post {
 				isRunning = false
@@ -296,7 +287,7 @@ class MediaProjectionService : Service() {
 				// Now set the MediaProjection object to null to eliminate the "Invalid media projection" error.
 				mediaProjection = null
 
-				Log.d(tagMediaProjectionStopCallback, "MediaProjection Service for GAA has stopped.")
+				Log.d(tag, "MediaProjection Service for GAA has stopped for this context: ${myContext.applicationInfo}.")
 				Toast.makeText(myContext, "MediaProjection Service for GAA has stopped.", Toast.LENGTH_SHORT).show()
 			}
 		}
@@ -309,7 +300,7 @@ class MediaProjectionService : Service() {
 	 * @param data The data of this service.
 	 */
 	private fun startMediaProjection(resultCode: Int, data: Intent) {
-		Log.d(loggerTag, "Starting MediaProjection here")
+		Log.d(tag, "Starting MediaProjection here")
 
 		// Retrieve the MediaProjection object.
 		if (mediaProjection == null) {
@@ -325,7 +316,7 @@ class MediaProjectionService : Service() {
 		// Create the VirtualDisplay and start reading in screenshots.
 		createVirtualDisplay()
 
-		Log.d(loggerTag, "Finished creating the Virtual Display")
+		Log.d(tag, "Finished creating the Virtual Display")
 
 		// Attach the OrientationChangeCallback.
 		orientationChangeCallback = OrientationChangeCallback(this)
@@ -336,8 +327,8 @@ class MediaProjectionService : Service() {
 		// Attach the MediaProjectionStopCallback to the MediaProjection object.
 		mediaProjection?.registerCallback(MediaProjectionStopCallback(), threadHandler)
 
-		Log.d(tag, "MediaProjection Service for $appName is now running.")
-		Toast.makeText(myContext, "MediaProjection Service for $appName is now running.", Toast.LENGTH_SHORT).show()
+		Log.d(tag, "MediaProjection Service is now running.")
+		Toast.makeText(myContext, "MediaProjection Service is now running.", Toast.LENGTH_SHORT).show()
 	}
 
 	/**
@@ -369,7 +360,7 @@ class MediaProjectionService : Service() {
 
 		// Now create the VirtualDisplay.
 		virtualDisplay = mediaProjection?.createVirtualDisplay(
-			"$appName's Virtual Display", displayWidth, displayHeight,
+			"Bot Virtual Display", displayWidth, displayHeight,
 			displayDPI, getVirtualDisplayFlags(), imageReader.surface, null, threadHandler
 		)!!
 	}

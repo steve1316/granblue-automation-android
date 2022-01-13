@@ -260,6 +260,7 @@ dependencies {
     // Klaxon to parse JSON data files.
     implementation 'com.beust:klaxon:5.5'
 
+    // Module to interact with Android File System.
     implementation project(':react-native-fs')
 
     // react-native-bootsplash for the bootsplash during app startup.
