@@ -364,7 +364,7 @@ const Settings = () => {
                         modalProps={{
                             animationType: "slide",
                         }}
-                        style={styles.picker}
+                        style={[styles.picker, { backgroundColor: bsc.settings.game.item !== "" ? "azure" : "pink" }]}
                         dropDownContainerStyle={styles.dropdown}
                         placeholder="Select Item"
                         searchTextInputStyle={{ fontStyle: "italic" }}
@@ -382,7 +382,7 @@ const Settings = () => {
 
                     <DropDownPicker
                         listMode="SCROLLVIEW"
-                        style={styles.picker}
+                        style={[styles.picker, { backgroundColor: bsc.settings.game.mission !== "" ? "azure" : "pink" }]}
                         dropDownContainerStyle={styles.dropdown}
                         placeholder="Select Mission"
                         searchTextInputStyle={{ fontStyle: "italic" }}
@@ -410,7 +410,11 @@ const Settings = () => {
 
                     {bsc.settings.game.farmingMode !== "Coop" && bsc.settings.game.farmingMode !== "Arcarum" ? (
                         <View style={{ zIndex: 9996 }}>
-                            <CustomButton title="Select Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
+                            {bsc.settings.game.summons.length > 0 ? (
+                                <CustomButton title="Select Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
+                            ) : (
+                                <CustomButton title="Select Support Summon(s)" backgroundColor="red" width={"100%"} onPress={() => setModalOpen(true)} />
+                            )}
                             <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
                                 <View style={styles.modal}>
                                     <TouchableOpacity style={styles.outsideModal} onPress={() => setModalOpen(false)} />

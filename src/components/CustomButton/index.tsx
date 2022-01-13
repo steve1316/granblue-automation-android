@@ -6,14 +6,15 @@ interface Props {
     title: string
     width?: number | string
     borderRadius?: number
+    backgroundColor?: string
     onPress?: (event: GestureResponderEvent) => void
     disabled?: boolean
 }
 
-const CustomButton: FC<Props> = ({ title, width = 100, borderRadius = 5, disabled = false, onPress = () => Alert.alert("Pressed!") }) => {
+const CustomButton: FC<Props> = ({ title, width = 100, borderRadius = 5, disabled = false, backgroundColor = "rgba(78, 116, 289, 1)", onPress = () => Alert.alert("Pressed!") }) => {
     const styles = StyleSheet.create({
         button: {
-            backgroundColor: "rgba(78, 116, 289, 1)",
+            backgroundColor: backgroundColor,
             borderRadius: borderRadius,
             borderStyle: "solid",
             borderColor: "black",
