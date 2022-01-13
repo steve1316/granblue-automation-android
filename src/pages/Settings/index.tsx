@@ -284,7 +284,7 @@ const Settings = () => {
             <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ height: "100%" }}>
                 <View style={{ height: Dimensions.get("screen").height * 0.5, marginHorizontal: 20 }}>
                     <CustomButton
-                        title="Select Combat Script"
+                        title={bsc.settings.game.combatScriptName === "" ? "Select Combat Script" : `Selected: ${bsc.settings.game.combatScriptName}`}
                         width={200}
                         borderRadius={20}
                         onPress={async () => {
@@ -322,6 +322,10 @@ const Settings = () => {
                             }
                         }}
                     />
+
+                    <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>
+                        To deselect, cancel/back out of the document picker. If no combat script is selected, Full/Semi Auto is used by default.
+                    </Text>
 
                     <Divider />
 
