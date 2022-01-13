@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactActivityDelegate;
 import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
+import com.zoontek.rnbootsplash.RNBootSplash;
 
 import org.opencv.android.OpenCVLoader;
 
@@ -39,5 +41,17 @@ public class MainActivity extends ReactActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new ReactActivityDelegate(this, getMainComponentName()) {
+
+            @Override
+            protected void loadApp(String appKey) {
+                RNBootSplash.init(MainActivity.this); // <- initialize the splash screen
+                super.loadApp(appKey);
+            }
+        };
     }
 }

@@ -261,6 +261,9 @@ dependencies {
     implementation 'com.beust:klaxon:5.5'
 
     implementation project(':react-native-fs')
+
+    // react-native-bootsplash for the bootsplash during app startup.
+    implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
 }
 
 // Run this once to be able to run the application with BUCK
