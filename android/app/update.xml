@@ -9,6 +9,7 @@ New
 ---
 - UI now using React Native instead of native Android UI with an attempt at mimicking the style and layout of the PC version.
 - `config.json` now renamed to `settings.json` with many of the contents reusable from the PC version.
+- New bootsplash when app is starting up.
 
 Changed
 ---
