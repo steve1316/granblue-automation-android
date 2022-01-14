@@ -403,6 +403,7 @@ const ExtraSettings = () => {
                             iconStyle={{ borderColor: "red" }}
                             textStyle={{
                                 textDecorationLine: "none",
+                                color: "#000",
                             }}
                             style={{ marginVertical: 10, marginLeft: 2 }}
                             isChecked={enableDelayBetweenRuns}
@@ -447,6 +448,7 @@ const ExtraSettings = () => {
                             iconStyle={{ borderColor: "red" }}
                             textStyle={{
                                 textDecorationLine: "none",
+                                color: "#000",
                             }}
                             style={{ marginVertical: 10, marginLeft: 2 }}
                             isChecked={enableRandomizedDelayBetweenRuns}

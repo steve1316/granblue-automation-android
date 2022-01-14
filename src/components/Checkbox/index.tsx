@@ -38,6 +38,7 @@ const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBord
                 iconStyle={{ borderColor: iconBorderColor }}
                 textStyle={{
                     textDecorationLine: "none",
+                    color: "#000",
                 }}
                 style={styles.checkboxContainer}
                 isChecked={state}
