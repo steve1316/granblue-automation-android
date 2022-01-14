@@ -224,94 +224,117 @@ const ExtraSettings = () => {
                 <View>
                     <TitleDivider title={`${title} Settings`} hasIcon={true} iconName="sword-cross" iconColor="#000" />
 
-                    <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>If none of these settings are changed, then the bot will reuse the settings for the Farming Mode.</Text>
+                    <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>
+                        If "Enable Custom Settings" is not enabled, then the bot will reuse the settings for the Farming Mode. Same thing will happen if it is enabled and a separate combat script and
+                        summons are not selected here.
+                    </Text>
 
                     <Checkbox
-                        text={`Enable Custom Settings for ${title}`}
+                        text={`Enable Custom Settings for\n${title}`}
                         subtitle={`Enable customizing individual settings for ${title}`}
                         state={enableCustomNightmareSettings}
                         updateState={setEnableCustomNightmareSettings}
                     />
 
-                    <CustomButton
-                        title="Select Nightmare Combat Script"
-                        width={200}
-                        borderRadius={20}
-                        onPress={async () => {
-                            try {
-                                const pickerResult = await DocumentPicker.pickSingle({
-                                    type: "text/plain",
-                                })
-
-                                const uri = pickerResult.uri
-                                if (uri.startsWith("content://")) {
-                                    // Convert content uri to file uri.
-                                    // Source: https://stackoverflow.com/a/62677483
-                                    const uriComponents = uri.split("/")
-                                    const fileNameAndExtension = uriComponents[uriComponents.length - 1]
-                                    const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`
-                                    await RNFS.copyFile(uri, destPath)
-
-                                    // Now read the file using the newly converted file uri.
-                                    await RNFS.readFile("file://" + destPath).then((data) => {
-                                        console.log("Read combat script: ", data)
-
-                                        const newCombatScript: string[] = data
-                                            .replace(/\r\n/g, "\n") // Replace LF with CRLF.
-                                            .replace(/[\r\n]/g, "\n")
-                                            .replace("\t", "") // Replace tab characters.
-                                            .replace(/\t/g, "")
-                                            .split("\n")
-
-                                        bsc.setSettings({
-                                            ...bsc.settings,
-                                            nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: pickerResult.name, nightmareCombatScript: newCombatScript },
+                    {enableCustomNightmareSettings ? (
+                        <View style={{ marginTop: -10, marginLeft: 10, marginBottom: 10, marginRight: 10 }}>
+                            <CustomButton
+                                title={bsc.settings.nightmare.nightmareCombatScriptName === "" ? "Select Nightmare Combat Script" : `Selected: ${bsc.settings.nightmare.nightmareCombatScriptName}`}
+                                width={200}
+                                borderRadius={20}
+                                onPress={async () => {
+                                    try {
+                                        const pickerResult = await DocumentPicker.pickSingle({
+                                            type: "text/plain",
                                         })
-                                    })
-                                }
-                            } catch (e) {
-                                console.warn(e)
-                                bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: "", nightmareCombatScript: [] } })
-                            }
-                        }}
-                    />
 
-                    <Divider />
+                                        const uri = pickerResult.uri
+                                        if (uri.startsWith("content://")) {
+                                            // Convert content uri to file uri.
+                                            // Source: https://stackoverflow.com/a/62677483
+                                            const uriComponents = uri.split("/")
+                                            const fileNameAndExtension = uriComponents[uriComponents.length - 1]
+                                            const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`
+                                            await RNFS.copyFile(uri, destPath)
 
-                    <View>
-                        <CustomButton title="Select Nightmare Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
-                        <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
-                            <View style={styles.modal}>
-                                <TouchableOpacity style={styles.outsideModal} onPress={() => setModalOpen(false)} />
-                                <View style={styles.componentContainer}>
-                                    <TransferList isNightmare={true} />
+                                            // Now read the file using the newly converted file uri.
+                                            await RNFS.readFile("file://" + destPath).then((data) => {
+                                                console.log("Read combat script: ", data)
+
+                                                const newCombatScript: string[] = data
+                                                    .replace(/\r\n/g, "\n") // Replace LF with CRLF.
+                                                    .replace(/[\r\n]/g, "\n")
+                                                    .replace("\t", "") // Replace tab characters.
+                                                    .replace(/\t/g, "")
+                                                    .split("\n")
+
+                                                bsc.setSettings({
+                                                    ...bsc.settings,
+                                                    nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: pickerResult.name, nightmareCombatScript: newCombatScript },
+                                                })
+                                            })
+                                        }
+                                    } catch (e) {
+                                        console.warn(e)
+                                        bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: "", nightmareCombatScript: [] } })
+                                    }
+                                }}
+                            />
+
+                            <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>
+                                To deselect, cancel/back out of the document picker. If no combat script is selected, Full/Semi Auto is used by default.
+                            </Text>
+
+                            <Divider />
+
+                            <View>
+                                <CustomButton title="Select Nightmare Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />
+                                <Modal transparent={true} animationType="fade" statusBarTranslucent={true} visible={modalOpen} onRequestClose={() => setModalOpen(false)}>
+                                    <View style={styles.modal}>
+                                        <TouchableOpacity style={styles.outsideModal} onPress={() => setModalOpen(false)} />
+                                        <View style={styles.componentContainer}>
+                                            <TransferList isNightmare={true} />
+                                        </View>
+                                    </View>
+                                </Modal>
+                            </View>
+
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                                    <Text>Group #:</Text>
+                                    <Picker
+                                        selectedValue={nightmareGroupNumber}
+                                        onValueChange={(value) => setNightmareGroupNumber(value)}
+                                        mode="dropdown"
+                                        style={{ color: "#000" }}
+                                        dropdownIconColor={"#000"}
+                                    >
+                                        {[...Array(7 - 1 + 1).keys()]
+                                            .map((x) => x + 1)
+                                            .map((value) => {
+                                                return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                            })}
+                                    </Picker>
+                                </View>
+                                <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                                    <Text>Party #:</Text>
+                                    <Picker
+                                        selectedValue={nightmarePartyNumber}
+                                        onValueChange={(value) => setNightmarePartyNumber(value)}
+                                        mode="dropdown"
+                                        style={{ color: "#000" }}
+                                        dropdownIconColor={"#000"}
+                                    >
+                                        {[...Array(6 - 1 + 1).keys()]
+                                            .map((x) => x + 1)
+                                            .map((value) => {
+                                                return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                            })}
+                                    </Picker>
                                 </View>
                             </View>
-                        </Modal>
-                    </View>
-
-                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                        <View style={{ width: Dimensions.get("window").width * 0.3 }}>
-                            <Text>Group #:</Text>
-                            <Picker selectedValue={nightmareGroupNumber} onValueChange={(value) => setNightmareGroupNumber(value)} mode="dropdown">
-                                {[...Array(7 - 1 + 1).keys()]
-                                    .map((x) => x + 1)
-                                    .map((value) => {
-                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
-                                    })}
-                            </Picker>
                         </View>
-                        <View style={{ width: Dimensions.get("window").width * 0.3 }}>
-                            <Text>Party #:</Text>
-                            <Picker selectedValue={nightmarePartyNumber} onValueChange={(value) => setNightmarePartyNumber(value)} mode="dropdown">
-                                {[...Array(6 - 1 + 1).keys()]
-                                    .map((x) => x + 1)
-                                    .map((value) => {
-                                        return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
-                                    })}
-                            </Picker>
-                        </View>
-                    </View>
+                    ) : null}
                 </View>
             )
         } else {
