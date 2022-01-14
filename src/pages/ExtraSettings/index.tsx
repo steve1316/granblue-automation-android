@@ -526,7 +526,7 @@ const ExtraSettings = () => {
                             minimumValue={100}
                             maximumValue={5000}
                             step={100}
-                            onValueChange={(value) => setDelayTapMilliseconds(value)}
+                            onSlidingComplete={(value) => setDelayTapMilliseconds(value)}
                             minimumTrackTintColor="black"
                             maximumTrackTintColor="gray"
                             thumbTintColor="red"
