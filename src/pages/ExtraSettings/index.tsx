@@ -360,7 +360,12 @@ const ExtraSettings = () => {
                 ) : null}
 
                 <TitleDivider title="Configuration Settings" hasIcon={true} iconName="tune" />
-                <Checkbox text="Enable Debug Mode" subtitle="Enables debugging messages to show up in the log." state={debugMode} updateState={setDebugMode} />
+                <Checkbox
+                    text="Enable Debug Mode"
+                    subtitle={`Enables debugging messages to show up in the log.\n\nIt will also enable saving screenshots to internal storage for debugging purposes. As such, it will increase average image processing time by ~500ms per operation.`}
+                    state={debugMode}
+                    updateState={setDebugMode}
+                />
                 <Checkbox
                     text="Enable Auto Exit Raid"
                     subtitle="Enables backing out of a Raid without retreating while under Semi/Full Auto after a certain period of time has passed."
