@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from "react"
+import React, { FC } from "react"
 import { StyleSheet, View } from "react-native"
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import { Text } from "react-native-elements"
@@ -28,14 +28,6 @@ const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBord
         },
     })
 
-    // Update the state from another component.
-    const handleStateChange = useCallback(
-        (value) => {
-            updateState(value)
-        },
-        [updateState]
-    )
-
     return (
         <View>
             <BouncyCheckbox
@@ -49,7 +41,8 @@ const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBord
                 }}
                 style={styles.checkboxContainer}
                 isChecked={state}
-                onPress={handleStateChange}
+                disableBuiltInState={true}
+                onPress={() => updateState(!state)}
             />
             {subtitle !== "" ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
