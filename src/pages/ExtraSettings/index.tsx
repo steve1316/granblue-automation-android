@@ -137,6 +137,7 @@ const ExtraSettings = () => {
                 },
                 discord: {
                     ...bsc.settings.discord,
+                    enableDiscordNotifications: enableDiscord,
                     discordToken: discordToken,
                     discordUserID: discordUserID,
                 },
@@ -178,8 +179,10 @@ const ExtraSettings = () => {
         twitterAPIKeySecret,
         twitterAccessToken,
         twitterAccessTokenSecret,
+        enableDiscord,
         discordToken,
         discordUserID,
+        debugMode,
         enableDelayBetweenRuns,
         delayBetweenRuns,
         enableRandomizedDelayBetweenRuns,
