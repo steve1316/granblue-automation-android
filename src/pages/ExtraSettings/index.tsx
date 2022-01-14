@@ -433,12 +433,13 @@ const ExtraSettings = () => {
                             }}
                             style={{ marginVertical: 10, marginLeft: 2 }}
                             isChecked={enableDelayBetweenRuns}
-                            onPress={(checked) => {
-                                if (checked && enableRandomizedDelayBetweenRuns) {
+                            disableBuiltInState={true}
+                            onPress={() => {
+                                if (!enableDelayBetweenRuns && enableRandomizedDelayBetweenRuns) {
                                     setEnableRandomizedDelayBetweenRuns(false)
                                 }
 
-                                setEnableDelayBetweenRuns(checked)
+                                setEnableDelayBetweenRuns(!enableDelayBetweenRuns)
                             }}
                         />
                         <Text style={{ marginBottom: 5, marginLeft: 2, fontSize: 12, opacity: 0.7 }}>Enable delay in seconds between runs to serve as a resting period.</Text>
@@ -478,12 +479,13 @@ const ExtraSettings = () => {
                             }}
                             style={{ marginVertical: 10, marginLeft: 2 }}
                             isChecked={enableRandomizedDelayBetweenRuns}
-                            onPress={(checked) => {
-                                if (checked && enableDelayBetweenRuns) {
+                            disableBuiltInState={true}
+                            onPress={() => {
+                                if (!enableRandomizedDelayBetweenRuns && enableDelayBetweenRuns) {
                                     setEnableDelayBetweenRuns(false)
                                 }
 
-                                setEnableRandomizedDelayBetweenRuns(checked)
+                                setEnableRandomizedDelayBetweenRuns(!enableRandomizedDelayBetweenRuns)
                             }}
                         />
                         <Text style={{ marginBottom: 5, marginLeft: 2, fontSize: 12, opacity: 0.7 }}>Enable randomized delay in seconds between runs to serve as a resting period.</Text>
