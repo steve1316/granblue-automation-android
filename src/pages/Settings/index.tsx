@@ -12,6 +12,7 @@ import TransferList from "../../components/TransferList"
 import Checkbox from "../../components/Checkbox"
 import SnackBar from "rn-snackbar-component"
 import Ionicons from "react-native-vector-icons/Ionicons"
+import { MessageLogContext } from "../../context/MessageLogContext"
 
 const styles = StyleSheet.create({
     root: {
@@ -79,6 +80,7 @@ const Settings = () => {
     const [enableNightmare, setEnableNightmare] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
+    const mlc = useContext(MessageLogContext)
 
     const farmingModes = [
         { label: "Quest", value: "Quest" },
@@ -123,6 +125,9 @@ const Settings = () => {
 
     useEffect(() => {
         if (!firstTime) {
+            mlc.setMessageLog([])
+            mlc.setAsyncMessages([])
+
             // Reset selected Item and Mission and save the farming mode.
             bsc.setSettings({
                 ...bsc.settings,
