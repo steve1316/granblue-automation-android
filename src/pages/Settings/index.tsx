@@ -78,6 +78,8 @@ const Settings = () => {
     const [partyNumber, setPartyNumber] = useState<number>(1)
     const [combatScript, setCombatScript] = useState<CombatScript>({ name: "", script: [] })
     const [enableNightmare, setEnableNightmare] = useState<boolean>(false)
+    const [enableLocationIncrementByOne, setEnableLocationIncrementByOne] = useState<boolean>(false)
+    const [enableStopOnArcarumBoss, setEnableStopOnArcarumBoss] = useState<boolean>(true)
 
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
@@ -120,6 +122,8 @@ const Settings = () => {
         setPartyNumber(bsc.settings.game.partyNumber)
         setCombatScript({ name: bsc.settings.game.combatScriptName, script: bsc.settings.game.combatScript })
         setEnableNightmare(bsc.settings.nightmare.enableNightmare)
+        setEnableLocationIncrementByOne(bsc.settings.event.enableLocationIncrementByOne)
+        setEnableStopOnArcarumBoss(bsc.settings.arcarum.enableStopOnArcarumBoss)
         setFirstTime(false)
     }, [])
 
@@ -142,6 +146,14 @@ const Settings = () => {
                     nightmareSummonElements: [],
                     nightmareGroupNumber: 1,
                     nightmarePartyNumber: 1,
+                },
+                event: {
+                    ...bsc.settings.event,
+                    enableLocationIncrementByOne: false,
+                },
+                arcarum: {
+                    ...bsc.settings.arcarum,
+                    enableStopOnArcarumBoss: true,
                 },
             })
 
@@ -170,9 +182,17 @@ const Settings = () => {
                     ...bsc.settings.nightmare,
                     enableNightmare: enableNightmare,
                 },
+                event: {
+                    ...bsc.settings.event,
+                    enableLocationIncrementByOne: enableLocationIncrementByOne,
+                },
+                arcarum: {
+                    ...bsc.settings.arcarum,
+                    enableStopOnArcarumBoss: enableStopOnArcarumBoss,
+                },
             })
         }
-    }, [item, mission, map, itemAmount, groupNumber, partyNumber, combatScript, enableNightmare])
+    }, [item, mission, map, itemAmount, groupNumber, partyNumber, combatScript, enableNightmare, enableLocationIncrementByOne, enableStopOnArcarumBoss])
 
     // Populates the item list based on farming mode.
     useEffect(() => {
@@ -350,6 +370,24 @@ const Settings = () => {
                         setValue={setFarmingMode}
                         zIndex={9999}
                     />
+
+                    {bsc.settings.game.farmingMode === "Event" ? (
+                        <Checkbox
+                            text="Enable Incrementation of Location by 1"
+                            subtitle="Enable this if the event has its N/H missions at the very top so the bot can correctly select the correct quest. Or in otherwords, enable this if the Event tab in the Special page has 3 'Select' buttons instead of 2."
+                            state={enableLocationIncrementByOne}
+                            updateState={setEnableLocationIncrementByOne}
+                        />
+                    ) : null}
+
+                    {bsc.settings.game.farmingMode === "Arcarum" ? (
+                        <Checkbox
+                            text="Enable Stop on Arcarum Boss"
+                            subtitle="Enable this option to have the bot upon encountering a Arcarum Boss (3-3, 6-3, 9-9)."
+                            state={enableStopOnArcarumBoss}
+                            updateState={setEnableStopOnArcarumBoss}
+                        />
+                    ) : null}
 
                     {bsc.settings.game.farmingMode === "Special" ||
                     bsc.settings.game.farmingMode === "Event" ||
