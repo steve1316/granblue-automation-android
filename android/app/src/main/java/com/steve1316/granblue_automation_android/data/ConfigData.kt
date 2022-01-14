@@ -135,15 +135,15 @@ class ConfigData(val myContext: Context) {
 		enableLocationIncrementByOne = sharedPreferences.getBoolean("enableLocationIncrementByOne", false)
 
 		enableAutoExitRaid = sharedPreferences.getBoolean("enableAutoExitRaid", false)
-		timeAllowedUntilAutoExitRaid = sharedPreferences.getInt("timeAllowedUntilAutoExitRaid", 1)
+		timeAllowedUntilAutoExitRaid = sharedPreferences.getInt("timeAllowedUntilAutoExitRaid", 1).toLong() * 60L * 1000L
 		enableNoTimeout = sharedPreferences.getBoolean("enableNoTimeout", false)
 
 		enableStopOnArcarumBoss = sharedPreferences.getBoolean("enableStopOnArcarumBoss", true)
 
 		enableDelayTap = sharedPreferences.getBoolean("enableDelayTap", false)
 		delayTapMilliseconds = sharedPreferences.getInt("delayTapMilliseconds", 1000)
-		confidence = sharedPreferences.getFloat("confidence", 0.8f).toDouble()
-		confidenceAll = sharedPreferences.getFloat("confidenceAll", 0.8f).toDouble()
+		confidence = sharedPreferences.getFloat("confidence", 0.8f).toDouble() / 100.0
+		confidenceAll = sharedPreferences.getFloat("confidenceAll", 0.8f).toDouble() / 100.0
 		customScale = sharedPreferences.getFloat("customScale", 1.0f).toDouble()
 		enableTestForHomeScreen = sharedPreferences.getBoolean("enableTestForHomeScreen", false)
 
