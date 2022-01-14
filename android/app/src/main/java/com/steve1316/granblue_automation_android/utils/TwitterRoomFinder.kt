@@ -52,7 +52,7 @@ class MyListener(private val game: Game) : StatusListener {
 /**
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
-class TwitterRoomFinder(myContext: Context, private val game: Game) {
+class TwitterRoomFinder(private val game: Game) {
 	private lateinit var twitter: Twitter
 	private val listener = MyListener(game)
 
@@ -192,18 +192,17 @@ class TwitterRoomFinder(myContext: Context, private val game: Game) {
 			game.printToLog("[INFO] Main thread will now allow Network IO to be run on it without throwing NetworkOnMainThreadException.", tag = tag)
 
 			// Initialize the Twitter object.
-			val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 			val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
-				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
-				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
-				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
-				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
+				.setOAuthConsumerKey(game.configData.twitterAPIKey)
+				.setOAuthConsumerSecret(game.configData.twitterAPIKeySecret)
+				.setOAuthAccessToken(game.configData.twitterAccessToken)
+				.setOAuthAccessTokenSecret(game.configData.twitterAccessTokenSecret)
 
 			val configurationStreamBuilder: ConfigurationBuilder = ConfigurationBuilder()
-				.setOAuthConsumerKey(sharedPreferences.getString("apiKey", ""))
-				.setOAuthConsumerSecret(sharedPreferences.getString("apiKeySecret", ""))
-				.setOAuthAccessToken(sharedPreferences.getString("accessToken", ""))
-				.setOAuthAccessTokenSecret(sharedPreferences.getString("accessTokenSecret", ""))
+				.setOAuthConsumerKey(game.configData.twitterAPIKey)
+				.setOAuthConsumerSecret(game.configData.twitterAPIKeySecret)
+				.setOAuthAccessToken(game.configData.twitterAccessToken)
+				.setOAuthAccessTokenSecret(game.configData.twitterAccessTokenSecret)
 
 			try {
 				// Create the listener and stream objects.

@@ -113,15 +113,12 @@ class BotService : Service() {
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
 
-									val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-									val enableHomeTest: Boolean = sharedPreferences.getBoolean("enableTestForHomeScreen", false)
-
-									if (!enableHomeTest) {
+									if (!game.configData.enableTestForHomeScreen) {
 										// Run the Discord process on a new Thread.
-										if (sharedPreferences.getBoolean("enableDiscordNotifications", false)) {
+										if (game.configData.enableDiscordNotifications) {
 											thread {
 												runBlocking {
-													val discordUtils = DiscordUtils(myContext)
+													val discordUtils = DiscordUtils(game)
 													DiscordUtils.queue.clear()
 													discordUtils.main()
 												}

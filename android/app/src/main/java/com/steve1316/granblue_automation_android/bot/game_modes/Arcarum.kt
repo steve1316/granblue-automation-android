@@ -98,7 +98,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 
 		var tries = 3
 		while (tries > 0) {
-			if (checkForBoss()) {
+			if (game.configData.enableStopOnArcarumBoss && checkForBoss()) {
 				return "Boss Detected"
 			}
 

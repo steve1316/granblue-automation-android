@@ -1,6 +1,5 @@
 package com.steve1316.granblue_automation_android.bot
 
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import org.opencv.core.Point
 
@@ -10,9 +9,6 @@ import org.opencv.core.Point
 class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
 	private val tag: String = "${loggerTag}CombatMode"
 
-	private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
-	private val enableAutoExitCombat: Boolean = sharedPreferences.getBoolean("enableAutoExitRaid", false)
-	private val autoExitCombatMinutes: Long = sharedPreferences.getInt("timeAllowedUntilAutoExitRaid", 5).toLong() * 60L * 1000L
 	private var autoExitStartTime: Long = 0L
 	private var autoExitEndTime: Long = 0L
 
@@ -1392,7 +1388,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 			var sleepPreventionTimer = 0
 
-			if ((semiAutoCheckFlag || fullAutoCheckFlag) && enableAutoExitCombat) {
+			if ((semiAutoCheckFlag || fullAutoCheckFlag) && game.configData.enableAutoExitRaid) {
 				autoExitStartTime = System.currentTimeMillis()
 			}
 
@@ -1439,7 +1435,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
 					else -> {
 						autoExitEndTime = System.currentTimeMillis()
-						if (enableAutoExitCombat && (autoExitEndTime - autoExitStartTime >= autoExitCombatMinutes)) {
+						if (game.configData.enableAutoExitRaid && (autoExitEndTime - autoExitStartTime >= game.configData.timeAllowedUntilAutoExitRaid)) {
 							game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", tag = tag)
 							game.printToLog("\n############################################################", tag = tag)
 							game.printToLog("############################################################", tag = tag)

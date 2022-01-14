@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity
 
-class ConfigData(val myContext: Context) {
+class ConfigData(myContext: Context) {
 	private val tag = "${MainActivity.loggerTag}ConfigData"
 
 	// Game
@@ -54,7 +54,7 @@ class ConfigData(val myContext: Context) {
 
 	// Raid
 	val enableAutoExitRaid: Boolean
-	val timeAllowedUntilAutoExitRaid: Int
+	val timeAllowedUntilAutoExitRaid: Long
 	val enableNoTimeout: Boolean
 
 	// Arcarum

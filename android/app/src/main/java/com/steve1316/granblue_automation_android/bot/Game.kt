@@ -17,13 +17,13 @@ import java.util.concurrent.TimeUnit
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
-class Game(val myContext: Context) {
+class Game(myContext: Context) {
 	private val tag: String = "${loggerTag}Game"
 
 	val configData: ConfigData = ConfigData(myContext)
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
-	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext, this)
+	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(this)
 	val combatMode: CombatMode = CombatMode(this, configData.debugMode)
 
 	private lateinit var quest: Quest
