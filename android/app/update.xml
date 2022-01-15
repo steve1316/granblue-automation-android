@@ -1,20 +1,25 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.3.0</latestVersion>
+        <latestVersion>3.3.1</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.3.0 - Changelog
+v3.3.1 - Changelog
 
 New
 ---
-- UI now using React Native instead of native Android UI with an attempt at mimicking the style and layout of the PC version.
-- `config.json` now renamed to `settings.json` with many of the contents reusable from the PC version.
-- New bootsplash when app is starting up.
+- Added 2 missing Checkbox settings for Event and Arcarum in the Settings page.
 
 Changed
 ---
-- Changed how the backend reads the new `settings.json`.
-- Changed package name from `com.steve1316.granblueautomation_android` to `com.steve1316.granblue_automation_android`.
+- Minor changes to styling.
+- Moved `Enable Additional Delay Before Tap` Checkbox component to be under the Device Settings section.
+
+Fixed
+---
+- Finally fixed Discord integration on emulators.
+- Fixed many state persistance bugs when changing certain settings in both the Settings and Extra Settings pages.
+- Fixed `confidence` and `confidenceAll` not being converted correctly for use in image processing functions.
+
         </releaseNotes>
     </update>
 </AppUpdater>
