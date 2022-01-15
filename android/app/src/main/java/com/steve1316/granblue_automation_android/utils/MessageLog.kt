@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
+import com.steve1316.granblue_automation_android.StartModule
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -50,6 +51,8 @@ class MessageLog {
 
 				// Now save the Message Log to the new text file.
 				Log.d(TAG, "Now saving Message Log to file named \"$fileName\" at $path")
+				messageLog.add("Now saving Message Log to file named \"$fileName\" at $path")
+				StartModule.sendEvent("MessageLog", "Now saving Message Log to file named \"$fileName\" at $path")
 				val file = File(path, "$fileName.txt")
 
 				if (!file.exists()) {

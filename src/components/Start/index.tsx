@@ -18,6 +18,11 @@ const Start = () => {
         saveSettings()
     }, [bsc.settings])
 
+    useEffect(() => {
+        const newLog = [...mlc.messageLog, ...mlc.asyncMessages]
+        mlc.setMessageLog(newLog)
+    }, [mlc.asyncMessages])
+
     const saveSettings = async (newSettings?: Settings) => {
         if (!firstTime) {
             // Grab a local copy of the current settings.

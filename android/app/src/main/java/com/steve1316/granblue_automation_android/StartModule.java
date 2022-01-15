@@ -27,13 +27,13 @@ import java.util.Objects;
 
 public class StartModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private final String tag = loggerTag + "StartModule";
-    private final ReactApplicationContext reactContext;
-    private DeviceEventManagerModule.RCTDeviceEventEmitter emitter = null;
+    private static ReactApplicationContext reactContext;
+    private static DeviceEventManagerModule.RCTDeviceEventEmitter emitter = null;
 
     public StartModule(ReactApplicationContext reactContext) {
         super(reactContext); //required by React Native
-        this.reactContext = reactContext;
-        this.reactContext.addActivityEventListener(this);
+        StartModule.reactContext = reactContext;
+        StartModule.reactContext.addActivityEventListener(this);
     }
 
     @ReactMethod
@@ -43,12 +43,12 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
         }
     }
 
-    public void sendEvent(String eventName, String message) {
+    public static void sendEvent(String eventName, String message) {
         WritableMap params = Arguments.createMap();
         params.putString("message", message);
         if (emitter == null) {
             // Register the event emitter to send messages to JS.
-            emitter = this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
+            emitter = StartModule.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
         }
 
         emitter.emit(eventName, params);
@@ -79,7 +79,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
 
             builder.setPositiveButton(R.string.go_to_settings, (dialogInterface, i) -> {
                 // Send the user to the Overlay Settings.
-                String uri = String.format("package:%s", this.reactContext.getPackageName());
+                String uri = String.format("package:%s", reactContext.getPackageName());
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse(uri));
                 Objects.requireNonNull(getCurrentActivity()).startActivity(intent);
             });
@@ -99,7 +99,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
 
         if (prefString != null && !prefString.isEmpty()) {
             // Check the string of enabled accessibility services to see if this application's accessibility service is there.
-            boolean enabled = prefString.contains(this.reactContext.getPackageName() + "/" + MyAccessibilityService.class.getName());
+            boolean enabled = prefString.contains(reactContext.getPackageName() + "/" + MyAccessibilityService.class.getName());
 
             if (enabled) {
                 Log.d(tag, "This application's Accessibility Service is currently turned on.");
@@ -126,12 +126,12 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
     }
 
     private void startProjection() {
-        MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) this.reactContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        this.reactContext.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), 100, null);
+        MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) reactContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        reactContext.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), 100, null);
     }
 
     private void stopProjection() {
-        this.reactContext.startService(MediaProjectionService.Companion.getStopIntent(this.reactContext));
+        reactContext.startService(MediaProjectionService.Companion.getStopIntent(reactContext));
         sendEvent("MediaProjectionService", "Not Running");
     }
 
@@ -139,7 +139,7 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             // Start up the MediaProjection service after the user accepts the onscreen prompt.
-            this.reactContext.startService(MediaProjectionService.Companion.getStartIntent(this.reactContext, resultCode, data));
+            reactContext.startService(MediaProjectionService.Companion.getStartIntent(reactContext, resultCode, data));
             sendEvent("MediaProjectionService", "Running");
         }
     }

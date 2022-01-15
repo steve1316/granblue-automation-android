@@ -3,6 +3,7 @@ import MessageLog from "../../components/MessageLog"
 import React, { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
 import { DeviceEventEmitter, StyleSheet, View } from "react-native"
+import { MessageLogContext } from "../../context/MessageLogContext"
 import { NativeModules } from "react-native" // Import native Java module.
 
 const styles = StyleSheet.create({
@@ -21,10 +22,22 @@ const Home = () => {
     const [isRunning, setIsRunning] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
+    const mlc = useContext(MessageLogContext)
 
     useEffect(() => {
         DeviceEventEmitter.addListener("MediaProjectionService", (data) => {
             setIsRunning(data["message"] === "Running")
+        })
+
+        DeviceEventEmitter.addListener("BotService", (data) => {
+            if (data["message"] === "Running") {
+                mlc.setAsyncMessages([])
+                mlc.setMessageLog([])
+            }
+        })
+
+        DeviceEventEmitter.addListener("MessageLog", (data) => {
+            mlc.setAsyncMessages([...mlc.asyncMessages, "\n" + data["message"]])
         })
     }, [])
 

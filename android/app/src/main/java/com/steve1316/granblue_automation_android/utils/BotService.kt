@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.R
+import com.steve1316.granblue_automation_android.StartModule
 import com.steve1316.granblue_automation_android.bot.Game
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
@@ -112,6 +113,9 @@ class BotService : Service() {
 									// Clear the Message Log.
 									MessageLog.messageLog.clear()
 									MessageLog.saveCheck = false
+
+									// Clear the message log in the frontend.
+									StartModule.sendEvent("BotService", "Running")
 
 									if (!game.configData.enableTestForHomeScreen) {
 										// Run the Discord process on a new Thread.

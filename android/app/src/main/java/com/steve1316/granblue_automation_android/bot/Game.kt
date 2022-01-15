@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
+import com.steve1316.granblue_automation_android.StartModule
 import com.steve1316.granblue_automation_android.bot.game_modes.*
 import com.steve1316.granblue_automation_android.data.ConfigData
 import com.steve1316.granblue_automation_android.data.SummonData
@@ -105,12 +106,16 @@ class Game(myContext: Context) {
 		}
 
 		// Remove the newline prefix if needed and place it where it should be.
-		if (message.startsWith("\n")) {
-			val newMessage = message.removePrefix("\n")
-			MessageLog.messageLog.add("\n" + printTime() + " " + newMessage)
+		val newMessage = if (message.startsWith("\n")) {
+			"\n" + printTime() + " " + message.removePrefix("\n")
 		} else {
-			MessageLog.messageLog.add(printTime() + " " + message)
+			printTime() + " " + message
 		}
+
+		MessageLog.messageLog.add(newMessage)
+
+		// Send the message to the frontend.
+		StartModule.sendEvent("MessageLog", newMessage)
 	}
 
 	/**
