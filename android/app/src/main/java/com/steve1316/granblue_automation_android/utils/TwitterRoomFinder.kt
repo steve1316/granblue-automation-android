@@ -24,6 +24,10 @@ class MyListener(private val game: Game) : StatusListener {
 				Log.d(tag, "[DEBUG] Stream found: ${status.text}")
 			}
 
+			if (tweets.size > 10) {
+				tweets.clear()
+			}
+
 			tweets.addFirst(status)
 		}
 	}
