@@ -228,7 +228,7 @@ const ExtraSettings = () => {
 
                 <TitleDivider
                     title="Discord Settings"
-                    subtitle={`Please visit the wiki on the GitHub page for instructions on how to get the token and user ID.\n\nNote: This does not work on emulators currently.`}
+                    subtitle={`Please visit the wiki on the GitHub page for instructions on how to get the token and user ID.`}
                     hasIcon={true}
                     iconName="discord"
                     iconColor="#7289d9"

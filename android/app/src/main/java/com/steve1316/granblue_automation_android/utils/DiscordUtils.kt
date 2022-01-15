@@ -3,12 +3,14 @@ package com.steve1316.granblue_automation_android.utils
 import android.util.Log
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
-import dev.kord.common.entity.Snowflake
-import dev.kord.core.Kord
-import dev.kord.core.event.gateway.ReadyEvent
-import dev.kord.core.on
-import kotlinx.coroutines.coroutineScope
 import java.util.*
+import org.javacord.api.DiscordApiBuilder
+
+import org.javacord.api.DiscordApi
+import org.javacord.api.entity.channel.PrivateChannel
+import org.javacord.api.entity.user.User
+import org.javacord.api.entity.user.UserStatus
+
 
 /**
  * This class takes care of notifying users of status updates via Discord private DMs.
@@ -18,52 +20,48 @@ class DiscordUtils(val game: Game) {
 
 	companion object {
 		val queue: Queue<String> = LinkedList()
+		lateinit var client: DiscordApi
+		lateinit var privateChannel: PrivateChannel
 
-		lateinit var client: Kord
-
-		suspend fun disconnectClient() {
-			if (this::client.isInitialized) {
-				client.logout()
+		fun disconnectClient() {
+			if (this::client.isInitialized && client.status == UserStatus.ONLINE) {
+				client.disconnect()
 			}
 		}
 	}
 
-	suspend fun main(): Unit = coroutineScope {
+	private fun sendMessage(message: String) {
+		privateChannel.sendMessage(message).join()
+	}
+
+	fun main() {
 		try {
 			Log.d(tag, "Starting Discord process now...")
 
-			// Initialize the client with the Bot Account's token.
-			client = Kord(game.configData.discordToken)
+			client = DiscordApiBuilder().setToken(game.configData.discordToken).login().join()
+			val user: User = client.getUserById(game.configData.discordUserID).join()
+			privateChannel = user.openPrivateChannel().join()
 
-			// This listener gets fired when the client is connected to the Discord API.
-			client.on<ReadyEvent> {
-				// Get the user's private DM channel via their Snowflake.
-				val snowflake = Snowflake(game.configData.discordUserID)
-				val dmChannel = client.getUser(snowflake)?.getDmChannelOrNull()!!
+			Log.d(tag, "Successfully fetched reference to user and their private channel.")
 
-				Log.d(tag, "Successful connection to Discord API.")
-				queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
+			queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
 
-				// Loop and send any messages inside the Queue.
-				while (true) {
-					if (queue.isNotEmpty()) {
-						val message = queue.remove()
-						dmChannel.createMessage(message)
+			// Loop and send any messages inside the Queue.
+			while (true) {
+				if (queue.isNotEmpty()) {
+					val message = queue.remove()
+					sendMessage(message)
 
-						if (message.contains("Terminated connection to Discord API")) {
-							break
-						}
+					if (message.contains("Terminated connection to Discord API")) {
+						break
 					}
 				}
-
-				Log.d(tag, "Terminated connection to Discord API.")
-				client.logout()
 			}
 
-			// Login to the Discord API. This will block this Thread but will allow the onReadyEvent listener to continue running.
-			client.login()
+			Log.d(tag, "Terminated connection to Discord API.")
+			disconnectClient()
 		} catch (e: Exception) {
-			Log.d(tag, "Failed to initialize Kord client: ${e.stackTraceToString()}")
+			Log.e(tag, "Failed to initialize JDA client: ${e.stackTraceToString()}")
 			disconnectClient()
 		}
 	}

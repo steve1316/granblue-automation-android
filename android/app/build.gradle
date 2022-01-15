@@ -252,8 +252,8 @@ dependencies {
     // AppUpdater for notifying users when there is a new update available.
     implementation 'com.github.javiersantos:AppUpdater:2.7'
 
-    // Kord for Discord integration.
-    implementation("dev.kord:kord-core:0.7.4")
+    // Javacord for Discord integration.
+    implementation 'org.javacord:javacord:3.3.2'
 
     // Klaxon to parse JSON data files.
     implementation 'com.beust:klaxon:5.5'
