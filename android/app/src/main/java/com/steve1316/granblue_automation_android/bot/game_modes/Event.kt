@@ -24,14 +24,14 @@ class Event(private val game: Game, private val missionName: String) {
 			} else {
 				game.printToLog("\n[EVENT] Detected Event Nightmare. Starting it now...", tag = tag)
 
-				game.printToLog("\n********************************************************************************", tag = tag)
-				game.printToLog("********************************************************************************", tag = tag)
+				game.printToLog("\n********************", tag = tag)
+				game.printToLog("********************", tag = tag)
 				game.printToLog("[EVENT] Event Nightmare", tag = tag)
 				game.printToLog("[EVENT] Event Nightmare Summons: ${game.configData.nightmareSummons}", tag = tag)
 				game.printToLog("[EVENT] Event Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
 				game.printToLog("[EVENT] Event Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
-				game.printToLog("********************************************************************************", tag = tag)
-				game.printToLog("\n********************************************************************************", tag = tag)
+				game.printToLog("********************", tag = tag)
+				game.printToLog("\n********************", tag = tag)
 
 				// Tap the "Play Next" button to head to the Summon Selection screen.
 				game.findAndClickButton("play_next")

@@ -718,16 +718,16 @@ class Game(myContext: Context) {
 
 		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
-				printToLog("\n************************************************************")
-				printToLog("************************************************************")
+				printToLog("\n********************")
+				printToLog("********************")
 				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
 				printToLog("[INFO] Mission: ${configData.missionName}")
 				printToLog("[INFO] Summons: ${configData.summonList}")
 				printToLog("[INFO] # of ${configData.itemName} gained this run: $amountGained")
 				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed + amountGained}/${configData.itemAmount}")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
-				printToLog("************************************************************")
-				printToLog("************************************************************")
+				printToLog("********************")
+				printToLog("********************")
 
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
@@ -742,14 +742,14 @@ class Game(myContext: Context) {
 					DiscordUtils.queue.add(discordString)
 				}
 			} else {
-				printToLog("\n************************************************************")
-				printToLog("************************************************************")
+				printToLog("\n********************")
+				printToLog("********************")
 				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
 				printToLog("[INFO] Mission: ${configData.missionName}")
 				printToLog("[INFO] Summons: ${configData.summonList}")
 				printToLog("[INFO] # of runs completed: $amountOfRuns / ${configData.itemAmount}")
-				printToLog("************************************************************")
-				printToLog("************************************************************")
+				printToLog("********************")
+				printToLog("********************")
 
 				// Construct the message for the Discord private DM.
 				val discordString = if (amountOfRuns >= configData.itemAmount) {
@@ -762,16 +762,16 @@ class Game(myContext: Context) {
 			}
 		} else if (isPendingBattle && amountGained > 0 && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
-				printToLog("\n************************************************************")
-				printToLog("************************************************************")
+				printToLog("\n********************")
+				printToLog("********************")
 				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
 				printToLog("[INFO] Mission: ${configData.missionName}")
 				printToLog("[INFO] Summons: ${configData.summonList}")
 				printToLog("[INFO] # of ${configData.itemName} gained from this Pending Battle: $amountGained")
 				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed + amountGained}/${configData.itemAmount}")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
-				printToLog("************************************************************")
-				printToLog("************************************************************")
+				printToLog("********************")
+				printToLog("********************")
 
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
@@ -953,19 +953,19 @@ class Game(myContext: Context) {
 		}
 
 		if (configData.itemName != "EXP") {
-			printToLog("\n############################################################")
-			printToLog("############################################################")
+			printToLog("\n####################")
+			printToLog("####################")
 			printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.")
 			printToLog("[FARM] Farming ${configData.itemAmount}x ${configData.itemName} at ${configData.missionName}.")
-			printToLog("############################################################")
-			printToLog("############################################################")
+			printToLog("####################")
+			printToLog("####################")
 		} else {
-			printToLog("\n############################################################")
-			printToLog("############################################################")
+			printToLog("\n####################")
+			printToLog("####################")
 			printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.")
 			printToLog("[FARM] Doing ${configData.itemAmount}x runs for ${configData.itemName} at ${configData.missionName}.")
-			printToLog("############################################################")
-			printToLog("############################################################")
+			printToLog("####################")
+			printToLog("####################")
 		}
 
 		var firstRun = true
@@ -1003,11 +1003,11 @@ class Game(myContext: Context) {
 			}
 		}
 
-		printToLog("\n************************************************************")
-		printToLog("************************************************************")
+		printToLog("\n********************")
+		printToLog("********************")
 		printToLog("[INFO] Farming Mode has ended")
-		printToLog("************************************************************")
-		printToLog("************************************************************")
+		printToLog("********************")
+		printToLog("********************")
 
 		return true
 	}

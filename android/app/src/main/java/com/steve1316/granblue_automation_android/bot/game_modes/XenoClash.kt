@@ -23,14 +23,14 @@ class XenoClash(private val game: Game, private val missionName: String) {
 			} else {
 				game.printToLog("\n[XENO] Detected Event Nightmare. Starting it now...", tag = tag)
 
-				game.printToLog("\n********************************************************************************", tag = tag)
-				game.printToLog("********************************************************************************", tag = tag)
+				game.printToLog("\n********************", tag = tag)
+				game.printToLog("********************", tag = tag)
 				game.printToLog("[XENO] Xeno Clash Nightmare", tag = tag)
 				game.printToLog("[XENO] Xeno Clash Nightmare Summons: ${game.configData.nightmareSummons}", tag = tag)
 				game.printToLog("[XENO] Xeno Clash Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
 				game.printToLog("[XENO] Xeno Clash Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
-				game.printToLog("********************************************************************************", tag = tag)
-				game.printToLog("\n********************************************************************************", tag = tag)
+				game.printToLog("********************", tag = tag)
+				game.printToLog("\n********************", tag = tag)
 
 				// Tap the "Play Next" button to head to the Summon Selection screen.
 				game.findAndClickButton("play_next")

@@ -17,14 +17,14 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
 			game.printToLog("\n[ROTB] Detected Extreme+. Starting it now...", tag = tag)
 
-			game.printToLog("\n********************************************************************************", tag = tag)
-			game.printToLog("********************************************************************************", tag = tag)
+			game.printToLog("\n********************", tag = tag)
+			game.printToLog("********************", tag = tag)
 			game.printToLog("[ROTB] Rise of the Beasts Extreme+", tag = tag)
 			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Summons: ${game.configData.nightmareSummons}", tag = tag)
 			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
 			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
-			game.printToLog("********************************************************************************", tag = tag)
-			game.printToLog("\n********************************************************************************", tag = tag)
+			game.printToLog("********************", tag = tag)
+			game.printToLog("\n********************", tag = tag)
 
 			// Tap the "Play Next" button to head to the Summon Selection screen.
 			game.findAndClickButton("play_next")

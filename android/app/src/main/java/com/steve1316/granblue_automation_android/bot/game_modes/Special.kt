@@ -19,14 +19,14 @@ class Special(private val game: Game, private val mapName: String, private val m
 		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
 			game.printToLog("\n[D.HALO] Detected Dimensional Halo. Starting it now...", tag = tag)
 
-			game.printToLog("\n********************************************************************************", tag = tag)
-			game.printToLog("********************************************************************************", tag = tag)
+			game.printToLog("\n********************", tag = tag)
+			game.printToLog("********************", tag = tag)
 			game.printToLog("[D.HALO] Dimensional Halo", tag = tag)
 			game.printToLog("[D.HALO] Dimensional Halo Summons: ${game.configData.nightmareSummons}", tag = tag)
 			game.printToLog("[D.HALO] Dimensional Halo Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
 			game.printToLog("[D.HALO] Dimensional Halo Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
-			game.printToLog("********************************************************************************", tag = tag)
-			game.printToLog("\n********************************************************************************", tag = tag)
+			game.printToLog("********************", tag = tag)
+			game.printToLog("\n********************", tag = tag)
 
 			// Tap the "Play Next" button to head to the Summon Selection screen.
 			game.findAndClickButton("play_next")
