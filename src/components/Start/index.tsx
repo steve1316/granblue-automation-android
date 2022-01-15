@@ -55,6 +55,9 @@ const Start = () => {
                 .finally(() => {
                     handleReady()
                 })
+        } else {
+            // Perform ready check upon loading up the settings on a cold boot.
+            handleReady()
         }
     }
 
