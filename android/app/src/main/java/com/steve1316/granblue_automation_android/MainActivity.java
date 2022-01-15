@@ -1,6 +1,7 @@
 package com.steve1316.granblue_automation_android;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
@@ -11,12 +12,20 @@ import com.zoontek.rnbootsplash.RNBootSplash;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.util.Locale;
+
 public class MainActivity extends ReactActivity {
     public static final String loggerTag = "[GAA]";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set application locale to combat cases where user's language uses commas instead of decimal points for floating numbers.
+        Configuration config = this.getResources().getConfiguration();
+        Locale locale = new Locale("en");
+        Locale.setDefault(locale);
+        this.getResources().updateConfiguration(config, this.getResources().getDisplayMetrics());
 
         // Set up the app updater to check for the latest update from GitHub.
         new AppUpdater(this)
