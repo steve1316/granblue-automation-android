@@ -10,11 +10,11 @@ interface Props {
     iconBorderColor?: string
     iconCheckedColor?: string
     iconUncheckedColor?: string
-    state: boolean
-    updateState: React.Dispatch<React.SetStateAction<boolean>>
+    isChecked: boolean
+    onPress?: (checked: boolean) => void
 }
 
-const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBorderColor = "red", iconCheckedColor = "red", iconUncheckedColor = "white", state, updateState }) => {
+const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBorderColor = "red", iconCheckedColor = "red", iconUncheckedColor = "white", isChecked, onPress }) => {
     const styles = StyleSheet.create({
         checkboxContainer: {
             marginVertical: 5,
@@ -41,9 +41,9 @@ const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBord
                     color: "#000",
                 }}
                 style={styles.checkboxContainer}
-                isChecked={state}
+                isChecked={isChecked}
                 disableBuiltInState={true}
-                onPress={() => updateState(!state)}
+                onPress={onPress}
             />
             {subtitle !== "" ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
