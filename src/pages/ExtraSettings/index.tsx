@@ -10,7 +10,6 @@ import { Picker } from "@react-native-picker/picker"
 import RNFS from "react-native-fs"
 import DocumentPicker from "react-native-document-picker"
 import { BotStateContext } from "../../context/BotStateContext"
-import { CombatScript } from "../Settings"
 import CustomButton from "../../components/CustomButton"
 import TransferList from "../../components/TransferList"
 import { MessageLogContext } from "../../context/MessageLogContext"
@@ -42,42 +41,6 @@ const styles = StyleSheet.create({
 
 const ExtraSettings = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
-    const [firstTime, setFirstTime] = useState<boolean>(true)
-
-    // Twitter Settings
-    const [twitterAPIKey, setTwitterAPIKey] = useState<string>("")
-    const [twitterAPIKeySecret, setTwitterAPIKeySecret] = useState<string>("")
-    const [twitterAccessToken, setTwitterAccessToken] = useState<string>("")
-    const [twitterAccessTokenSecret, setTwitterAccessTokenSecret] = useState<string>("")
-
-    // Discord Settings
-    const [enableDiscord, setEnableDiscord] = useState<boolean>(false)
-    const [discordToken, setDiscordToken] = useState<string>("")
-    const [discordUserID, setDiscordUserID] = useState<string>("")
-
-    // Configuration Settings
-    const [debugMode, setDebugMode] = useState<boolean>(false)
-    const [enableDelayBetweenRuns, setEnableDelayBetweenRuns] = useState<boolean>(false)
-    const [delayBetweenRuns, setDelayBetweenRuns] = useState<number>(5)
-    const [randomizedDelayBetweenRuns, setRandomizedDelayBetweenRuns] = useState<[number, number]>([5, 15])
-    const [enableRandomizedDelayBetweenRuns, setEnableRandomizedDelayBetweenRuns] = useState<boolean>(false)
-    const [enableAutoExitRaid, setEnableAutoExitRaid] = useState<boolean>(false)
-    const [autoExitRaidMinutes, setAutoExitRaidsMinutes] = useState<number>(1)
-    const [enableNoTimeout, setEnableNoTimeout] = useState<boolean>(false)
-    const [enableDelayTap, setEnableDelayTap] = useState<boolean>(false)
-    const [delayTapMilliseconds, setDelayTapMilliseconds] = useState<number>(1000)
-
-    // Nightmare Settings
-    const [enableCustomNightmareSettings, setEnableCustomNightmareSettings] = useState<boolean>(false)
-    const [nightmareCombatScript, setNightmareCombatScript] = useState<CombatScript>({ name: "", script: [] })
-    const [nightmareGroupNumber, setNightmareGroupNumber] = useState<number>(1)
-    const [nightmarePartyNumber, setNightmarePartyNumber] = useState<number>(1)
-
-    // Device Settings
-    const [confidence, setConfidence] = useState<number>(80)
-    const [confidenceAll, setConfidenceAll] = useState<number>(80)
-    const [customScale, setCustomScale] = useState<number>(1.0)
-    const [enableTestForHomeScreen, setEnableTestForHomeScreen] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
@@ -85,122 +48,6 @@ const ExtraSettings = () => {
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // Callbacks
-
-    // Load state from context to local.
-    useEffect(() => {
-        setTwitterAPIKey(bsc.settings.twitter.twitterAPIKey)
-        setTwitterAPIKeySecret(bsc.settings.twitter.twitterAPIKeySecret)
-        setTwitterAccessToken(bsc.settings.twitter.twitterAccessToken)
-        setTwitterAccessTokenSecret(bsc.settings.twitter.twitterAccessTokenSecret)
-        setEnableDiscord(bsc.settings.discord.enableDiscordNotifications)
-        setDiscordToken(bsc.settings.discord.discordToken)
-        setDiscordUserID(bsc.settings.discord.discordUserID)
-        setDebugMode(bsc.settings.game.debugMode)
-        setEnableDelayBetweenRuns(bsc.settings.configuration.enableDelayBetweenRuns)
-        setDelayBetweenRuns(bsc.settings.configuration.delayBetweenRuns)
-        setEnableRandomizedDelayBetweenRuns(bsc.settings.configuration.enableRandomizedDelayBetweenRuns)
-        setRandomizedDelayBetweenRuns([bsc.settings.configuration.delayBetweenRunsLowerBound, bsc.settings.configuration.delayBetweenRunsUpperBound])
-        setEnableAutoExitRaid(bsc.settings.raid.enableAutoExitRaid)
-        setAutoExitRaidsMinutes(bsc.settings.raid.timeAllowedUntilAutoExitRaid)
-        setEnableNoTimeout(bsc.settings.raid.enableNoTimeout)
-        setEnableDelayTap(bsc.settings.android.enableDelayTap)
-        setDelayTapMilliseconds(bsc.settings.android.delayTapMilliseconds)
-        setEnableCustomNightmareSettings(bsc.settings.nightmare.enableCustomNightmareSettings)
-        setNightmareCombatScript({ name: bsc.settings.nightmare.nightmareCombatScriptName, script: bsc.settings.nightmare.nightmareCombatScript })
-        setNightmareGroupNumber(bsc.settings.nightmare.nightmareGroupNumber)
-        setNightmarePartyNumber(bsc.settings.nightmare.nightmarePartyNumber)
-        setConfidence(bsc.settings.android.confidence)
-        setConfidenceAll(bsc.settings.android.confidenceAll)
-        setCustomScale(bsc.settings.android.customScale)
-        setEnableTestForHomeScreen(bsc.settings.android.enableTestForHomeScreen)
-        setFirstTime(false)
-    }, [])
-
-    // Save settings to context state.
-    useEffect(() => {
-        if (!firstTime) {
-            mlc.setMessageLog([])
-            mlc.setAsyncMessages([])
-
-            bsc.setSettings({
-                ...bsc.settings,
-                game: {
-                    ...bsc.settings.game,
-                    debugMode: debugMode,
-                },
-                twitter: {
-                    ...bsc.settings.twitter,
-                    twitterAPIKey: twitterAPIKey,
-                    twitterAPIKeySecret: twitterAPIKeySecret,
-                    twitterAccessToken: twitterAccessToken,
-                    twitterAccessTokenSecret: twitterAccessTokenSecret,
-                },
-                discord: {
-                    ...bsc.settings.discord,
-                    enableDiscordNotifications: enableDiscord,
-                    discordToken: discordToken,
-                    discordUserID: discordUserID,
-                },
-                configuration: {
-                    ...bsc.settings.configuration,
-                    enableDelayBetweenRuns: enableDelayBetweenRuns,
-                    delayBetweenRuns: delayBetweenRuns,
-                    enableRandomizedDelayBetweenRuns: enableRandomizedDelayBetweenRuns,
-                    delayBetweenRunsLowerBound: randomizedDelayBetweenRuns[0],
-                    delayBetweenRunsUpperBound: randomizedDelayBetweenRuns[1],
-                },
-                raid: {
-                    ...bsc.settings.raid,
-                    enableAutoExitRaid: enableAutoExitRaid,
-                    timeAllowedUntilAutoExitRaid: autoExitRaidMinutes,
-                    enableNoTimeout: enableNoTimeout,
-                },
-                nightmare: {
-                    ...bsc.settings.nightmare,
-                    enableCustomNightmareSettings: enableCustomNightmareSettings,
-                    nightmareCombatScriptName: nightmareCombatScript.name,
-                    nightmareCombatScript: nightmareCombatScript.script,
-                    nightmareGroupNumber: nightmareGroupNumber,
-                    nightmarePartyNumber: nightmarePartyNumber,
-                },
-                android: {
-                    ...bsc.settings.android,
-                    enableDelayTap: enableDelayTap,
-                    delayTapMilliseconds: delayTapMilliseconds,
-                    confidence: confidence,
-                    confidenceAll: confidenceAll,
-                    customScale: customScale,
-                    enableTestForHomeScreen: enableTestForHomeScreen,
-                },
-            })
-        }
-    }, [
-        twitterAPIKey,
-        twitterAPIKeySecret,
-        twitterAccessToken,
-        twitterAccessTokenSecret,
-        enableDiscord,
-        discordToken,
-        discordUserID,
-        debugMode,
-        enableDelayBetweenRuns,
-        delayBetweenRuns,
-        enableRandomizedDelayBetweenRuns,
-        randomizedDelayBetweenRuns,
-        enableAutoExitRaid,
-        autoExitRaidMinutes,
-        enableNoTimeout,
-        enableCustomNightmareSettings,
-        nightmareCombatScript,
-        nightmareGroupNumber,
-        nightmarePartyNumber,
-        enableDelayTap,
-        delayTapMilliseconds,
-        confidence,
-        confidenceAll,
-        customScale,
-        enableTestForHomeScreen,
-    ])
 
     const renderNightmareSettings = () => {
         if (
@@ -232,11 +79,13 @@ const ExtraSettings = () => {
                     <Checkbox
                         text={`Enable Custom Settings for\n${title}`}
                         subtitle={`Enable customizing individual settings for ${title}`}
-                        state={enableCustomNightmareSettings}
-                        updateState={setEnableCustomNightmareSettings}
+                        isChecked={bsc.settings.nightmare.enableCustomNightmareSettings}
+                        onPress={() =>
+                            bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, enableCustomNightmareSettings: !bsc.settings.nightmare.enableCustomNightmareSettings } })
+                        }
                     />
 
-                    {enableCustomNightmareSettings ? (
+                    {bsc.settings.nightmare.enableCustomNightmareSettings ? (
                         <View style={{ marginTop: -10, marginLeft: 10, marginBottom: 10, marginRight: 10 }}>
                             <CustomButton
                                 title={bsc.settings.nightmare.nightmareCombatScriptName === "" ? "Select Nightmare Combat Script" : `Selected: ${bsc.settings.nightmare.nightmareCombatScriptName}`}
@@ -303,8 +152,8 @@ const ExtraSettings = () => {
                                 <View style={{ width: Dimensions.get("window").width * 0.3 }}>
                                     <Text>Group #:</Text>
                                     <Picker
-                                        selectedValue={nightmareGroupNumber}
-                                        onValueChange={(value) => setNightmareGroupNumber(value)}
+                                        selectedValue={bsc.settings.nightmare.nightmareGroupNumber}
+                                        onValueChange={(value) => bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, nightmareGroupNumber: value } })}
                                         mode="dropdown"
                                         style={{ color: "#000" }}
                                         dropdownIconColor={"#000"}
@@ -319,8 +168,8 @@ const ExtraSettings = () => {
                                 <View style={{ width: Dimensions.get("window").width * 0.3 }}>
                                     <Text>Party #:</Text>
                                     <Picker
-                                        selectedValue={nightmarePartyNumber}
-                                        onValueChange={(value) => setNightmarePartyNumber(value)}
+                                        selectedValue={bsc.settings.nightmare.nightmarePartyNumber}
+                                        onValueChange={(value) => bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, nightmarePartyNumber: value } })}
                                         mode="dropdown"
                                         style={{ color: "#000" }}
                                         dropdownIconColor={"#000"}
@@ -354,15 +203,33 @@ const ExtraSettings = () => {
                     iconName="twitter"
                     iconColor="#1da1f2"
                 />
-                <Input label="Twitter API Key" multiline containerStyle={{ marginLeft: -10 }} value={twitterAPIKey} onChangeText={(value: string) => setTwitterAPIKey(value)} />
-                <Input label="Twitter API Key Secret" multiline containerStyle={{ marginLeft: -10 }} value={twitterAPIKeySecret} onChangeText={(value: string) => setTwitterAPIKeySecret(value)} />
-                <Input label="Twitter Access Token" multiline containerStyle={{ marginLeft: -10 }} value={twitterAccessToken} onChangeText={(value: string) => setTwitterAccessToken(value)} />
+                <Input
+                    label="Twitter API Key"
+                    multiline
+                    containerStyle={{ marginLeft: -10 }}
+                    value={bsc.settings.twitter.twitterAPIKey}
+                    onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, twitter: { ...bsc.settings.twitter, twitterAPIKey: value } })}
+                />
+                <Input
+                    label="Twitter API Key Secret"
+                    multiline
+                    containerStyle={{ marginLeft: -10 }}
+                    value={bsc.settings.twitter.twitterAPIKeySecret}
+                    onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, twitter: { ...bsc.settings.twitter, twitterAPIKeySecret: value } })}
+                />
+                <Input
+                    label="Twitter Access Token"
+                    multiline
+                    containerStyle={{ marginLeft: -10 }}
+                    value={bsc.settings.twitter.twitterAccessToken}
+                    onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, twitter: { ...bsc.settings.twitter, twitterAccessToken: value } })}
+                />
                 <Input
                     label="Twitter Access Token Secret"
                     multiline
                     containerStyle={{ marginLeft: -10 }}
-                    value={twitterAccessTokenSecret}
-                    onChangeText={(value: string) => setTwitterAccessTokenSecret(value)}
+                    value={bsc.settings.twitter.twitterAccessTokenSecret}
+                    onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, twitter: { ...bsc.settings.twitter, twitterAccessTokenSecret: value } })}
                 />
 
                 <TitleDivider
@@ -375,13 +242,25 @@ const ExtraSettings = () => {
                 <Checkbox
                     text="Enable Discord Notifications"
                     subtitle="Enable notifications of loot drops and errors encountered by the bot via Discord DMs."
-                    state={enableDiscord}
-                    updateState={setEnableDiscord}
+                    isChecked={bsc.settings.discord.enableDiscordNotifications}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, discord: { ...bsc.settings.discord, enableDiscordNotifications: !bsc.settings.discord.enableDiscordNotifications } })}
                 />
-                {enableDiscord ? (
+                {bsc.settings.discord.enableDiscordNotifications ? (
                     <View>
-                        <Input label="Discord Token" multiline containerStyle={{ marginLeft: -10 }} value={discordToken} onChangeText={(value: string) => setDiscordToken(value)} />
-                        <Input label="Discord User ID" multiline containerStyle={{ marginLeft: -10 }} value={discordUserID} onChangeText={(value: string) => setDiscordUserID(value)} />
+                        <Input
+                            label="Discord Token"
+                            multiline
+                            containerStyle={{ marginLeft: -10 }}
+                            value={bsc.settings.discord.discordToken}
+                            onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, discord: { ...bsc.settings.discord, discordToken: value } })}
+                        />
+                        <Input
+                            label="Discord User ID"
+                            multiline
+                            containerStyle={{ marginLeft: -10 }}
+                            value={bsc.settings.discord.discordUserID}
+                            onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, discord: { ...bsc.settings.discord, discordUserID: value } })}
+                        />
                     </View>
                 ) : null}
 
@@ -389,18 +268,18 @@ const ExtraSettings = () => {
                 <Checkbox
                     text="Enable Debug Mode"
                     subtitle={`Enables debugging messages to show up in the log.\n\nIt will also enable saving screenshots to internal storage for debugging purposes. As such, it will increase average image processing time by ~500ms per operation.`}
-                    state={debugMode}
-                    updateState={setDebugMode}
+                    isChecked={bsc.settings.game.debugMode}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, debugMode: !bsc.settings.game.debugMode } })}
                 />
                 <Checkbox
                     text="Enable Auto Exit Raid"
                     subtitle="Enables backing out of a Raid without retreating while under Semi/Full Auto after a certain period of time has passed."
-                    state={enableAutoExitRaid}
-                    updateState={setEnableAutoExitRaid}
+                    isChecked={bsc.settings.raid.enableAutoExitRaid}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, enableAutoExitRaid: !bsc.settings.raid.enableAutoExitRaid } })}
                 />
-                {enableAutoExitRaid ? (
+                {bsc.settings.raid.enableAutoExitRaid ? (
                     <View>
-                        <Text style={{ marginBottom: 10 }}>Max Time Allowed for Semi/Full Auto: {autoExitRaidMinutes} minutes</Text>
+                        <Text style={{ marginBottom: 10 }}>Max Time Allowed for Semi/Full Auto: {bsc.settings.raid.timeAllowedUntilAutoExitRaid} minutes</Text>
                         <NumericInput
                             type="plus-minus"
                             leftButtonBackgroundColor="#eb5056"
@@ -409,17 +288,22 @@ const ExtraSettings = () => {
                             valueType="integer"
                             minValue={1}
                             maxValue={15}
-                            value={autoExitRaidMinutes}
-                            onChange={(value) => setAutoExitRaidsMinutes(value)}
+                            value={bsc.settings.raid.timeAllowedUntilAutoExitRaid}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, timeAllowedUntilAutoExitRaid: value } })}
                             containerStyle={{ marginBottom: 10, alignSelf: "center" }}
                             totalWidth={Dimensions.get("screen").width * 0.9}
                             totalHeight={50}
                         />
                     </View>
                 ) : null}
-                <Checkbox text="Enable No Timeout" subtitle="Enable no timeouts when attempting to farm Raids that appear infrequently." state={enableNoTimeout} updateState={setEnableNoTimeout} />
+                <Checkbox
+                    text="Enable No Timeout"
+                    subtitle="Enable no timeouts when attempting to farm Raids that appear infrequently."
+                    isChecked={bsc.settings.raid.enableNoTimeout}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, enableNoTimeout: !bsc.settings.raid.enableNoTimeout } })}
+                />
 
-                {!enableRandomizedDelayBetweenRuns ? (
+                {!bsc.settings.configuration.enableRandomizedDelayBetweenRuns ? (
                     <View>
                         <BouncyCheckbox
                             size={30}
@@ -432,29 +316,29 @@ const ExtraSettings = () => {
                                 color: "#000",
                             }}
                             style={{ marginVertical: 10, marginLeft: 2 }}
-                            isChecked={enableDelayBetweenRuns}
+                            isChecked={bsc.settings.configuration.enableDelayBetweenRuns}
                             disableBuiltInState={true}
                             onPress={() => {
-                                if (!enableDelayBetweenRuns && enableRandomizedDelayBetweenRuns) {
-                                    setEnableRandomizedDelayBetweenRuns(false)
+                                if (!bsc.settings.configuration.enableDelayBetweenRuns && bsc.settings.configuration.enableRandomizedDelayBetweenRuns) {
+                                    bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, enableRandomizedDelayBetweenRuns: false } })
                                 }
 
-                                setEnableDelayBetweenRuns(!enableDelayBetweenRuns)
+                                bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, enableDelayBetweenRuns: !bsc.settings.configuration.enableDelayBetweenRuns } })
                             }}
                         />
                         <Text style={{ marginBottom: 5, marginLeft: 2, fontSize: 12, opacity: 0.7 }}>Enable delay in seconds between runs to serve as a resting period.</Text>
                     </View>
                 ) : null}
 
-                {enableDelayBetweenRuns ? (
+                {bsc.settings.configuration.enableDelayBetweenRuns ? (
                     <View>
-                        <Text style={{ marginBottom: 10 }}>Delay: {delayBetweenRuns}</Text>
+                        <Text style={{ marginBottom: 10 }}>Delay: {bsc.settings.configuration.delayBetweenRuns}</Text>
                         <Slider
-                            value={delayBetweenRuns}
+                            value={bsc.settings.configuration.delayBetweenRuns}
                             minimumValue={5}
                             maximumValue={60}
                             step={1}
-                            onSlidingComplete={(value) => setDelayBetweenRuns(value)}
+                            onSlidingComplete={(value) => bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, delayBetweenRuns: value } })}
                             minimumTrackTintColor="black"
                             maximumTrackTintColor="gray"
                             thumbTintColor="red"
@@ -465,7 +349,7 @@ const ExtraSettings = () => {
                     </View>
                 ) : null}
 
-                {!enableDelayBetweenRuns ? (
+                {!bsc.settings.configuration.enableDelayBetweenRuns ? (
                     <View>
                         <BouncyCheckbox
                             size={30}
@@ -478,32 +362,40 @@ const ExtraSettings = () => {
                                 color: "#000",
                             }}
                             style={{ marginVertical: 10, marginLeft: 2 }}
-                            isChecked={enableRandomizedDelayBetweenRuns}
+                            isChecked={bsc.settings.configuration.enableRandomizedDelayBetweenRuns}
                             disableBuiltInState={true}
                             onPress={() => {
-                                if (!enableRandomizedDelayBetweenRuns && enableDelayBetweenRuns) {
-                                    setEnableDelayBetweenRuns(false)
+                                if (!bsc.settings.configuration.enableRandomizedDelayBetweenRuns && bsc.settings.configuration.enableDelayBetweenRuns) {
+                                    bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, enableDelayBetweenRuns: false } })
                                 }
 
-                                setEnableRandomizedDelayBetweenRuns(!enableRandomizedDelayBetweenRuns)
+                                bsc.setSettings({
+                                    ...bsc.settings,
+                                    configuration: { ...bsc.settings.configuration, enableRandomizedDelayBetweenRuns: !bsc.settings.configuration.enableRandomizedDelayBetweenRuns },
+                                })
                             }}
                         />
                         <Text style={{ marginBottom: 5, marginLeft: 2, fontSize: 12, opacity: 0.7 }}>Enable randomized delay in seconds between runs to serve as a resting period.</Text>
                     </View>
                 ) : null}
 
-                {enableRandomizedDelayBetweenRuns ? (
+                {bsc.settings.configuration.enableRandomizedDelayBetweenRuns ? (
                     <View>
                         <Text style={{ marginBottom: 10 }}>
-                            Delay between {randomizedDelayBetweenRuns[0]}-{randomizedDelayBetweenRuns[1]} seconds
+                            Delay between {bsc.settings.configuration.delayBetweenRunsLowerBound}-{bsc.settings.configuration.delayBetweenRunsUpperBound} seconds
                         </Text>
                         <RangeSlider
-                            range={randomizedDelayBetweenRuns}
+                            range={[bsc.settings.configuration.delayBetweenRunsLowerBound, bsc.settings.configuration.delayBetweenRunsUpperBound]}
                             minimumValue={5}
                             maximumValue={60}
                             step={1}
                             minimumRange={1}
-                            onSlidingComplete={(values) => setRandomizedDelayBetweenRuns(values)}
+                            onSlidingComplete={(values) =>
+                                bsc.setSettings({
+                                    ...bsc.settings,
+                                    configuration: { ...bsc.settings.configuration, delayBetweenRunsLowerBound: values[0], delayBetweenRunsUpperBound: values[1] },
+                                })
+                            }
                             outboundColor="gray"
                             inboundColor="black"
                             thumbTintColor="red"
@@ -517,18 +409,18 @@ const ExtraSettings = () => {
                 <Checkbox
                     text="Enable Additional Delay Before Tap"
                     subtitle="Enables a range of delay before each tap in milliseconds (ms). The base point will be used to create a range from -100ms to +100ms using it to determine the additional delay."
-                    state={enableDelayTap}
-                    updateState={setEnableDelayTap}
+                    isChecked={bsc.settings.android.enableDelayTap}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, enableDelayTap: !bsc.settings.android.enableDelayTap } })}
                 />
-                {enableDelayTap ? (
+                {bsc.settings.android.enableDelayTap ? (
                     <View>
-                        <Text style={{ marginBottom: 10 }}>Set Base Point for Additional Delay: {delayTapMilliseconds} milliseconds</Text>
+                        <Text style={{ marginBottom: 10 }}>Set Base Point for Additional Delay: {bsc.settings.android.delayTapMilliseconds} milliseconds</Text>
                         <Slider
-                            value={delayTapMilliseconds}
-                            minimumValue={100}
+                            value={bsc.settings.android.delayTapMilliseconds}
+                            minimumValue={1000}
                             maximumValue={5000}
                             step={100}
-                            onSlidingComplete={(value) => setDelayTapMilliseconds(value)}
+                            onSlidingComplete={(value) => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, delayTapMilliseconds: value } })}
                             minimumTrackTintColor="black"
                             maximumTrackTintColor="gray"
                             thumbTintColor="red"
@@ -545,7 +437,7 @@ const ExtraSettings = () => {
                     hasIcon={true}
                     iconName="tablet-cellphone"
                 />
-                <Text style={{ marginBottom: 10 }}>Set Confidence Level: {confidence}%</Text>
+                <Text style={{ marginBottom: 10 }}>Set Confidence Level: {bsc.settings.android.confidence}%</Text>
                 <NumericInput
                     type="plus-minus"
                     leftButtonBackgroundColor="#eb5056"
@@ -554,13 +446,13 @@ const ExtraSettings = () => {
                     valueType="integer"
                     minValue={1}
                     maxValue={100}
-                    value={confidence}
-                    onChange={(value) => setConfidence(value)}
+                    value={bsc.settings.android.confidence}
+                    onChange={(value) => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, confidence: value } })}
                     containerStyle={{ marginBottom: 10, alignSelf: "center" }}
                     totalWidth={Dimensions.get("screen").width * 0.9}
                     totalHeight={50}
                 />
-                <Text style={{ marginBottom: 10 }}>Set Confidence Level for Multiple Matching: {confidenceAll}%</Text>
+                <Text style={{ marginBottom: 10 }}>Set Confidence Level for Multiple Matching: {bsc.settings.android.confidenceAll}%</Text>
                 <NumericInput
                     type="plus-minus"
                     leftButtonBackgroundColor="#eb5056"
@@ -569,13 +461,13 @@ const ExtraSettings = () => {
                     valueType="integer"
                     minValue={1}
                     maxValue={100}
-                    value={confidenceAll}
-                    onChange={(value) => setConfidenceAll(value)}
+                    value={bsc.settings.android.confidenceAll}
+                    onChange={(value) => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, confidenceAll: value } })}
                     containerStyle={{ marginBottom: 10, alignSelf: "center" }}
                     totalWidth={Dimensions.get("screen").width * 0.9}
                     totalHeight={50}
                 />
-                <Text>Set Custom Scale: {customScale % 1 === 0 ? `${customScale}.0` : customScale}</Text>
+                <Text>Set Custom Scale: {bsc.settings.android.customScale % 1 === 0 ? `${bsc.settings.android.customScale}.0` : bsc.settings.android.customScale}</Text>
                 <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>
                     Set the scale at which to resize existing image assets to match what would be shown on your device. Internally supported are 720p, 1080p, 1600p (Portrait) and 2560p (Landscape)
                     mode.
@@ -589,8 +481,8 @@ const ExtraSettings = () => {
                     minValue={0.1}
                     maxValue={5.0}
                     step={0.1}
-                    value={customScale}
-                    onChange={(value) => setCustomScale(value)}
+                    value={bsc.settings.android.customScale}
+                    onChange={(value) => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, customScale: value } })}
                     containerStyle={{ marginBottom: 10, alignSelf: "center" }}
                     totalWidth={Dimensions.get("screen").width * 0.9}
                     totalHeight={50}
@@ -598,8 +490,8 @@ const ExtraSettings = () => {
                 <Checkbox
                     text="Enable Test for Home Screen"
                     subtitle={`Enables test for getting to the Home screen instead of the regular bot process. If the test fails, then it will run a different test to find which scale is appropriate for your device.\n\nUseful for troubleshooting working confidences and scales for device compatibility.`}
-                    state={enableTestForHomeScreen}
-                    updateState={setEnableTestForHomeScreen}
+                    isChecked={bsc.settings.android.enableTestForHomeScreen}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, enableTestForHomeScreen: !bsc.settings.android.enableTestForHomeScreen } })}
                 />
             </ScrollView>
         </View>

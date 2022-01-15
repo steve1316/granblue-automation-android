@@ -73,9 +73,6 @@ const Settings = () => {
     const [item, setItem] = useState<ValueType | null>("")
     const [mission, setMission] = useState<ValueType | null>("")
     const [map, setMap] = useState<string>("")
-    const [itemAmount, setItemAmount] = useState<number>(1)
-    const [groupNumber, setGroupNumber] = useState<number>(1)
-    const [partyNumber, setPartyNumber] = useState<number>(1)
     const [combatScript, setCombatScript] = useState<CombatScript>({ name: "", script: [] })
     const [enableNightmare, setEnableNightmare] = useState<boolean>(false)
     const [enableLocationIncrementByOne, setEnableLocationIncrementByOne] = useState<boolean>(false)
@@ -117,9 +114,6 @@ const Settings = () => {
         setItem(bsc.settings.game.item)
         setMission(bsc.settings.game.mission)
         setMap(bsc.settings.game.map)
-        setItemAmount(bsc.settings.game.itemAmount)
-        setGroupNumber(bsc.settings.game.groupNumber)
-        setPartyNumber(bsc.settings.game.partyNumber)
         setCombatScript({ name: bsc.settings.game.combatScriptName, script: bsc.settings.game.combatScript })
         setEnableNightmare(bsc.settings.nightmare.enableNightmare)
         setEnableLocationIncrementByOne(bsc.settings.event.enableLocationIncrementByOne)
@@ -172,9 +166,6 @@ const Settings = () => {
                     item: item.toString(),
                     mission: mission.toString(),
                     map: map,
-                    itemAmount: itemAmount,
-                    groupNumber: groupNumber,
-                    partyNumber: partyNumber,
                     combatScriptName: combatScript.name,
                     combatScript: combatScript.script,
                 },
@@ -192,7 +183,7 @@ const Settings = () => {
                 },
             })
         }
-    }, [item, mission, map, itemAmount, groupNumber, partyNumber, combatScript, enableNightmare, enableLocationIncrementByOne, enableStopOnArcarumBoss])
+    }, [item, mission, map, combatScript, enableNightmare, enableLocationIncrementByOne, enableStopOnArcarumBoss])
 
     // Populates the item list based on farming mode.
     useEffect(() => {
@@ -442,7 +433,13 @@ const Settings = () => {
 
                     <View>
                         <Text style={{ color: "#000" }}>Item Amount:</Text>
-                        <Picker selectedValue={itemAmount} onValueChange={(value) => setItemAmount(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
+                        <Picker
+                            selectedValue={bsc.settings.game.itemAmount}
+                            onValueChange={(value) => bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, itemAmount: value } })}
+                            mode="dropdown"
+                            style={{ color: "#000" }}
+                            dropdownIconColor={"#000"}
+                        >
                             {[...Array(999 - 1 + 1).keys()]
                                 .map((x) => x + 1)
                                 .map((value) => {
@@ -472,7 +469,13 @@ const Settings = () => {
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                         <View style={{ width: Dimensions.get("window").width * 0.3 }}>
                             <Text style={{ color: "#000" }}>Group #:</Text>
-                            <Picker selectedValue={groupNumber} onValueChange={(value) => setGroupNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
+                            <Picker
+                                selectedValue={bsc.settings.game.groupNumber}
+                                onValueChange={(value) => bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, groupNumber: value } })}
+                                mode="dropdown"
+                                style={{ color: "#000" }}
+                                dropdownIconColor={"#000"}
+                            >
                                 {[...Array(7 - 1 + 1).keys()]
                                     .map((x) => x + 1)
                                     .map((value) => {
@@ -482,7 +485,13 @@ const Settings = () => {
                         </View>
                         <View style={{ width: Dimensions.get("window").width * 0.3 }}>
                             <Text style={{ color: "#000" }}>Party #:</Text>
-                            <Picker selectedValue={partyNumber} onValueChange={(value) => setPartyNumber(value)} mode="dropdown" style={{ color: "#000" }} dropdownIconColor={"#000"}>
+                            <Picker
+                                selectedValue={bsc.settings.game.partyNumber}
+                                onValueChange={(value) => bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, partyNumber: value } })}
+                                mode="dropdown"
+                                style={{ color: "#000" }}
+                                dropdownIconColor={"#000"}
+                            >
                                 {[...Array(6 - 1 + 1).keys()]
                                     .map((x) => x + 1)
                                     .map((value) => {
