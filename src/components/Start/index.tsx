@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react"
 import RNFS from "react-native-fs"
 import { BotStateContext, defaultSettings, Settings } from "../../context/BotStateContext"
 import { MessageLogContext } from "../../context/MessageLogContext"
+import { useContext, useEffect, useState } from "react"
 
 const Start = () => {
     const [firstTime, setFirstTime] = useState<boolean>(true)

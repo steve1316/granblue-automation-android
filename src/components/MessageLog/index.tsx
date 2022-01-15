@@ -1,6 +1,6 @@
 import React, { useContext } from "react"
-import { StyleSheet, View, ScrollView, Text } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
+import { ScrollView, StyleSheet, Text, View } from "react-native"
 
 const styles = StyleSheet.create({
     logInnerContainer: {

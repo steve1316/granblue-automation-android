@@ -1,5 +1,5 @@
 import React, { FC } from "react"
-import { StyleSheet, GestureResponderEvent, Alert } from "react-native"
+import { Alert, GestureResponderEvent, StyleSheet } from "react-native"
 import { Button } from "react-native-elements/dist/buttons/Button"
 
 interface Props {

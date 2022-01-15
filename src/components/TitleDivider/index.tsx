@@ -1,7 +1,7 @@
-import React, { FC } from "react"
-import { StyleSheet, View } from "react-native"
-import { Divider, Text } from "react-native-elements"
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons"
+import React, { FC } from "react"
+import { Divider, Text } from "react-native-elements"
+import { StyleSheet, View } from "react-native"
 
 interface Props {
     title: string

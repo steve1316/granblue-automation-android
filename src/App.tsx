@@ -1,14 +1,14 @@
-import React from "react"
-import { NavigationContainer } from "@react-navigation/native"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import Ionicons from "react-native-vector-icons/Ionicons"
-import Home from "./pages/Home"
-import Settings from "./pages/Settings"
 import ExtraSettings from "./pages/ExtraSettings"
-import { BotStateProvider } from "./context/BotStateContext"
-import { MessageLogProvider } from "./context/MessageLogContext"
-import Start from "./components/Start"
+import Home from "./pages/Home"
+import Ionicons from "react-native-vector-icons/Ionicons"
+import React from "react"
 import RNBootSplash from "react-native-bootsplash"
+import Settings from "./pages/Settings"
+import Start from "./components/Start"
+import { BotStateProvider } from "./context/BotStateContext"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { MessageLogProvider } from "./context/MessageLogContext"
+import { NavigationContainer } from "@react-navigation/native"
 
 const Tab = createBottomTabNavigator()
 

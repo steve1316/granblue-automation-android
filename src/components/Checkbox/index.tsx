@@ -1,6 +1,6 @@
+import BouncyCheckbox from "react-native-bouncy-checkbox"
 import React, { FC } from "react"
 import { StyleSheet, View } from "react-native"
-import BouncyCheckbox from "react-native-bouncy-checkbox"
 import { Text } from "react-native-elements"
 
 interface Props {
