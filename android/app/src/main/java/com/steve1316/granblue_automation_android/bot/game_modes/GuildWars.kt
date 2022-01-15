@@ -117,7 +117,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 				if (difficulty != "NM150" && game.imageUtils.confirmLocation("guild_wars_nightmare")) {
 					// If today is the first day of Guild Wars, only NM90 is available.
 					when {
-						game.imageUtils.confirmLocation("guild_wars_nightmare_first_day", tries = 1) -> {
+						game.imageUtils.confirmLocation("guild_wars_nightmare_first_day") -> {
 							game.printToLog("[GUILD.WARS] Today is the first day so hosting NM90.", tag = tag)
 							game.findAndClickButton("ok")
 						}
