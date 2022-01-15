@@ -12,7 +12,6 @@ const Start = () => {
     // Load settings if local settings.json file exists in internal storage.
     useEffect(() => {
         loadSettings()
-        setFirstTime(false)
     }, [])
 
     useEffect(() => {
@@ -106,7 +105,10 @@ const Start = () => {
                 }
             })
             .finally(() => {
+                console.log("Read: " + JSON.stringify(newSettings, null, 4))
+
                 bsc.setSettings(newSettings)
+                setFirstTime(false)
             })
     }
 
