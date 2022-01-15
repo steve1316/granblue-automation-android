@@ -341,8 +341,8 @@ const ExtraSettings = () => {
                             onSlidingComplete={(value) => bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, delayBetweenRuns: value } })}
                             minimumTrackTintColor="black"
                             maximumTrackTintColor="gray"
-                            thumbTintColor="red"
-                            thumbSize={20}
+                            thumbTintColor="teal"
+                            thumbSize={25}
                             trackHeight={10}
                             style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
                         />
@@ -398,33 +398,8 @@ const ExtraSettings = () => {
                             }
                             outboundColor="gray"
                             inboundColor="black"
-                            thumbTintColor="red"
-                            thumbSize={30}
-                            trackHeight={10}
-                            style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
-                        />
-                    </View>
-                ) : null}
-
-                <Checkbox
-                    text="Enable Additional Delay Before Tap"
-                    subtitle="Enables a range of delay before each tap in milliseconds (ms). The base point will be used to create a range from -100ms to +100ms using it to determine the additional delay."
-                    isChecked={bsc.settings.android.enableDelayTap}
-                    onPress={() => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, enableDelayTap: !bsc.settings.android.enableDelayTap } })}
-                />
-                {bsc.settings.android.enableDelayTap ? (
-                    <View>
-                        <Text style={{ marginBottom: 10 }}>Set Base Point for Additional Delay: {bsc.settings.android.delayTapMilliseconds} milliseconds</Text>
-                        <Slider
-                            value={bsc.settings.android.delayTapMilliseconds}
-                            minimumValue={1000}
-                            maximumValue={5000}
-                            step={100}
-                            onSlidingComplete={(value) => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, delayTapMilliseconds: value } })}
-                            minimumTrackTintColor="black"
-                            maximumTrackTintColor="gray"
-                            thumbTintColor="red"
-                            thumbSize={20}
+                            thumbTintColor="teal"
+                            thumbSize={25}
                             trackHeight={10}
                             style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
                         />
@@ -487,6 +462,30 @@ const ExtraSettings = () => {
                     totalWidth={Dimensions.get("screen").width * 0.9}
                     totalHeight={50}
                 />
+                <Checkbox
+                    text="Enable Additional Delay Before Tap"
+                    subtitle="Enables a range of delay before each tap in milliseconds (ms). The base point will be used to create a range from -100ms to +100ms using it to determine the additional delay."
+                    isChecked={bsc.settings.android.enableDelayTap}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, enableDelayTap: !bsc.settings.android.enableDelayTap } })}
+                />
+                {bsc.settings.android.enableDelayTap ? (
+                    <View>
+                        <Text style={{ marginBottom: 10 }}>Set Base Point for Additional Delay: {bsc.settings.android.delayTapMilliseconds} milliseconds</Text>
+                        <Slider
+                            value={bsc.settings.android.delayTapMilliseconds}
+                            minimumValue={1000}
+                            maximumValue={5000}
+                            step={100}
+                            onSlidingComplete={(value) => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, delayTapMilliseconds: value } })}
+                            minimumTrackTintColor="black"
+                            maximumTrackTintColor="gray"
+                            thumbTintColor="teal"
+                            thumbSize={25}
+                            trackHeight={10}
+                            style={{ width: "95%", alignSelf: "center", marginBottom: 10 }}
+                        />
+                    </View>
+                ) : null}
                 <Checkbox
                     text="Enable Test for Home Screen"
                     subtitle={`Enables test for getting to the Home screen instead of the regular bot process. If the test fails, then it will run a different test to find which scale is appropriate for your device.\n\nUseful for troubleshooting working confidences and scales for device compatibility.`}
