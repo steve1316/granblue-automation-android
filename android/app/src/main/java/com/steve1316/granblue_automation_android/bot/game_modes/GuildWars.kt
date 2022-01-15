@@ -31,6 +31,8 @@ class GuildWars(private val game: Game, private val missionName: String) {
 
 			game.wait(2.0)
 
+			val raidBattleLocations = game.imageUtils.findAll("event_raid_battle")
+
 			// Remove the difficulty prefix from the mission name.
 			var difficulty = ""
 			when (missionName) {
@@ -62,7 +64,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 				game.printToLog("\n[GUILD.WARS] Now proceeding to farm meat.", tag = tag)
 
 				// Click on the banner to farm meat.
-				game.findAndClickButton("guild_wars_meat")
+				game.gestureUtils.tap(raidBattleLocations[1].x, raidBattleLocations[1].y, "event_raid_battle")
 
 				game.wait(1.0)
 
@@ -102,7 +104,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 
 				// Click on the banner to farm Nightmares.
 				if (difficulty != "NM150") {
-					game.findAndClickButton("guild_wars_nightmare")
+					game.gestureUtils.tap(raidBattleLocations[0].x, raidBattleLocations[0].y, "event_raid_battle")
 				} else {
 					game.printToLog("Hosting NM150 now.", tag = tag)
 					game.findAndClickButton("guild_wars_nightmare_150")
