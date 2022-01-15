@@ -12,7 +12,6 @@ import TransferList from "../../components/TransferList"
 import Checkbox from "../../components/Checkbox"
 import SnackBar from "rn-snackbar-component"
 import Ionicons from "react-native-vector-icons/Ionicons"
-import { MessageLogContext } from "../../context/MessageLogContext"
 
 const styles = StyleSheet.create({
     root: {
@@ -68,18 +67,12 @@ const Settings = () => {
     const [itemList, setItemList] = useState<Item[]>([])
     const [missionList, setMissionList] = useState<Item[]>([])
 
-    // Individual states are necessary as react-native-dropdown-picker requires its setValue state parameter to be set for DropDownPicker.
+    // Certain individual states are necessary as react-native-dropdown-picker requires a setValue state parameter for DropDownPicker.
     const [farmingMode, setFarmingMode] = useState<ValueType | null>("")
     const [item, setItem] = useState<ValueType | null>("")
     const [mission, setMission] = useState<ValueType | null>("")
-    const [map, setMap] = useState<string>("")
-    const [combatScript, setCombatScript] = useState<CombatScript>({ name: "", script: [] })
-    const [enableNightmare, setEnableNightmare] = useState<boolean>(false)
-    const [enableLocationIncrementByOne, setEnableLocationIncrementByOne] = useState<boolean>(false)
-    const [enableStopOnArcarumBoss, setEnableStopOnArcarumBoss] = useState<boolean>(true)
 
     const bsc = useContext(BotStateContext)
-    const mlc = useContext(MessageLogContext)
 
     const farmingModes = [
         { label: "Quest", value: "Quest" },
@@ -108,24 +101,16 @@ const Settings = () => {
     //////////////////////////////////////////////////
     // Callbacks
 
-    // Load state from context to local.
+    // Load some specific states from context to local.
     useEffect(() => {
         setFarmingMode(bsc.settings.game.farmingMode)
         setItem(bsc.settings.game.item)
         setMission(bsc.settings.game.mission)
-        setMap(bsc.settings.game.map)
-        setCombatScript({ name: bsc.settings.game.combatScriptName, script: bsc.settings.game.combatScript })
-        setEnableNightmare(bsc.settings.nightmare.enableNightmare)
-        setEnableLocationIncrementByOne(bsc.settings.event.enableLocationIncrementByOne)
-        setEnableStopOnArcarumBoss(bsc.settings.arcarum.enableStopOnArcarumBoss)
         setFirstTime(false)
     }, [])
 
     useEffect(() => {
         if (!firstTime) {
-            mlc.setMessageLog([])
-            mlc.setAsyncMessages([])
-
             // Reset selected Item and Mission and save the farming mode.
             bsc.setSettings({
                 ...bsc.settings,
@@ -162,28 +147,12 @@ const Settings = () => {
                 ...bsc.settings,
                 game: {
                     ...bsc.settings.game,
-                    farmingMode: farmingMode.toString(),
                     item: item.toString(),
                     mission: mission.toString(),
-                    map: map,
-                    combatScriptName: combatScript.name,
-                    combatScript: combatScript.script,
-                },
-                nightmare: {
-                    ...bsc.settings.nightmare,
-                    enableNightmare: enableNightmare,
-                },
-                event: {
-                    ...bsc.settings.event,
-                    enableLocationIncrementByOne: enableLocationIncrementByOne,
-                },
-                arcarum: {
-                    ...bsc.settings.arcarum,
-                    enableStopOnArcarumBoss: enableStopOnArcarumBoss,
                 },
             })
         }
-    }, [item, mission, map, combatScript, enableNightmare, enableLocationIncrementByOne, enableStopOnArcarumBoss])
+    }, [item, mission])
 
     // Populates the item list based on farming mode.
     useEffect(() => {
@@ -270,7 +239,7 @@ const Settings = () => {
         ) {
             Object.entries(data[bsc.settings.game.farmingMode]).every((obj) => {
                 if (obj[0] === mission) {
-                    setMap(obj[1].map)
+                    bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, mission: mission, map: obj[1].map } })
                     return false
                 } else {
                     return true
@@ -366,8 +335,8 @@ const Settings = () => {
                         <Checkbox
                             text="Enable Incrementation of Location by 1"
                             subtitle="Enable this if the event has its N/H missions at the very top so the bot can correctly select the correct quest. Or in otherwords, enable this if the Event tab in the Special page has 3 'Select' buttons instead of 2."
-                            state={enableLocationIncrementByOne}
-                            updateState={setEnableLocationIncrementByOne}
+                            isChecked={bsc.settings.event.enableLocationIncrementByOne}
+                            onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableLocationIncrementByOne: !bsc.settings.event.enableLocationIncrementByOne } })}
                         />
                     ) : null}
 
@@ -375,8 +344,8 @@ const Settings = () => {
                         <Checkbox
                             text="Enable Stop on Arcarum Boss"
                             subtitle="Enable this option to have the bot upon encountering a Arcarum Boss (3-3, 6-3, 9-9)."
-                            state={enableStopOnArcarumBoss}
-                            updateState={setEnableStopOnArcarumBoss}
+                            isChecked={bsc.settings.arcarum.enableStopOnArcarumBoss}
+                            onPress={() => bsc.setSettings({ ...bsc.settings, arcarum: { ...bsc.settings.arcarum, enableStopOnArcarumBoss: !bsc.settings.arcarum.enableStopOnArcarumBoss } })}
                         />
                     ) : null}
 
@@ -388,8 +357,8 @@ const Settings = () => {
                         <Checkbox
                             text="Enable Nightmare Settings"
                             subtitle="Enable additional settings to show up in the Extra Settings page."
-                            state={enableNightmare}
-                            updateState={setEnableNightmare}
+                            isChecked={bsc.settings.nightmare.enableNightmare}
+                            onPress={() => bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, enableNightmare: !bsc.settings.nightmare.enableNightmare } })}
                         />
                     ) : null}
 
@@ -398,7 +367,7 @@ const Settings = () => {
                         modalProps={{
                             animationType: "slide",
                         }}
-                        style={[styles.picker, { backgroundColor: bsc.settings.game.item !== "" ? "azure" : "pink" }]}
+                        style={[styles.picker, { backgroundColor: item !== "" ? "azure" : "pink" }]}
                         dropDownContainerStyle={styles.dropdown}
                         placeholder="Select Item"
                         searchTextInputStyle={{ fontStyle: "italic" }}
@@ -416,7 +385,7 @@ const Settings = () => {
 
                     <DropDownPicker
                         listMode="SCROLLVIEW"
-                        style={[styles.picker, { backgroundColor: bsc.settings.game.mission !== "" ? "azure" : "pink" }]}
+                        style={[styles.picker, { backgroundColor: mission !== "" ? "azure" : "pink" }]}
                         dropDownContainerStyle={styles.dropdown}
                         placeholder="Select Mission"
                         searchTextInputStyle={{ fontStyle: "italic" }}
