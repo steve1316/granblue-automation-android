@@ -115,8 +115,8 @@ export const defaultSettings: Settings = {
         enableDelayBetweenRuns: false,
         delayBetweenRuns: 15,
         enableRandomizedDelayBetweenRuns: false,
-        delayBetweenRunsLowerBound: 15,
-        delayBetweenRunsUpperBound: 60,
+        delayBetweenRunsLowerBound: 5,
+        delayBetweenRunsUpperBound: 15,
     },
     nightmare: {
         enableNightmare: false,
@@ -133,7 +133,7 @@ export const defaultSettings: Settings = {
     },
     raid: {
         enableAutoExitRaid: false,
-        timeAllowedUntilAutoExitRaid: 10,
+        timeAllowedUntilAutoExitRaid: 1,
         enableNoTimeout: false,
     },
     arcarum: {
@@ -142,8 +142,8 @@ export const defaultSettings: Settings = {
     android: {
         enableDelayTap: false,
         delayTapMilliseconds: 1000,
-        confidence: 0.8,
-        confidenceAll: 0.8,
+        confidence: 80,
+        confidenceAll: 80,
         customScale: 1.0,
         enableTestForHomeScreen: false,
     },
