@@ -22,7 +22,6 @@ class NotificationUtils {
 		private lateinit var notificationManager: NotificationManager
 		private const val NOTIFICATION_ID: Int = 1
 		private const val CHANNEL_ID: String = "STATUS"
-		private const val CONTENT_TITLE = "Status"
 
 		/**
 		 * Creates the NotificationChannel and the Notification object.
@@ -84,7 +83,7 @@ class NotificationUtils {
 
 				return NotificationCompat.Builder(context, CHANNEL_ID).apply {
 					setSmallIcon(R.drawable.ic_baseline_control_camera)
-					setContentTitle(CONTENT_TITLE)
+					setContentTitle("Status")
 					setContentText("Bot is ready to go")
 					setContentIntent(contentPendingIntent)
 					addAction(R.drawable.stop_circle_filled, context.getString(R.string.accessibility_service_action), stopPendingIntent)
@@ -96,7 +95,7 @@ class NotificationUtils {
 			} else {
 				return NotificationCompat.Builder(context, CHANNEL_ID).apply {
 					setSmallIcon(R.drawable.ic_baseline_control_camera)
-					setContentTitle(CONTENT_TITLE)
+					setContentTitle("Status")
 					setContentText("Bot is ready to go")
 					setContentIntent(contentPendingIntent)
 					priority = NotificationManager.IMPORTANCE_HIGH
@@ -112,8 +111,10 @@ class NotificationUtils {
 		 *
 		 * @param context The application context.
 		 * @param message Message to append to the Notification text body.
+		 * @param displayBigText Display the big form of the text body template in place of the content text. Defaults to false which will not render it.
+		 * @param title Title for the Notification. Defaults to "Status".
 		 */
-		fun updateNotification(context: Context, message: String) {
+		fun updateNotification(context: Context, message: String, title: String = "Status", displayBigText: Boolean = false) {
 			// Create a PendingIntent to send the user back to the application if they tap the notification itself.
 			val contentIntent = Intent(context, MainActivity::class.java)
 			val contentPendingIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -125,28 +126,58 @@ class NotificationUtils {
 				// Create a PendingIntent in order to add a action button to stop the MediaProjection service in the notification.
 				val stopPendingIntent: PendingIntent = PendingIntent.getBroadcast(context, System.currentTimeMillis().toInt(), stopIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
-				NotificationCompat.Builder(context, CHANNEL_ID).apply {
-					setSmallIcon(R.drawable.ic_baseline_control_camera)
-					setContentTitle(CONTENT_TITLE)
-					setContentText(message)
-					setContentIntent(contentPendingIntent)
-					addAction(R.drawable.stop_circle_filled, context.getString(R.string.accessibility_service_action), stopPendingIntent)
-					priority = NotificationManager.IMPORTANCE_HIGH
-					setCategory(Notification.CATEGORY_SERVICE)
-					setOngoing(true)
-					setShowWhen(true)
-				}.build()
+				if (displayBigText) {
+					NotificationCompat.Builder(context, CHANNEL_ID).apply {
+						setSmallIcon(R.drawable.ic_baseline_control_camera)
+						setContentTitle(title)
+						setContentText("Swipe down to see more...")
+						setStyle(NotificationCompat.BigTextStyle().bigText(message))
+						setContentIntent(contentPendingIntent)
+						addAction(R.drawable.stop_circle_filled, context.getString(R.string.accessibility_service_action), stopPendingIntent)
+						priority = NotificationManager.IMPORTANCE_HIGH
+						setCategory(Notification.CATEGORY_SERVICE)
+						setOngoing(true)
+						setShowWhen(true)
+					}.build()
+				} else {
+					NotificationCompat.Builder(context, CHANNEL_ID).apply {
+						setSmallIcon(R.drawable.ic_baseline_control_camera)
+						setContentTitle(title)
+						setContentText(message)
+						setContentIntent(contentPendingIntent)
+						addAction(R.drawable.stop_circle_filled, context.getString(R.string.accessibility_service_action), stopPendingIntent)
+						priority = NotificationManager.IMPORTANCE_HIGH
+						setCategory(Notification.CATEGORY_SERVICE)
+						setOngoing(true)
+						setShowWhen(true)
+					}.build()
+				}
 			} else {
-				NotificationCompat.Builder(context, CHANNEL_ID).apply {
-					setSmallIcon(R.drawable.ic_baseline_control_camera)
-					setContentTitle(CONTENT_TITLE)
-					setContentText(message)
-					setContentIntent(contentPendingIntent)
-					priority = NotificationManager.IMPORTANCE_HIGH
-					setCategory(Notification.CATEGORY_SERVICE)
-					setOngoing(true)
-					setShowWhen(true)
-				}.build()
+				if (displayBigText) {
+					NotificationCompat.Builder(context, CHANNEL_ID).apply {
+						setSmallIcon(R.drawable.ic_baseline_control_camera)
+						setContentTitle(title)
+						setContentText("Swipe down to see more...")
+						setStyle(NotificationCompat.BigTextStyle().bigText(message))
+						setContentIntent(contentPendingIntent)
+						priority = NotificationManager.IMPORTANCE_HIGH
+						setCategory(Notification.CATEGORY_SERVICE)
+						setOngoing(true)
+						setShowWhen(true)
+					}.build()
+				} else {
+					NotificationCompat.Builder(context, CHANNEL_ID).apply {
+						setSmallIcon(R.drawable.ic_baseline_control_camera)
+						setContentTitle(title)
+						setContentText(message)
+						setContentIntent(contentPendingIntent)
+						priority = NotificationManager.IMPORTANCE_HIGH
+						setCategory(Notification.CATEGORY_SERVICE)
+						setOngoing(true)
+						setShowWhen(true)
+					}.build()
+				}
+
 			}
 
 			notificationManager.notify(NOTIFICATION_ID, newNotification)

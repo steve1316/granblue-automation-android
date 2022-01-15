@@ -16,7 +16,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.R
 import com.steve1316.granblue_automation_android.StartModule
@@ -147,7 +146,9 @@ class BotService : Service() {
 									if (e.toString() == "java.lang.InterruptedException") {
 										NotificationUtils.updateNotification(myContext, "Bot has completed successfully with no errors.")
 									} else {
-										NotificationUtils.updateNotification(myContext, "Encountered Exception: ${e}. Tap me to see more details.")
+										NotificationUtils.updateNotification(
+											myContext, "Encountered Exception: ${e.javaClass.canonicalName}\nTap me to see more details.", title = "Encountered Exception", displayBigText = true
+										)
 										game.printToLog("$appName encountered an Exception: ${e.stackTraceToString()}", tag = tag, isError = true)
 
 										if (e.stackTraceToString().length >= 2500) {
