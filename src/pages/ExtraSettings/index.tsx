@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useContext } from "react"
 import { StyleSheet, View, ScrollView, Dimensions, Modal, TouchableOpacity } from "react-native"
 import { Divider, Input, Text } from "react-native-elements"
 import Checkbox from "../../components/Checkbox"
@@ -12,7 +12,6 @@ import DocumentPicker from "react-native-document-picker"
 import { BotStateContext } from "../../context/BotStateContext"
 import CustomButton from "../../components/CustomButton"
 import TransferList from "../../components/TransferList"
-import { MessageLogContext } from "../../context/MessageLogContext"
 
 const styles = StyleSheet.create({
     root: {
@@ -43,11 +42,6 @@ const ExtraSettings = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
-    const mlc = useContext(MessageLogContext)
-
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    // Callbacks
 
     const renderNightmareSettings = () => {
         if (

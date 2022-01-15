@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import RNFS from "react-native-fs"
 import { BotStateContext, defaultSettings, Settings } from "../../context/BotStateContext"
 import { MessageLogContext } from "../../context/MessageLogContext"
@@ -20,9 +20,6 @@ const Start = () => {
 
     const saveSettings = async (newSettings?: Settings) => {
         if (!firstTime) {
-            mlc.setMessageLog([])
-            mlc.setAsyncMessages([])
-
             // Grab a local copy of the current settings.
             const localSettings: Settings = newSettings ? newSettings : bsc.settings
 
@@ -46,7 +43,8 @@ const Start = () => {
             await RNFS.writeFile(path, toSave)
                 .then(() => {
                     console.log("Settings saved to ", path)
-                    mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings saved to ${path}`])
+                    mlc.setAsyncMessages([])
+                    mlc.setMessageLog([`\n[SUCCESS] Settings saved to ${path}`])
                 })
                 .catch((e) => {
                     console.error(`Error writing settings to path ${path}: ${e}`)
@@ -109,7 +107,6 @@ const Start = () => {
             })
             .finally(() => {
                 console.log("Read: " + JSON.stringify(newSettings, null, 4))
-
                 bsc.setSettings(newSettings)
                 setFirstTime(false)
             })
