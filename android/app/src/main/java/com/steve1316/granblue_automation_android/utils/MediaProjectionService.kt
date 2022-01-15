@@ -24,6 +24,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
+import com.steve1316.granblue_automation_android.StartModule
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -289,6 +290,8 @@ class MediaProjectionService : Service() {
 
 				Log.d(tag, "MediaProjection Service for GAA has stopped for this context: ${myContext.applicationInfo}.")
 				Toast.makeText(myContext, "MediaProjection Service for GAA has stopped.", Toast.LENGTH_SHORT).show()
+
+				StartModule.sendEvent("MediaProjectionService", "Not Running")
 			}
 		}
 	}
