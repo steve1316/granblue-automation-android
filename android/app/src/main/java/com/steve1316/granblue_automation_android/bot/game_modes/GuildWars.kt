@@ -73,6 +73,19 @@ class GuildWars(private val game: Game, private val missionName: String) {
 					var tries = 10
 					game.printToLog("[GUILD.WARS] Now hosting $difficulty now...", tag = tag)
 					val locations = game.imageUtils.findAll("ap_30")
+
+					when (difficulty) {
+						"Very Hard" -> {
+							game.gestureUtils.tap(locations[0].x, locations[0].y, "ap_30")
+						}
+						"Extreme" -> {
+							game.gestureUtils.tap(locations[1].x, locations[1].y, "ap_30")
+						}
+						"Extreme+" -> {
+							game.gestureUtils.tap(locations[2].x, locations[2].y, "ap_30")
+						}
+					}
+
 					while (!game.imageUtils.waitVanish("ap_30", timeout = 10)) {
 						when (difficulty) {
 							"Very Hard" -> {
