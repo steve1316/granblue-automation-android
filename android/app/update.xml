@@ -1,24 +1,21 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.3.1</latestVersion>
+        <latestVersion>3.3.2</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.3.1 - Changelog
-
-New
----
-- Added 2 missing Checkbox settings for Event and Arcarum in the Settings page.
+v3.3.2 - Changelog
 
 Changed
 ---
-- Minor changes to styling.
-- Moved `Enable Additional Delay Before Tap` Checkbox component to be under the Device Settings section.
+- Changed how Notification is updated when an Exception occurs.
+- Adjusted length of text separators in message log to be much shorter.
 
 Fixed
 ---
-- Finally fixed Discord integration on emulators.
-- Fixed many state persistance bugs when changing certain settings in both the Settings and Extra Settings pages.
-- Fixed `confidence` and `confidenceAll` not being converted correctly for use in image processing functions.
+- Fix GW navigation due to bamboo. Stupid bamboo.
+- Fix GW selecting NM90 on the first day of GW.
+- Fix message log clearing at the wrong time.
+- Fix GW waiting to see if meat farming location was tapped when it didn't do it first.
 
         </releaseNotes>
     </update>
