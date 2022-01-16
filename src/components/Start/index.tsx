@@ -19,8 +19,10 @@ const Start = () => {
     }, [bsc.settings])
 
     useEffect(() => {
-        const newLog = [...mlc.messageLog, ...mlc.asyncMessages]
-        mlc.setMessageLog(newLog)
+        if (mlc.asyncMessages.length > 0) {
+            const newLog = [...mlc.messageLog, ...mlc.asyncMessages]
+            mlc.setMessageLog(newLog)
+        }
     }, [mlc.asyncMessages])
 
     const saveSettings = async (newSettings?: Settings) => {
