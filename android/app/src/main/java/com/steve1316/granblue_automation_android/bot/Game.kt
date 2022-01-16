@@ -681,11 +681,14 @@ class Game(myContext: Context) {
 
 		// Close all popups until the bot reaches the Loot Collected screen.
 		if (!skipPopupCheck) {
-			var tries = 5
+			var tries = 10
 			while (!imageUtils.confirmLocation("loot_collected", tries = 1)) {
 				findAndClickButton("ok", tries = 1, suppressError = true)
+				wait(1.0)
 				findAndClickButton("close", tries = 1, suppressError = true)
+				wait(1.0)
 				findAndClickButton("cancel", tries = 1, suppressError = true)
+				wait(1.0)
 				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
 
 				tries -= 1
@@ -799,8 +802,8 @@ class Game(myContext: Context) {
 	fun checkForPopups(): Boolean {
 		printToLog("\n[INFO] Now beginning process to check for popups...")
 
-		var tries = 5
-		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 5)) {
+		var tries = 10
+		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
 			if (!configData.enableAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
 				break
 			}
@@ -831,9 +834,11 @@ class Game(myContext: Context) {
 			}
 
 			// Attempt to close the popup by clicking on any detected "Close" and "Cancel" buttons.
-			if (!findAndClickButton("close", tries = 1, suppressError = true)) {
-				findAndClickButton("cancel", tries = 1, suppressError = true)
-			}
+			findAndClickButton("close", tries = 2, suppressError = true)
+			wait(1.0)
+			findAndClickButton("cancel", tries = 2, suppressError = true)
+			wait(1.0)
+			findAndClickButton("ok", tries = 2, suppressError = true)
 
 			tries -= 1
 		}
