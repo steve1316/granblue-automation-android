@@ -875,7 +875,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun reloadAfterAttack(override: Boolean = false) {
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-		if (checkRaid() && override) {
+		if (checkRaid() || override) {
 			game.printToLog("[COMBAT] Reloading now.", tag = tag)
 			game.findAndClickButton("reload")
 			game.wait(3.0)
