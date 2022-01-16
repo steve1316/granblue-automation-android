@@ -1,21 +1,23 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.3.2</latestVersion>
+        <latestVersion>3.3.3</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.3.2 - Changelog
+v3.3.3 - Changelog
+
+New
+---
+- Add missing description for Generic Farming Mode in Settings page.
 
 Changed
 ---
-- Changed how Notification is updated when an Exception occurs.
-- Adjusted length of text separators in message log to be much shorter.
+- Adjust delay timings for checkForPopups() and collectLoot().
 
 Fixed
 ---
-- Fix GW navigation due to bamboo. Stupid bamboo.
-- Fix GW selecting NM90 on the first day of GW.
-- Fix message log clearing at the wrong time.
-- Fix GW waiting to see if meat farming location was tapped when it didn't do it first.
+- Fix entry condition for reloadAfterAttack() method.
+- Fix message log not resetting when restarting the bot.
+- Fix wrong SharedPreferences used for upper bound of randomized delay.
 
         </releaseNotes>
     </update>
