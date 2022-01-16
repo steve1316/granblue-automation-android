@@ -99,7 +99,7 @@ class ConfigData(myContext: Context) {
 		delayBetweenRuns = sharedPreferences.getInt("delayBetweenRuns", 5)
 		enableRandomizedDelayBetweenRuns = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
 		delayBetweenRunsLowerBound = sharedPreferences.getInt("delayBetweenRunsLowerBound", 5)
-		delayBetweenRunsUpperBound = sharedPreferences.getInt("delayBetweenRunsLowerBound", 15)
+		delayBetweenRunsUpperBound = sharedPreferences.getInt("delayBetweenRunsUpperBound", 15)
 
 		enableNightmare = sharedPreferences.getBoolean("enableNightmare", false)
 		if (sharedPreferences.getBoolean("enableCustomNightmareSettings", false)) {
