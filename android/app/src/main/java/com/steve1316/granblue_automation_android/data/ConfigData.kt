@@ -60,6 +60,9 @@ class ConfigData(myContext: Context) {
 	// Arcarum
 	val enableStopOnArcarumBoss: Boolean
 
+	// Generic
+	val enableForceReload: Boolean
+
 	// Android
 	val enableDelayTap: Boolean
 	val delayTapMilliseconds: Int
@@ -139,6 +142,8 @@ class ConfigData(myContext: Context) {
 		enableNoTimeout = sharedPreferences.getBoolean("enableNoTimeout", false)
 
 		enableStopOnArcarumBoss = sharedPreferences.getBoolean("enableStopOnArcarumBoss", true)
+
+		enableForceReload = sharedPreferences.getBoolean("enableForceReload", false)
 
 		enableDelayTap = sharedPreferences.getBoolean("enableDelayTap", false)
 		delayTapMilliseconds = sharedPreferences.getInt("delayTapMilliseconds", 1000)

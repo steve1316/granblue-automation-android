@@ -71,6 +71,10 @@ export interface Settings {
         enableStopOnArcarumBoss: boolean
     }
 
+    generic: {
+        enableForceReload: boolean
+    }
+
     android: {
         enableDelayTap: boolean
         delayTapMilliseconds: number
@@ -138,6 +142,9 @@ export const defaultSettings: Settings = {
     },
     arcarum: {
         enableStopOnArcarumBoss: true,
+    },
+    generic: {
+        enableForceReload: false,
     },
     android: {
         enableDelayTap: false,

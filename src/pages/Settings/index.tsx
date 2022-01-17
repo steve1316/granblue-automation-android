@@ -361,6 +361,15 @@ const Settings = () => {
                         />
                     ) : null}
 
+                    {bsc.settings.game.farmingMode === "Generic" ? (
+                        <Checkbox
+                            text="Enable Forcing Reload after Attack"
+                            subtitle="Enable this option to force Generic Farming Mode to reload after an attack. This does not take into account whether or not the current battle supports reloading after an attack."
+                            isChecked={bsc.settings.generic.enableForceReload}
+                            onPress={() => bsc.setSettings({ ...bsc.settings, generic: { ...bsc.settings.generic, enableForceReload: !bsc.settings.generic.enableForceReload } })}
+                        />
+                    ) : null}
+
                     {bsc.settings.game.farmingMode === "Special" ||
                     bsc.settings.game.farmingMode === "Event" ||
                     bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ||

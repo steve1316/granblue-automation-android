@@ -29,7 +29,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 	private var retreatCheckFlag = false
 	private var attackButtonLocation: Point? = null
-	private var expGainedLocationCheck = false
 
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
@@ -875,7 +874,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun reloadAfterAttack(override: Boolean = false) {
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-		if (checkRaid() || override) {
+		if (checkRaid() || override || (game.configData.farmingMode == "Generic" && game.configData.enableForceReload)) {
 			game.printToLog("[COMBAT] Reloading now.", tag = tag)
 			game.findAndClickButton("reload")
 			game.wait(3.0)
@@ -1553,6 +1552,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 									}
 								}
 							}
+						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null &&
+							game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
+							reloadAfterAttack()
 						}
 
 						game.wait(1.0)

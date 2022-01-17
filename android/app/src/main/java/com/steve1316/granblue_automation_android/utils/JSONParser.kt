@@ -110,6 +110,12 @@ class JSONParser() {
 			commit()
 		}
 
+		val genericObj = jObj.getJSONObject("generic")
+		sharedPreferences.edit {
+			putBoolean("enableForceReload", genericObj.getBoolean("enableForceReload"))
+			commit()
+		}
+
 		val androidObj = jObj.getJSONObject("android")
 		sharedPreferences.edit {
 			putBoolean("enableDelayTap", androidObj.getBoolean("enableDelayTap"))
