@@ -872,9 +872,9 @@ class Game(myContext: Context) {
 	 */
 	private fun clearPendingBattle(): Boolean {
 		if (findAndClickButton("tap_here_to_see_rewards")) {
-			wait(1.0)
+			wait(3.0)
 
-			if (imageUtils.confirmLocation("no_loot", tries = 2)) {
+			if (imageUtils.confirmLocation("no_loot", tries = 5)) {
 				printToLog("[INFO] No loot can be collected. Backing out...")
 
 				// Navigate back to the Quests screen.
@@ -889,8 +889,8 @@ class Game(myContext: Context) {
 					collectLoot(isCompleted = false, isPendingBattle = true)
 				}
 
-				findAndClickButton("close", tries = 2)
-				findAndClickButton("ok", tries = 2)
+				findAndClickButton("close", tries = 5)
+				findAndClickButton("ok", tries = 5)
 
 				return true
 			}
@@ -906,25 +906,25 @@ class Game(myContext: Context) {
 	 */
 	fun checkPendingBattles(): Boolean {
 		printToLog("\n[INFO] Starting process of checking for Pending Battles...")
-		wait(1.0)
+		wait(3.0)
 
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
-		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 1) ||
-			imageUtils.confirmLocation("pending_battles", tries = 1) ||
-			findAndClickButton("quest_results_pending_battles", tries = 1)
+		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 5) ||
+			imageUtils.confirmLocation("pending_battles", tries = 5) ||
+			findAndClickButton("quest_results_pending_battles", tries = 5)
 		) {
 			printToLog("[INFO] Found Pending Battles that need collecting from.")
 
-			findAndClickButton("ok", tries = 1)
+			findAndClickButton("ok")
 
-			wait(3.0)
+			wait(4.0)
 
-			if (imageUtils.confirmLocation("pending_battles", tries = 1)) {
+			if (imageUtils.confirmLocation("pending_battles", tries = 5)) {
 				// Process the current Pending Battle.
 				while (clearPendingBattle()) {
 					// While on the Loot Collected screen, if there are more Pending Battles then head back to the Pending Battles screen.
-					if (findAndClickButton("quest_results_pending_battles", tries = 1)) {
+					if (findAndClickButton("quest_results_pending_battles")) {
 						wait(1.0)
 						checkSkyscope()
 						checkFriendRequest()
