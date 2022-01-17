@@ -77,7 +77,8 @@ const Start = () => {
                 normalData = data
 
                 const parsed: Settings = JSON.parse(data)
-                newSettings = parsed
+                const fixedSettings: Settings = fixSettings(parsed)
+                newSettings = fixedSettings
             })
             .catch((e: Error) => {
                 if (e.name === "SyntaxError") {
@@ -87,7 +88,8 @@ const Start = () => {
                         fixedData = fixedData.substring(0, fixedData.length - 1)
                         try {
                             const parsed: Settings = JSON.parse(fixedData)
-                            newSettings = parsed
+                            const fixedSettings: Settings = fixSettings(parsed)
+                            newSettings = fixedSettings
                             corruptionFixed = true
                         } catch {}
 
@@ -117,6 +119,21 @@ const Start = () => {
                 bsc.setSettings(newSettings)
                 setFirstTime(false)
             })
+    }
+
+    // Attempt to fix missing key-value pairs in the settings before commiting them to state.
+    const fixSettings = (decoded: Settings) => {
+        var newSettings: Settings = decoded
+        Object.keys(defaultSettings).forEach((key) => {
+            if (decoded[key as keyof Settings] === undefined) {
+                newSettings = {
+                    ...newSettings,
+                    [key as keyof Settings]: defaultSettings[key as keyof Settings],
+                }
+            }
+        })
+
+        return newSettings
     }
 
     // Determine whether the program is ready to start.
