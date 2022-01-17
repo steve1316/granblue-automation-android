@@ -973,9 +973,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 		// Reset the Retreat, Semi Auto, and Full Auto flags.
 		retreatCheckFlag = false
-		expGainedLocationCheck = false
 		var semiAutoCheckFlag = false
 		var fullAutoCheckFlag = false
+		var manualAttackAndReload = false
 
 		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
 		if (game.configData.farmingMode == "Arcarum") {
@@ -1154,6 +1154,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							}
 						}
 					}
+					command.contains("repeatmanualattackandreload") -> {
+						game.printToLog("[COMBAT] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
+						manualAttackAndReload = true
+					}
 					!semiAutoCheckFlag && !fullAutoCheckFlag && command == "end" -> {
 						// Tap the "Attack" button once every command inside the Turn Block has been processed.
 						game.printToLog("[COMBAT] Ending Turn $turnNumber")
@@ -1250,6 +1254,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				}
 
 				break
+			} else if (command.contains("repeatmanualattackandreload")) {
+				game.printToLog("[COMBAT] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
+				manualAttackAndReload = true
 			}
 		}
 
@@ -1266,8 +1273,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		// When the bot arrives here, all the commands in the combat script has been processed.
 		game.printToLog("[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.", tag = tag)
 
-		// Skip this entire section if combat already ended as dictated in the waitForAttack() function.
-		if (!expGainedLocationCheck) {
+		if (!manualAttackAndReload) {
 			// If Semi or Full Auto is not enabled at the end of the combat script, enable one or the other.
 			if (!semiAutoCheckFlag && !fullAutoCheckFlag) {
 				when {
@@ -1554,6 +1560,57 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						sleepPreventionTimer += 1
 					}
 				}
+			}
+		} else {
+			// Main workflow loop for manually pressing the Attack button and reloading until combat ends.
+			while (!retreatCheckFlag) {
+				if (game.configData.enableAutoExitRaid && (autoExitEndTime - autoExitStartTime >= game.configData.timeAllowedUntilAutoExitRaid)) {
+					game.printToLog("\n[COMBAT] Battle ending due to allotted time for Semi/Full Auto being surpassed.", tag = tag)
+					game.printToLog("\n####################", tag = tag)
+					game.printToLog("####################", tag = tag)
+					game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+					game.printToLog("####################", tag = tag)
+					game.printToLog("####################", tag = tag)
+					return false
+				}
+
+				when {
+					game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
+						game.printToLog("\n####################", tag = tag)
+						game.printToLog("####################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("####################", tag = tag)
+						game.printToLog("####################", tag = tag)
+						return false
+					}
+					game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+						game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+						game.printToLog("\n####################", tag = tag)
+						game.printToLog("####################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("####################", tag = tag)
+						game.printToLog("####################", tag = tag)
+						game.findAndClickButton("reload")
+						return true
+					}
+					game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+						game.printToLog("\n####################", tag = tag)
+						game.printToLog("####################", tag = tag)
+						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+						game.printToLog("####################", tag = tag)
+						game.printToLog("####################", tag = tag)
+						return true
+					}
+				}
+
+				if (game.findAndClickButton("next", tries = 3, suppressError = true)) {
+					game.wait(3.0)
+				}
+
+				game.findAndClickButton("attack", tries = 20)
+				reloadAfterAttack()
+				waitForAttack()
 			}
 		}
 
