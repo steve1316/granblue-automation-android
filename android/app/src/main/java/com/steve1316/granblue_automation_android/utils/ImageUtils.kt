@@ -130,7 +130,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 
 		while (scales.isNotEmpty()) {
-			val newScale: Double = decimalFormat.format(scales.removeFirst()).toDouble()
+			val newScale: Double = decimalFormat.format(scales.removeFirst()).replace(",", ".").toDouble()
 
 			val tmp: Bitmap = if (newScale != 1.0) {
 				Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
@@ -161,8 +161,8 @@ class ImageUtils(context: Context, private val game: Game) {
 			var matchCheck = false
 
 			// Format minVal or maxVal.
-			val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
-			val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+			val minVal: Double = decimalFormat.format(mmr.minVal).replace(",", ".").toDouble()
+			val maxVal: Double = decimalFormat.format(mmr.maxVal).replace(",", ".").toDouble()
 
 			// Depending on which matching method was used, the algorithms determine which location was the best.
 			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
@@ -261,7 +261,7 @@ class ImageUtils(context: Context, private val game: Game) {
 
 		// Set templateMat at whatever scale it found the very first match for the next while loop.
 		while (!matchCheck && scales.isNotEmpty()) {
-			newScale = decimalFormat.format(scales.removeFirst()).toDouble()
+			newScale = decimalFormat.format(scales.removeFirst()).replace(",", ".").toDouble()
 
 			val tmp: Bitmap = if (newScale != 1.0) {
 				Bitmap.createScaledBitmap(templateBitmap, (templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt(), true)
@@ -339,8 +339,8 @@ class ImageUtils(context: Context, private val game: Game) {
 			val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
 
 			// Format minVal or maxVal.
-			val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
-			val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
+			val minVal: Double = decimalFormat.format(mmr.minVal).replace(",", ".").toDouble()
+			val maxVal: Double = decimalFormat.format(mmr.maxVal).replace(",", ".").toDouble()
 
 			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
 				val tempMatchLocation: Point = mmr.minLoc
@@ -496,7 +496,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					if (testMode) {
 						// Increment scale by 0.01 until a match is found if Test Mode is enabled.
 						customScale += 0.01
-						customScale = decimalFormat.format(customScale).toDouble()
+						customScale = decimalFormat.format(customScale).replace(",", ".").toDouble()
 					}
 
 					numberOfTries -= 1
@@ -518,11 +518,11 @@ class ImageUtils(context: Context, private val game: Game) {
 				} else {
 					if (testMode) {
 						// Create a range of scales for user recommendation.
-						val scale0: Double = decimalFormat.format(customScale).toDouble()
-						val scale1: Double = decimalFormat.format(scale0 + 0.01).toDouble()
-						val scale2: Double = decimalFormat.format(scale0 + 0.02).toDouble()
-						val scale3: Double = decimalFormat.format(scale0 + 0.03).toDouble()
-						val scale4: Double = decimalFormat.format(scale0 + 0.04).toDouble()
+						val scale0: Double = decimalFormat.format(customScale).replace(",", ".").toDouble()
+						val scale1: Double = decimalFormat.format(scale0 + 0.01).replace(",", ".").toDouble()
+						val scale2: Double = decimalFormat.format(scale0 + 0.02).replace(",", ".").toDouble()
+						val scale3: Double = decimalFormat.format(scale0 + 0.03).replace(",", ".").toDouble()
+						val scale4: Double = decimalFormat.format(scale0 + 0.04).replace(",", ".").toDouble()
 
 						game.printToLog(
 							"[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation with scale $scale0.\n\nRecommended to use scale $scale1, $scale2, $scale3 or $scale4.",
