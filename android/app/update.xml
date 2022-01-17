@@ -1,23 +1,22 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.3.3</latestVersion>
+        <latestVersion>3.3.4</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.3.3 - Changelog
+v3.3.4 - Changelog
 
 New
 ---
-- Add missing description for Generic Farming Mode in Settings page.
+- Add new setting in the Settings Page to enable forced reloading during Combat Mode for Generic Farming Mode.
+- Add `repeatManualAttackAndReload` command from PC version.
 
 Changed
 ---
-- Adjust delay timings for checkForPopups() and collectLoot().
+- Adjust delays in checking for pending battles.
 
 Fixed
 ---
-- Fix entry condition for reloadAfterAttack() method.
-- Fix message log not resetting when restarting the bot.
-- Fix wrong SharedPreferences used for upper bound of randomized delay.
+- Another attempt at fixing issue where certain locales use commas in numbers instead of decimals.
 
         </releaseNotes>
     </update>
