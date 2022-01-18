@@ -1,22 +1,18 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.3.4</latestVersion>
+        <latestVersion>3.3.5</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.3.4 - Changelog
+v3.3.5 - Changelog
 
 New
 ---
-- Add new setting in the Settings Page to enable forced reloading during Combat Mode for Generic Farming Mode.
-- Add `repeatManualAttackAndReload` command from PC version.
-
-Changed
----
-- Adjust delays in checking for pending battles.
+- Add a new chain command `.wait(#)` used in skill and summon commands. Refer to the wiki for usage examples.
 
 Fixed
 ---
-- Another attempt at fixing issue where certain locales use commas in numbers instead of decimals.
+- Fix for reloading on Loot Collection screen.
+- Prevent bot from restarting Auto if combat already ended.
 
         </releaseNotes>
     </update>
