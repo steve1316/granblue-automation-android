@@ -1459,6 +1459,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 						partyWipeCheck()
 
+						// Have separate logic for non-Raid and Raid battles.
 						if (checkRaid()) {
 							// Click Next if it is available and enable automation again if combat continues.
 							if (game.findAndClickButton("next", tries = 2)) {
@@ -1506,10 +1507,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 									}
 								}
 							} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
-								reloadAfterAttack(override = true)
-
-								waitForAttack()
-
 								when {
 									game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
 										game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
@@ -1548,12 +1545,15 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 										return false
 									}
 									else -> {
+										reloadAfterAttack(override = true)
+
+										waitForAttack()
+
 										enableAuto()
 									}
 								}
 							}
-						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null &&
-							game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
+						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
 							reloadAfterAttack()
 						}
 
