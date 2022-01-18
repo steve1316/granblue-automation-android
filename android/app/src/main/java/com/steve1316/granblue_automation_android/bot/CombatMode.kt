@@ -446,6 +446,29 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	}
 
 	/**
+	 * Execute a wait command.
+	 *
+	 * @param commandList A split list of the command by its "." delimiter with the "wait" command being the first element.
+	 * @param fallbackDelay A default delay if the wait command was invalid. Defaults to 1.0 second.
+	 */
+	private fun waitExecute(commandList: List<String>, fallbackDelay: Double = 1.0) {
+		val waitCommand = if (commandList[0].contains(")")) {
+			commandList[0].substringAfter("(").replace(")", "")
+		} else {
+			commandList[0].substringAfter("(") + "." + commandList[1].replace(")", "")
+		}
+
+		try {
+			val waitSeconds = waitCommand.toDouble()
+			game.printToLog("[COMBAT] Now waiting $waitSeconds second(s).", tag = tag)
+			game.wait(waitSeconds)
+		} catch (e: Exception) {
+			game.printToLog("[COMBAT] Could not parse out the seconds in the wait command. Waiting $fallbackDelay second(s) as fallback.", tag = tag)
+			game.wait(fallbackDelay)
+		}
+	}
+
+	/**
 	 * Activate the specified Skill for the already selected Character.
 	 *
 	 * @param characterNumber The Character whose Skill needs to be used.
@@ -460,218 +483,241 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 
 		while (tempSkillCommandList.isNotEmpty()) {
-			val x = when (tempSkillCommandList[0]) {
-				"useskill(1)" -> {
-					game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", tag = tag)
-					if (!game.imageUtils.isTablet) {
-						if (game.imageUtils.isLowerEnd) {
-							attackButtonLocation!!.x - 320.0
-						} else {
-							attackButtonLocation!!.x - 485.0
-						}
-					} else {
-						if (!game.imageUtils.isLandscape) {
-							attackButtonLocation!!.x - 356.0
-						} else {
-							attackButtonLocation!!.x - 275.0
-						}
-					}
-				}
-				"useskill(2)" -> {
-					game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", tag = tag)
-					if (!game.imageUtils.isTablet) {
-						if (game.imageUtils.isLowerEnd) {
-							attackButtonLocation!!.x - 195.0
-						} else {
-							attackButtonLocation!!.x - 295.0
-						}
-					} else {
-						if (!game.imageUtils.isLandscape) {
-							attackButtonLocation!!.x - 216.0
-						} else {
-							attackButtonLocation!!.x - 170.0
-						}
-					}
-				}
-				"useskill(3)" -> {
-					game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", tag = tag)
-					if (!game.imageUtils.isTablet) {
-						if (game.imageUtils.isLowerEnd) {
-							attackButtonLocation!!.x - 70.0
-						} else {
-							attackButtonLocation!!.x - 105.0
-						}
-					} else {
-						if (!game.imageUtils.isLandscape) {
-							attackButtonLocation!!.x - 77.0
-						} else {
-							attackButtonLocation!!.x - 60.0
-						}
-					}
-				}
-				"useskill(4)" -> {
-					game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", tag = tag)
-					if (!game.imageUtils.isTablet) {
-						if (game.imageUtils.isLowerEnd) {
-							attackButtonLocation!!.x + 55.0
-						} else {
-							attackButtonLocation!!.x + 85.0
-						}
-					} else {
-						if (!game.imageUtils.isLandscape) {
-							attackButtonLocation!!.x + 65.0
-						} else {
-							attackButtonLocation!!.x - 45.0
-						}
-					}
-				}
-				else -> {
-					game.printToLog("[WARNING] Invalid command received for using the Character's Skill.", tag = tag)
-					return
-				}
-			}
-
-			tempSkillCommandList = tempSkillCommandList.drop(1)
-
-			val y = if (!game.imageUtils.isTablet) {
-				if (game.imageUtils.isLowerEnd) {
-					attackButtonLocation!!.y + 255.0
-				} else {
-					attackButtonLocation!!.y + 395.0
-				}
+			if (tempSkillCommandList[0].contains("wait")) {
+				waitExecute(tempSkillCommandList)
+				tempSkillCommandList = tempSkillCommandList.drop(1)
 			} else {
-				if (!game.imageUtils.isLandscape) {
-					attackButtonLocation!!.y + 287.0
-				} else {
-					attackButtonLocation!!.y + 230.0
+				val x = when (tempSkillCommandList[0]) {
+					"useskill(1)" -> {
+						game.printToLog("[COMBAT] Character $characterNumber uses Skill 1.", tag = tag)
+						if (!game.imageUtils.isTablet) {
+							if (game.imageUtils.isLowerEnd) {
+								attackButtonLocation!!.x - 320.0
+							} else {
+								attackButtonLocation!!.x - 485.0
+							}
+						} else {
+							if (!game.imageUtils.isLandscape) {
+								attackButtonLocation!!.x - 356.0
+							} else {
+								attackButtonLocation!!.x - 275.0
+							}
+						}
+					}
+					"useskill(2)" -> {
+						game.printToLog("[COMBAT] Character $characterNumber uses Skill 2.", tag = tag)
+						if (!game.imageUtils.isTablet) {
+							if (game.imageUtils.isLowerEnd) {
+								attackButtonLocation!!.x - 195.0
+							} else {
+								attackButtonLocation!!.x - 295.0
+							}
+						} else {
+							if (!game.imageUtils.isLandscape) {
+								attackButtonLocation!!.x - 216.0
+							} else {
+								attackButtonLocation!!.x - 170.0
+							}
+						}
+					}
+					"useskill(3)" -> {
+						game.printToLog("[COMBAT] Character $characterNumber uses Skill 3.", tag = tag)
+						if (!game.imageUtils.isTablet) {
+							if (game.imageUtils.isLowerEnd) {
+								attackButtonLocation!!.x - 70.0
+							} else {
+								attackButtonLocation!!.x - 105.0
+							}
+						} else {
+							if (!game.imageUtils.isLandscape) {
+								attackButtonLocation!!.x - 77.0
+							} else {
+								attackButtonLocation!!.x - 60.0
+							}
+						}
+					}
+					"useskill(4)" -> {
+						game.printToLog("[COMBAT] Character $characterNumber uses Skill 4.", tag = tag)
+						if (!game.imageUtils.isTablet) {
+							if (game.imageUtils.isLowerEnd) {
+								attackButtonLocation!!.x + 55.0
+							} else {
+								attackButtonLocation!!.x + 85.0
+							}
+						} else {
+							if (!game.imageUtils.isLandscape) {
+								attackButtonLocation!!.x + 65.0
+							} else {
+								attackButtonLocation!!.x - 45.0
+							}
+						}
+					}
+					else -> {
+						game.printToLog("[WARNING] Invalid command received for using the Character's Skill.", tag = tag)
+						game.findAndClickButton("back")
+						return
+					}
 				}
-			}
 
-			// Double tap the Skill to avoid any popups caused by other Raid participants.
-			game.wait(0.5)
-			game.gestureUtils.tap(x, y, "template_skill")
+				tempSkillCommandList = tempSkillCommandList.drop(1)
 
-			game.wait(1.0)
+				val y = if (!game.imageUtils.isTablet) {
+					if (game.imageUtils.isLowerEnd) {
+						attackButtonLocation!!.y + 255.0
+					} else {
+						attackButtonLocation!!.y + 395.0
+					}
+				} else {
+					if (!game.imageUtils.isLandscape) {
+						attackButtonLocation!!.y + 287.0
+					} else {
+						attackButtonLocation!!.y + 230.0
+					}
+				}
 
-			// Check if the Skill requires a target.
-			if (game.imageUtils.confirmLocation("use_skill", tries = 3)) {
-				val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
+				// Double tap the Skill to avoid any popups caused by other Raid participants.
+				game.wait(0.5)
+				game.gestureUtils.tap(x, y, "template_skill")
 
-				if (selectCharacterLocation != null) {
-					game.printToLog("[COMBAT] Skill is awaiting a target.", tag = tag)
+				game.wait(1.0)
 
-					game.wait(0.5)
-
+				// Check if the Skill requires a target.
+				if (game.imageUtils.confirmLocation("use_skill", tries = 3)) {
 					if (tempSkillCommandList.isNotEmpty()) {
-						// Select the targeted Character.
-						when (tempSkillCommandList[0]) {
-							"target(1)" -> {
-								game.printToLog("[COMBAT] Targeting Character 1 for Skill.", tag = tag)
-								if (!game.imageUtils.isTablet) {
-									if (game.imageUtils.isLowerEnd) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 140.0, selectCharacterLocation.y + 125.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
+						val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
+
+						when {
+							selectCharacterLocation != null -> {
+								game.wait(0.5)
+
+								// Select the targeted Character.
+								when (tempSkillCommandList[0]) {
+									"target(1)" -> {
+										game.printToLog("[COMBAT] Targeting Character 1 for Skill.", tag = tag)
+										if (!game.imageUtils.isTablet) {
+											if (game.imageUtils.isLowerEnd) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 140.0, selectCharacterLocation.y + 125.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 195.0, "template_target")
+											}
+										} else {
+											if (!game.imageUtils.isLandscape) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 135.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 115.0, selectCharacterLocation.y + 115.0, "template_target")
+											}
+										}
 									}
-								} else {
-									if (!game.imageUtils.isLandscape) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 135.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 115.0, selectCharacterLocation.y + 115.0, "template_target")
+									"target(2)" -> {
+										game.printToLog("[COMBAT] Targeting Character 2 for Skill.", tag = tag)
+										if (!game.imageUtils.isTablet) {
+											if (game.imageUtils.isLowerEnd) {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 125.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0, "template_target")
+											}
+										} else {
+											if (!game.imageUtils.isLandscape) {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 135.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 115.0, "template_target")
+											}
+										}
+									}
+									"target(3)" -> {
+										game.printToLog("[COMBAT] Targeting Character 3 for Skill.", tag = tag)
+										if (!game.imageUtils.isTablet) {
+											if (game.imageUtils.isLowerEnd) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 125.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
+											}
+										} else {
+											if (!game.imageUtils.isLandscape) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 135.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 115.0, "template_target")
+											}
+										}
+									}
+									"target(4)" -> {
+										game.printToLog("[COMBAT] Targeting Character 4 for Skill.", tag = tag)
+										if (!game.imageUtils.isTablet) {
+											if (game.imageUtils.isLowerEnd) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 140.0, selectCharacterLocation.y + 375.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0, "template_target")
+											}
+										} else {
+											if (!game.imageUtils.isLandscape) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 415.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 115.0, selectCharacterLocation.y + 315.0, "template_target")
+											}
+										}
+									}
+									"target(5)" -> {
+										game.printToLog("[COMBAT] Targeting Character 5 for Skill.", tag = tag)
+										if (!game.imageUtils.isTablet) {
+											if (game.imageUtils.isLowerEnd) {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 375.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0, "template_target")
+											}
+										} else {
+											if (!game.imageUtils.isLandscape) {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 415.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 315.0, "template_target")
+											}
+										}
+									}
+									"target(6)" -> {
+										game.printToLog("[COMBAT] Targeting Character 6 for Skill.", tag = tag)
+										if (!game.imageUtils.isTablet) {
+											if (game.imageUtils.isLowerEnd) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 375.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
+											}
+										} else {
+											if (!game.imageUtils.isLandscape) {
+												game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 415.0, "template_target")
+											} else {
+												game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 315.0, "template_target")
+											}
+										}
+									}
+									else -> {
+										if (tempSkillCommandList[0].contains("wait")) {
+											waitExecute(tempSkillCommandList)
+										} else {
+											game.printToLog("[WARNING] Invalid command received for Skill targeting.", tag = tag)
+											game.findAndClickButton("cancel")
+										}
 									}
 								}
+
+								tempSkillCommandList = tempSkillCommandList.drop(1)
 							}
-							"target(2)" -> {
-								game.printToLog("[COMBAT] Targeting Character 2 for Skill.", tag = tag)
-								if (!game.imageUtils.isTablet) {
-									if (game.imageUtils.isLowerEnd) {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 125.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 195.0, "template_target")
-									}
-								} else {
-									if (!game.imageUtils.isLandscape) {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 135.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 115.0, "template_target")
-									}
-								}
-							}
-							"target(3)" -> {
-								game.printToLog("[COMBAT] Targeting Character 3 for Skill.", tag = tag)
-								if (!game.imageUtils.isTablet) {
-									if (game.imageUtils.isLowerEnd) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 125.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
-									}
-								} else {
-									if (!game.imageUtils.isLandscape) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 135.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 115.0, "template_target")
-									}
-								}
-							}
-							"target(4)" -> {//360,495
-								game.printToLog("[COMBAT] Targeting Character 4 for Skill.", tag = tag)
-								if (!game.imageUtils.isTablet) {
-									if (game.imageUtils.isLowerEnd) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 140.0, selectCharacterLocation.y + 375.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 195.0, selectCharacterLocation.y + 570.0, "template_target")
-									}
-								} else {
-									if (!game.imageUtils.isLandscape) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 150.0, selectCharacterLocation.y + 415.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 115.0, selectCharacterLocation.y + 315.0, "template_target")
-									}
-								}
-							}
-							"target(5)" -> {
-								game.printToLog("[COMBAT] Targeting Character 5 for Skill.", tag = tag)
-								if (!game.imageUtils.isTablet) {
-									if (game.imageUtils.isLowerEnd) {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 375.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 570.0, "template_target")
-									}
-								} else {
-									if (!game.imageUtils.isLandscape) {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 415.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x + 5.0, selectCharacterLocation.y + 315.0, "template_target")
-									}
-								}
-							}
-							"target(6)" -> {
-								game.printToLog("[COMBAT] Targeting Character 6 for Skill.", tag = tag)
-								if (!game.imageUtils.isTablet) {
-									if (game.imageUtils.isLowerEnd) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 375.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
-									}
-								} else {
-									if (!game.imageUtils.isLandscape) {
-										game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 415.0, "template_target")
-									} else {
-										game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 315.0, "template_target")
-									}
-								}
-							}
-							else -> {
-								game.printToLog("[WARNING] Invalid command received for Skill targeting.", tag = tag)
+							game.imageUtils.confirmLocation("skill_unusable", tries = 2) -> {
+								game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", tag = tag)
 								game.findAndClickButton("cancel")
 							}
-						}
+							tempSkillCommandList[0].contains("wait") -> {
+								val waitCommand = tempSkillCommandList[0].substringAfter("(").replace(")", "")
 
-						tempSkillCommandList = tempSkillCommandList.drop(1)
+								try {
+									val waitSeconds = waitCommand.toDouble()
+									game.printToLog("[COMBAT] Now waiting $waitSeconds seconds.", tag = tag)
+									game.wait(waitSeconds)
+								} catch (e: Exception) {
+									game.printToLog("[COMBAT] Could not parse out the seconds in the wait command. Waiting 1 second as fallback.", tag = tag)
+									game.wait(1.0)
+								}
+							}
+						}
 					}
-				} else if (game.imageUtils.confirmLocation("skill_unusable", tries = 2)) {
-					game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", tag = tag)
-					game.findAndClickButton("cancel")
 				}
 			}
 		}
@@ -687,7 +733,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun useSummon(summonCommand: String) {
 		for (j in 1..6) {
-			if (summonCommand == "summon($j)") {
+			if (summonCommand.contains("summon($j)")) {
 				// Bring up the available Summons.
 				game.printToLog("[COMBAT] Invoking Summon $j.", tag = tag)
 				game.findAndClickButton("summon", tries = 5)
@@ -813,6 +859,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						// Try to tap on the Summon again if a popup from the Raid absorbed the tap event.
 						tries -= 1
 					}
+				}
+
+				if (summonCommand.contains("wait")) {
+					val splitCommand = summonCommand.split(".").drop(1)
+					waitExecute(splitCommand, fallbackDelay = 5.0)
 				}
 			}
 		}
@@ -1033,7 +1084,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				}
 			}
 
-			// The commands are already preprocessed to remove all comments back in SettingsFragment.
 			val command = commandList.removeAt(0).lowercase()
 
 			game.printToLog("\n[COMBAT] Reading command: \"$command\"", tag = tag)
@@ -1096,14 +1146,18 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					healingItemCommands.contains(command) -> {
 						useCombatHealingItem(command)
 					}
-					command.contains("summon") && command != "quicksummon" -> {
+					command.contains("summon") && !command.contains("quicksummon") -> {
 						useSummon(command)
 					}
-					command == "quicksummon" -> {
+					command.contains("quicksummon") -> {
 						game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
 						if (game.findAndClickButton("quick_summon1") || game.findAndClickButton("quick_summon2")) {
 							game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
-							game.wait(3.0)
+
+							if (command.contains("wait")) {
+								val splitCommand = command.split(".").drop(1)
+								waitExecute(splitCommand, fallbackDelay = 5.0)
+							}
 						} else {
 							game.printToLog("[COMBAT] Was not able to quick summon this Turn.", tag = tag)
 						}
