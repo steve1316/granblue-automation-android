@@ -820,8 +820,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 	/**
 	 * Wait several tries until the bot sees either the "Attack" or the "Next" button before starting a new turn.
+	 *
+	 * @return True if Attack ended into the next Turn. False if Attack ended but combat also ended as well.
 	 */
-	private fun waitForAttack() {
+	private fun waitForAttack(): Boolean {
 		game.printToLog("[COMBAT] Waiting for attack to end...", tag = tag)
 		var tries = 10
 
@@ -834,18 +836,20 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				partyWipeCheck()
 
 				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1)) {
-					break
+					return false
 				}
 			}
 
 			if (game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
-				break
+				return false
 			}
 
 			tries -= 1
 		}
 
 		game.printToLog("[COMBAT] Attack ended.", tag = tag)
+
+		return true
 	}
 
 	/**
@@ -1463,8 +1467,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						if (checkRaid()) {
 							// Click Next if it is available and enable automation again if combat continues.
 							if (game.findAndClickButton("next", tries = 2)) {
-								waitForAttack()
-
 								when {
 									game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
 										game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
@@ -1503,7 +1505,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 										return false
 									}
 									else -> {
-										enableAuto()
+										game.printToLog("[COMBAT] Clicked the Next button to move to the next wave. Attempting to restart Full/Semi Auto...", tag = tag)
+										if (waitForAttack()) {
+											enableAuto()
+										}
 									}
 								}
 							} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
@@ -1545,15 +1550,18 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 										return false
 									}
 									else -> {
+										game.printToLog("[COMBAT] Attack button has disappeared during Full/Semi Auto. Determining if bot should reload...", tag = tag)
+
 										reloadAfterAttack(override = true)
 
-										waitForAttack()
-
-										enableAuto()
+										if (waitForAttack()) {
+											enableAuto()
+										}
 									}
 								}
 							}
 						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
+							game.printToLog("[COMBAT] Attack and Next buttons have vanished. Determining if bot should reload...", tag = tag)
 							reloadAfterAttack()
 						}
 
