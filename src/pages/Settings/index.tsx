@@ -386,7 +386,7 @@ const Settings = () => {
     const renderItemSetting = () => {
         return (
             <DropDownPicker
-                listMode="MODAL"
+                listMode={itemList.length > 10 ? "MODAL" : "SCROLLVIEW"}
                 modalProps={{
                     animationType: "slide",
                 }}
@@ -394,7 +394,7 @@ const Settings = () => {
                 dropDownContainerStyle={styles.dropdown}
                 placeholder="Select Item"
                 searchTextInputStyle={{ fontStyle: "italic" }}
-                searchable={true}
+                searchable={itemList.length > 10}
                 items={itemList}
                 open={isItemPickerOpen}
                 setOpen={(flag) => {
@@ -416,6 +416,7 @@ const Settings = () => {
                 dropDownContainerStyle={styles.dropdown}
                 placeholder="Select Mission"
                 searchTextInputStyle={{ fontStyle: "italic" }}
+                dropDownDirection="BOTTOM"
                 items={missionList}
                 open={isMissionPickerOpen}
                 setOpen={(flag) => {
