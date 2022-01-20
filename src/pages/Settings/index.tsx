@@ -266,8 +266,8 @@ const Settings = () => {
                 native={false}
             />
 
-            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ height: "100%" }}>
-                <View style={{ height: Dimensions.get("screen").height * 0.5, marginHorizontal: 20 }}>
+            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={{ marginHorizontal: 20 }}>
                     <CustomButton
                         title={bsc.settings.game.combatScriptName === "" ? "Select Combat Script" : `Selected: ${bsc.settings.game.combatScriptName}`}
                         width={200}
