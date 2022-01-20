@@ -1312,7 +1312,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 				break
 			} else if (command.contains("repeatmanualattackandreload")) {
-				game.printToLog("[COMBAT] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
+				if (game.configData.debugMode) {
+					game.printToLog("[DEBUG] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
+				}
+
 				manualAttackAndReload = true
 			}
 		}
@@ -1559,7 +1562,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 										return false
 									}
 									else -> {
-										game.printToLog("[COMBAT] Clicked the Next button to move to the next wave. Attempting to restart Full/Semi Auto...", tag = tag)
+										if (game.configData.debugMode) {
+											game.printToLog("[DEBUG] Clicked the Next button to move to the next wave. Attempting to restart Full/Semi Auto...", tag = tag)
+										}
+
 										if (waitForAttack()) {
 											enableAuto()
 										}
@@ -1604,7 +1610,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 										return false
 									}
 									else -> {
-										game.printToLog("[COMBAT] Attack button has disappeared during Full/Semi Auto. Determining if bot should reload...", tag = tag)
+										if (game.configData.debugMode) {
+											game.printToLog("[DEBUG] Attack button has disappeared during Full/Semi Auto. Determining if bot should reload...", tag = tag)
+										}
 
 										reloadAfterAttack(override = true)
 
@@ -1615,7 +1623,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 								}
 							}
 						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null && game.imageUtils.findButton("next", tries = 1, suppressError = true) == null) {
-							game.printToLog("[COMBAT] Attack and Next buttons have vanished. Determining if bot should reload...", tag = tag)
+							if (game.configData.debugMode) {
+								game.printToLog("[DEBUG] Attack and Next buttons have vanished. Determining if bot should reload...", tag = tag)
+							}
+
 							reloadAfterAttack()
 						}
 
