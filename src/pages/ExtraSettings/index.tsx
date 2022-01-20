@@ -43,6 +43,10 @@ const ExtraSettings = () => {
 
     const bsc = useContext(BotStateContext)
 
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // Rendering
+
     const renderNightmareSettings = () => {
         if (
             bsc.settings.nightmare.enableNightmare &&
@@ -185,11 +189,9 @@ const ExtraSettings = () => {
         }
     }
 
-    return (
-        <View style={styles.root}>
-            <ScrollView>
-                {renderNightmareSettings()}
-
+    const renderTwitterSettings = () => {
+        return (
+            <View>
                 <TitleDivider
                     title="Twitter Settings"
                     subtitle="Please visit the wiki on the GitHub page for instructions on how to get these keys and tokens."
@@ -225,7 +227,13 @@ const ExtraSettings = () => {
                     value={bsc.settings.twitter.twitterAccessTokenSecret}
                     onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, twitter: { ...bsc.settings.twitter, twitterAccessTokenSecret: value } })}
                 />
+            </View>
+        )
+    }
 
+    const renderDiscordSettings = () => {
+        return (
+            <View>
                 <TitleDivider
                     title="Discord Settings"
                     subtitle={`Please visit the wiki on the GitHub page for instructions on how to get the token and user ID.`}
@@ -257,7 +265,13 @@ const ExtraSettings = () => {
                         />
                     </View>
                 ) : null}
+            </View>
+        )
+    }
 
+    const renderConfigurationSettings = () => {
+        return (
+            <View>
                 <TitleDivider title="Configuration Settings" hasIcon={true} iconName="tune" />
                 <Checkbox
                     text="Enable Debug Mode"
@@ -399,7 +413,13 @@ const ExtraSettings = () => {
                         />
                     </View>
                 ) : null}
+            </View>
+        )
+    }
 
+    const renderDeviceSettings = () => {
+        return (
+            <View>
                 <TitleDivider
                     title="Device Settings"
                     subtitle={`Adjust and fine-tune settings related to device setups and image processing optimizations.`}
@@ -486,6 +506,22 @@ const ExtraSettings = () => {
                     isChecked={bsc.settings.android.enableTestForHomeScreen}
                     onPress={() => bsc.setSettings({ ...bsc.settings, android: { ...bsc.settings.android, enableTestForHomeScreen: !bsc.settings.android.enableTestForHomeScreen } })}
                 />
+            </View>
+        )
+    }
+
+    return (
+        <View style={styles.root}>
+            <ScrollView>
+                {renderNightmareSettings()}
+
+                {renderTwitterSettings()}
+
+                {renderDiscordSettings()}
+
+                {renderConfigurationSettings()}
+
+                {renderDeviceSettings()}
             </ScrollView>
         </View>
     )
