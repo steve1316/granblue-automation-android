@@ -27,7 +27,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 
 		if (game.imageUtils.confirmLocation("guild_wars")) {
 			// Scroll down the screen a bit.
-			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
+			game.gestureUtils.swipe(500f, 1000f, 500f, 500f)
 
 			game.wait(2.0)
 
@@ -63,8 +63,12 @@ class GuildWars(private val game: Game, private val missionName: String) {
 			if (difficulty == "Very Hard" || difficulty == "Extreme" || difficulty == "Extreme+") {
 				game.printToLog("\n[GUILD.WARS] Now proceeding to farm meat.", tag = tag)
 
-				// Click on the banner to farm meat.
-				game.gestureUtils.tap(raidBattleLocations[1].x, raidBattleLocations[1].y, "event_raid_battle")
+				// Click on the banner to farm meat. Take care of the situation where NM150 is available so it pushes the meat banner down by 1.
+				if (raidBattleLocations.size < 3) {
+					game.gestureUtils.tap(raidBattleLocations[1].x, raidBattleLocations[1].y, "event_raid_battle")
+				} else {
+					game.gestureUtils.tap(raidBattleLocations[2].x, raidBattleLocations[2].y, "event_raid_battle")
+				}
 
 				game.wait(1.0)
 
@@ -117,13 +121,19 @@ class GuildWars(private val game: Game, private val missionName: String) {
 
 				// Click on the banner to farm Nightmares.
 				if (difficulty != "NM150") {
-					game.gestureUtils.tap(raidBattleLocations[0].x, raidBattleLocations[0].y, "event_raid_battle")
+					if (raidBattleLocations.size < 3) {
+						game.gestureUtils.tap(raidBattleLocations[0].x, raidBattleLocations[0].y, "event_raid_battle")
+					} else {
+						game.gestureUtils.tap(raidBattleLocations[1].x, raidBattleLocations[1].y, "event_raid_battle")
+					}
 				} else {
 					game.printToLog("Hosting NM150 now.", tag = tag)
-					game.findAndClickButton("guild_wars_nightmare_150")
+					if (raidBattleLocations.size >= 3) {
+						game.gestureUtils.tap(raidBattleLocations[0].x, raidBattleLocations[0].y, "event_raid_battle")
 
-					if (game.imageUtils.confirmLocation("guild_wars_nightmare") && game.findAndClickButton("start")) {
-						startCheckForNM150 = true
+						if (game.imageUtils.confirmLocation("guild_wars_nightmare") && game.findAndClickButton("start")) {
+							startCheckForNM150 = true
+						}
 					}
 				}
 
@@ -161,7 +171,11 @@ class GuildWars(private val game: Game, private val missionName: String) {
 					game.printToLog("[GUILD.WARS] Hosting Extreme+ now.", tag = tag)
 
 					// Click on the banner to farm meat.
-					game.findAndClickButton("guild_wars_meat")
+					if (raidBattleLocations.size < 3) {
+						game.gestureUtils.tap(raidBattleLocations[1].x, raidBattleLocations[1].y, "event_raid_battle")
+					} else {
+						game.gestureUtils.tap(raidBattleLocations[2].x, raidBattleLocations[2].y, "event_raid_battle")
+					}
 
 					if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 						game.printToLog("Hosting Extreme+ now.", tag = tag)
