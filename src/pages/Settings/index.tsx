@@ -342,7 +342,7 @@ const Settings = () => {
 
                 {bsc.settings.game.farmingMode === "Event" ? (
                     <Checkbox
-                        text="Enable Incrementation of Location by 1"
+                        text={`Enable Incrementation of Location\nby 1`}
                         subtitle="Enable this if the event has its N/H missions at the very top so the bot can correctly select the correct quest. Or in otherwords, enable this if the Event tab in the Special page has 3 'Select' buttons instead of 2."
                         isChecked={bsc.settings.event.enableLocationIncrementByOne}
                         onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableLocationIncrementByOne: !bsc.settings.event.enableLocationIncrementByOne } })}
