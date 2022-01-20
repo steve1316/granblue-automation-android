@@ -1,18 +1,15 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.3.5</latestVersion>
+        <latestVersion>3.3.6</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.3.5 - Changelog
-
-New
----
-- Add a new chain command `.wait(#)` used in skill and summon commands. Refer to the wiki for usage examples.
+v3.3.6 - Changelog
 
 Fixed
 ---
-- Fix for reloading on Loot Collection screen.
-- Prevent bot from restarting Auto if combat already ended.
+- Fix ScrollView getting cut off at the bottom in the Settings page.
+- Generalized navigation for NM and meat farming.
+- Minor UI changes.
 
         </releaseNotes>
     </update>
