@@ -339,19 +339,34 @@ class Game(myContext: Context) {
 		// Find the location of one of the Summons.
 		val summonLocation = imageUtils.findSummon(newSummonList, summonElementList)
 
-		return if (summonLocation != null) {
-			// Select the Summon.
-			gestureUtils.tap(summonLocation.x, summonLocation.y, "template_summon")
+		return when {
+			summonLocation != null -> {
+				// Select the Summon.
+				gestureUtils.tap(summonLocation.x, summonLocation.y, "template_summon")
 
-			// Check for CAPTCHA.
-			checkForCAPTCHA()
+				// Check for CAPTCHA.
+				checkForCAPTCHA()
 
-			true
-		} else {
-			// Reset Summons if not found.
-			resetSummons()
+				true
+			}
+			configData.enableBypassResetSummon -> {
+				printToLog("[INFO] Bypassing procedure to reset Summons. Reloading page and selecting the very first one now...")
 
-			false
+				findAndClickButton("reload")
+				wait(3.0)
+
+				// Now select the first Summon.
+				val chooseASummonLocation = imageUtils.findButton("choose_a_summon")!!
+				gestureUtils.tap(chooseASummonLocation.x, chooseASummonLocation.y + 400, "template_summon")
+
+				true
+			}
+			else -> {
+				// Reset Summons if not found.
+				resetSummons()
+
+				false
+			}
 		}
 	}
 
