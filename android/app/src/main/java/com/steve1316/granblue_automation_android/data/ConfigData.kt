@@ -63,6 +63,21 @@ class ConfigData(myContext: Context) {
 	// Generic
 	val enableForceReload: Boolean
 
+	// Adjustment
+	val enableCalibrationAdjustment: Boolean
+	val adjustCalibration: Int
+	val enableGeneralAdjustment: Boolean
+	val adjustButtonSearchGeneral: Int
+	val adjustHeaderSearchGeneral: Int
+	val enableSupportSummonSelectionScreenAdjustment: Boolean
+	val adjustSupportSummonSelectionScreen: Int
+	val enableCombatModeAdjustment: Boolean
+	val adjustCombatStart: Int
+	val adjustSkillUsage: Int
+	val adjustSummonUsage: Int
+	val adjustWaitingForReload: Int
+	val adjustWaitingForAttack: Int
+
 	// Android
 	val enableDelayTap: Boolean
 	val delayTapMilliseconds: Int
@@ -144,6 +159,20 @@ class ConfigData(myContext: Context) {
 		enableStopOnArcarumBoss = sharedPreferences.getBoolean("enableStopOnArcarumBoss", true)
 
 		enableForceReload = sharedPreferences.getBoolean("enableForceReload", false)
+
+		enableCalibrationAdjustment = sharedPreferences.getBoolean("enableCalibrationAdjustment", false)
+		adjustCalibration = sharedPreferences.getInt("adjustCalibration", 5)
+		enableGeneralAdjustment = sharedPreferences.getBoolean("enableGeneralAdjustment", false)
+		adjustButtonSearchGeneral = sharedPreferences.getInt("adjustButtonSearchGeneral", 5)
+		adjustHeaderSearchGeneral = sharedPreferences.getInt("adjustHeaderSearchGeneral", 5)
+		enableSupportSummonSelectionScreenAdjustment = sharedPreferences.getBoolean("enableSupportSummonSelectionScreenAdjustment", false)
+		adjustSupportSummonSelectionScreen = sharedPreferences.getInt("adjustSupportSummonSelectionScreen", 30)
+		enableCombatModeAdjustment = sharedPreferences.getBoolean("enableCombatModeAdjustment", false)
+		adjustCombatStart = sharedPreferences.getInt("adjustCombatStart", 50)
+		adjustSkillUsage = sharedPreferences.getInt("adjustSkillUsage", 5)
+		adjustSummonUsage = sharedPreferences.getInt("adjustSummonUsage", 5)
+		adjustWaitingForReload = sharedPreferences.getInt("adjustWaitingForReload", 3)
+		adjustWaitingForAttack = sharedPreferences.getInt("adjustWaitingForAttack", 100)
 
 		enableDelayTap = sharedPreferences.getBoolean("enableDelayTap", false)
 		delayTapMilliseconds = sharedPreferences.getInt("delayTapMilliseconds", 1000)

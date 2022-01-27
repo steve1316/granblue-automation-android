@@ -116,6 +116,24 @@ class JSONParser() {
 			commit()
 		}
 
+		val adjustmentObj = jObj.getJSONObject("adjustment")
+		sharedPreferences.edit {
+			putBoolean("enableCalibrationAdjustment", adjustmentObj.getBoolean("enableCalibrationAdjustment"))
+			putInt("adjustCalibration", adjustmentObj.getInt("adjustCalibration"))
+			putBoolean("enableGeneralAdjustment", adjustmentObj.getBoolean("enableGeneralAdjustment"))
+			putInt("adjustButtonSearchGeneral", adjustmentObj.getInt("adjustButtonSearchGeneral"))
+			putInt("adjustHeaderSearchGeneral", adjustmentObj.getInt("adjustHeaderSearchGeneral"))
+			putBoolean("enableSupportSummonSelectionScreenAdjustment", adjustmentObj.getBoolean("enableSupportSummonSelectionScreenAdjustment"))
+			putInt("adjustSupportSummonSelectionScreen", adjustmentObj.getInt("adjustSupportSummonSelectionScreen"))
+			putBoolean("enableCombatModeAdjustment", adjustmentObj.getBoolean("enableCombatModeAdjustment"))
+			putInt("adjustCombatStart", adjustmentObj.getInt("adjustCombatStart"))
+			putInt("adjustSkillUsage", adjustmentObj.getInt("adjustSkillUsage"))
+			putInt("adjustSummonUsage", adjustmentObj.getInt("adjustSummonUsage"))
+			putInt("adjustWaitingForReload", adjustmentObj.getInt("adjustWaitingForReload"))
+			putInt("adjustWaitingForAttack", adjustmentObj.getInt("adjustWaitingForAttack"))
+			commit()
+		}
+
 		val androidObj = jObj.getJSONObject("android")
 		sharedPreferences.edit {
 			putBoolean("enableDelayTap", androidObj.getBoolean("enableDelayTap"))
