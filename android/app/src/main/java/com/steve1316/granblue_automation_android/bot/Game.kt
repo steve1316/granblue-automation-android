@@ -367,42 +367,36 @@ class Game(myContext: Context) {
 		// Scroll the screen down to attempt to see the "Gameplay Extras" button.
 		gestureUtils.swipe(500f, 1000f, 500f, 400f)
 
-		val listOfSteps: ArrayList<String> = arrayListOf(
-			"gameplay_extras", "trial_battles", "trial_battles_old_lignoid", "play_round_button",
-			"choose_a_summon", "ok", "close", "menu", "retreat", "retreat_confirmation", "next"
-		)
-
-		listOfSteps.forEach {
-			if (it == "trial_battles_old_lignoid") {
-				// Make sure to confirm that the bot arrived at the Trial Battles screen.
-				wait(2.0)
-				imageUtils.confirmLocation("trial_battles")
+		if (findAndClickButton("gameplay_extras")) {
+			// If the bot cannot find the "Trial Battles" button, keep scrolling down until it does. It should not take more than 2 loops to see it for any reasonable screen size.
+			while (!findAndClickButton("trial_battles")) {
+				gestureUtils.swipe(500f, 1000f, 500f, 400f)
 			}
 
-			if (it == "close") {
-				// Wait a few seconds and then confirm its location.
-				wait(5.0)
-				imageUtils.confirmLocation("trial_battles_description")
-			}
+			if (imageUtils.confirmLocation("trial_battles")) {
+				// Press the "Old Lignoid" button.
+				findAndClickButton("trial_battles_old_lignoid")
 
-			var imageLocation: Point? = imageUtils.findButton(it, tries = 2)
+				// Press any detected "Play" button.
+				findAndClickButton("play_round_button")
 
-			while ((it == "gameplay_extras" || it == "trial_battles") && imageLocation == null) {
-				// Keep swiping the screen down until the bot finds the specified button.
-				imageLocation = imageUtils.findButton(it, tries = 1)
-				if (imageLocation == null) {
-					gestureUtils.scroll()
-					wait(1.0)
+				// Now select the first Summon.
+				val chooseASummonLocation = imageUtils.findButton("choose_a_summon")!!
+				gestureUtils.tap(chooseASummonLocation.x, chooseASummonLocation.y + 400, "template_summon")
+
+				// Now start the Old Lignoid Trial Battle right away and then wait a few seconds.
+				wait(3.0)
+
+				// Retreat from this Trial Battle.
+				findAndClickButton("menu", tries = 30)
+				findAndClickButton("retreat", tries = 30)
+				findAndClickButton("retreat_confirmation", tries = 30)
+				goBackHome()
+
+				if (imageUtils.confirmLocation("home")) {
+					printToLog("[SUCCESS] Summons have now been refreshed.")
 				}
 			}
-
-			if (it == "choose_a_summon" && imageLocation != null) {
-				gestureUtils.tap(imageLocation.x, imageLocation.y + 400, "template_summon")
-			} else if (it != "choose_a_summon" && imageLocation != null) {
-				gestureUtils.tap(imageLocation.x, imageLocation.y, it)
-			}
-
-			wait(2.0)
 		}
 	}
 
