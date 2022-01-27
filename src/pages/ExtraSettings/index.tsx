@@ -413,6 +413,33 @@ const ExtraSettings = () => {
                         />
                     </View>
                 ) : null}
+
+                <Checkbox
+                    text="Enable Refreshing during Combat"
+                    subtitle={
+                        "Enables the ability to refresh to speed up Combat Mode whenever the Attack button disappears when it is pressed or during Full/Semi Auto. This option takes precedence above any other related setting to reloading during combat except via the reload command in a script."
+                    }
+                    isChecked={bsc.settings.configuration.enableRefreshDuringCombat}
+                    onPress={() =>
+                        bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, enableRefreshDuringCombat: !bsc.settings.configuration.enableRefreshDuringCombat } })
+                    }
+                />
+                <Checkbox
+                    text="Enable Automatic Quick Summon during Full/Semi Auto"
+                    subtitle={
+                        'Enables the ability to automatically use Quick Summon during Full/Semi Auto. Note that this option only takes into effect when "Enable Refreshing during Combat" is turned on and that the bot is fighting a battle that is compatible with refreshing during combat.'
+                    }
+                    isChecked={bsc.settings.configuration.enableAutoQuickSummon}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, enableAutoQuickSummon: !bsc.settings.configuration.enableAutoQuickSummon } })}
+                />
+                <Checkbox
+                    text="Enable Bypassing Reset Summon Procedure"
+                    subtitle={
+                        "Enables bypassing the bot resetting Summons if there are none of your chosen found during Summon Selection. The bot will reload the page and select the very first summon at the top of the list."
+                    }
+                    isChecked={bsc.settings.configuration.enableBypassResetSummon}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, enableBypassResetSummon: !bsc.settings.configuration.enableBypassResetSummon } })}
+                />
             </View>
         )
     }
