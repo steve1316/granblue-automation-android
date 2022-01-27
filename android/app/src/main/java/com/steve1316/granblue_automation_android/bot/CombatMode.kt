@@ -400,6 +400,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * @return True if Full/Semi auto is enabled.
 	 */
 	private fun enableAuto(): Boolean {
+		if (game.configData.enableRefreshDuringCombat && game.configData.enableAutoQuickSummon) {
+			game.printToLog("[COMBAT] Automatically attempting to use Quick Summon...", tag = tag)
+			quickSummon()
+		}
+
 		game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
 		var enabledAuto = game.findAndClickButton("full_auto") || game.findAndClickButton("full_auto_enabled")
 
