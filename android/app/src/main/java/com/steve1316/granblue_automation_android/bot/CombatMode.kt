@@ -1278,238 +1278,251 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			return false
 		}
 
+		////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
 		// The following is the primary loop workflow for Combat Mode.
-		while (commandList.isNotEmpty() && !retreatCheckFlag) {
-			// Check if the Battle has ended.
-			checkForBattleEnd()
-
-			val command = commandList.removeAt(0).lowercase()
-
-			game.printToLog("\n[COMBAT] Reading command: \"$command\"", tag = tag)
-
-			if (command.contains("turn")) {
-				startTurn(command)
-			} else if (turnNumber == commandTurnNumber) {
-				// Proceed to process each command inside this Turn block until the "end" command is reached.
-
-				// Determine which Character to take action.
-				val characterSelected = when {
-					command.contains("character1") -> {
-						1
-					}
-					command.contains("character2") -> {
-						2
-					}
-					command.contains("character3") -> {
-						3
-					}
-					command.contains("character4") -> {
-						4
-					}
-					else -> {
-						0
-					}
-				}
-
-				when {
-					characterSelected != 0 -> {
-						// Select the specified Character.
-						selectCharacter(characterSelected)
-
-						// Now execute each Skill command starting from left to right for this Character.
-						val skillCommandList: List<String> = command.split(".").drop(1)
-
-						useCharacterSkill(characterSelected, skillCommandList)
-					}
-					command == "requestbackup" -> {
-						requestBackup()
-					}
-					command == "tweetbackup" -> {
-						tweetBackup()
-					}
-					healingItemCommands.contains(command) -> {
-						useCombatHealingItem(command)
-					}
-					command.contains("summon") && !command.contains("quicksummon") -> {
-						useSummon(command)
-					}
-					command.contains("quicksummon") -> {
-						quickSummon(command)
-					}
-					command == "enablesemiauto" -> {
-						enableSemiAuto()
-					}
-					command == "enablefullauto" -> {
-						enableFullAuto()
-					}
-					command.contains("targetenemy") -> {
-						// Select enemy target.
-						selectEnemyTarget(command)
-					}
-					command.contains("back") && game.findAndClickButton("home_back") -> {
-						game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
-						waitForAttack()
-
-						game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-
-						// Advance the Turn number by 1.
-						turnNumber += 1
-					}
-					command.contains("reload") -> {
-						game.printToLog("[COMBAT] Bot will now attempt to manually reload.", tag = tag)
-
-						// Press the "Attack" button in order to show the "Cancel" button. Once that disappears, manually reload the page.
-						if (game.findAndClickButton("attack")) {
-							if (game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
-								game.findAndClickButton("reload")
-								game.wait(3.0)
-							} else {
-								// If the "Cancel" button fails to disappear after 10 tries, reload anyways.
-								game.findAndClickButton("reload")
-								game.wait(3.0)
-							}
-						}
-					}
-					command.contains("repeatmanualattackandreload") -> {
-						game.printToLog("[COMBAT] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
-						manualAttackAndReload = true
-					}
-					!semiAuto && !fullAuto && command == "end" -> {
-						endTurn()
-
-						reloadAfterAttack()
-						waitForAttack()
-
-						game.printToLog("[COMBAT] Turn ${turnNumber} has ended.", tag = tag)
-
-						turnNumber += 1
-					}
-					command == "exit" -> {
-						// End Combat Mode by heading back to the Home screen without retreating.
-						game.printToLog("\n[COMBAT] Leaving this Raid without retreating.", tag = tag)
-						game.printToLog("\n####################", tag = tag)
-						game.printToLog("####################", tag = tag)
-						game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-						game.printToLog("####################", tag = tag)
-						game.printToLog("####################", tag = tag)
-						game.goBackHome(confirmLocationCheck = true)
-						return false
-					}
-				}
-			}
-
-			// Handle certain commands that could be present outside of a Turn block.
-			if (!semiAuto && !fullAuto && command == "enablesemiauto") {
-				enableSemiAuto()
-			} else if (!semiAuto && !fullAuto && command == "enablefullauto") {
-				fullAuto
-			} else if (command.contains("repeatmanualattackandreload")) {
-				game.printToLog("[Combat] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
-				manualAttackAndReload = true
-			}
-		}
-
-		// Deal with any the situation where high-profile raids end right when the bot loads in and all it sees is the "Next" button.
-		if (game.configData.farmingMode == "Raid" && game.findAndClickButton("next", tries = 3)) {
-			game.printToLog("\n####################", tag = tag)
-			game.printToLog("####################", tag = tag)
-			game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
-			game.printToLog("####################", tag = tag)
-			game.printToLog("####################", tag = tag)
-			return true
-		}
-
-		////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////
-		// When the bot arrives here, all the commands in the combat script has been processed.
-		game.printToLog("[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.", tag = tag)
-
-		if (!manualAttackAndReload) {
-			// If Semi or Full Auto is not enabled at the end of the combat script, enable one or the other.
-			if (!semiAuto && !fullAuto) {
-				enableFullAuto()
-			}
-
-			var sleepPreventionTimer = 0
-
-			// Primary loop workflow for both Semi Auto Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
-			while (!retreatCheckFlag && (fullAuto || semiAuto)) {
-				// Check for exit conditions.
+		try {
+			while (commandList.isNotEmpty() && !retreatCheckFlag) {
+				// Check if the Battle has ended.
 				checkForBattleEnd()
 
-				if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-					game.wait(3.0)
+				val command = commandList.removeAt(0).lowercase()
+
+				game.printToLog("\n[COMBAT] Reading command: \"$command\"", tag = tag)
+
+				if (command.contains("turn")) {
+					startTurn(command)
+				} else if (turnNumber == commandTurnNumber) {
+					// Proceed to process each command inside this Turn block until the "end" command is reached.
+
+					// Determine which Character to take action.
+					val characterSelected = when {
+						command.contains("character1") -> {
+							1
+						}
+						command.contains("character2") -> {
+							2
+						}
+						command.contains("character3") -> {
+							3
+						}
+						command.contains("character4") -> {
+							4
+						}
+						else -> {
+							0
+						}
+					}
+
+					when {
+						characterSelected != 0 -> {
+							// Select the specified Character.
+							selectCharacter(characterSelected)
+
+							// Now execute each Skill command starting from left to right for this Character.
+							val skillCommandList: List<String> = command.split(".").drop(1)
+
+							useCharacterSkill(characterSelected, skillCommandList)
+						}
+						command == "requestbackup" -> {
+							requestBackup()
+						}
+						command == "tweetbackup" -> {
+							tweetBackup()
+						}
+						healingItemCommands.contains(command) -> {
+							useCombatHealingItem(command)
+						}
+						command.contains("summon") && !command.contains("quicksummon") -> {
+							useSummon(command)
+						}
+						command.contains("quicksummon") -> {
+							quickSummon(command)
+						}
+						command == "enablesemiauto" -> {
+							enableSemiAuto()
+						}
+						command == "enablefullauto" -> {
+							enableFullAuto()
+						}
+						command.contains("targetenemy") -> {
+							// Select enemy target.
+							selectEnemyTarget(command)
+						}
+						command.contains("back") && game.findAndClickButton("home_back") -> {
+							game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
+							waitForAttack()
+
+							game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
+
+							// Advance the Turn number by 1.
+							turnNumber += 1
+						}
+						command.contains("reload") -> {
+							game.printToLog("[COMBAT] Bot will now attempt to manually reload.", tag = tag)
+
+							// Press the "Attack" button in order to show the "Cancel" button. Once that disappears, manually reload the page.
+							if (game.findAndClickButton("attack")) {
+								if (game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
+									game.findAndClickButton("reload")
+									game.wait(3.0)
+								} else {
+									// If the "Cancel" button fails to disappear after 10 tries, reload anyways.
+									game.findAndClickButton("reload")
+									game.wait(3.0)
+								}
+							}
+						}
+						command.contains("repeatmanualattackandreload") -> {
+							game.printToLog("[COMBAT] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
+							manualAttackAndReload = true
+						}
+						!semiAuto && !fullAuto && command == "end" -> {
+							endTurn()
+
+							reloadAfterAttack()
+							waitForAttack()
+
+							game.printToLog("[COMBAT] Turn ${turnNumber} has ended.", tag = tag)
+
+							turnNumber += 1
+						}
+						command == "exit" -> {
+							// End Combat Mode by heading back to the Home screen without retreating.
+							game.printToLog("\n[COMBAT] Leaving this Raid without retreating.", tag = tag)
+							game.printToLog("\n####################", tag = tag)
+							game.printToLog("####################", tag = tag)
+							game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+							game.printToLog("####################", tag = tag)
+							game.printToLog("####################", tag = tag)
+							game.goBackHome(confirmLocationCheck = true)
+							return false
+						}
+					}
 				}
 
-				checkForWipe()
+				// Handle certain commands that could be present outside of a Turn block.
+				if (!semiAuto && !fullAuto && command == "enablesemiauto") {
+					enableSemiAuto()
+				} else if (!semiAuto && !fullAuto && command == "enablefullauto") {
+					fullAuto
+				} else if (command.contains("repeatmanualattackandreload")) {
+					game.printToLog("[Combat] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
+					manualAttackAndReload = true
+				}
+			}
 
-				if (checkRaid()) {
-					// Press Next if it is available and enable automation again if combat continues.
+			// Deal with any the situation where high-profile raids end right when the bot loads in and all it sees is the "Next" button.
+			if (game.configData.farmingMode == "Raid" && game.findAndClickButton("next", tries = 3)) {
+				game.printToLog("\n####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				return true
+			}
+
+			////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////////////
+			// When the bot arrives here, all the commands in the combat script has been processed.
+			game.printToLog("[COMBAT] Bot has processed the entire combat script. Automatically attacking until the battle ends or Party wipes.", tag = tag)
+
+			if (!manualAttackAndReload) {
+				// If Semi or Full Auto is not enabled at the end of the combat script, enable one or the other.
+				if (!semiAuto && !fullAuto) {
+					enableFullAuto()
+				}
+
+				var sleepPreventionTimer = 0
+
+				// Primary loop workflow for both Semi Auto Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
+				while (!retreatCheckFlag && (fullAuto || semiAuto)) {
+					// Check for exit conditions.
+					checkForBattleEnd()
+
 					if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-						// Check for exit conditions and restart auto.
 						game.wait(3.0)
-						if (checkForBattleEnd() == "Nothing") {
-							enableAuto()
+					}
+
+					checkForWipe()
+
+					if (checkRaid()) {
+						// Press Next if it is available and enable automation again if combat continues.
+						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+							// Check for exit conditions and restart auto.
+							game.wait(3.0)
+							if (checkForBattleEnd() == "Nothing") {
+								enableAuto()
+							}
+						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null &&
+							game.imageUtils.findButton("next", tries = 1, suppressError = true) == null
+						) {
+							reloadAfterAttack(override = true)
+
+							waitForAttack()
+
+							// Check for exit conditions and restart auto.
+							if (checkForBattleEnd() == "Nothing") {
+								if (game.configData.debugMode) {
+									game.printToLog("[DEBUG] Clicked the Next button to move to the next wave. Attempting to restart Full/Semi Auto...", tag = tag)
+								}
+
+								enableAuto()
+							}
 						}
 					} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null &&
 						game.imageUtils.findButton("next", tries = 1, suppressError = true) == null
 					) {
-						reloadAfterAttack(override = true)
+						if (game.configData.debugMode) {
+							game.printToLog("[DEBUG] Attack and Next buttons have vanished. Determining if bot should reload...", tag = tag)
+						}
 
-						waitForAttack()
-
-						// Check for exit conditions and restart auto.
-						if (checkForBattleEnd() == "Nothing") {
-							if (game.configData.debugMode) {
-								game.printToLog("[DEBUG] Clicked the Next button to move to the next wave. Attempting to restart Full/Semi Auto...", tag = tag)
+						if (reloadAfterAttack()) {
+							// Enable Full/Semi Auto again if the bot reloaded.
+							if (fullAuto) {
+								enableFullAuto()
+							} else if (semiAuto) {
+								enableSemiAuto()
 							}
-
-							enableAuto()
 						}
 					}
-				} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null &&
-					game.imageUtils.findButton("next", tries = 1, suppressError = true) == null
-				) {
-					if (game.configData.debugMode) {
-						game.printToLog("[DEBUG] Attack and Next buttons have vanished. Determining if bot should reload...", tag = tag)
-					}
 
-					if (reloadAfterAttack()) {
-						// Enable Full/Semi Auto again if the bot reloaded.
-						if (fullAuto) {
-							enableFullAuto()
-						} else if (semiAuto) {
-							enableSemiAuto()
-						}
+					game.wait(1.0)
+
+					sleepPreventionTimer += 1
+
+					// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
+					if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
+						game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", tag = tag)
+						game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
+						game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
 					}
 				}
+			} else {
+				// Main workflow loop for manually pressing the Attack button and reloading until combat ends.
+				while (!retreatCheckFlag) {
+					// Check for exit conditions.
+					checkForBattleEnd()
 
-				game.wait(1.0)
+					if (game.findAndClickButton("next", tries = 3, suppressError = true)) {
+						game.wait(3.0)
+					}
 
-				sleepPreventionTimer += 1
-
-				// The Android device would lock itself and go to sleep if there has been no inputs. Thus, some occasional swiping is required.
-				if (sleepPreventionTimer != 0 && sleepPreventionTimer % 60 == 0) {
-					game.printToLog("\n[COMBAT] Swiping screen to prevent Android device going to sleep due to inactivity.", tag = tag)
-					game.gestureUtils.swipe(500f, 1000f, 500f, 900f, 100L)
-					game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
+					game.findAndClickButton("attack", tries = 10)
+					reloadAfterAttack()
+					waitForAttack()
 				}
 			}
-		} else {
-			// Main workflow loop for manually pressing the Attack button and reloading until combat ends.
-			while (!retreatCheckFlag) {
-				// Check for exit conditions.
-				checkForBattleEnd()
-
-				if (game.findAndClickButton("next", tries = 3, suppressError = true)) {
-					game.wait(3.0)
-				}
-
-				game.findAndClickButton("attack", tries = 10)
-				reloadAfterAttack()
-				waitForAttack()
+		} catch (e: CombatModeException) {
+			if (listOfExitEventsForFalse.contains(e.message)) {
+				return false
+			} else if (listOfExitEventsForTrue.contains(e.message)) {
+				return true
 			}
 		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
 
 		game.printToLog("\n####################", tag = tag)
 		game.printToLog("####################", tag = tag)
