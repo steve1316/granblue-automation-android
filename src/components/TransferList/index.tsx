@@ -94,6 +94,10 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
             uri: require("../../images/summons/hades.png"),
         },
         {
+            label: "Belial",
+            uri: require("../../images/summons/belial.png"),
+        },
+        {
             label: "Kaguya",
             uri: require("../../images/summons/kaguya.png"),
         },
