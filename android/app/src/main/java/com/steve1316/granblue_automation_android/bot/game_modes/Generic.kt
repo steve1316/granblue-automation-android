@@ -20,7 +20,7 @@ class Generic(private val game: Game) {
 
 		// Bot can start either at the Combat screen with the "Attack" button visible or the Loot Collection screen with the "Play Again" button visible.
 		when {
-			game.imageUtils.findButton("attack", tries = 5) != null -> {
+			game.imageUtils.findButton("attack", tries = 10) != null -> {
 				game.printToLog("\n[GENERIC] Bot is at the Combat screen. Starting Combat Mode now...", tag = tag)
 				if (game.combatMode.startCombatMode()) {
 					runsCompleted = game.collectLoot(isCompleted = true)
@@ -46,9 +46,7 @@ class Generic(private val game: Game) {
 				if (game.imageUtils.confirmLocation("select_a_summon")) {
 					if (game.selectSummon()) {
 						// Do not select party and just commence the mission.
-						if (game.findAndClickButton("ok", tries = 10)) {
-							game.wait(1.0)
-
+						if (game.findAndClickButton("ok", tries = 30)) {
 							// Now start Combat Mode and detect any item drops.
 							if (game.combatMode.startCombatMode()) {
 								runsCompleted = game.collectLoot(isCompleted = true)

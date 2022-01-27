@@ -139,19 +139,19 @@ class Game(myContext: Context) {
 			}
 
 			// Wait a few seconds for the page to load and to prevent the bot from prematurely scrolling all the way to the bottom.
-			wait(2.0)
+			wait(4.0)
 
 			printToLog("\n[INFO] Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, Screen DPI: ${MediaProjectionService.displayDPI}")
 
 			// Check for any misc popups.
-			findAndClickButton("close", tries = 2)
+			findAndClickButton("close")
 
 			if (confirmLocationCheck) {
 				wait(2.0)
 
 				if (!imageUtils.confirmLocation("home")) {
 					findAndClickButton("reload")
-					wait(2.0)
+					wait(4.0)
 					if (!imageUtils.confirmLocation("home")) {
 						throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
 					}
@@ -256,7 +256,7 @@ class Game(myContext: Context) {
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
 	fun checkForCAPTCHA() {
-		if (imageUtils.confirmLocation("captcha", tries = 2)) {
+		if (imageUtils.confirmLocation("captcha")) {
 			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Stopping the bot now."))
 		} else {
 			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
@@ -436,9 +436,9 @@ class Game(myContext: Context) {
 			// Search for the location of the "Set" button based on the Group number.
 			while (setLocation == null) {
 				setLocation = if (selectedGroupNumber < 8) {
-					imageUtils.findButton("party_set_a", tries = 1)
+					imageUtils.findButton("party_set_a", tries = 10)
 				} else {
-					imageUtils.findButton("party_set_b", tries = 1)
+					imageUtils.findButton("party_set_b", tries = 10)
 				}
 
 				if (setLocation == null) {
@@ -454,9 +454,9 @@ class Game(myContext: Context) {
 
 					// Switch over and search for the other Set.
 					setLocation = if (selectedGroupNumber < 8) {
-						imageUtils.findButton("party_set_b", tries = 1)
+						imageUtils.findButton("party_set_b", tries = 10)
 					} else {
-						imageUtils.findButton("party_set_a", tries = 1)
+						imageUtils.findButton("party_set_a", tries = 10)
 					}
 				}
 			}
@@ -506,7 +506,7 @@ class Game(myContext: Context) {
 				}
 			}
 
-			wait(1.0)
+			wait(2.0)
 
 			// Select the Party.
 			equation = if (!imageUtils.isTablet) {
@@ -553,7 +553,7 @@ class Game(myContext: Context) {
 				}
 			}
 
-			wait(1.0)
+			wait(2.0)
 
 			partySelectionFirstRun = false
 		}
@@ -562,14 +562,16 @@ class Game(myContext: Context) {
 
 		// Start the mission by clicking "OK".
 		findAndClickButton("ok")
-		wait(5.0)
+		wait(1.0)
 
 		// Detect if a "This raid battle has already ended" popup appeared.
 		if (configData.farmingMode == "Raid" && findAndClickButton("ok")) {
 			printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
+			wait(3.0)
 			return false
 		}
 
+		wait(3.0)
 		return true
 	}
 
@@ -681,19 +683,18 @@ class Game(myContext: Context) {
 
 		// Close all popups until the bot reaches the Loot Collected screen.
 		if (!skipPopupCheck) {
-			var tries = 10
 			while (!imageUtils.confirmLocation("loot_collected", tries = 1)) {
 				findAndClickButton("ok", tries = 1, suppressError = true)
-				wait(1.0)
 				findAndClickButton("close", tries = 1, suppressError = true)
-				wait(1.0)
 				findAndClickButton("cancel", tries = 1, suppressError = true)
-				wait(1.0)
 				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
 
-				tries -= 1
-				if (tries <= 0) {
-					break
+				if (imageUtils.confirmLocation("no_loot", tries = 1)) {
+					return 0
+				}
+
+				if (configData.debugMode) {
+					printToLog("[DEBUG] Have not detected the Loot Collection screen yet...")
 				}
 			}
 		}
@@ -802,8 +803,7 @@ class Game(myContext: Context) {
 	fun checkForPopups(): Boolean {
 		printToLog("\n[INFO] Now beginning process to check for popups...")
 
-		var tries = 10
-		while (tries > 0 && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
+		while (!imageUtils.confirmLocation("select_a_summon", tries = 1, suppressError = true)) {
 			if (!configData.enableAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
 				break
 			}
@@ -834,13 +834,13 @@ class Game(myContext: Context) {
 			}
 
 			// Attempt to close the popup by clicking on any detected "Close" and "Cancel" buttons.
-			findAndClickButton("close", tries = 2, suppressError = true)
-			wait(1.0)
-			findAndClickButton("cancel", tries = 2, suppressError = true)
-			wait(1.0)
-			findAndClickButton("ok", tries = 2, suppressError = true)
+			if (!findAndClickButton("close", tries = 1, suppressError = true)) {
+				findAndClickButton("cancel", tries = 1, suppressError = true)
+			}
 
-			tries -= 1
+			if (configData.debugMode) {
+				printToLog("[DEBUG] Have not detected the Support Summon Selection screen yet...")
+			}
 		}
 
 		return false
@@ -849,9 +849,10 @@ class Game(myContext: Context) {
 	/**
 	 * Detects any "Friend Request" popups and close them.
 	 */
-	private fun checkFriendRequest() {
-		if (imageUtils.confirmLocation("friend_request", tries = 3)) {
+	fun checkFriendRequest() {
+		if (imageUtils.confirmLocation("friend_request")) {
 			findAndClickButton("cancel")
+			wait(2.0)
 		}
 	}
 
@@ -859,9 +860,9 @@ class Game(myContext: Context) {
 	 * Detects Skyscope popup and close it.
 	 */
 	fun checkSkyscope() {
-		if (imageUtils.confirmLocation("skyscope", tries = 3)) {
+		if (imageUtils.confirmLocation("skyscope")) {
 			findAndClickButton("close")
-			wait(1.0)
+			wait(2.0)
 		}
 	}
 
@@ -871,10 +872,11 @@ class Game(myContext: Context) {
 	 * @return Return True if a Pending Battle was successfully processed. Otherwise, return False.
 	 */
 	private fun clearPendingBattle(): Boolean {
-		if (findAndClickButton("tap_here_to_see_rewards")) {
-			wait(3.0)
+		if (findAndClickButton("tap_here_to_see_rewards", tries = 10)) {
+			printToLog("[INFO] Clearing this Pending Battle...")
+			wait(2.0)
 
-			if (imageUtils.confirmLocation("no_loot", tries = 5)) {
+			if (imageUtils.confirmLocation("no_loot")) {
 				printToLog("[INFO] No loot can be collected. Backing out...")
 
 				// Navigate back to the Quests screen.
@@ -889,8 +891,8 @@ class Game(myContext: Context) {
 					collectLoot(isCompleted = false, isPendingBattle = true)
 				}
 
-				findAndClickButton("close", tries = 5)
-				findAndClickButton("ok", tries = 5)
+				findAndClickButton("close", suppressError = true)
+				findAndClickButton("ok", suppressError = true)
 
 				return true
 			}
@@ -906,32 +908,31 @@ class Game(myContext: Context) {
 	 */
 	fun checkPendingBattles(): Boolean {
 		printToLog("\n[INFO] Starting process of checking for Pending Battles...")
+
 		wait(3.0)
 
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
-		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 5) ||
-			imageUtils.confirmLocation("pending_battles", tries = 5) ||
-			findAndClickButton("quest_results_pending_battles", tries = 5)
+		if (imageUtils.confirmLocation("check_your_pending_battles") ||
+			imageUtils.confirmLocation("pending_battles") ||
+			findAndClickButton("quest_results_pending_battles")
 		) {
 			printToLog("[INFO] Found Pending Battles that need collecting from.")
-
 			findAndClickButton("ok")
 
-			wait(4.0)
+			wait(3.0)
 
-			if (imageUtils.confirmLocation("pending_battles", tries = 5)) {
+			if (imageUtils.confirmLocation("pending_battles")) {
 				// Process the current Pending Battle.
 				while (clearPendingBattle()) {
 					// While on the Loot Collected screen, if there are more Pending Battles then head back to the Pending Battles screen.
 					if (findAndClickButton("quest_results_pending_battles")) {
 						wait(1.0)
 						checkSkyscope()
-						checkFriendRequest()
-						wait(1.0)
 					} else {
 						// When there are no more Pending Battles, go back to the Home screen.
 						findAndClickButton("home")
+						wait(1.0)
 						checkSkyscope()
 						break
 					}

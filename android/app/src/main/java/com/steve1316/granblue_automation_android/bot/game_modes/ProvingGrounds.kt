@@ -74,12 +74,12 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 		// Check if the bot is at the Summon Selection screen.
 		if ((firstRun || firstTime) && game.imageUtils.confirmLocation("proving_grounds_summon_selection")) {
 			if (game.selectSummon()) {
-				game.wait(1.0)
+				game.wait(2.0)
 
 				// No need to select a Party. Just click "OK" to start the mission and confirming the selected summon.
 				game.findAndClickButton("ok")
 
-				game.wait(1.0)
+				game.wait(2.0)
 
 				game.printToLog("\n[PROVING.GROUNDS] Now starting Mission for Proving Grounds...", tag = tag)
 				game.findAndClickButton("proving_grounds_start")
@@ -111,12 +111,12 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 					game.findAndClickButton("event")
 
 					// Check for friend request.
-					game.findAndClickButton("cancel", tries = 1, suppressError = true)
+					game.checkFriendRequest()
 
 					// Check for trophy.
-					game.findAndClickButton("close", tries = 1, suppressError = true)
+					game.findAndClickButton("close", suppressError = true)
 
-					game.wait(2.0)
+					game.wait(3.0)
 					game.findAndClickButton("proving_grounds_open_chest")
 					game.findAndClickButton("proving_grounds_open_chest")
 

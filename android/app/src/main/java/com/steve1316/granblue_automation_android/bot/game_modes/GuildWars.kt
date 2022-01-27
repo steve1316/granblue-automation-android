@@ -70,7 +70,7 @@ class GuildWars(private val game: Game, private val missionName: String) {
 					game.gestureUtils.tap(raidBattleLocations[2].x, raidBattleLocations[2].y, "event_raid_battle")
 				}
 
-				game.wait(1.0)
+				game.wait(3.0)
 
 				if (game.imageUtils.confirmLocation("guild_wars_meat")) {
 					// Now tap on the specified Mission to start.

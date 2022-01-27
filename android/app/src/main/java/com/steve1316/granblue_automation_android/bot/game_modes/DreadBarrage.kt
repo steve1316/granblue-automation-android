@@ -24,7 +24,7 @@ class DreadBarrage(private val game: Game, private val missionName: String) {
 
 		if (game.imageUtils.confirmLocation("dread_barrage")) {
 			// Check if there is already a hosted Dread Barrage mission.
-			if (game.imageUtils.confirmLocation("resume_quests", tries = 1)) {
+			if (game.imageUtils.confirmLocation("resume_quests")) {
 				game.printToLog("\n[WARNING] Detected that there is already a hosted Dread Barrage mission.", tag = tag)
 				var expiryTimeInSeconds = 0
 
@@ -130,8 +130,6 @@ class DreadBarrage(private val game: Game, private val missionName: String) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
-
-				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode()) {

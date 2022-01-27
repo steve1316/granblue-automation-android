@@ -14,7 +14,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 	 * @return True if Extreme Plus was detected and successfully completed. False otherwise.
 	 */
 	fun checkROTBExtremePlus(): Boolean {
-		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 3)) {
 			game.printToLog("\n[ROTB] Detected Extreme+. Starting it now...", tag = tag)
 
 			game.printToLog("\n********************", tag = tag)
@@ -42,7 +42,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 					return true
 				}
 			}
-		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 3)) {
 			game.printToLog("\n[ROTB] Rise of the Beasts Extreme+ detected but user opted to not run it. Moving on...", tag = tag)
 			game.findAndClickButton("close")
 		} else {
@@ -198,12 +198,10 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 		game.checkAP()
 
 		// Check if the bot is at the Summon Selection screen.
-		if (game.imageUtils.confirmLocation("select_a_summon")) {
+		if (game.imageUtils.confirmLocation("select_a_summon", tries = 30)) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
-
-				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode()) {

@@ -140,7 +140,7 @@ class Coop(private val game: Game, private val missionName: String) {
 			game.wait(3.0)
 
 			// Just in case, check for the "You retreated from the raid battle" popup.
-			if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+			if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 3)) {
 				game.findAndClickButton("ok")
 			}
 
@@ -170,7 +170,7 @@ class Coop(private val game: Game, private val missionName: String) {
 
 				game.wait(1.0)
 
-				if (game.imageUtils.confirmLocation("coop_daily_missions", tries = 1)) {
+				if (game.imageUtils.confirmLocation("coop_daily_missions")) {
 					game.printToLog("\n[COOP] Coop room has closed due to time running out.", tag = tag)
 					return -1
 				}
@@ -188,8 +188,6 @@ class Coop(private val game: Game, private val missionName: String) {
 
 			// Now tap the "Start" button to start the Coop mission.
 			game.findAndClickButton("coop_start")
-
-			game.wait(1.0)
 
 			// Now start Combat Mode and detect any item drops.
 			if (game.combatMode.startCombatMode()) {

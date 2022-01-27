@@ -1,6 +1,5 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
@@ -15,9 +14,9 @@ class Event(private val game: Game, private val missionName: String) {
 	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
 	 */
 	fun checkEventNightmare(): Boolean {
-		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests")) {
 			// First check if the Nightmare is skippable.
-			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
+			if (game.findAndClickButton("event_claim_loot")) {
 				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
 				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
@@ -50,9 +49,9 @@ class Event(private val game: Game, private val missionName: String) {
 					}
 				}
 			}
-		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests")) {
 			// First check if the Nightmare is skippable.
-			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
+			if (game.findAndClickButton("event_claim_loot")) {
 				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
 				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
@@ -76,8 +75,6 @@ class Event(private val game: Game, private val missionName: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 
-		game.wait(0.5)
-
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		var bannerLocations = game.imageUtils.findAll("event_banner")
@@ -89,7 +86,7 @@ class Event(private val game: Game, private val missionName: String) {
 		game.wait(3.0)
 
 		// Check if there is a "Daily Missions" popup and close it.
-		if (game.imageUtils.confirmLocation("event_daily_missions", tries = 1)) {
+		if (game.imageUtils.confirmLocation("event_daily_missions", tries = 3)) {
 			game.printToLog("\n[EVENT.TOKEN.DRAWBOXES] Detected \"Daily Missions\" popup. Closing it...", tag = tag)
 			game.findAndClickButton("cancel")
 		}
@@ -182,12 +179,11 @@ class Event(private val game: Game, private val missionName: String) {
 
 			// Go to the Home screen.
 			game.goBackHome(confirmLocationCheck = true)
-			game.wait(0.5)
 
 			game.findAndClickButton("quest")
 
 			// Check for the "You retreated from the raid battle" popup.
-			if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+			if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 3)) {
 				game.findAndClickButton("ok")
 			}
 
@@ -218,7 +214,7 @@ class Event(private val game: Game, private val missionName: String) {
 
 			if (game.imageUtils.confirmLocation("special")) {
 				// Check if there is a Nightmare already available.
-				val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
+				val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare") != null) {
 					1
 				} else {
 					0
@@ -296,8 +292,6 @@ class Event(private val game: Game, private val missionName: String) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
-
-				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode()) {

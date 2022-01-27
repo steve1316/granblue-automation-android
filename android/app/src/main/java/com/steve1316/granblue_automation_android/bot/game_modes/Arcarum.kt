@@ -22,7 +22,8 @@ class Arcarum(private val game: Game, private val mapName: String) {
 		if (firstRun) {
 			game.printToLog("\n[ARCARUM] Now beginning navigation to $mapName.", tag = tag)
 			game.goBackHome()
-			game.wait(2.0)
+
+			game.wait(3.0)
 
 			// Scroll up in case of the rare cases where refreshing the page lead to being loaded in on the bottom of the Home page.
 			val tempFix: Boolean = game.imageUtils.findButton("home_menu", tries = 1) == null
@@ -57,7 +58,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 		game.wait(1.0)
 
 		// Confirm the completion popup if it shows up.
-		if (game.imageUtils.confirmLocation("arcarum_expedition", tries = 1)) {
+		if (game.imageUtils.confirmLocation("arcarum_expedition")) {
 			game.findAndClickButton("ok")
 		}
 
@@ -66,10 +67,10 @@ class Arcarum(private val game: Game, private val mapName: String) {
 		// Finally, navigate to the specified map to start it.
 		game.printToLog("[ARCARUM] Now starting the specified expedition: $mapName", tag = tag)
 		val formattedMapName: String = mapName.lowercase().replace(" ", "_")
-		if (!game.findAndClickButton("arcarum_${formattedMapName}", tries = 5)) {
+		if (!game.findAndClickButton("arcarum_${formattedMapName}", tries = 10)) {
 			// Resume the expedition if it is already in-progress.
 			game.findAndClickButton("arcarum_exploring")
-		} else if (game.imageUtils.confirmLocation("arcarum_departure_check", tries = 3)) {
+		} else if (game.imageUtils.confirmLocation("arcarum_departure_check")) {
 			game.printToLog("[ARCARUM] Now using 1 Arcarum ticket to start this expedition...", tag = tag)
 			val resultCheck = game.findAndClickButton("start_expedition")
 			game.wait(6.0)
@@ -94,7 +95,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 		game.printToLog("\n[ARCARUM] Now determining what action to take...", tag = tag)
 
 		// Wait a second in case the "Do or Die" animation plays.
-		game.wait(1.0)
+		game.wait(2.0)
 
 		var tries = 3
 		while (tries > 0) {
@@ -112,10 +113,10 @@ class Arcarum(private val game: Game, private val mapName: String) {
 				game.checkForCAPTCHA()
 
 				return when {
-					game.imageUtils.confirmLocation("arcarum_party_selection", tries = 1) -> {
+					game.imageUtils.confirmLocation("arcarum_party_selection", tries = 3) -> {
 						"Combat"
 					}
-					game.findAndClickButton("ok", tries = 1) -> {
+					game.findAndClickButton("ok", tries = 3) -> {
 						"Claimed Treasure/Keythorn"
 					}
 					else -> {
@@ -126,28 +127,28 @@ class Arcarum(private val game: Game, private val mapName: String) {
 
 			// Clear any detected Treasure popup after claiming a chest.
 			game.printToLog("[ARCARUM] No action found for the current node. Looking for Treasure popup...")
-			if (game.imageUtils.confirmLocation("arcarum_treasure", tries = 1)) {
+			if (game.imageUtils.confirmLocation("arcarum_treasure", tries = 3)) {
 				game.findAndClickButton("ok")
 				return "Claimed Treasure"
 			}
 
 			// Next, determine if there is a available node to move to. Any bound monsters should have been destroyed by now.
 			game.printToLog("[ARCARUM] No Treasure popup detected. Looking for an available node to move to...")
-			if (game.findAndClickButton("arcarum_node", tries = 1)) {
+			if (game.findAndClickButton("arcarum_node", tries = 3)) {
 				game.wait(1.0)
 				return "Navigating"
 			}
 
 			// If all else fails, attempt to navigate to a node that is occupied by mob(s).
 			game.printToLog("[ARCARUM] No available node to move to. Looking for nodes with mobs on them...")
-			if (game.findAndClickButton("arcarum_mob", tries = 1) || game.findAndClickButton("arcarum_red_mob", tries = 1)) {
+			if (game.findAndClickButton("arcarum_mob", tries = 3) || game.findAndClickButton("arcarum_red_mob", tries = 3)) {
 				game.wait(1.0)
 				return "Navigating"
 			}
 
 			// If all else fails, see if there are any unclaimed chests, like the ones spawned by a random special event that spawns chests on all nodes.
 			game.printToLog("[ARCARUM] No nodes with mobs on them. Looking for nodes with chests on them...")
-			if (game.findAndClickButton("arcarum_silver_chest", tries = 1) || game.findAndClickButton("arcarum_gold_chest", tries = 1)) {
+			if (game.findAndClickButton("arcarum_silver_chest", tries = 3) || game.findAndClickButton("arcarum_gold_chest", tries = 3)) {
 				game.wait(1.0)
 				return "Navigating"
 			}
@@ -167,7 +168,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 	private fun checkForBoss(): Boolean {
 		game.printToLog("\n[ARCARUM] Checking if boss is available...")
 
-		return game.imageUtils.findButton("arcarum_boss", tries = 1) != null || game.imageUtils.findButton("arcarum_boss2", tries = 1) != null
+		return game.imageUtils.findButton("arcarum_boss", tries = 3) != null || game.imageUtils.findButton("arcarum_boss2", tries = 3) != null
 	}
 
 	/**
@@ -187,13 +188,12 @@ class Arcarum(private val game: Game, private val mapName: String) {
 				if (action == "Combat") {
 					// Start Combat Mode.
 					if (game.selectPartyAndStartMission()) {
-						if (game.imageUtils.confirmLocation("elemental_damage", tries = 1)) {
+						if (game.imageUtils.confirmLocation("elemental_damage")) {
 							throw(IllegalStateException("Encountered an important mob for Arcarum and the selected party does not conform to the enemy's weakness. Perhaps you would like to do this battle yourself?"))
-						} else if (game.imageUtils.confirmLocation("arcarum_restriction", tries = 1)) {
+						} else if (game.imageUtils.confirmLocation("arcarum_restriction")) {
 							throw(IllegalStateException("Encountered a party restriction for Arcarum. Perhaps you would like to complete this section by yourself?"))
 						}
 
-						game.wait(3.0)
 						if (game.combatMode.startCombatMode()) {
 							game.collectLoot(isCompleted = false, skipInfo = true)
 							game.findAndClickButton("expedition")

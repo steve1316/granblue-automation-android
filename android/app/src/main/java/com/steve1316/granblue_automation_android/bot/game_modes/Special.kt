@@ -16,7 +16,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 	 * @return True if Dimensional Halo was detected and successfully completed. False otherwise.
 	 */
 	fun checkDimensionalHalo(): Boolean {
-		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 3)) {
 			game.printToLog("\n[D.HALO] Detected Dimensional Halo. Starting it now...", tag = tag)
 
 			game.printToLog("\n********************", tag = tag)
@@ -44,7 +44,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 					return true
 				}
 			}
-		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 3)) {
 			game.printToLog("\n[D.HALO] Dimensional Halo detected but user opted to not run it. Moving on...", tag = tag)
 			game.findAndClickButton("close")
 		} else {
@@ -67,7 +67,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 		game.wait(3.0)
 
 		// Check for the "You retreated from the raid battle" popup.
-		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 3)) {
 			game.findAndClickButton("ok")
 		}
 
@@ -317,8 +317,6 @@ class Special(private val game: Game, private val mapName: String, private val m
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
-
-				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode()) {

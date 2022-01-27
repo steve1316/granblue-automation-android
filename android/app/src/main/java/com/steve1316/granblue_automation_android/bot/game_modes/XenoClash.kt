@@ -14,7 +14,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 	 * @return True if Xeno Clash Nightmare was detected and successfully completed. False otherwise.
 	 */
 	fun checkForXenoClashNightmare(): Boolean {
-		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 3)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
@@ -55,7 +55,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 					}
 				}
 			}
-		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 1)) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 3)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
 				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
@@ -92,10 +92,10 @@ class XenoClash(private val game: Game, private val missionName: String) {
 		game.wait(3.0)
 
 		if (game.findAndClickButton("xeno_special")) {
-			game.wait(1.0)
+			game.wait(2.0)
 
 			// Check if there is a Nightmare already available.
-			val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare", tries = 1) != null) {
+			val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare") != null) {
 				1
 			} else {
 				0
@@ -158,8 +158,6 @@ class XenoClash(private val game: Game, private val missionName: String) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
-
-				game.wait(1.0)
 
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode()) {

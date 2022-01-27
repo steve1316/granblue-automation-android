@@ -20,8 +20,6 @@ class Raid(private val game: Game) {
 	 * Check and updates the number of Raids currently joined.
 	 */
 	private fun checkJoinedRaids() {
-		game.wait(1.0)
-
 		val joinedLocations = game.imageUtils.findAll("joined")
 		numberOfRaidsJoined = joinedLocations.size
 		game.printToLog("\n[RAID] There are currently $numberOfRaidsJoined raids joined.", tag = tag)
@@ -36,14 +34,13 @@ class Raid(private val game: Game) {
 			game.goBackHome(confirmLocationCheck = true)
 			game.findAndClickButton("quest")
 
-			game.wait(1.0)
-
 			if (game.checkPendingBattles()) {
 				game.findAndClickButton("quest")
-				game.wait(1.0)
+				game.wait(3.0)
 			}
 
 			game.findAndClickButton("raid")
+			game.wait(3.0)
 			checkJoinedRaids()
 		}
 	}
@@ -150,20 +147,22 @@ class Raid(private val game: Game) {
 		game.goBackHome(confirmLocationCheck = true)
 		game.findAndClickButton("quest")
 
+		game.wait(3.0)
+
 		// Check for the "You retreated from the raid battle" popup.
-		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 1)) {
+		if (game.imageUtils.confirmLocation("you_retreated_from_the_raid_battle", tries = 3)) {
 			game.findAndClickButton("ok")
 		}
 
 		if (game.checkPendingBattles()) {
 			game.findAndClickButton("quest")
-			game.wait(1.0)
+			game.wait(3.0)
 		}
 
 		// Now go to the Backup Requests screen.
 		game.findAndClickButton("raid")
 
-		game.wait(2.0)
+		game.wait(3.0)
 
 		if (game.imageUtils.confirmLocation("raid")) {
 			// Check for any joined Raids.
@@ -207,10 +206,8 @@ class Raid(private val game: Game) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				if (game.selectPartyAndStartMission()) {
-					game.wait(1.0)
-
 					// Handle the rare case where joining the Raid after selecting the Summon and Party led the bot to the Quest Results screen with no loot to collect.
-					if (game.imageUtils.confirmLocation("no_loot", tries = 1)) {
+					if (game.imageUtils.confirmLocation("no_loot")) {
 						game.printToLog("\n[RAID] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...", tag = tag)
 					} else {
 						// Now start Combat Mode and detect any item drops.

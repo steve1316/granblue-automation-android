@@ -51,8 +51,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			game.printToLog("[INFO] Checking to see if Party wiped.", tag = tag)
 		}
 
-		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 1, suppressError = true)
-		if (partyWipeIndicatorLocation != null || game.imageUtils.confirmLocation("salute_participants", tries = 1, suppressError = true)) {
+		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 3, suppressError = true)
+		if (partyWipeIndicatorLocation != null || game.imageUtils.confirmLocation("salute_participants", tries = 3, suppressError = true)) {
 			if (game.configData.farmingMode != "Raid" && game.configData.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
 				// Tap on the blue indicator to get rid of the overlay.
 				if (partyWipeIndicatorLocation != null) {
@@ -322,7 +322,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 		game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
 
-		if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+		if (game.findAndClickButton("next", tries = 3, suppressError = true)) {
 			game.wait(3.0)
 		}
 
@@ -384,7 +384,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 				game.wait(2.0)
 
-				enabledAuto = game.findAndClickButton("semi_auto", tries = 5)
+				enabledAuto = game.findAndClickButton("semi_auto", tries = 10)
 				if (enabledAuto) {
 					game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
 				}
@@ -1181,10 +1181,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
 		if (game.configData.farmingMode == "Arcarum") {
-			game.findAndClickButton("arcarum_stage_effect_active", tries = 5)
+			game.findAndClickButton("arcarum_stage_effect_active", tries = 10)
 		}
 
-		attackButtonLocation = game.imageUtils.findButton("attack", tries = 30)
+		attackButtonLocation = game.imageUtils.findButton("attack", tries = 50)
 		if (attackButtonLocation == null) {
 			game.printToLog("\n[ERROR] Cannot find Attack button. Raid must have just ended.", tag = tag, isError = true)
 			return false
@@ -1321,7 +1321,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						// Select enemy target.
 						selectEnemyTarget(command)
 					}
-					command.contains("back") && game.findAndClickButton("home_back", tries = 1) -> {
+					command.contains("back") && game.findAndClickButton("home_back") -> {
 						game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
 						waitForAttack()
 
@@ -1661,7 +1661,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						// Have separate logic for non-Raid and Raid battles.
 						if (checkRaid()) {
 							// Click Next if it is available and enable automation again if combat continues.
-							if (game.findAndClickButton("next", tries = 2)) {
+							if (game.findAndClickButton("next", tries = 1)) {
 								when {
 									game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
 										game.printToLog("\n[COMBAT] Battle ended with no loot.", tag = tag)
