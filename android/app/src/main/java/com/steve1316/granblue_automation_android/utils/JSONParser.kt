@@ -75,6 +75,9 @@ class JSONParser() {
 			putBoolean("enableRandomizedDelayBetweenRuns", configurationObj.getBoolean("enableRandomizedDelayBetweenRuns"))
 			putInt("delayBetweenRunsLowerBound", configurationObj.getInt("delayBetweenRunsLowerBound"))
 			putInt("delayBetweenRunsUpperBound", configurationObj.getInt("delayBetweenRunsUpperBound"))
+			putBoolean("enableRefreshDuringCombat", configurationObj.getBoolean("enableRefreshDuringCombat"))
+			putBoolean("enableAutoQuickSummon", configurationObj.getBoolean("enableAutoQuickSummon"))
+			putBoolean("enableBypassResetSummon", configurationObj.getBoolean("enableBypassResetSummon"))
 			commit()
 		}
 

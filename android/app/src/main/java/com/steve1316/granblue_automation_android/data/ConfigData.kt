@@ -40,6 +40,9 @@ class ConfigData(myContext: Context) {
 	val enableRandomizedDelayBetweenRuns: Boolean
 	val delayBetweenRunsLowerBound: Int
 	val delayBetweenRunsUpperBound: Int
+	val enableRefreshDuringCombat: Boolean
+	val enableAutoQuickSummon: Boolean
+	val enableBypassResetSummon: Boolean
 
 	// Nightmare
 	val enableNightmare: Boolean
@@ -118,6 +121,9 @@ class ConfigData(myContext: Context) {
 		enableRandomizedDelayBetweenRuns = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
 		delayBetweenRunsLowerBound = sharedPreferences.getInt("delayBetweenRunsLowerBound", 5)
 		delayBetweenRunsUpperBound = sharedPreferences.getInt("delayBetweenRunsUpperBound", 15)
+		enableRefreshDuringCombat = sharedPreferences.getBoolean("enableRefreshDuringCombat", true)
+		enableAutoQuickSummon = sharedPreferences.getBoolean("enableAutoQuickSummon", false)
+		enableBypassResetSummon = sharedPreferences.getBoolean("enableBypassResetSummon", false)
 
 		enableNightmare = sharedPreferences.getBoolean("enableNightmare", false)
 		if (sharedPreferences.getBoolean("enableCustomNightmareSettings", false)) {
