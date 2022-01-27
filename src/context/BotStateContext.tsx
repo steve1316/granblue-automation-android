@@ -42,6 +42,9 @@ export interface Settings {
         enableRandomizedDelayBetweenRuns: boolean
         delayBetweenRunsLowerBound: number
         delayBetweenRunsUpperBound: number
+        enableRefreshDuringCombat: boolean
+        enableAutoQuickSummon: boolean
+        enableBypassResetSummon: boolean
     }
 
     // Extra Settings related to Nightmares from certain Farming Modes.
@@ -83,6 +86,23 @@ export interface Settings {
         customScale: number
         enableTestForHomeScreen: boolean
     }
+
+    // Adjustment Settings.
+    adjustment: {
+        enableCalibrationAdjustment: boolean
+        adjustCalibration: number
+        enableGeneralAdjustment: boolean
+        adjustButtonSearchGeneral: number
+        adjustHeaderSearchGeneral: number
+        enableSupportSummonSelectionScreenAdjustment: boolean
+        adjustSupportSummonSelectionScreen: number
+        enableCombatModeAdjustment: boolean
+        adjustCombatStart: number
+        adjustSkillUsage: number
+        adjustSummonUsage: number
+        adjustWaitingForReload: number
+        adjustWaitingForAttack: number
+    }
 }
 
 // Set the default settings.
@@ -121,6 +141,9 @@ export const defaultSettings: Settings = {
         enableRandomizedDelayBetweenRuns: false,
         delayBetweenRunsLowerBound: 5,
         delayBetweenRunsUpperBound: 15,
+        enableRefreshDuringCombat: true,
+        enableAutoQuickSummon: false,
+        enableBypassResetSummon: false,
     },
     nightmare: {
         enableNightmare: false,
@@ -145,6 +168,21 @@ export const defaultSettings: Settings = {
     },
     generic: {
         enableForceReload: false,
+    },
+    adjustment: {
+        enableCalibrationAdjustment: false,
+        adjustCalibration: 5,
+        enableGeneralAdjustment: false,
+        adjustButtonSearchGeneral: 5,
+        adjustHeaderSearchGeneral: 5,
+        enableSupportSummonSelectionScreenAdjustment: false,
+        adjustSupportSummonSelectionScreen: 30,
+        enableCombatModeAdjustment: false,
+        adjustCombatStart: 50,
+        adjustSkillUsage: 5,
+        adjustSummonUsage: 5,
+        adjustWaitingForReload: 3,
+        adjustWaitingForAttack: 100,
     },
     android: {
         enableDelayTap: false,
