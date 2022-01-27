@@ -3,14 +3,13 @@ package com.steve1316.granblue_automation_android.bot
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import org.opencv.core.Point
 
+class CombatModeException(message: String) : Exception(message)
+
 /**
  * This class handles the Combat Mode and offers helper functions to assist it.
  */
 class CombatMode(private val game: Game, private val debugMode: Boolean = false) {
 	private val tag: String = "${loggerTag}CombatMode"
-
-	private var autoExitStartTime: Long = 0L
-	private var autoExitEndTime: Long = 0L
 
 	private var healingItemCommands = listOf(
 		"usegreenpotion.target(1)",
@@ -27,13 +26,27 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		"userevivalpotion"
 	)
 
-	private var retreatCheckFlag = false
+	// Save some variables for use throughout the class.
+	private var semiAuto = false
+	private var fullAuto = false
 	private var attackButtonLocation: Point? = null
+	private var retreatCheckFlag = false
+	private var startTime: Long = 0L
+	private val listOfExitEventsForFalse = listOf("Time Exceeded", "No Loot")
+	private val listOfExitEventsForTrue = listOf("Battle Concluded", "Exp Gained")
+	private var commandTurnNumber: Int = 1
+	private var turnNumber: Int = 1
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// Checks
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Checks if the Party wiped during Combat Mode. Updates the retreat flag if so.
 	 */
-	private fun partyWipeCheck() {
+	private fun checkForWipe() {
 		if (debugMode) {
 			game.printToLog("[INFO] Checking to see if Party wiped.", tag = tag)
 		}
@@ -82,19 +95,331 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	/**
 	 * Checks if there are any dialog popups during Combat Mode from either Lyria or Vyrn and close them.
 	 */
-	private fun findCombatDialog() {
+	private fun checkForDialog() {
 		// Check for Lyria dialog popup first.
-		var combatDialogLocation = game.imageUtils.findButton("dialog_lyria", tries = 1)
+		var combatDialogLocation = game.imageUtils.findButton("dialog_lyria", tries = 2)
 		if (combatDialogLocation != null) {
 			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
 		}
 
 		// Then check for Vyrn dialog popup next.
-		combatDialogLocation = game.imageUtils.findButton("dialog_vyrn", tries = 1)
+		combatDialogLocation = game.imageUtils.findButton("dialog_vyrn", tries = 2)
 		if (combatDialogLocation != null) {
 			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
+		}
+	}
+
+	/**
+	 * Perform checks to see if the battle ended or not.
+	 *
+	 * @return Return "Nothing" if combat is still continuing. Otherwise, raise a CombatModeException whose message is the event name that caused the battle to end.
+	 */
+	private fun checkForBattleEnd(): String {
+
+		when {
+			game.configData.farmingMode == "Raid" && game.configData.enableAutoExitRaid && (System.currentTimeMillis() - startTime >= game.configData.timeAllowedUntilAutoExitRaid) -> {
+				game.printToLog("\n####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("[COMBAT] Combat Mode ended due to exceeding time allowed.", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				throw CombatModeException("Time Exceeded")
+			}
+			retreatCheckFlag || game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+				game.printToLog("\n####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("[COMBAT] Combat Mode has ended with not loot.", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				throw CombatModeException("No Loot")
+			}
+			game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+				game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
+				game.printToLog("\n####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.findAndClickButton("reload")
+				throw CombatModeException("Time Exceeded")
+			}
+			game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+				game.printToLog("\n####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				throw CombatModeException("Exp Gained")
+			}
+			else -> {
+				return "Nothing"
+			}
+		}
+	}
+
+	/**
+	 * Check if the current battle is a Raid.
+	 *
+	 * @return True if the current battle is a Raid.
+	 */
+	private fun checkRaid(): Boolean {
+		val eventRaids = arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
+		val rotbRaids = arrayListOf("EX Zhuque", "EX Xuanwu", "EX Baihu", "EX Qinglong", "Lvl 100 Shenxian")
+		val dreadBarrageRaids = arrayListOf("1 Star", "2 Star", "3 Star", "4 Star", "5 Star")
+		val provingGroundsRaids = arrayListOf("Extreme", "Extreme+")
+		val guildWarsRaids = arrayListOf("Very Hard", "Extreme", "Extreme+", "NM90", "NM95", "NM100", "NM150")
+		val xenoClashRaids = arrayListOf("Xeno Clash Raid")
+
+		return game.configData.farmingMode == "Raid" || eventRaids.contains(game.configData.missionName) || rotbRaids.contains(game.configData.missionName) ||
+				dreadBarrageRaids.contains(game.configData.missionName) || game.configData.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.configData.missionName) ||
+				game.configData.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.configData.missionName) || xenoClashRaids.contains(game.configData.missionName) ||
+				game.configData.farmingMode == "Arcarum"
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// Helper Methods
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Selects the portrait of the specified character during Combat Mode.
+	 *
+	 * @param characterNumber The character that needs to be selected.
+	 */
+	private fun selectCharacter(characterNumber: Int) {
+		val x = if (!game.imageUtils.isTablet) {
+			if (game.imageUtils.isLowerEnd) {
+				when (characterNumber) {
+					1 -> {
+						attackButtonLocation!!.x - 480.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 355.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 230.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 105.0
+					}
+				}
+			} else {
+				when (characterNumber) {//550,745 ATTACK
+					1 -> {
+						attackButtonLocation!!.x - 715.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 540.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 350.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 180.0
+					}
+				}
+			}
+		} else {
+			if (!game.imageUtils.isLandscape) {
+				when (characterNumber) {
+					1 -> {
+						attackButtonLocation!!.x - 530.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 400.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 265.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 130.0
+					}
+				}
+			} else {
+				// 563, 730
+				when (characterNumber) {
+					1 -> {
+						attackButtonLocation!!.x - 415.0
+					}
+					2 -> {
+						attackButtonLocation!!.x - 315.0
+					}
+					3 -> {
+						attackButtonLocation!!.x - 200.0
+					}
+					else -> {
+						attackButtonLocation!!.x - 100.0
+					}
+				}
+			}
+		}
+
+		val y = if (!game.imageUtils.isTablet) {
+			if (game.imageUtils.isLowerEnd) {
+				attackButtonLocation!!.y + 185.0
+			} else {
+				attackButtonLocation!!.y + 290.0
+			}
+		} else {
+			if (!game.imageUtils.isLandscape) {
+				attackButtonLocation!!.y + 220.0
+			} else {
+				attackButtonLocation!!.y + 170.0
+			}
+		}
+
+		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
+		game.gestureUtils.tap(x, y, "template_character", ignoreWait = true)
+		game.gestureUtils.tap(x, y, "template_character")
+	}
+
+	/**
+	 * Determine whether or not to reload after an Attack.
+	 *
+	 * @param override Override the set checks and reload anyways. Defaults to false.
+	 */
+	private fun reloadAfterAttack(override: Boolean = false) {
+		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
+		if (checkRaid() || override || (game.configData.farmingMode == "Generic" && game.configData.enableForceReload)) {
+			game.printToLog("[COMBAT] Reloading now.", tag = tag)
+			game.findAndClickButton("reload")
+			game.wait(3.0)
+		}
+	}
+
+	/**
+	 * Processes a Turn if its currently the incorrect Turn number.
+	 *
+	 * @param turnNumber The current Turn number.
+	 * @return The new Turn number.
+	 */
+	private fun processIncorrectTurn(turnNumber: Int): Int {
+		game.printToLog("\n[COMBAT] Starting Turn $turnNumber.", tag = tag)
+
+		// Clear any detected dialog popups that might obstruct the "Attack" button.
+		checkForDialog()
+
+		// Tap the "Attack" button.
+		game.printToLog("[COMBAT] Ending Turn $turnNumber")
+		game.findAndClickButton("attack", tries = 10)
+
+		// Wait until the "Cancel" button vanishes from the screen.
+		if (game.imageUtils.findButton("combat_cancel") != null) {
+			while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
+				if (debugMode) {
+					game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
+				}
+
+				game.wait(1.0)
+			}
+		}
+
+		reloadAfterAttack()
+		waitForAttack()
+
+		game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
+
+		if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+			game.wait(3.0)
+		}
+
+		return turnNumber + 1
+	}
+
+	/**
+	 * Wait several tries until the bot sees either the "Attack" or the "Next" button before starting a new turn.
+	 *
+	 * @return True if Attack ended into the next Turn. False if Attack ended but combat also ended as well.
+	 */
+	private fun waitForAttack(): Boolean {
+		game.printToLog("[COMBAT] Waiting for attack to end...", tag = tag)
+		var tries = 10
+
+		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1) == null && game.imageUtils.findButton("next", tries = 1) == null) {
+			// Stagger the checks for dialog popups during Combat Mode.
+			if (tries % 2 == 0) {
+				checkForDialog()
+
+				// Check if the Party wiped after attacking.
+				checkForWipe()
+
+				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1)) {
+					return false
+				}
+			}
+
+			if (game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
+				return false
+			}
+
+			tries -= 1
+		}
+
+		game.printToLog("[COMBAT] Attack ended.", tag = tag)
+
+		return true
+	}
+
+	/**
+	 * Enable Full/Semi auto for this battle.
+	 *
+	 * @return True if Full/Semi auto is enabled.
+	 */
+	private fun enableAuto(): Boolean {
+		game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
+		var enabledAuto = game.findAndClickButton("full_auto")
+
+		// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
+		if (!enabledAuto) {
+			game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
+			game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", tag = tag)
+
+			val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
+			if (enabledSemiAutoButtonLocation == null) {
+				// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
+				game.findAndClickButton("attack")
+
+				game.wait(2.0)
+
+				enabledAuto = game.findAndClickButton("semi_auto", tries = 5)
+				if (enabledAuto) {
+					game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
+				}
+			}
+		}
+
+		return enabledAuto
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// Commands
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Execute a wait command.
+	 *
+	 * @param commandList A split list of the command by its "." delimiter with the "wait" command being the first element.
+	 * @param fallbackDelay A default delay if the wait command was invalid. Defaults to 1.0 second.
+	 */
+	private fun waitExecute(commandList: List<String>, fallbackDelay: Double = 1.0) {
+		val waitCommand = if (commandList[0].contains(")")) {
+			commandList[0].substringAfter("(").replace(")", "")
+		} else {
+			commandList[0].substringAfter("(") + "." + commandList[1].replace(")", "")
+		}
+
+		try {
+			val waitSeconds = waitCommand.toDouble()
+			game.printToLog("[COMBAT] Now waiting $waitSeconds second(s).", tag = tag)
+			game.wait(waitSeconds)
+		} catch (e: Exception) {
+			game.printToLog("[COMBAT] Could not parse out the seconds in the wait command. Waiting $fallbackDelay second(s) as fallback.", tag = tag)
+			game.wait(fallbackDelay)
 		}
 	}
 
@@ -273,97 +598,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		game.gestureUtils.swipe(500f, 400f, 500f, 1000f)
 	}
 
-	/**
-	 * Selects the portrait of the specified character during Combat Mode.
-	 *
-	 * @param characterNumber The character that needs to be selected.
-	 */
-	private fun selectCharacter(characterNumber: Int) {
-		val x = if (!game.imageUtils.isTablet) {
-			if (game.imageUtils.isLowerEnd) {
-				when (characterNumber) {
-					1 -> {
-						attackButtonLocation!!.x - 480.0
-					}
-					2 -> {
-						attackButtonLocation!!.x - 355.0
-					}
-					3 -> {
-						attackButtonLocation!!.x - 230.0
-					}
-					else -> {
-						attackButtonLocation!!.x - 105.0
-					}
-				}
-			} else {
-				when (characterNumber) {//550,745 ATTACK
-					1 -> {
-						attackButtonLocation!!.x - 715.0
-					}
-					2 -> {
-						attackButtonLocation!!.x - 540.0
-					}
-					3 -> {
-						attackButtonLocation!!.x - 350.0
-					}
-					else -> {
-						attackButtonLocation!!.x - 180.0
-					}
-				}
-			}
-		} else {
-			if (!game.imageUtils.isLandscape) {
-				when (characterNumber) {
-					1 -> {
-						attackButtonLocation!!.x - 530.0
-					}
-					2 -> {
-						attackButtonLocation!!.x - 400.0
-					}
-					3 -> {
-						attackButtonLocation!!.x - 265.0
-					}
-					else -> {
-						attackButtonLocation!!.x - 130.0
-					}
-				}
-			} else {
-				// 563, 730
-				when (characterNumber) {
-					1 -> {
-						attackButtonLocation!!.x - 415.0
-					}
-					2 -> {
-						attackButtonLocation!!.x - 315.0
-					}
-					3 -> {
-						attackButtonLocation!!.x - 200.0
-					}
-					else -> {
-						attackButtonLocation!!.x - 100.0
-					}
-				}
-			}
-		}
-
-		val y = if (!game.imageUtils.isTablet) {
-			if (game.imageUtils.isLowerEnd) {
-				attackButtonLocation!!.y + 185.0
-			} else {
-				attackButtonLocation!!.y + 290.0
-			}
-		} else {
-			if (!game.imageUtils.isLandscape) {
-				attackButtonLocation!!.y + 220.0
-			} else {
-				attackButtonLocation!!.y + 170.0
-			}
-		}
-
-		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
-		game.gestureUtils.tap(x, y, "template_character", ignoreWait = true)
-		game.gestureUtils.tap(x, y, "template_character")
-	}
 
 	/**
 	 * Selects the targeted enemy.
@@ -442,29 +676,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.findAndClickButton("set_target")
 				game.printToLog("[COMBAT] Targeted Enemy #${target}.", tag = tag)
 			}
-		}
-	}
-
-	/**
-	 * Execute a wait command.
-	 *
-	 * @param commandList A split list of the command by its "." delimiter with the "wait" command being the first element.
-	 * @param fallbackDelay A default delay if the wait command was invalid. Defaults to 1.0 second.
-	 */
-	private fun waitExecute(commandList: List<String>, fallbackDelay: Double = 1.0) {
-		val waitCommand = if (commandList[0].contains(")")) {
-			commandList[0].substringAfter("(").replace(")", "")
-		} else {
-			commandList[0].substringAfter("(") + "." + commandList[1].replace(")", "")
-		}
-
-		try {
-			val waitSeconds = waitCommand.toDouble()
-			game.printToLog("[COMBAT] Now waiting $waitSeconds second(s).", tag = tag)
-			game.wait(waitSeconds)
-		} catch (e: Exception) {
-			game.printToLog("[COMBAT] Could not parse out the seconds in the wait command. Waiting $fallbackDelay second(s) as fallback.", tag = tag)
-			game.wait(fallbackDelay)
 		}
 	}
 
@@ -870,141 +1081,78 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	}
 
 	/**
-	 * Wait several tries until the bot sees either the "Attack" or the "Next" button before starting a new turn.
+	 * Activate a Quick Summon.
 	 *
-	 * @return True if Attack ended into the next Turn. False if Attack ended but combat also ended as well.
+	 * @param command The command to be executed. Defaults to the regular quick summon command.
 	 */
-	private fun waitForAttack(): Boolean {
-		game.printToLog("[COMBAT] Waiting for attack to end...", tag = tag)
-		var tries = 10
+	private fun quickSummon(command: String = "") {
+		game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
+		if (game.configData.enableCombatModeAdjustment && (game.findAndClickButton("quick_summon1", tries = game.configData.adjustSummonUsage) ||
+					game.findAndClickButton("quick_summon2", tries = game.configData.adjustSummonUsage)) || game.findAndClickButton("quick_summon1") ||
+			game.findAndClickButton("quick_summon2")
+		) {
+			game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
 
-		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1) == null && game.imageUtils.findButton("next", tries = 1) == null) {
-			// Stagger the checks for dialog popups during Combat Mode.
-			if (tries % 2 == 0) {
-				findCombatDialog()
-
-				// Check if the Party wiped after attacking.
-				partyWipeCheck()
-
-				if (game.imageUtils.confirmLocation("battle_concluded", tries = 1)) {
-					return false
-				}
+			if (command.contains("wait")) {
+				val splitCommand = command.split(".").drop(1)
+				waitExecute(splitCommand, fallbackDelay = 5.0)
 			}
-
-			if (game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
-				return false
-			}
-
-			tries -= 1
+		} else {
+			game.printToLog("[COMBAT] Was not able to quick summon this Turn.", tag = tag)
 		}
-
-		game.printToLog("[COMBAT] Attack ended.", tag = tag)
-
-		return true
 	}
 
 	/**
-	 * Check if the current battle is a Raid.
+	 * Enable Semi Auto and if it fails, try to enable Full Auto.
 	 *
-	 * @return True if the current battle is a Raid.
 	 */
-	private fun checkRaid(): Boolean {
-		val eventRaids = arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
-		val rotbRaids = arrayListOf("EX Zhuque", "EX Xuanwu", "EX Baihu", "EX Qinglong", "Lvl 100 Shenxian")
-		val dreadBarrageRaids = arrayListOf("1 Star", "2 Star", "3 Star", "4 Star", "5 Star")
-		val provingGroundsRaids = arrayListOf("Extreme", "Extreme+")
-		val guildWarsRaids = arrayListOf("Very Hard", "Extreme", "Extreme+", "NM90", "NM95", "NM100", "NM150")
-		val xenoClashRaids = arrayListOf("Xeno Clash Raid")
+	private fun enableSemiAuto() {
+		game.printToLog("[COMBAT] Bot will now attempt to enable Semi Auto...", tag = tag)
 
-		return game.configData.farmingMode == "Raid" || eventRaids.contains(game.configData.missionName) || rotbRaids.contains(game.configData.missionName) ||
-				dreadBarrageRaids.contains(game.configData.missionName) || game.configData.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.configData.missionName) ||
-				game.configData.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.configData.missionName) || xenoClashRaids.contains(game.configData.missionName) ||
-				game.configData.farmingMode == "Arcarum"
-	}
-
-	/**
-	 * Determine whether or not to reload after an Attack.
-	 *
-	 * @param override Override the set checks and reload anyways. Defaults to false.
-	 */
-	private fun reloadAfterAttack(override: Boolean = false) {
-		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
-		if (checkRaid() || override || (game.configData.farmingMode == "Generic" && game.configData.enableForceReload)) {
-			game.printToLog("[COMBAT] Reloading now.", tag = tag)
-			game.findAndClickButton("reload")
+		val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
+		if (enabledSemiAutoButtonLocation == null) {
+			// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
+			game.findAndClickButton("attack")
 			game.wait(3.0)
-		}
-	}
+			semiAuto = game.findAndClickButton("semi_auto", tries = 5)
 
-	/**
-	 * Processes a Turn if its currently the incorrect Turn number.
-	 *
-	 * @param turnNumber The current Turn number.
-	 * @return The new Turn number.
-	 */
-	private fun processIncorrectTurn(turnNumber: Int): Int {
-		game.printToLog("\n[COMBAT] Starting Turn $turnNumber.", tag = tag)
+			// If the bot still cannot find the "Semi Auto" button, that probably means that the user has the "Full Auto" button on the screen instead.
+			if (!semiAuto) {
+				game.printToLog("[COMBAT] Failed to enable Semi Auto. Falling back to Full Auto...", tag = tag)
 
-		// Clear any detected dialog popups that might obstruct the "Attack" button.
-		findCombatDialog()
-
-		// Tap the "Attack" button.
-		game.printToLog("[COMBAT] Ending Turn $turnNumber")
-		game.findAndClickButton("attack", tries = 10)
-
-		// Wait until the "Cancel" button vanishes from the screen.
-		if (game.imageUtils.findButton("combat_cancel") != null) {
-			while (!game.imageUtils.waitVanish("combat_cancel", timeout = 10)) {
-				if (debugMode) {
-					game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
-				}
-
-				game.wait(1.0)
+				// Enable Full Auto.
+				fullAuto = game.findAndClickButton("full_auto")
+			} else {
+				game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
 			}
+		} else {
+			semiAuto = true
 		}
-
-		reloadAfterAttack()
-		waitForAttack()
-
-		game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
-
-		if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-			game.wait(3.0)
-		}
-
-		return turnNumber + 1
 	}
 
 	/**
-	 * Enable Full/Semi auto for this battle.
+	 * Enable Full Auto and if it fails, try to enable Semi Auto.
 	 *
-	 * @return True if Full/Semi auto is enabled.
 	 */
-	private fun enableAuto(): Boolean {
-		game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
-		var enabledAuto = game.findAndClickButton("full_auto")
+	private fun enableFullAuto() {
+		game.printToLog("[COMBAT] Bot will now attempt to enable Full Auto...", tag = tag)
+
+		fullAuto = game.findAndClickButton("full_auto")
 
 		// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
-		if (!enabledAuto) {
-			game.printToLog("[COMBAT] Failed to find the \"Full Auto\" button. Falling back to Semi Auto.", tag = tag)
-			game.printToLog("[COMBAT] Double checking to see if Semi Auto is enabled.", tag = tag)
-
-			val enabledSemiAutoButtonLocation = game.imageUtils.findButton("semi_auto_enabled")
-			if (enabledSemiAutoButtonLocation == null) {
-				// Have the Party attack and then attempt to see if the "Semi Auto" button becomes visible.
-				game.findAndClickButton("attack")
-
-				game.wait(2.0)
-
-				enabledAuto = game.findAndClickButton("semi_auto", tries = 5)
-				if (enabledAuto) {
-					game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
-				}
-			}
+		if (!fullAuto) {
+			game.printToLog("[COMBAT] Bot failed to find the \"Full Auto\" button. Falling back to Semi Auto...", tag = tag)
+			enableSemiAuto()
+		} else {
+			game.printToLog("[COMBAT] Full Auto is now enabled.", tag = tag)
 		}
-
-		return enabledAuto
 	}
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// Entry Point
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Start Combat Mode with the provided combat script.
@@ -1090,7 +1238,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 			if (command.contains("turn")) {
 				// Clear any detected dialog popups that might obstruct the "Attack" button.
-				findCombatDialog()
+				checkForDialog()
 
 				// Parse the Turn's number.
 				commandTurnNumber = (command.split(":")[0].split(" ")[1]).toInt()
@@ -1150,17 +1298,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						useSummon(command)
 					}
 					command.contains("quicksummon") -> {
-						game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
-						if (game.findAndClickButton("quick_summon1") || game.findAndClickButton("quick_summon2")) {
-							game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
-
-							if (command.contains("wait")) {
-								val splitCommand = command.split(".").drop(1)
-								waitExecute(splitCommand, fallbackDelay = 5.0)
-							}
-						} else {
-							game.printToLog("[COMBAT] Was not able to quick summon this Turn.", tag = tag)
-						}
+						quickSummon(command)
 					}
 					command == "enablesemiauto" -> {
 						game.printToLog("[COMBAT] Enabling Semi Auto.", tag = tag)
@@ -1518,7 +1656,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							game.gestureUtils.swipe(500f, 900f, 500f, 1000f, 100L)
 						}
 
-						partyWipeCheck()
+						checkForWipe()
 
 						// Have separate logic for non-Raid and Raid battles.
 						if (checkRaid()) {
