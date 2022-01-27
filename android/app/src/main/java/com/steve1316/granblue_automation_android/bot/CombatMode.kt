@@ -401,6 +401,65 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	//////////////////////////////////////////////////////////////////////
 
 	/**
+	 * Start the Turn based on the read command and move the internal Turn count forward to match the command.
+	 *
+	 * @param command The command to execute.
+	 */
+	private fun startTurn(command: String) {
+		// Clear any detected dialog popups that might obstruct the "Attack" button.
+		checkForDialog()
+
+		// Parse the Turn's number.
+		commandTurnNumber = (command.split(":")[0].split(" ")[1]).toInt()
+
+		// If the command is a "Turn #:" and it is currently not the correct Turn, attack until the Turn numbers match.
+		if (!retreatCheckFlag && turnNumber != commandTurnNumber) {
+			game.printToLog("[COMBAT] Attacking until the bot reaches Turn $commandTurnNumber.", tag = tag)
+
+			while (turnNumber != commandTurnNumber) {
+				turnNumber = processIncorrectTurn(turnNumber)
+			}
+		} else {
+			game.printToLog("\n[COMBAT] Starting Turn $turnNumber.", tag = tag)
+		}
+	}
+
+	/**
+	 * Ends the Turn by clicking the Attack button.
+	 *
+	 */
+	private fun endTurn() {
+		// Tap the "Attack" button once every command inside the Turn Block has been processed.
+		game.printToLog("[COMBAT] Ending Turn ${turnNumber}...")
+
+		if (fullAuto || semiAuto) {
+			while (game.imageUtils.findButton("attack") != null) {
+				game.wait(1.0)
+			}
+		} else {
+			game.findAndClickButton("attack", tries = 10)
+
+			// Wait until the "Cancel" button vanishes from the screen.
+			if (game.imageUtils.findButton("combat_cancel", tries = 10) != null) {
+				while (!game.imageUtils.waitVanish("combat_cancel", timeout = 5, suppressError = true)) {
+					if (debugMode) {
+						game.printToLog("[DEBUG] The \"Cancel\" button has not vanished from the screen yet.", tag = tag)
+					}
+
+					game.wait(1.0)
+				}
+			}
+		}
+
+		// Check for exit conditions.
+		checkForBattleEnd()
+
+		if (game.findAndClickButton("next", tries = 3, suppressError = true)) {
+			game.wait(3.0)
+		}
+	}
+
+	/**
 	 * Execute a wait command.
 	 *
 	 * @param commandList A split list of the command by its "." delimiter with the "wait" command being the first element.
