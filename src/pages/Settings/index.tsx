@@ -333,7 +333,7 @@ const Settings = () => {
                         <Divider style={{ marginBottom: 10 }} />
 
                         <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>
-                            {`Selecting this will repeat the current mission on the screen until it finishes the required number of runs. Note that Generic does not provide any navigation.\n\nIt is required that the bot starts on either the Combat screen with the "Attack" button visible or on the Loot Collection screen with the "Play Again" button visible.`}
+                            {`Selecting this will repeat the current mission on the screen until it finishes the required number of runs. Note that Generic does not provide any navigation.\n\nIt is required that the bot starts on either the Combat screen with the "Attack" button visible, the Loot Collection screen with the "Play Again" button visible, or the Coop Room screen with the "Start" button visible and party already selected.`}
                         </Text>
 
                         <Divider />
