@@ -51,8 +51,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			game.printToLog("[INFO] Checking to see if Party wiped.", tag = tag)
 		}
 
-		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 3, suppressError = true)
-		if (partyWipeIndicatorLocation != null || game.imageUtils.confirmLocation("salute_participants", tries = 3, suppressError = true)) {
+		val partyWipeIndicatorLocation = game.imageUtils.findButton("party_wipe_indicator", tries = 1, suppressError = true)
+		if (partyWipeIndicatorLocation != null || game.imageUtils.confirmLocation("salute_participants", tries = 1, suppressError = true)) {
 			if (game.configData.farmingMode != "Raid" && game.configData.farmingMode != "Dread Barrage" && game.imageUtils.confirmLocation("continue")) {
 				// Tap on the blue indicator to get rid of the overlay.
 				if (partyWipeIndicatorLocation != null) {
@@ -72,7 +72,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				// Head back to the Home screen.
 				game.goBackHome(confirmLocationCheck = true)
 				retreatCheckFlag = true
-			} else if (game.configData.farmingMode == "Coop" && game.imageUtils.confirmLocation("salute_participants")) {
+			} else if (game.configData.farmingMode == "Coop" && game.imageUtils.confirmLocation("salute_participants", tries = 1, suppressError = true)) {
 				// Salute the participants.
 				game.printToLog("[WARNING] Party has wiped during Coop Combat Mode. Leaving the Coop Room...", tag = tag)
 
