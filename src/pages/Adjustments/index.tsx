@@ -159,8 +159,8 @@ const Adjustments = () => {
                 <TitleDivider title="Combat Mode" hasIcon={false} />
 
                 <Checkbox
-                    text="Enable Summon Selection Screen Adjustments"
-                    subtitle="Enable adjustment of tries for Support Summon Selection Screen."
+                    text="Enable Combat Mode Adjustments"
+                    subtitle="Enable adjustment of tries for Combat Mode Adjustments."
                     isChecked={bsc.settings.adjustment.enableCombatModeAdjustment}
                     onPress={() =>
                         bsc.setSettings({
