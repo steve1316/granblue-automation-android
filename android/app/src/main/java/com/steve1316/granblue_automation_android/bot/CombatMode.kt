@@ -390,11 +390,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			// Check if the Party wiped after attacking.
 			checkForWipe()
 
-			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) ||
-				game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)
-			) {
-				return false
-			}
+			checkForBattleEnd()
 
 			tries -= 1
 		}
