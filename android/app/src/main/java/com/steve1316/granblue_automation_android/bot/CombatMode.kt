@@ -799,6 +799,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 
 		while (tempSkillCommandList.isNotEmpty()) {
+			// Stop if the Next button is present.
+			if (game.imageUtils.findButton("next", tries = 1, suppressError = true) != null) {
+				return
+			}
+
 			if (tempSkillCommandList[0].contains("wait")) {
 				waitExecute(tempSkillCommandList)
 				tempSkillCommandList = tempSkillCommandList.drop(1)
