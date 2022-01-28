@@ -515,8 +515,6 @@ class ImageUtils(context: Context, private val game: Game) {
 						break
 					}
 
-					Log.d(tag, "Failed to find the ${templateName.uppercase()} button. Trying again...")
-
 					if (!testMode) {
 						game.wait(0.1)
 					}
@@ -536,7 +534,9 @@ class ImageUtils(context: Context, private val game: Game) {
 							tag = tag
 						)
 					} else {
-						game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $matchLocation.", tag = tag)
+						if (game.configData.debugMode) {
+							game.printToLog("[DEBUG] Found the ${templateName.uppercase()} at $matchLocation.", tag = tag)
+						}
 					}
 
 					return matchLocation
@@ -595,7 +595,10 @@ class ImageUtils(context: Context, private val game: Game) {
 					game.wait(0.1)
 					sourceBitmap = getSourceBitmap()
 				} else {
-					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.uppercase()}.", tag = tag)
+					if (game.configData.debugMode) {
+						game.printToLog("[DEBUG] Current location confirmed to be at ${templateName.uppercase()}.", tag = tag)
+					}
+
 					return true
 				}
 			} else {

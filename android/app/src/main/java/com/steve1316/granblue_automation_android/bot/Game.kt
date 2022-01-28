@@ -21,11 +21,10 @@ import java.util.concurrent.TimeUnit
 class Game(myContext: Context) {
 	private val tag: String = "${loggerTag}Game"
 
-	val configData: ConfigData = ConfigData(myContext)
-	val imageUtils: ImageUtils = ImageUtils(myContext, this)
-	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
-	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(this)
-	val combatMode: CombatMode = CombatMode(this, configData.debugMode)
+	var itemAmountFarmed: Int = 0
+	private var amountOfRuns: Int = 0
+	private val startTime: Long = System.currentTimeMillis()
+	private var partySelectionFirstRun: Boolean = true
 
 	private lateinit var quest: Quest
 	private lateinit var special: Special
@@ -40,10 +39,11 @@ class Game(myContext: Context) {
 	private lateinit var arcarum: Arcarum
 	private lateinit var generic: Generic
 
-	var itemAmountFarmed: Int = 0
-	private var amountOfRuns: Int = 0
-	private val startTime: Long = System.currentTimeMillis()
-	private var partySelectionFirstRun: Boolean = true
+	val configData: ConfigData = ConfigData(myContext)
+	val imageUtils: ImageUtils = ImageUtils(myContext, this)
+	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
+	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(this)
+	val combatMode: CombatMode = CombatMode(this, configData.debugMode)
 
 	init {
 		if (configData.farmingMode == "Quest") {
@@ -295,7 +295,6 @@ class Game(myContext: Context) {
 				wait(newDelay)
 			}
 
-			Log.d(tag, "Found and going to tap: $newButtonName")
 			gestureUtils.tap(tempLocation.x, tempLocation.y, newButtonName)
 		} else {
 			false
