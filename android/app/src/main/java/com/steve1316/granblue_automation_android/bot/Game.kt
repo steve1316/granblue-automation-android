@@ -125,10 +125,10 @@ class Game(myContext: Context) {
 	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 */
 	fun goBackHome(confirmLocationCheck: Boolean = false, testMode: Boolean = false) {
-		if (!imageUtils.confirmLocation("home")) {
+		if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration)) {
 			printToLog("[INFO] Moving back to the Home screen...")
 
-			if (!findAndClickButton("home")) {
+			if (!findAndClickButton("home", tries = configData.adjustCalibration)) {
 				if (!testMode) {
 					throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
 				} else {
@@ -149,10 +149,10 @@ class Game(myContext: Context) {
 			if (confirmLocationCheck) {
 				wait(2.0)
 
-				if (!imageUtils.confirmLocation("home")) {
+				if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration)) {
 					findAndClickButton("reload")
 					wait(4.0)
-					if (!imageUtils.confirmLocation("home")) {
+					if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration)) {
 						throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
 					}
 				}
@@ -177,11 +177,12 @@ class Game(myContext: Context) {
 	 * Find and click button
 	 *
 	 * @param buttonName Name of the button image file in the /assets/buttons/ folder.
-	 * @param tries Number of tries to find the specified button.
+	 * @param tries Number of tries to find the specified button. Defaults to 0 which will use ImageUtil's default.
 	 * @param suppressError Whether or not to suppress saving error messages to the log in failing to find the button.
+	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to True.
 	 * @return True if the button was found and clicked. False otherwise.
 	 */
-	fun findAndClickButton(buttonName: String, tries: Int = 5, suppressError: Boolean = false): Boolean {
+	fun findAndClickButton(buttonName: String, tries: Int = 0, suppressError: Boolean = false, bypassGeneralAdjustment: Boolean = true): Boolean {
 		if (configData.debugMode) {
 			printToLog("[DEBUG] Now attempting to find and click the \"$buttonName\" button.")
 		}
@@ -189,53 +190,102 @@ class Game(myContext: Context) {
 		var tempLocation: Point?
 		var newButtonName = buttonName
 
-		if (buttonName.lowercase() == "quest") {
-			tempLocation = imageUtils.findButton("quest_blue", suppressError = suppressError)
-			newButtonName = "quest_blue"
+		if (tries == 0) {
+			if (buttonName.lowercase() == "quest") {
+				tempLocation = imageUtils.findButton("quest_blue", suppressError = suppressError)
+				newButtonName = "quest_blue"
 
-			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("quest_red", suppressError = suppressError)
-				newButtonName = "quest_red"
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("quest_red", suppressError = suppressError)
+					newButtonName = "quest_red"
+				}
+
+			} else if (buttonName.lowercase() == "raid") {
+				tempLocation = imageUtils.findButton("raid_flat", suppressError = suppressError)
+				newButtonName = "raid_flat"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("raid_bouncing", suppressError = suppressError)
+					newButtonName = "raid_bouncing"
+				}
+
+			} else if (buttonName.lowercase() == "coop_start") {
+				tempLocation = imageUtils.findButton("coop_start_flat", suppressError = suppressError)
+				newButtonName = "coop_start_flat"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("coop_start_faded", suppressError = suppressError)
+					newButtonName = "coop_start_faded"
+				}
+
+			} else if (buttonName.lowercase() == "event_special_quest") {
+				tempLocation = imageUtils.findButton("event_special_quest_flat", suppressError = suppressError)
+				newButtonName = "event_special_quest_flat"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("event_special_quest_bouncing", suppressError = suppressError)
+					newButtonName = "event_special_quest_bouncing"
+				}
+
+			} else if (buttonName.lowercase() == "world") {
+				tempLocation = imageUtils.findButton("world", suppressError = suppressError)
+				newButtonName = "world"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("world2", suppressError = suppressError)
+					newButtonName = "world2"
+				}
+			} else {
+				tempLocation = imageUtils.findButton(buttonName, suppressError = suppressError)
 			}
-
-		} else if (buttonName.lowercase() == "raid") {
-			tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError)
-			newButtonName = "raid_flat"
-
-			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("raid_bouncing", tries = tries, suppressError = suppressError)
-				newButtonName = "raid_bouncing"
-			}
-
-		} else if (buttonName.lowercase() == "coop_start") {
-			tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError)
-			newButtonName = "coop_start_flat"
-
-			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("coop_start_faded", tries = tries, suppressError = suppressError)
-				newButtonName = "coop_start_faded"
-			}
-
-		} else if (buttonName.lowercase() == "event_special_quest") {
-			tempLocation = imageUtils.findButton("event_special_quest_flat", tries = tries, suppressError = suppressError)
-			newButtonName = "event_special_quest_flat"
-
-			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("event_special_quest_bouncing", tries = tries, suppressError = suppressError)
-				newButtonName = "event_special_quest_bouncing"
-			}
-
-		} else if (buttonName.lowercase() == "world") {
-			tempLocation = imageUtils.findButton("world", tries = tries, suppressError = suppressError)
-			newButtonName = "world"
-
-			if (tempLocation == null) {
-				tempLocation = imageUtils.findButton("world2", tries = tries, suppressError = suppressError)
-				newButtonName = "world2"
-			}
-
 		} else {
-			tempLocation = imageUtils.findButton(buttonName, tries = tries, suppressError = suppressError)
+			if (buttonName.lowercase() == "quest") {
+				tempLocation = imageUtils.findButton("quest_blue", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+				newButtonName = "quest_blue"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("quest_red", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+					newButtonName = "quest_red"
+				}
+
+			} else if (buttonName.lowercase() == "raid") {
+				tempLocation = imageUtils.findButton("raid_flat", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+				newButtonName = "raid_flat"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("raid_bouncing", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+					newButtonName = "raid_bouncing"
+				}
+
+			} else if (buttonName.lowercase() == "coop_start") {
+				tempLocation = imageUtils.findButton("coop_start_flat", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+				newButtonName = "coop_start_flat"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("coop_start_faded", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+					newButtonName = "coop_start_faded"
+				}
+
+			} else if (buttonName.lowercase() == "event_special_quest") {
+				tempLocation = imageUtils.findButton("event_special_quest_flat", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+				newButtonName = "event_special_quest_flat"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("event_special_quest_bouncing", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+					newButtonName = "event_special_quest_bouncing"
+				}
+
+			} else if (buttonName.lowercase() == "world") {
+				tempLocation = imageUtils.findButton("world", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+				newButtonName = "world"
+
+				if (tempLocation == null) {
+					tempLocation = imageUtils.findButton("world2", tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+					newButtonName = "world2"
+				}
+			} else {
+				tempLocation = imageUtils.findButton(buttonName, tries = tries, suppressError = suppressError, bypassGeneralAdjustment = bypassGeneralAdjustment)
+			}
 		}
 
 		return if (tempLocation != null) {

@@ -97,14 +97,14 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun checkForDialog() {
 		// Check for Lyria dialog popup first.
-		var combatDialogLocation = game.imageUtils.findButton("dialog_lyria", tries = 2)
+		var combatDialogLocation = game.imageUtils.findButton("dialog_lyria", tries = 2, suppressError = true)
 		if (combatDialogLocation != null) {
 			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
 		}
 
 		// Then check for Vyrn dialog popup next.
-		combatDialogLocation = game.imageUtils.findButton("dialog_vyrn", tries = 2)
+		combatDialogLocation = game.imageUtils.findButton("dialog_vyrn", tries = 2, suppressError = true)
 		if (combatDialogLocation != null) {
 			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
@@ -117,7 +117,6 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 * @return Return "Nothing" if combat is still continuing. Otherwise, raise a CombatModeException whose message is the event name that caused the battle to end.
 	 */
 	private fun checkForBattleEnd(): String {
-
 		when {
 			game.configData.farmingMode == "Raid" && game.configData.enableAutoExitRaid && (System.currentTimeMillis() - startTime >= game.configData.timeAllowedUntilAutoExitRaid) -> {
 				game.printToLog("\n####################", tag = tag)
@@ -287,7 +286,12 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		if (game.configData.enableRefreshDuringCombat && (checkRaid() || override || (game.configData.farmingMode == "Generic" && game.configData.enableForceReload))) {
 			game.printToLog("[COMBAT] Reloading now.", tag = tag)
 			game.findAndClickButton("reload")
-			game.wait(3.0)
+			if (game.configData.enableCombatModeAdjustment) {
+				game.wait(game.configData.adjustWaitingForReload.toDouble())
+			} else {
+				game.wait(3.0)
+			}
+
 			return true
 		}
 
@@ -374,15 +378,23 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun waitForAttack(): Boolean {
 		game.printToLog("[COMBAT] Waiting for attack to end...", tag = tag)
-		var tries = 100
+		var tries = if (game.configData.enableCombatModeAdjustment) {
+			game.configData.adjustWaitingForAttack
+		} else {
+			100
+		}
 
-		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1) == null && game.imageUtils.findButton("next", tries = 1) == null) {
+		while (tries > 0 && !retreatCheckFlag && game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null &&
+			game.imageUtils.findButton("next", tries = 1, suppressError = true) == null
+		) {
 			checkForDialog()
 
 			// Check if the Party wiped after attacking.
 			checkForWipe()
 
-			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1) || game.imageUtils.confirmLocation("exp_gained", tries = 1)) {
+			if (game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) ||
+				game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true)
+			) {
 				return false
 			}
 
@@ -888,7 +900,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.wait(1.0)
 
 				// Check if the Skill requires a target.
-				if (game.imageUtils.confirmLocation("use_skill", tries = 3)) {
+				if ((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("use_skill", tries = game.configData.adjustSkillUsage)) ||
+					game.imageUtils.confirmLocation("use_skill")
+				) {
 					if (tempSkillCommandList.isNotEmpty()) {
 						val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
 
@@ -1006,7 +1020,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 								tempSkillCommandList = tempSkillCommandList.drop(1)
 							}
-							game.imageUtils.confirmLocation("skill_unusable", tries = 2) -> {
+							((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation(
+								"skill_unusable",
+								tries = game.configData.adjustSkillUsage
+							))) || game.imageUtils.confirmLocation("skill_unusable") -> {
 								game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", tag = tag)
 								game.findAndClickButton("cancel")
 							}
@@ -1042,13 +1059,13 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			if (summonCommand.contains("summon($j)")) {
 				// Bring up the available Summons.
 				game.printToLog("[COMBAT] Invoking Summon $j.", tag = tag)
-				game.findAndClickButton("summon", tries = 5)
+				game.findAndClickButton("summon")
 
 				game.wait(1.0)
 
-				var tries = 2
+				// Now tap on the specified Summon.
+				var tries = 3
 				while (tries > 0) {
-					// Now tap on the specified Summon.
 					when (j) {
 						1 -> {
 							if (!game.imageUtils.isTablet) {
@@ -1144,7 +1161,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 					game.wait(1.0)
 
-					if (game.imageUtils.confirmLocation("summon_details")) {
+					if ((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("summon_details", tries = game.configData.adjustSummonUsage)) ||
+						game.imageUtils.confirmLocation("summon_details")
+					) {
 						val okButtonLocation = game.imageUtils.findButton("ok")
 
 						if (okButtonLocation != null) {
@@ -1182,8 +1201,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun quickSummon(command: String = "") {
 		game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
-		if (game.configData.enableCombatModeAdjustment && (game.findAndClickButton("quick_summon1", tries = game.configData.adjustSummonUsage) ||
-					game.findAndClickButton("quick_summon2", tries = game.configData.adjustSummonUsage)) || game.findAndClickButton("quick_summon1") ||
+		if ((game.configData.enableCombatModeAdjustment && (game.findAndClickButton("quick_summon1", tries = game.configData.adjustSummonUsage) ||
+					game.findAndClickButton("quick_summon2", tries = game.configData.adjustSummonUsage))) || game.findAndClickButton("quick_summon1") ||
 			game.findAndClickButton("quick_summon2")
 		) {
 			game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
@@ -1277,7 +1296,12 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			game.findAndClickButton("arcarum_stage_effect_active", tries = 10)
 		}
 
-		attackButtonLocation = game.imageUtils.findButton("attack", tries = 50)
+		attackButtonLocation = if (game.configData.enableCombatModeAdjustment) {
+			game.imageUtils.findButton("attack", tries = game.configData.adjustCombatStart)
+		} else {
+			game.imageUtils.findButton("attack", tries = 50)
+		}
+
 		if (attackButtonLocation == null) {
 			game.printToLog("\n[ERROR] Cannot find Attack button. Raid must have just ended.", tag = tag, isError = true)
 			return false
@@ -1388,7 +1412,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							reloadAfterAttack()
 							waitForAttack()
 
-							game.printToLog("[COMBAT] Turn ${turnNumber} has ended.", tag = tag)
+							game.printToLog("[COMBAT] Turn $turnNumber has ended.", tag = tag)
 
 							turnNumber += 1
 						}

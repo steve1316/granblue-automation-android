@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -470,12 +469,20 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param tries Number of tries before failing. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
+	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
 	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 * @return Point object containing the location of the match or null if not found.
 	 */
-	fun findButton(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false, testMode: Boolean = false): Point? {
+	fun findButton(
+		templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false,
+		bypassGeneralAdjustment: Boolean = false, testMode: Boolean = false
+	): Point? {
 		val folderName = "buttons"
-		var numberOfTries = tries
+		var numberOfTries = if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries != 5) {
+			game.configData.adjustButtonSearchGeneral
+		} else {
+			tries
+		}
 
 		if (debugMode) {
 			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} button image...", tag = tag)
@@ -547,11 +554,20 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param tries Number of tries before failing. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log.
+	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
 	 * @return True if the current location is at the specified location. False otherwise.
 	 */
-	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Boolean {
+	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false, bypassGeneralAdjustment: Boolean = false): Boolean {
 		val folderName = "headers"
-		var numberOfTries = tries
+		var numberOfTries = if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries != 5) {
+			if ((templateName == "coop_without_support_summon" || templateName == "select_a_summon" || templateName == "proving_grounds_summon_selection") && game.configData.enableSupportSummonSelectionScreenAdjustment) {
+				game.configData.adjustSupportSummonSelectionScreen
+			} else {
+				game.configData.adjustHeaderSearchGeneral
+			}
+		} else {
+			tries
+		}
 
 		if (debugMode) {
 			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} header image...", tag = tag)

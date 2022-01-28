@@ -18,7 +18,7 @@ class Generic(private val game: Game) {
 
 		game.printToLog("\n[GENERIC] Now checking for run eligibility...", tag = tag)
 
-		// Bot can start either at the Combat screen with the "Attack" button visible or the Loot Collection screen with the "Play Again" button visible.
+		// Bot can start either at the Combat screen with the "Attack" button visible, the Loot Collection screen with the "Play Again" button visible, or the Coop Room screen.
 		when {
 			game.imageUtils.findButton("attack", tries = 10) != null -> {
 				game.printToLog("\n[GENERIC] Bot is at the Combat screen. Starting Combat Mode now...", tag = tag)
@@ -26,16 +26,32 @@ class Generic(private val game: Game) {
 					runsCompleted = game.collectLoot(isCompleted = true)
 				}
 			}
+			game.findAndClickButton("coop_start", tries = 10) -> {
+				game.printToLog("[GENERIC] Bot is at the Coop Room screen. Starting the Coop mission and Combat Mode now...", tag = tag)
+
+				game.wait(3.0)
+
+				if (game.combatMode.startCombatMode()) {
+					runsCompleted = game.collectLoot(isCompleted = true)
+
+					// Head back to the Coop Room.
+					game.findAndClickButton("coop_room")
+
+					// Check for "Daily Missions" popup for Coop.
+					if (game.imageUtils.confirmLocation("coop_daily_missions")) {
+						game.findAndClickButton("close")
+					}
+				}
+			}
 			else -> {
-				game.printToLog("\n[GENERIC] Bot is not at the Combat screen. Checking for the Loot Collection screen now...", tag = tag)
+				game.printToLog("\n[GENERIC] Bot is not at the Combat or Coop Room screen. Checking for the Loot Collection screen now...", tag = tag)
 
 				// Press the "Play Again" button if necessary, otherwise start Combat Mode.
 				if (game.findAndClickButton("play_again")) {
 					game.checkForPopups()
 				} else {
 					throw GenericException(
-						"Failed to detect the 'Play Again' button. Bot can start either at the Combat screen with the 'Attack' button visible or the Loot Collection screen with " +
-								"the 'Play Again' button visible..."
+						"Failed to detect the 'Play Again' button. Bot can start either at the Combat screen with the 'Attack' button visible, the Loot Collection screen with the 'Play Again' button visible, or the Coop Room screen with the 'Start' button visible with the party already selected..."
 					)
 				}
 
@@ -43,7 +59,7 @@ class Generic(private val game: Game) {
 				game.checkAP()
 
 				// Check if the bot is at the Summon Selection screen.
-				if (game.imageUtils.confirmLocation("select_a_summon")) {
+				if (game.imageUtils.confirmLocation("select_a_summon", tries = 30)) {
 					if (game.selectSummon()) {
 						// Do not select party and just commence the mission.
 						if (game.findAndClickButton("ok", tries = 30)) {
