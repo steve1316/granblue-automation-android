@@ -125,10 +125,14 @@ class Game(myContext: Context) {
 	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 */
 	fun goBackHome(confirmLocationCheck: Boolean = false, testMode: Boolean = false) {
-		if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
+		if ((configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
+			(!configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home"))
+		) {
 			printToLog("[INFO] Moving back to the Home screen...")
 
-			if (!findAndClickButton("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
+			if ((configData.enableCalibrationAdjustment && !findAndClickButton("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
+				(!configData.enableCalibrationAdjustment && !findAndClickButton("home"))
+			) {
 				if (!testMode) {
 					throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
 				} else {
@@ -149,10 +153,14 @@ class Game(myContext: Context) {
 			if (confirmLocationCheck) {
 				wait(2.0)
 
-				if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
+				if ((configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
+					(!configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home"))
+				) {
 					findAndClickButton("reload")
 					wait(4.0)
-					if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
+					if ((configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
+						(!configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home"))
+					) {
 						throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
 					}
 				}
@@ -967,7 +975,7 @@ class Game(myContext: Context) {
 	fun checkPendingBattles(): Boolean {
 		printToLog("\n[INFO] Starting process of checking for Pending Battles...")
 
-		wait(3.0)
+		wait(1.0)
 
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
