@@ -1281,6 +1281,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 		val commandList = optionalCombatScript?.toMutableList() ?: game.configData.combatScript.toMutableList()
 
+		startTime = System.currentTimeMillis()
+
 		// Reset the Retreat, Semi Auto, and Full Auto flags.
 		retreatCheckFlag = false
 		semiAuto = false
