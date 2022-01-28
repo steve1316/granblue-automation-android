@@ -349,12 +349,10 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		// If the bot reloaded the page, determine if bot needs to enable Full/Semi Auto again.
 		if (!reloadCheck) {
 			reloadCheck = reloadAfterAttack()
-			if (!reloadCheck) {
-				if (fullAuto) {
-					enableFullAuto()
-				} else {
-					enableSemiAuto()
-				}
+			if (reloadCheck && fullAuto) {
+				enableFullAuto()
+			} else if (reloadCheck && semiAuto) {
+				enableSemiAuto()
 			}
 		}
 
