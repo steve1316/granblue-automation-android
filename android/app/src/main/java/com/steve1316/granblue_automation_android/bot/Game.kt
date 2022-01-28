@@ -971,9 +971,9 @@ class Game(myContext: Context) {
 
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
-		if (imageUtils.confirmLocation("check_your_pending_battles") ||
-			imageUtils.confirmLocation("pending_battles") ||
-			findAndClickButton("quest_results_pending_battles")
+		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 2) ||
+			imageUtils.confirmLocation("pending_battles", tries = 2) ||
+			findAndClickButton("quest_results_pending_battles", tries = 2)
 		) {
 			printToLog("[INFO] Found Pending Battles that need collecting from.")
 			findAndClickButton("ok")
