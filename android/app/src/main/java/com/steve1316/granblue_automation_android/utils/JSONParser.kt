@@ -63,7 +63,6 @@ class JSONParser {
 		} catch (e: Exception) {
 		}
 
-
 		try {
 			val discordObj = jObj.getJSONObject("discord")
 			sharedPreferences.edit {
@@ -74,7 +73,6 @@ class JSONParser {
 			}
 		} catch (e: Exception) {
 		}
-
 
 		try {
 			val configurationObj = jObj.getJSONObject("configuration")
@@ -95,7 +93,6 @@ class JSONParser {
 		} catch (e: Exception) {
 		}
 
-
 		try {
 			val nightmareObj = jObj.getJSONObject("nightmare")
 			sharedPreferences.edit {
@@ -111,7 +108,6 @@ class JSONParser {
 		} catch (e: Exception) {
 		}
 
-
 		try {
 			val eventObj = jObj.getJSONObject("event")
 			sharedPreferences.edit {
@@ -120,8 +116,6 @@ class JSONParser {
 			}
 		} catch (e: Exception) {
 		}
-
-
 
 		try {
 			val raidObj = jObj.getJSONObject("raid")
@@ -134,7 +128,6 @@ class JSONParser {
 		} catch (e: Exception) {
 		}
 
-
 		try {
 			val arcarumObj = jObj.getJSONObject("arcarum")
 			sharedPreferences.edit {
@@ -143,7 +136,6 @@ class JSONParser {
 			}
 		} catch (e: Exception) {
 		}
-
 
 		try {
 			val genericObj = jObj.getJSONObject("generic")
@@ -154,7 +146,6 @@ class JSONParser {
 		} catch (e: Exception) {
 		}
 
-
 		try {
 			val adjustmentObj = jObj.getJSONObject("adjustment")
 			sharedPreferences.edit {
@@ -163,10 +154,16 @@ class JSONParser {
 				putBoolean("enableGeneralAdjustment", adjustmentObj.getBoolean("enableGeneralAdjustment"))
 				putInt("adjustButtonSearchGeneral", adjustmentObj.getInt("adjustButtonSearchGeneral"))
 				putInt("adjustHeaderSearchGeneral", adjustmentObj.getInt("adjustHeaderSearchGeneral"))
+				putBoolean("enablePendingBattleAdjustment", adjustmentObj.getBoolean("enablePendingBattleAdjustment"))
+				putInt("adjustBeforePendingBattle", adjustmentObj.getInt("adjustBeforePendingBattle"))
+				putInt("adjustPendingBattle", adjustmentObj.getInt("adjustPendingBattle"))
+				putBoolean("enableCaptchaAdjustment", adjustmentObj.getBoolean("enableCaptchaAdjustment"))
+				putInt("adjustCaptcha", adjustmentObj.getInt("adjustCaptcha"))
 				putBoolean("enableSupportSummonSelectionScreenAdjustment", adjustmentObj.getBoolean("enableSupportSummonSelectionScreenAdjustment"))
 				putInt("adjustSupportSummonSelectionScreen", adjustmentObj.getInt("adjustSupportSummonSelectionScreen"))
 				putBoolean("enableCombatModeAdjustment", adjustmentObj.getBoolean("enableCombatModeAdjustment"))
 				putInt("adjustCombatStart", adjustmentObj.getInt("adjustCombatStart"))
+				putInt("adjustDialog", adjustmentObj.getInt("adjustDialog"))
 				putInt("adjustSkillUsage", adjustmentObj.getInt("adjustSkillUsage"))
 				putInt("adjustSummonUsage", adjustmentObj.getInt("adjustSummonUsage"))
 				putInt("adjustWaitingForReload", adjustmentObj.getInt("adjustWaitingForReload"))
@@ -175,8 +172,6 @@ class JSONParser {
 			}
 		} catch (e: Exception) {
 		}
-
-
 
 		try {
 			val androidObj = jObj.getJSONObject("android")
@@ -191,7 +186,6 @@ class JSONParser {
 			}
 		} catch (e: Exception) {
 		}
-
 
 		Log.d(tag, "Successfully loaded settings into SharedPreferences.")
 	}

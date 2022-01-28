@@ -72,10 +72,16 @@ class ConfigData(myContext: Context) {
 	val enableGeneralAdjustment: Boolean
 	val adjustButtonSearchGeneral: Int
 	val adjustHeaderSearchGeneral: Int
+	val enablePendingBattleAdjustment: Boolean
+	val adjustBeforePendingBattle: Int
+	val adjustPendingBattle: Int
+	val enableCaptchaAdjustment: Boolean
+	val adjustCaptcha: Int
 	val enableSupportSummonSelectionScreenAdjustment: Boolean
 	val adjustSupportSummonSelectionScreen: Int
 	val enableCombatModeAdjustment: Boolean
 	val adjustCombatStart: Int
+	val adjustDialog: Int
 	val adjustSkillUsage: Int
 	val adjustSummonUsage: Int
 	val adjustWaitingForReload: Int
@@ -171,10 +177,16 @@ class ConfigData(myContext: Context) {
 		enableGeneralAdjustment = sharedPreferences.getBoolean("enableGeneralAdjustment", false)
 		adjustButtonSearchGeneral = sharedPreferences.getInt("adjustButtonSearchGeneral", 5)
 		adjustHeaderSearchGeneral = sharedPreferences.getInt("adjustHeaderSearchGeneral", 5)
+		enablePendingBattleAdjustment = sharedPreferences.getBoolean("enablePendingBattleAdjustment", false)
+		adjustBeforePendingBattle = sharedPreferences.getInt("adjustBeforePendingBattle", 1)
+		adjustPendingBattle = sharedPreferences.getInt("adjustPendingBattle", 2)
+		enableCaptchaAdjustment = sharedPreferences.getBoolean("enableCaptchaAdjustment", false)
+		adjustCaptcha = sharedPreferences.getInt("adjustCaptcha", 5)
 		enableSupportSummonSelectionScreenAdjustment = sharedPreferences.getBoolean("enableSupportSummonSelectionScreenAdjustment", false)
 		adjustSupportSummonSelectionScreen = sharedPreferences.getInt("adjustSupportSummonSelectionScreen", 30)
 		enableCombatModeAdjustment = sharedPreferences.getBoolean("enableCombatModeAdjustment", false)
 		adjustCombatStart = sharedPreferences.getInt("adjustCombatStart", 50)
+		adjustDialog = sharedPreferences.getInt("adjustDialog", 2)
 		adjustSkillUsage = sharedPreferences.getInt("adjustSkillUsage", 5)
 		adjustSummonUsage = sharedPreferences.getInt("adjustSummonUsage", 5)
 		adjustWaitingForReload = sharedPreferences.getInt("adjustWaitingForReload", 3)
