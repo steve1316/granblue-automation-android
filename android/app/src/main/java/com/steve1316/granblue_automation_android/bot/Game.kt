@@ -125,10 +125,10 @@ class Game(myContext: Context) {
 	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 */
 	fun goBackHome(confirmLocationCheck: Boolean = false, testMode: Boolean = false) {
-		if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration)) {
+		if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
 			printToLog("[INFO] Moving back to the Home screen...")
 
-			if (!findAndClickButton("home", tries = configData.adjustCalibration)) {
+			if (!findAndClickButton("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
 				if (!testMode) {
 					throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
 				} else {
@@ -149,10 +149,10 @@ class Game(myContext: Context) {
 			if (confirmLocationCheck) {
 				wait(2.0)
 
-				if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration)) {
+				if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
 					findAndClickButton("reload")
 					wait(4.0)
-					if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration)) {
+					if (!imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) {
 						throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
 					}
 				}

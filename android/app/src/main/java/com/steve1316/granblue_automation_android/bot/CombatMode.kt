@@ -898,7 +898,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.wait(1.0)
 
 				// Check if the Skill requires a target.
-				if ((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("use_skill", tries = game.configData.adjustSkillUsage)) ||
+				if ((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("use_skill", tries = game.configData.adjustSkillUsage, bypassGeneralAdjustment = true)) ||
 					game.imageUtils.confirmLocation("use_skill")
 				) {
 					if (tempSkillCommandList.isNotEmpty()) {
@@ -1020,7 +1020,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 							}
 							((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation(
 								"skill_unusable",
-								tries = game.configData.adjustSkillUsage
+								tries = game.configData.adjustSkillUsage,
+								bypassGeneralAdjustment = true
 							))) || game.imageUtils.confirmLocation("skill_unusable") -> {
 								game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", tag = tag)
 								game.findAndClickButton("cancel")
@@ -1159,7 +1160,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 					game.wait(1.0)
 
-					if ((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("summon_details", tries = game.configData.adjustSummonUsage)) ||
+					if ((game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("summon_details", tries = game.configData.adjustSummonUsage, bypassGeneralAdjustment = true)) ||
 						game.imageUtils.confirmLocation("summon_details")
 					) {
 						val okButtonLocation = game.imageUtils.findButton("ok")
@@ -1297,7 +1298,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 
 		attackButtonLocation = if (game.configData.enableCombatModeAdjustment) {
-			game.imageUtils.findButton("attack", tries = game.configData.adjustCombatStart)
+			game.imageUtils.findButton("attack", tries = game.configData.adjustCombatStart, bypassGeneralAdjustment = true)
 		} else {
 			game.imageUtils.findButton("attack", tries = 50)
 		}
