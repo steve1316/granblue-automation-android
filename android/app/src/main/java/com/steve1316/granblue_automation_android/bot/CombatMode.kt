@@ -97,14 +97,22 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun checkForDialog() {
 		// Check for Lyria dialog popup first.
-		var combatDialogLocation = game.imageUtils.findButton("dialog_lyria", tries = 2, suppressError = true)
+		var combatDialogLocation = if (game.configData.enableCombatModeAdjustment) {
+			game.imageUtils.findButton("dialog_lyria", tries = game.configData.adjustDialog, suppressError = true, bypassGeneralAdjustment = true)
+		} else {
+			game.imageUtils.findButton("dialog_lyria", tries = 2, suppressError = true)
+		}
 		if (combatDialogLocation != null) {
 			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return
 		}
 
 		// Then check for Vyrn dialog popup next.
-		combatDialogLocation = game.imageUtils.findButton("dialog_vyrn", tries = 2, suppressError = true)
+		combatDialogLocation = if (game.configData.enableCombatModeAdjustment) {
+			game.imageUtils.findButton("dialog_vyrn", tries = game.configData.adjustDialog, suppressError = true, bypassGeneralAdjustment = true)
+		} else {
+			game.imageUtils.findButton("dialog_vyrn", tries = 2, suppressError = true)
+		}
 		if (combatDialogLocation != null) {
 			game.gestureUtils.tap(combatDialogLocation.x, combatDialogLocation.y, "template_dialog")
 			return

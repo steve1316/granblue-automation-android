@@ -313,7 +313,9 @@ class Game(myContext: Context) {
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
 	fun checkForCAPTCHA() {
-		if (imageUtils.confirmLocation("captcha")) {
+		if ((configData.enableCaptchaAdjustment && imageUtils.confirmLocation("captcha", tries = configData.adjustCaptcha, bypassGeneralAdjustment = true)) ||
+			(!configData.enableCaptchaAdjustment && imageUtils.confirmLocation("captcha"))
+		) {
 			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Stopping the bot now."))
 		} else {
 			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
@@ -975,13 +977,22 @@ class Game(myContext: Context) {
 	fun checkPendingBattles(): Boolean {
 		printToLog("\n[INFO] Starting process of checking for Pending Battles...")
 
-		wait(1.0)
+		if (configData.enablePendingBattleAdjustment) {
+			wait(configData.adjustBeforePendingBattle.toDouble())
+		} else {
+			wait(1.0)
+		}
 
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
-		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 2) ||
-			imageUtils.confirmLocation("pending_battles", tries = 2) ||
-			findAndClickButton("quest_results_pending_battles", tries = 2)
+		if ((configData.enablePendingBattleAdjustment &&
+					(imageUtils.confirmLocation("check_your_pending_battles", tries = configData.adjustPendingBattle, bypassGeneralAdjustment = true) ||
+							imageUtils.confirmLocation("pending_battles", tries = configData.adjustPendingBattle, bypassGeneralAdjustment = true) ||
+							findAndClickButton("quest_results_pending_battles", tries = configData.adjustPendingBattle, bypassGeneralAdjustment = true))) ||
+			(!configData.enablePendingBattleAdjustment &&
+					(imageUtils.confirmLocation("check_your_pending_battles", tries = 2) ||
+							imageUtils.confirmLocation("pending_battles", tries = 2) ||
+							findAndClickButton("quest_results_pending_battles", tries = 2)))
 		) {
 			printToLog("[INFO] Found Pending Battles that need collecting from.")
 			findAndClickButton("ok")
