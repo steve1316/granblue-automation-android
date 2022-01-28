@@ -53,7 +53,7 @@ const Adjustments = () => {
                             totalWidth={Dimensions.get("screen").width * 0.9}
                             totalHeight={50}
                         />
-                        <Text style={styles.subtitle}>Home calibration occurs when the bot is first started and attempts to find and save the location of the game window.</Text>
+                        <Text style={styles.subtitle}>Home calibration occurs when the bot is first started and attempts to detect if the game window is fully present.</Text>
                     </View>
                 ) : null}
             </View>
@@ -67,7 +67,7 @@ const Adjustments = () => {
 
                 <Checkbox
                     text="Enable General Image Searching Adjustments"
-                    subtitle="Enable adjustment of tries for General."
+                    subtitle="Enable adjustment of tries for General. This encompasses a vast majority of the image processing operations of the bot so adjusting these will greatly affect the average running time."
                     isChecked={bsc.settings.adjustment.enableGeneralAdjustment}
                     onPress={() => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, enableGeneralAdjustment: !bsc.settings.adjustment.enableGeneralAdjustment } })}
                 />
@@ -89,7 +89,9 @@ const Adjustments = () => {
                             totalWidth={Dimensions.get("screen").width * 0.9}
                             totalHeight={50}
                         />
-                        <Text style={styles.subtitle}>Set the default number of tries for button template matching. This will be overwritten by the specific settings down below if applicable.</Text>
+                        <Text style={styles.subtitle}>
+                            Set the default number of tries for overall button template matching. This will be overwritten by the specific settings down below if applicable.
+                        </Text>
                         <Text style={{ marginBottom: 10 }}>General Image Template Matching for Headers</Text>
                         <NumericInput
                             type="plus-minus"
@@ -105,7 +107,107 @@ const Adjustments = () => {
                             totalWidth={Dimensions.get("screen").width * 0.9}
                             totalHeight={50}
                         />
-                        <Text style={styles.subtitle}>Set the default number of tries for header template matching. This will be overwritten by the specific settings down below if applicable.</Text>
+                        <Text style={styles.subtitle}>
+                            Set the default number of tries for overall header template matching. This will be overwritten by the specific settings down below if applicable.
+                        </Text>
+                    </View>
+                ) : null}
+            </View>
+        )
+    }
+
+    const renderCheckPendingBattles = () => {
+        return (
+            <View>
+                <TitleDivider title="Check for Pending Battles" hasIcon={false} />
+
+                <Checkbox
+                    text="Enable Pending Battles Adjustments"
+                    subtitle="Enable adjustment of tries of check for Pending Battles."
+                    isChecked={bsc.settings.adjustment.enablePendingBattleAdjustment}
+                    onPress={() =>
+                        bsc.setSettings({
+                            ...bsc.settings,
+                            adjustment: { ...bsc.settings.adjustment, enablePendingBattleAdjustment: !bsc.settings.adjustment.enablePendingBattleAdjustment },
+                        })
+                    }
+                />
+
+                {bsc.settings.adjustment.enablePendingBattleAdjustment ? (
+                    <View style={{ marginTop: 10 }}>
+                        <Text style={{ marginBottom: 10 }}>Delay Before Starting Check</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustBeforePendingBattle}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustBeforePendingBattle: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>Set the default number of seconds before starting the check for Pending Battles.</Text>
+                        <Text style={{ marginBottom: 10 }}>Check for Pending Battles</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustPendingBattle}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustPendingBattle: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>Set the default number of tries to check for Pending Battles.</Text>
+                    </View>
+                ) : null}
+            </View>
+        )
+    }
+
+    const renderCaptcha = () => {
+        return (
+            <View>
+                <TitleDivider title="Check for CAPTCHA" hasIcon={false} />
+
+                <Checkbox
+                    text="Enable CAPTCHA Adjustments"
+                    subtitle="Enable adjustment of tries of check for CAPTCHA."
+                    isChecked={bsc.settings.adjustment.enableCaptchaAdjustment}
+                    onPress={() =>
+                        bsc.setSettings({
+                            ...bsc.settings,
+                            adjustment: { ...bsc.settings.adjustment, enableCaptchaAdjustment: !bsc.settings.adjustment.enableCaptchaAdjustment },
+                        })
+                    }
+                />
+
+                {bsc.settings.adjustment.enableCaptchaAdjustment ? (
+                    <View style={{ marginTop: 10 }}>
+                        <Text style={{ marginBottom: 10 }}>Check for CAPTCHA</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustCaptcha}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustCaptcha: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>Set the default number of tries to check for CAPTCHA.</Text>
                     </View>
                 ) : null}
             </View>
@@ -188,6 +290,22 @@ const Adjustments = () => {
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>Set the default number of tries for checking when the bot arrives at the Combat Screen.</Text>
+                        <Text style={{ marginBottom: 10 }}>Check for Dialog Popups</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustDialog}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustDialog: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>Set the default number of tries for checking when a dialog popup from Lyria/Vyrn is present during combat.</Text>
                         <Text style={{ marginBottom: 10 }}>Skill Usage</Text>
                         <NumericInput
                             type="plus-minus"
@@ -236,7 +354,7 @@ const Adjustments = () => {
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>
-                            Set the default number of tries for checking when a reload is finished, whether or not the bot ends up back at the Combat screen or the Loot Collection screen.
+                            Set the default number of seconds for checking when a reload is finished, whether or not the bot ends up back at the Combat screen or the Loot Collection screen.
                         </Text>
                         <Text style={{ marginBottom: 10 }}>Waiting for Attack</Text>
                         <NumericInput
@@ -271,6 +389,10 @@ const Adjustments = () => {
                     {renderStart()}
 
                     {renderGeneral()}
+
+                    {renderCheckPendingBattles()}
+
+                    {renderCaptcha()}
 
                     {renderSupportSummonSelection()}
 
