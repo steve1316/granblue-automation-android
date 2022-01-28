@@ -425,7 +425,7 @@ const ExtraSettings = () => {
                     }
                 />
                 <Checkbox
-                    text="Enable Automatic Quick Summon during Full/Semi Auto"
+                    text={`Enable Automatic Quick Summon\nduring Full/Semi Auto`}
                     subtitle={
                         'Enables the ability to automatically use Quick Summon during Full/Semi Auto. Note that this option only takes into effect when "Enable Refreshing during Combat" is turned on and that the bot is fighting a battle that is compatible with refreshing during combat.'
                     }
