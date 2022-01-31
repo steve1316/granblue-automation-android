@@ -1325,7 +1325,14 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				// Check if the Battle has ended.
 				checkForBattleEnd()
 
-				val command = commandList.removeAt(0).lowercase()
+				var command = commandList.removeAt(0).lowercase()
+				if (command.startsWith("//") || command.startsWith("#")) {
+					// Ignore comments in script.
+					continue
+				} else {
+					// Remove comments in the same line.
+					command = command.substringBefore("/").substringBefore("#").trim()
+				}
 
 				game.printToLog("\n[COMBAT] Reading command: \"$command\"", tag = tag)
 
