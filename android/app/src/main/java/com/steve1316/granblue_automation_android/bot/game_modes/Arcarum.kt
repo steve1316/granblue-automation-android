@@ -113,10 +113,10 @@ class Arcarum(private val game: Game, private val mapName: String) {
 				game.checkForCAPTCHA()
 
 				return when {
-					game.imageUtils.confirmLocation("arcarum_party_selection", tries = 3) -> {
+					game.imageUtils.confirmLocation("arcarum_party_selection", tries = 3, bypassGeneralAdjustment = true) -> {
 						"Combat"
 					}
-					game.findAndClickButton("ok", tries = 3) -> {
+					game.findAndClickButton("ok", tries = 3, bypassGeneralAdjustment = true) -> {
 						"Claimed Treasure/Keythorn"
 					}
 					else -> {
@@ -127,28 +127,32 @@ class Arcarum(private val game: Game, private val mapName: String) {
 
 			// Clear any detected Treasure popup after claiming a chest.
 			game.printToLog("[ARCARUM] No action found for the current node. Looking for Treasure popup...")
-			if (game.imageUtils.confirmLocation("arcarum_treasure", tries = 3)) {
+			if (game.imageUtils.confirmLocation("arcarum_treasure", tries = 3, bypassGeneralAdjustment = true)) {
 				game.findAndClickButton("ok")
 				return "Claimed Treasure"
 			}
 
 			// Next, determine if there is a available node to move to. Any bound monsters should have been destroyed by now.
 			game.printToLog("[ARCARUM] No Treasure popup detected. Looking for an available node to move to...")
-			if (game.findAndClickButton("arcarum_node", tries = 3)) {
+			if (game.findAndClickButton("arcarum_node", tries = 3, bypassGeneralAdjustment = true)) {
 				game.wait(1.0)
 				return "Navigating"
 			}
 
 			// If all else fails, attempt to navigate to a node that is occupied by mob(s).
 			game.printToLog("[ARCARUM] No available node to move to. Looking for nodes with mobs on them...")
-			if (game.findAndClickButton("arcarum_mob", tries = 3) || game.findAndClickButton("arcarum_red_mob", tries = 3)) {
+			if (game.findAndClickButton("arcarum_mob", tries = 3, bypassGeneralAdjustment = true) ||
+				game.findAndClickButton("arcarum_red_mob", tries = 3, bypassGeneralAdjustment = true)
+			) {
 				game.wait(1.0)
 				return "Navigating"
 			}
 
 			// If all else fails, see if there are any unclaimed chests, like the ones spawned by a random special event that spawns chests on all nodes.
 			game.printToLog("[ARCARUM] No nodes with mobs on them. Looking for nodes with chests on them...")
-			if (game.findAndClickButton("arcarum_silver_chest", tries = 3) || game.findAndClickButton("arcarum_gold_chest", tries = 3)) {
+			if (game.findAndClickButton("arcarum_silver_chest", tries = 3, bypassGeneralAdjustment = true) ||
+				game.findAndClickButton("arcarum_gold_chest", tries = 3, bypassGeneralAdjustment = true)
+			) {
 				game.wait(1.0)
 				return "Navigating"
 			}
@@ -168,7 +172,8 @@ class Arcarum(private val game: Game, private val mapName: String) {
 	private fun checkForBoss(): Boolean {
 		game.printToLog("\n[ARCARUM] Checking if boss is available...")
 
-		return game.imageUtils.findButton("arcarum_boss", tries = 3) != null || game.imageUtils.findButton("arcarum_boss2", tries = 3) != null
+		return game.imageUtils.findButton("arcarum_boss", tries = 3, bypassGeneralAdjustment = true) != null ||
+				game.imageUtils.findButton("arcarum_boss2", tries = 3, bypassGeneralAdjustment = true) != null
 	}
 
 	/**
@@ -222,8 +227,6 @@ class Arcarum(private val game: Game, private val mapName: String) {
 					game.printToLog("[ARCARUM] Boss has been detected. Stopping the bot.")
 					throw ArcarumException("Boss has been detected. Stopping the bot.")
 				}
-
-				game.wait(1.0)
 			}
 		}
 

@@ -86,6 +86,8 @@ class ConfigData(myContext: Context) {
 	val adjustSummonUsage: Int
 	val adjustWaitingForReload: Int
 	val adjustWaitingForAttack: Int
+	val enableArcarumAdjustment: Boolean
+	val adjustArcarum: Int
 
 	// Android
 	val enableDelayTap: Boolean
@@ -191,6 +193,8 @@ class ConfigData(myContext: Context) {
 		adjustSummonUsage = sharedPreferences.getInt("adjustSummonUsage", 5)
 		adjustWaitingForReload = sharedPreferences.getInt("adjustWaitingForReload", 3)
 		adjustWaitingForAttack = sharedPreferences.getInt("adjustWaitingForAttack", 100)
+		enableArcarumAdjustment = sharedPreferences.getBoolean("enableArcarumAdjustment", false)
+		adjustArcarum = sharedPreferences.getInt("adjustArcarum", 3)
 
 		enableDelayTap = sharedPreferences.getBoolean("enableDelayTap", false)
 		delayTapMilliseconds = sharedPreferences.getInt("delayTapMilliseconds", 1000)

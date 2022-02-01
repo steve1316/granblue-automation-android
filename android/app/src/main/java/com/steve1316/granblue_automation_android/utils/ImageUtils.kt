@@ -476,6 +476,9 @@ class ImageUtils(context: Context, private val game: Game) {
 		val dialogList = arrayListOf("dialog_lyria", "dialog_vyrn")
 		val skillUsageList = arrayListOf("use_skill", "skill_unusable")
 		val summonUsageList = arrayListOf("summon_details", "quick_summon1", "quick_summon2")
+		val arcarumList = arrayListOf(
+			"arcarum_party_selection", "arcarum_treasure", "arcarum_node", "arcarum_mob", "arcarum_red_mob", "arcarum_silver_chest", "arcarum_gold_chest", "arcarum_boss", "arcarum_boss2"
+		)
 
 		return when {
 			game.configData.enableCalibrationAdjustment && calibrationList.contains(templateName) -> {
@@ -501,6 +504,9 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 			game.configData.enableCombatModeAdjustment && summonUsageList.contains(templateName) -> {
 				game.configData.adjustSummonUsage
+			}
+			game.configData.enableArcarumAdjustment && arcarumList.contains(templateName) -> {
+				game.configData.adjustArcarum
 			}
 			else -> {
 				0

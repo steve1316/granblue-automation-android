@@ -168,6 +168,8 @@ class JSONParser {
 				putInt("adjustSummonUsage", adjustmentObj.getInt("adjustSummonUsage"))
 				putInt("adjustWaitingForReload", adjustmentObj.getInt("adjustWaitingForReload"))
 				putInt("adjustWaitingForAttack", adjustmentObj.getInt("adjustWaitingForAttack"))
+				putBoolean("enableArcarumAdjustment", adjustmentObj.getBoolean("enableArcarumAdjustment"))
+				putInt("adjustArcarum", adjustmentObj.getInt("adjustArcarum"))
 				commit()
 			}
 		} catch (e: Exception) {
