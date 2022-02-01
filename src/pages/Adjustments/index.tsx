@@ -378,6 +378,47 @@ const Adjustments = () => {
         )
     }
 
+    const renderArcarum = () => {
+        return (
+            <View>
+                <TitleDivider title="Arcarum" hasIcon={false} />
+
+                <Checkbox
+                    text="Enable Arcarum Adjustments"
+                    subtitle="Enable adjustment of tries for Arcarum Adjustments."
+                    isChecked={bsc.settings.adjustment.enableArcarumAdjustment}
+                    onPress={() =>
+                        bsc.setSettings({
+                            ...bsc.settings,
+                            adjustment: { ...bsc.settings.adjustment, enableArcarumAdjustment: !bsc.settings.adjustment.enableArcarumAdjustment },
+                        })
+                    }
+                />
+
+                {bsc.settings.adjustment.enableArcarumAdjustment ? (
+                    <View style={{ marginTop: 10 }}>
+                        <Text style={{ marginBottom: 10 }}>Determining Which Action To Take</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustArcarum}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustArcarum: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>Set the default number of tries for checking which action to take during Arcarum.</Text>
+                    </View>
+                ) : null}
+            </View>
+        )
+    }
+
     return (
         <View style={styles.root}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -397,6 +438,8 @@ const Adjustments = () => {
                     {renderSupportSummonSelection()}
 
                     {renderCombatMode()}
+
+                    {renderArcarum()}
                 </View>
             </ScrollView>
         </View>
