@@ -3,7 +3,6 @@ package com.steve1316.granblue_automation_android.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -463,6 +462,53 @@ class ImageUtils(context: Context, private val game: Game) {
 	}
 
 	/**
+	 * Verify whether the template name is able to be adjusted and return its adjustment.
+	 *
+	 * @param templateName File name of the template image.
+	 * @return The specific adjustment to the specified template or 0 to use the default number of tries.
+	 */
+	private fun determineAdjustment(templateName: String): Int {
+		val calibrationList = arrayListOf("home")
+		val pendingBattlesList = arrayListOf("check_your_pending_battles", "pending_battles", "quest_results_pending_battles")
+		val captchaList = arrayListOf("captcha")
+		val supportSummonSelectionList = arrayListOf("select_a_summon", "coop_without_support_summon", "proving_grounds_summon_selection")
+		val beforeCombatStartList = arrayListOf("attack")
+		val dialogList = arrayListOf("dialog_lyria", "dialog_vyrn")
+		val skillUsageList = arrayListOf("use_skill", "skill_unusable")
+		val summonUsageList = arrayListOf("summon_details", "quick_summon1", "quick_summon2")
+
+		return when {
+			game.configData.enableCalibrationAdjustment && calibrationList.contains(templateName) -> {
+				game.configData.adjustCalibration
+			}
+			game.configData.enablePendingBattleAdjustment && pendingBattlesList.contains(templateName) -> {
+				game.configData.adjustPendingBattle
+			}
+			game.configData.enableCaptchaAdjustment && captchaList.contains(templateName) -> {
+				game.configData.adjustCaptcha
+			}
+			game.configData.enableSupportSummonSelectionScreenAdjustment && supportSummonSelectionList.contains(templateName) -> {
+				game.configData.adjustSupportSummonSelectionScreen
+			}
+			game.configData.enableCombatModeAdjustment && beforeCombatStartList.contains(templateName) -> {
+				game.configData.adjustCombatStart
+			}
+			game.configData.enableCombatModeAdjustment && dialogList.contains(templateName) -> {
+				game.configData.adjustDialog
+			}
+			game.configData.enableCombatModeAdjustment && skillUsageList.contains(templateName) -> {
+				game.configData.adjustSkillUsage
+			}
+			game.configData.enableCombatModeAdjustment && summonUsageList.contains(templateName) -> {
+				game.configData.adjustSummonUsage
+			}
+			else -> {
+				0
+			}
+		}
+	}
+
+	/**
 	 * Finds the location of the specified image from the /images/ folder inside assets.
 	 *
 	 * @param templateName File name of the template image.
@@ -480,6 +526,13 @@ class ImageUtils(context: Context, private val game: Game) {
 		val folderName = "buttons"
 		var numberOfTries = if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries != 5) {
 			game.configData.adjustButtonSearchGeneral
+		} else if (bypassGeneralAdjustment) {
+			val newTries = determineAdjustment(templateName)
+			if (newTries != 0) {
+				newTries
+			} else {
+				tries
+			}
 		} else {
 			tries
 		}
@@ -560,10 +613,13 @@ class ImageUtils(context: Context, private val game: Game) {
 	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false, bypassGeneralAdjustment: Boolean = false): Boolean {
 		val folderName = "headers"
 		var numberOfTries = if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries != 5) {
-			if ((templateName == "coop_without_support_summon" || templateName == "select_a_summon" || templateName == "proving_grounds_summon_selection") && game.configData.enableSupportSummonSelectionScreenAdjustment) {
-				game.configData.adjustSupportSummonSelectionScreen
+			game.configData.adjustHeaderSearchGeneral
+		} else if (bypassGeneralAdjustment) {
+			val newTries = determineAdjustment(templateName)
+			if (newTries != 0) {
+				newTries
 			} else {
-				game.configData.adjustHeaderSearchGeneral
+				tries
 			}
 		} else {
 			tries

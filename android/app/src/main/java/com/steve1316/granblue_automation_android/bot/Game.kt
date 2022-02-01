@@ -125,14 +125,10 @@ class Game(myContext: Context) {
 	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 */
 	fun goBackHome(confirmLocationCheck: Boolean = false, testMode: Boolean = false) {
-		if ((configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
-			(!configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home"))
-		) {
+		if (!imageUtils.confirmLocation("home", bypassGeneralAdjustment = true)) {
 			printToLog("[INFO] Moving back to the Home screen...")
 
-			if ((configData.enableCalibrationAdjustment && !findAndClickButton("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
-				(!configData.enableCalibrationAdjustment && !findAndClickButton("home"))
-			) {
+			if (!findAndClickButton("home", bypassGeneralAdjustment = true)) {
 				if (!testMode) {
 					throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
 				} else {
@@ -153,14 +149,10 @@ class Game(myContext: Context) {
 			if (confirmLocationCheck) {
 				wait(2.0)
 
-				if ((configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
-					(!configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home"))
-				) {
+				if (!imageUtils.confirmLocation("home", bypassGeneralAdjustment = true)) {
 					findAndClickButton("reload")
 					wait(4.0)
-					if ((configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home", tries = configData.adjustCalibration, bypassGeneralAdjustment = true)) ||
-						(!configData.enableCalibrationAdjustment && !imageUtils.confirmLocation("home"))
-					) {
+					if (!imageUtils.confirmLocation("home", bypassGeneralAdjustment = true)) {
 						throw Exception("Failed to head back to the Home screen after clicking on the Home button.")
 					}
 				}
@@ -313,9 +305,7 @@ class Game(myContext: Context) {
 	 * Checks for CAPTCHA right after selecting a Summon. If detected, alert the user and stop the bot.
 	 */
 	fun checkForCAPTCHA() {
-		if ((configData.enableCaptchaAdjustment && imageUtils.confirmLocation("captcha", tries = configData.adjustCaptcha, bypassGeneralAdjustment = true)) ||
-			(!configData.enableCaptchaAdjustment && imageUtils.confirmLocation("captcha"))
-		) {
+		if (imageUtils.confirmLocation("captcha", bypassGeneralAdjustment = true)) {
 			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Stopping the bot now."))
 		} else {
 			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
@@ -985,14 +975,9 @@ class Game(myContext: Context) {
 
 		// Check for the "Check your Pending Battles" popup when navigating to the Quest screen or attempting to join a raid when there are 6
 		// Pending Battles or check if the "Play Again" button is covered by the "Pending Battles" button for any other Farming Mode.
-		if ((configData.enablePendingBattleAdjustment &&
-					(imageUtils.confirmLocation("check_your_pending_battles", tries = configData.adjustPendingBattle, bypassGeneralAdjustment = true) ||
-							imageUtils.confirmLocation("pending_battles", tries = configData.adjustPendingBattle, bypassGeneralAdjustment = true) ||
-							findAndClickButton("quest_results_pending_battles", tries = configData.adjustPendingBattle, bypassGeneralAdjustment = true))) ||
-			(!configData.enablePendingBattleAdjustment &&
-					(imageUtils.confirmLocation("check_your_pending_battles", tries = 2) ||
-							imageUtils.confirmLocation("pending_battles", tries = 2) ||
-							findAndClickButton("quest_results_pending_battles", tries = 2)))
+		if (imageUtils.confirmLocation("check_your_pending_battles", tries = 2, bypassGeneralAdjustment = true) ||
+			imageUtils.confirmLocation("pending_battles", tries = 2, bypassGeneralAdjustment = true) ||
+			findAndClickButton("quest_results_pending_battles", tries = 2, bypassGeneralAdjustment = true)
 		) {
 			printToLog("[INFO] Found Pending Battles that need collecting from.")
 			findAndClickButton("ok")
