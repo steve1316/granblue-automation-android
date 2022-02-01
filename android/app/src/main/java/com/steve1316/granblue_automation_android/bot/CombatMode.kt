@@ -33,7 +33,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	private var retreatCheckFlag = false
 	private var startTime: Long = 0L
 	private val listOfExitEventsForFalse = listOf("Time Exceeded", "No Loot")
-	private val listOfExitEventsForTrue = listOf("Battle Concluded", "Exp Gained")
+	private val listOfExitEventsForTrue = listOf("Battle Concluded", "Exp Gained", "Loot Collected")
 	private var commandTurnNumber: Int = 1
 	private var turnNumber: Int = 1
 
@@ -159,6 +159,14 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.printToLog("####################", tag = tag)
 				game.printToLog("####################", tag = tag)
 				throw CombatModeException("Exp Gained")
+			}
+			game.imageUtils.confirmLocation("loot_collected", tries = 1, suppressError = true) -> {
+				game.printToLog("\n####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
+				game.printToLog("####################", tag = tag)
+				game.printToLog("####################", tag = tag)
+				throw CombatModeException("Loot Collected")
 			}
 			else -> {
 				return "Nothing"
