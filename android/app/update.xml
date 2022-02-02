@@ -1,31 +1,21 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.4.0</latestVersion>
+        <latestVersion>3.4.1</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.4.0 - Changelog
+v3.4.1 - Changelog
 
 New
 ---
-- Add a new Adjustments page to fine-tune number of tries the bot attempts in image searching during certain situations to compensate for ping and/or long animations.
-- Add Belial support summon.
-- Add option to enable/disable refreshing during combat in the Extra Settings page.
-- Add option to automatically use quick summons during Full/Semi Auto in the Extra Settings page.
-- Add option to bypass the process to reset summons and just select the first summon at the top of the page in the Extra Settings page.
+- Add new Arcarum adjustment settings in the Adjustments page.
 
 Changed
 ---
-- Consolidated exit logic for Combat Mode.
-- Full/Semi Auto behavior will no longer stop combat script reading.
-- Generally increased the amount of tries the bot attempts to image search in almost everything.
-- Add check for battle end during wait for attack end.
+- Add another exit condition for Combat Mode.
 
 Fixed
 ---
-- Fix Generic Farming Mode not working when trying to farm Coop missions.
-- Fix freezing at bot start when newly implemented fields are not present in the settings.json.
-- Fix possible situation where bot executes skill command when combat end.
-- #14 Fix invalid character in image file name for Colomba.
+- Fix reading command where there is a comment in the same string.
 
         </releaseNotes>
     </update>
