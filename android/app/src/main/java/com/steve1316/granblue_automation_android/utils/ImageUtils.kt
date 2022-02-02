@@ -12,7 +12,6 @@ import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 import java.text.DecimalFormat
-import java.util.*
 
 /**
  * Utility functions for image processing via CV like OpenCV.
@@ -522,7 +521,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * Finds the location of the specified image from the /images/ folder inside assets.
 	 *
 	 * @param templateName File name of the template image.
-	 * @param tries Number of tries before failing. Defaults to 5.
+	 * @param tries Number of tries before failing. Note that this gets overridden if the templateName is one of the adjustments. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
 	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
@@ -534,12 +533,10 @@ class ImageUtils(context: Context, private val game: Game) {
 		bypassGeneralAdjustment: Boolean = false, testMode: Boolean = false
 	): Point? {
 		val folderName = "buttons"
-		var numberOfTries = if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries != 5) {
-			game.configData.adjustButtonSearchGeneral
-		} else if (bypassGeneralAdjustment) {
-			val newTries = determineAdjustment(templateName)
-			if (newTries != 0) {
-				newTries
+		var numberOfTries = determineAdjustment(templateName)
+		numberOfTries = if (numberOfTries == 0) {
+			if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries == 5) {
+				game.configData.adjustButtonSearchGeneral
 			} else {
 				tries
 			}
@@ -614,7 +611,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * Confirms whether or not the bot is at the specified location from the /headers/ folder inside assets.
 	 *
 	 * @param templateName File name of the template image.
-	 * @param tries Number of tries before failing. Defaults to 5.
+	 * @param tries Number of tries before failing. Note that this gets overridden if the templateName is one of the adjustments. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log.
 	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
@@ -622,12 +619,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	 */
 	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false, bypassGeneralAdjustment: Boolean = false): Boolean {
 		val folderName = "headers"
-		var numberOfTries = if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries != 5) {
-			game.configData.adjustHeaderSearchGeneral
-		} else if (bypassGeneralAdjustment) {
-			val newTries = determineAdjustment(templateName)
-			if (newTries != 0) {
-				newTries
+		var numberOfTries = determineAdjustment(templateName)
+		numberOfTries = if (numberOfTries == 0) {
+			if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries == 5) {
+				game.configData.adjustHeaderSearchGeneral
 			} else {
 				tries
 			}

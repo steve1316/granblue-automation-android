@@ -1307,14 +1307,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		// The following is the primary loop workflow for Combat Mode.
 		try {
 			while (commandList.isNotEmpty() && !retreatCheckFlag) {
-				// Check if the Battle has ended.
-				checkForBattleEnd()
-
 				var command = commandList.removeAt(0).lowercase()
 				if (command.startsWith("//") || command.startsWith("#")) {
 					// Ignore comments in script.
 					continue
-				} else {
+				} else if (command.contains("/") || command.contains("#")) {
 					// Remove comments in the same line.
 					command = command.substringBefore("/").substringBefore("#").trim()
 				}
@@ -1325,6 +1322,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					startTurn(command)
 				} else if (turnNumber == commandTurnNumber) {
 					// Proceed to process each command inside this Turn block until the "end" command is reached.
+
+					// Check if the Battle has ended.
+					checkForBattleEnd()
 
 					// Determine which Character to take action.
 					val characterSelected = when {
@@ -1379,6 +1379,20 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						command.contains("targetenemy") -> {
 							// Select enemy target.
 							selectEnemyTarget(command)
+						}
+						command.contains("attackback") -> {
+							if (game.findAndClickButton("attack")) {
+								if (game.imageUtils.waitVanish("cancel", timeout = 10)) {
+									game.printToLog("[COMBAT] Attacked and pressing the Back button now...", tag = tag)
+									game.findAndClickButton("home_back")
+									waitForAttack()
+								}
+
+								// Advance the Turn number by 1.
+								turnNumber += 1
+							} else {
+								game.printToLog("[COMBAT] Failed to execute the \"attackback\" command...", tag = tag)
+							}
 						}
 						command.contains("back") && game.findAndClickButton("home_back") -> {
 							game.printToLog("[COMBAT] Tapped the Back button.", tag = tag)
