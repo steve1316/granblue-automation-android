@@ -406,13 +406,30 @@ const Adjustments = () => {
                             valueType="integer"
                             minValue={1}
                             maxValue={999}
-                            value={bsc.settings.adjustment.adjustArcarum}
-                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustArcarum: Number(value) } })}
+                            value={bsc.settings.adjustment.adjustArcarumAction}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustArcarumAction: Number(value) } })}
                             containerStyle={{ marginBottom: 10, alignSelf: "center" }}
                             totalWidth={Dimensions.get("screen").width * 0.9}
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>Set the default number of tries for checking which action to take during Arcarum.</Text>
+
+                        <Text style={{ marginBottom: 10 }}>Checking for Stage Effect during Combat</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustArcarumStageEffect}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustArcarumStageEffect: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>Set the default number of tries for checking if there is an active stage effect popup at the start of Combat Mode.</Text>
                     </View>
                 ) : null}
             </View>
