@@ -87,7 +87,8 @@ class ConfigData(myContext: Context) {
 	val adjustWaitingForReload: Int
 	val adjustWaitingForAttack: Int
 	val enableArcarumAdjustment: Boolean
-	val adjustArcarum: Int
+	val adjustArcarumAction: Int
+	val adjustArcarumStageEffect: Int
 
 	// Android
 	val enableDelayTap: Boolean
@@ -139,13 +140,13 @@ class ConfigData(myContext: Context) {
 
 			nightmareCombatScriptName = sharedPreferences.getString("nightmareCombatScriptName", "")!!
 
-			nightmareCombatScript = if(sharedPreferences.getString("nightmareCombatScript", "")!!.split("|").isNotEmpty()) {
+			nightmareCombatScript = if (sharedPreferences.getString("nightmareCombatScript", "")!!.split("|").isNotEmpty()) {
 				sharedPreferences.getString("nightmareCombatScript", "")!!.split("|")
 			} else {
 				combatScript
 			}
 
-			nightmareSummons = if(sharedPreferences.getString("nightmareSummons", "")!!.split("|").isNotEmpty()) {
+			nightmareSummons = if (sharedPreferences.getString("nightmareSummons", "")!!.split("|").isNotEmpty()) {
 				sharedPreferences.getString("nightmareSummons", "")!!.split("|")
 			} else {
 				summonList
@@ -194,7 +195,8 @@ class ConfigData(myContext: Context) {
 		adjustWaitingForReload = sharedPreferences.getInt("adjustWaitingForReload", 3)
 		adjustWaitingForAttack = sharedPreferences.getInt("adjustWaitingForAttack", 100)
 		enableArcarumAdjustment = sharedPreferences.getBoolean("enableArcarumAdjustment", false)
-		adjustArcarum = sharedPreferences.getInt("adjustArcarum", 3)
+		adjustArcarumAction = sharedPreferences.getInt("adjustArcarumAction", 3)
+		adjustArcarumStageEffect = sharedPreferences.getInt("adjustArcarumStageEffect", 10)
 
 		enableDelayTap = sharedPreferences.getBoolean("enableDelayTap", false)
 		delayTapMilliseconds = sharedPreferences.getInt("delayTapMilliseconds", 1000)

@@ -1292,7 +1292,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 		// If current Farming Mode is Arcarum, attempt to dismiss potential stage effect popup like "Can't use Charge Attacks".
 		if (game.configData.farmingMode == "Arcarum") {
-			game.findAndClickButton("arcarum_stage_effect_active", tries = 10)
+			game.findAndClickButton("arcarum_stage_effect_active", tries = 10, bypassGeneralAdjustment = true)
 		}
 
 		attackButtonLocation = game.imageUtils.findButton("attack", tries = 50, bypassGeneralAdjustment = true)

@@ -479,6 +479,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		val arcarumList = arrayListOf(
 			"arcarum_party_selection", "arcarum_treasure", "arcarum_node", "arcarum_mob", "arcarum_red_mob", "arcarum_silver_chest", "arcarum_gold_chest", "arcarum_boss", "arcarum_boss2"
 		)
+		val arcarumStageEffectList = arrayListOf("arcarum_stage_effect_active")
 
 		return when {
 			game.configData.enableCalibrationAdjustment && calibrationList.contains(templateName) -> {
@@ -506,7 +507,10 @@ class ImageUtils(context: Context, private val game: Game) {
 				game.configData.adjustSummonUsage
 			}
 			game.configData.enableArcarumAdjustment && arcarumList.contains(templateName) -> {
-				game.configData.adjustArcarum
+				game.configData.adjustArcarumAction
+			}
+			game.configData.enableArcarumAdjustment && arcarumStageEffectList.contains(templateName) -> {
+				game.configData.adjustArcarumStageEffect
 			}
 			else -> {
 				0
