@@ -843,6 +843,9 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 		}
 
+		// Wait a few seconds for the asynchronous operations of Google's OCR to finish.
+		game.wait(3.0)
+
 		return totalItemAmount
 	}
 
