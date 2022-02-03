@@ -1,21 +1,24 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.4.1</latestVersion>
+        <latestVersion>3.4.2</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.4.1 - Changelog
+v3.4.2 - Changelog
 
 New
 ---
-- Add new Arcarum adjustment settings in the Adjustments page.
+- Add new command, `attackback` that will press the "Attack" button and then press the "Back" button to advance to the next wave (useful for farming Fragments quickly from the Elemental Treasure Quests).
 
 Changed
 ---
-- Add another exit condition for Combat Mode.
+- Optimize call to check for battle end during combat.
+- Fix nonexistent items in data.json by removing Aurora Fragment and Oblivion Fragment.
 
 Fixed
 ---
-- Fix reading command where there is a comment in the same string.
+- Fix the fix previously implemented to handle comments in same string.
+- Fix general bypass on adjustments for image processing.
+- Add back missing code to facilitate item detection.
 
         </releaseNotes>
     </update>
