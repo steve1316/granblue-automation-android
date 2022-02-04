@@ -473,7 +473,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 		game.checkAP()
 
 		// Check if the bot is at the Summon Selection screen.
-		if (game.imageUtils.confirmLocation("select_a_summon")) {
+		if (game.imageUtils.confirmLocation("select_a_summon", tries = 30)) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()

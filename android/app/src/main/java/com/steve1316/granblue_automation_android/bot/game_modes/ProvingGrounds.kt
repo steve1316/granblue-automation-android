@@ -72,7 +72,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 		game.checkAP()
 
 		// Check if the bot is at the Summon Selection screen.
-		if ((firstRun || firstTime) && game.imageUtils.confirmLocation("proving_grounds_summon_selection")) {
+		if ((firstRun || firstTime) && game.imageUtils.confirmLocation("proving_grounds_summon_selection", tries = 30)) {
 			if (game.selectSummon()) {
 				game.wait(2.0)
 

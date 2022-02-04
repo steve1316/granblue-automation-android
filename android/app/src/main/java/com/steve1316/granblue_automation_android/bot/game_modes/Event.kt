@@ -288,7 +288,7 @@ class Event(private val game: Game, private val missionName: String) {
 		game.checkAP()
 
 		// Check if the bot is at the Summon Selection screen.
-		if (game.imageUtils.confirmLocation("select_a_summon")) {
+		if (game.imageUtils.confirmLocation("select_a_summon", tries = 30)) {
 			if (game.selectSummon()) {
 				// Select the Party.
 				game.selectPartyAndStartMission()
