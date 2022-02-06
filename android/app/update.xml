@@ -1,24 +1,18 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.4.2</latestVersion>
+        <latestVersion>3.4.3</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.4.2 - Changelog
+v3.4.3 - Changelog
 
 New
 ---
-- Add new command, `attackback` that will press the "Attack" button and then press the "Back" button to advance to the next wave (useful for farming Fragments quickly from the Elemental Treasure Quests).
-
-Changed
----
-- Optimize call to check for battle end during combat.
-- Fix nonexistent items in data.json by removing Aurora Fragment and Oblivion Fragment.
+- Add 4 new Combat Mode options in the Adjustments page.
 
 Fixed
 ---
-- Fix the fix previously implemented to handle comments in same string.
-- Fix general bypass on adjustments for image processing.
-- Add back missing code to facilitate item detection.
+- Fix missing default values for checking for Summon Selection screen.
+- Possible fix for reloading right after combat ended, causing the bot to break navigation by skipping the Loot Collection screen.
 
         </releaseNotes>
     </update>

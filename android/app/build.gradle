@@ -141,8 +141,8 @@ android {
         applicationId "com.steve1316.granblue_automation_android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 71
-        versionName "3.4.2"
+        versionCode 72
+        versionName "3.4.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
