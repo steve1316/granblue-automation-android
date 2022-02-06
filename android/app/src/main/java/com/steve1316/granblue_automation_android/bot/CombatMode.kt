@@ -292,15 +292,17 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	private fun reloadAfterAttack(override: Boolean = false): Boolean {
 		// If the "Cancel" button vanishes, that means the attack is in-progress. Now reload the page and wait for either the attack to finish or Battle ended.
 		if (game.configData.enableRefreshDuringCombat && (checkRaid() || override || (game.configData.farmingMode == "Generic" && game.configData.enableForceReload))) {
-			game.printToLog("[COMBAT] Reloading now.", tag = tag)
-			game.findAndClickButton("reload")
-			if (game.configData.enableCombatModeAdjustment) {
-				game.wait(game.configData.adjustWaitingForReload.toDouble())
-			} else {
-				game.wait(3.0)
-			}
+			if (checkForBattleEnd() == "Nothing") {
+				game.printToLog("[COMBAT] Reloading now.", tag = tag)
+				game.findAndClickButton("reload")
+				if (game.configData.enableCombatModeAdjustment) {
+					game.wait(game.configData.adjustWaitingForReload.toDouble())
+				} else {
+					game.wait(3.0)
+				}
 
-			return true
+				return true
+			}
 		}
 
 		return false
@@ -1494,14 +1496,21 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					if (checkRaid()) {
 						// Press Next if it is available and enable automation again if combat continues.
 						if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
-							// Check for exit conditions and restart auto.
 							game.wait(3.0)
+
+							// Check for exit conditions and restart auto.
 							if (checkForBattleEnd() == "Nothing") {
 								enableAuto()
 							}
 						} else if (game.imageUtils.findButton("attack", tries = 1, suppressError = true) == null &&
-							game.imageUtils.findButton("next", tries = 1, suppressError = true) == null
+							game.imageUtils.findButton("next", tries = 1, suppressError = true) == null &&
+							checkForBattleEnd() == "Nothing"
 						) {
+							game.wait(1.0)
+
+							// Check for exit conditions.
+							checkForBattleEnd()
+
 							reloadAfterAttack(override = true)
 
 							waitForAttack()
@@ -1521,6 +1530,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						if (game.configData.debugMode) {
 							game.printToLog("[DEBUG] Attack and Next buttons have vanished. Determining if bot should reload...", tag = tag)
 						}
+
+						// Check for exit conditions.
+						checkForBattleEnd()
 
 						if (reloadAfterAttack()) {
 							// Enable Full/Semi Auto again if the bot reloaded.
@@ -1551,6 +1563,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 					if (game.findAndClickButton("next", tries = 3, suppressError = true)) {
 						game.wait(3.0)
+
+						// Check for exit conditions.
+						checkForBattleEnd()
 					}
 
 					game.findAndClickButton("attack", tries = 10)
