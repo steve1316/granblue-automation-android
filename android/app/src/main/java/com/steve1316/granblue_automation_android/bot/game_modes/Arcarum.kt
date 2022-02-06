@@ -91,14 +91,14 @@ class Arcarum(private val game: Game, private val mapName: String) {
 	 * @return The action to take next.
 	 */
 	private fun chooseAction(): String {
-		// Determine what action to take.
-		game.printToLog("\n[ARCARUM] Now determining what action to take...", tag = tag)
-
 		// Wait a second in case the "Do or Die" animation plays.
 		game.wait(2.0)
 
+		// Determine what action to take.
 		var tries = 3
 		while (tries > 0) {
+			game.printToLog("\n[ARCARUM] Now determining what action to take with ${tries} tries remaining...", tag = tag)
+
 			if (game.configData.enableStopOnArcarumBoss && checkForBoss()) {
 				return "Boss Detected"
 			}
