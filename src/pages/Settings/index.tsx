@@ -352,7 +352,7 @@ const Settings = () => {
                 {bsc.settings.game.farmingMode === "Arcarum" ? (
                     <Checkbox
                         text="Enable Stop on Arcarum Boss"
-                        subtitle="Enable this option to have the bot upon encountering a Arcarum Boss (3-3, 6-3, 9-9)."
+                        subtitle="Enable this option to have the bot stop upon encountering a Arcarum Boss (3-3, 6-3, 9-9)."
                         isChecked={bsc.settings.arcarum.enableStopOnArcarumBoss}
                         onPress={() => bsc.setSettings({ ...bsc.settings, arcarum: { ...bsc.settings.arcarum, enableStopOnArcarumBoss: !bsc.settings.arcarum.enableStopOnArcarumBoss } })}
                     />
