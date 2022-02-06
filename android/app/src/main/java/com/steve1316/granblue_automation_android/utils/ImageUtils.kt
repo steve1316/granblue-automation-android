@@ -475,6 +475,10 @@ class ImageUtils(context: Context, private val game: Game) {
 		val dialogList = arrayListOf("dialog_lyria", "dialog_vyrn")
 		val skillUsageList = arrayListOf("use_skill", "skill_unusable")
 		val summonUsageList = arrayListOf("summon_details", "quick_summon1", "quick_summon2")
+		val noLootScreenList = arrayListOf("no_loot")
+		val battleConcludedPopupList = arrayListOf("battle_concluded")
+		val expGainedPopupList = arrayListOf("exp_gained")
+		val lootCollectionScreenList = arrayListOf("loot_collected")
 		val arcarumList = arrayListOf(
 			"arcarum_party_selection", "arcarum_treasure", "arcarum_node", "arcarum_mob", "arcarum_red_mob", "arcarum_silver_chest", "arcarum_gold_chest", "arcarum_boss", "arcarum_boss2"
 		)
@@ -505,6 +509,18 @@ class ImageUtils(context: Context, private val game: Game) {
 			game.configData.enableCombatModeAdjustment && summonUsageList.contains(templateName) -> {
 				game.configData.adjustSummonUsage
 			}
+			game.configData.enableCombatModeAdjustment && noLootScreenList.contains(templateName) -> {
+				game.configData.adjustCheckForNoLootScreen
+			}
+			game.configData.enableCombatModeAdjustment && battleConcludedPopupList.contains(templateName) -> {
+				game.configData.adjustCheckForBattleConcludedPopup
+			}
+			game.configData.enableCombatModeAdjustment && expGainedPopupList.contains(templateName) -> {
+				game.configData.adjustCheckForExpGainedPopup
+			}
+			game.configData.enableCombatModeAdjustment && lootCollectionScreenList.contains(templateName) -> {
+				game.configData.adjustCheckForLootCollectionScreen
+			}
 			game.configData.enableArcarumAdjustment && arcarumList.contains(templateName) -> {
 				game.configData.adjustArcarumAction
 			}
@@ -524,17 +540,18 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param tries Number of tries before failing. Note that this gets overridden if the templateName is one of the adjustments. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
+	 * @param disableAdjustment Disable the usage of adjustment to tries. Defaults to False.
 	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
 	 * @param testMode Flag to test and get a valid scale for device compatibility.
 	 * @return Point object containing the location of the match or null if not found.
 	 */
 	fun findButton(
 		templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false,
-		bypassGeneralAdjustment: Boolean = false, testMode: Boolean = false
+		disableAdjustment: Boolean = false, bypassGeneralAdjustment: Boolean = false, testMode: Boolean = false
 	): Point? {
 		val folderName = "buttons"
 		var numberOfTries = determineAdjustment(templateName)
-		numberOfTries = if (numberOfTries == 0) {
+		numberOfTries = if (numberOfTries == 0 && !disableAdjustment) {
 			if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries == 5) {
 				game.configData.adjustButtonSearchGeneral
 			} else {
@@ -614,13 +631,17 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param tries Number of tries before failing. Note that this gets overridden if the templateName is one of the adjustments. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
 	 * @param suppressError Whether or not to suppress saving error messages to the log.
+	 * @param disableAdjustment Disable the usage of adjustment to tries. Defaults to False.
 	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
 	 * @return True if the current location is at the specified location. False otherwise.
 	 */
-	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false, bypassGeneralAdjustment: Boolean = false): Boolean {
+	fun confirmLocation(
+		templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false,
+		disableAdjustment: Boolean = false, bypassGeneralAdjustment: Boolean = false
+	): Boolean {
 		val folderName = "headers"
 		var numberOfTries = determineAdjustment(templateName)
-		numberOfTries = if (numberOfTries == 0) {
+		numberOfTries = if (numberOfTries == 0 && !disableAdjustment) {
 			if (game.configData.enableGeneralAdjustment && !bypassGeneralAdjustment && tries == 5) {
 				game.configData.adjustHeaderSearchGeneral
 			} else {

@@ -741,13 +741,13 @@ class Game(myContext: Context) {
 
 		// Close all popups until the bot reaches the Loot Collected screen.
 		if (!skipPopupCheck) {
-			while (!imageUtils.confirmLocation("loot_collected", tries = 1)) {
+			while (!imageUtils.confirmLocation("loot_collected", tries = 1, disableAdjustment = true)) {
 				findAndClickButton("ok", tries = 1, suppressError = true)
 				findAndClickButton("close", tries = 1, suppressError = true)
 				findAndClickButton("cancel", tries = 1, suppressError = true)
 				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
 
-				if (imageUtils.confirmLocation("no_loot", tries = 1)) {
+				if (imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true, disableAdjustment = true)) {
 					return 0
 				}
 
@@ -896,6 +896,11 @@ class Game(myContext: Context) {
 				findAndClickButton("cancel", tries = 1, suppressError = true)
 			}
 
+			if (imageUtils.findButton("bottom_of_summon_selection", tries = 1, suppressError = true) != null) {
+				printToLog("[INFO] Detected bottom of Summon Selection screen. Reloading now to continue with process to check for popups...")
+				findAndClickButton("reload")
+			}
+
 			if (configData.debugMode) {
 				printToLog("[DEBUG] Have not detected the Support Summon Selection screen yet...")
 			}
@@ -934,7 +939,7 @@ class Game(myContext: Context) {
 			printToLog("[INFO] Clearing this Pending Battle...")
 			wait(2.0)
 
-			if (imageUtils.confirmLocation("no_loot")) {
+			if (imageUtils.confirmLocation("no_loot", disableAdjustment = true)) {
 				printToLog("[INFO] No loot can be collected. Backing out...")
 
 				// Navigate back to the Quests screen.

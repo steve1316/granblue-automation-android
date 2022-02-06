@@ -207,7 +207,7 @@ class Raid(private val game: Game) {
 				// Select the Party.
 				if (game.selectPartyAndStartMission()) {
 					// Handle the rare case where joining the Raid after selecting the Summon and Party led the bot to the Quest Results screen with no loot to collect.
-					if (game.imageUtils.confirmLocation("no_loot")) {
+					if (game.imageUtils.confirmLocation("no_loot", disableAdjustment = true)) {
 						game.printToLog("\n[RAID] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...", tag = tag)
 					} else {
 						// Now start Combat Mode and detect any item drops.

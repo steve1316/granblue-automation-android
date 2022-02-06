@@ -290,6 +290,7 @@ const Adjustments = () => {
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>Set the default number of tries for checking when the bot arrives at the Combat Screen.</Text>
+
                         <Text style={{ marginBottom: 10 }}>Check for Dialog Popups</Text>
                         <NumericInput
                             type="plus-minus"
@@ -306,6 +307,7 @@ const Adjustments = () => {
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>Set the default number of tries for checking when a dialog popup from Lyria/Vyrn is present during combat.</Text>
+
                         <Text style={{ marginBottom: 10 }}>Skill Usage</Text>
                         <NumericInput
                             type="plus-minus"
@@ -322,6 +324,7 @@ const Adjustments = () => {
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>Set the default number of tries for checking when a skill is used.</Text>
+
                         <Text style={{ marginBottom: 10 }}>Summon Usage</Text>
                         <NumericInput
                             type="plus-minus"
@@ -338,6 +341,7 @@ const Adjustments = () => {
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>Set the default number of tries for checking when a Summon is used.</Text>
+
                         <Text style={{ marginBottom: 10 }}>Waiting for Reload</Text>
                         <NumericInput
                             type="plus-minus"
@@ -356,6 +360,7 @@ const Adjustments = () => {
                         <Text style={styles.subtitle}>
                             Set the default number of seconds for checking when a reload is finished, whether or not the bot ends up back at the Combat screen or the Loot Collection screen.
                         </Text>
+
                         <Text style={{ marginBottom: 10 }}>Waiting for Attack</Text>
                         <NumericInput
                             type="plus-minus"
@@ -372,6 +377,86 @@ const Adjustments = () => {
                             totalHeight={50}
                         />
                         <Text style={styles.subtitle}>Set the default number of tries for checking when an attack is finished after the Attack button is pressed.</Text>
+
+                        <Text style={{ marginBottom: 10 }}>Check for No Loot Screen</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustCheckForNoLootScreen}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustCheckForNoLootScreen: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>
+                            Set the default number of tries for the frequent checking of the No Loot screen during Combat Mode. This occurs when the bot just joined a raid and takes an action but the
+                            boss died already in the process of loading into the raid. This influences when the bot gets to reload the page.
+                        </Text>
+
+                        <Text style={{ marginBottom: 10 }}>Check for Battle Concluded Popup</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustCheckForBattleConcludedPopup}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustCheckForBattleConcludedPopup: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>
+                            Set the default number of tries for the frequent checking of the Battle Concluded popup during Combat Mode. This occurs when the bot takes an action but the boss died at
+                            that exact moment. This influences when the bot gets to reload the page.
+                        </Text>
+
+                        <Text style={{ marginBottom: 10 }}>Check for Exp Gained Popup</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustCheckForExpGainedPopup}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustCheckForExpGainedPopup: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>
+                            Set the default number of tries for the frequent checking of the Exp Gained popup after Combat Mode on the Loot Collection screen. This influences when the bot gets to
+                            reload the page.
+                        </Text>
+
+                        <Text style={{ marginBottom: 10 }}>Check for Loot Collection Screen</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={999}
+                            value={bsc.settings.adjustment.adjustCheckForLootCollectionScreen}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, adjustment: { ...bsc.settings.adjustment, adjustCheckForLootCollectionScreen: Number(value) } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                        <Text style={styles.subtitle}>
+                            Set the default number of tries for the frequent checking if the bot arrived at the Loot Collection screen after Combat Mode. This influences when the bot gets to reload
+                            the page.
+                        </Text>
                     </View>
                 ) : null}
             </View>

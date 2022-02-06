@@ -86,6 +86,10 @@ class ConfigData(myContext: Context) {
 	val adjustSummonUsage: Int
 	val adjustWaitingForReload: Int
 	val adjustWaitingForAttack: Int
+	val adjustCheckForNoLootScreen: Int
+	val adjustCheckForBattleConcludedPopup: Int
+	val adjustCheckForExpGainedPopup: Int
+	val adjustCheckForLootCollectionScreen: Int
 	val enableArcarumAdjustment: Boolean
 	val adjustArcarumAction: Int
 	val adjustArcarumStageEffect: Int
@@ -194,6 +198,10 @@ class ConfigData(myContext: Context) {
 		adjustSummonUsage = sharedPreferences.getInt("adjustSummonUsage", 5)
 		adjustWaitingForReload = sharedPreferences.getInt("adjustWaitingForReload", 3)
 		adjustWaitingForAttack = sharedPreferences.getInt("adjustWaitingForAttack", 100)
+		adjustCheckForNoLootScreen = sharedPreferences.getInt("adjustCheckForNoLootScreen", 1)
+		adjustCheckForBattleConcludedPopup = sharedPreferences.getInt("adjustCheckForBattleConcludedPopup", 1)
+		adjustCheckForExpGainedPopup = sharedPreferences.getInt("adjustCheckForExpGainedPopup", 1)
+		adjustCheckForLootCollectionScreen = sharedPreferences.getInt("adjustCheckForLootCollectionScreen", 1)
 		enableArcarumAdjustment = sharedPreferences.getBoolean("enableArcarumAdjustment", false)
 		adjustArcarumAction = sharedPreferences.getInt("adjustArcarumAction", 3)
 		adjustArcarumStageEffect = sharedPreferences.getInt("adjustArcarumStageEffect", 10)

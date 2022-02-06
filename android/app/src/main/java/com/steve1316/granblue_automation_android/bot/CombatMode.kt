@@ -126,7 +126,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.printToLog("####################", tag = tag)
 				throw CombatModeException("Time Exceeded")
 			}
-			retreatCheckFlag || game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true) -> {
+			retreatCheckFlag || game.imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true, bypassGeneralAdjustment = true) -> {
 				game.printToLog("\n####################", tag = tag)
 				game.printToLog("####################", tag = tag)
 				game.printToLog("[COMBAT] Combat Mode has ended with not loot.", tag = tag)
@@ -134,7 +134,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.printToLog("####################", tag = tag)
 				throw CombatModeException("No Loot")
 			}
-			game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true) -> {
+			game.imageUtils.confirmLocation("battle_concluded", tries = 1, suppressError = true, bypassGeneralAdjustment = true) -> {
 				game.printToLog("\n[COMBAT] Battle concluded suddenly.", tag = tag)
 				game.printToLog("\n####################", tag = tag)
 				game.printToLog("####################", tag = tag)
@@ -144,7 +144,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.findAndClickButton("reload")
 				throw CombatModeException("Time Exceeded")
 			}
-			game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true) -> {
+			game.imageUtils.confirmLocation("exp_gained", tries = 1, suppressError = true, bypassGeneralAdjustment = true) -> {
 				game.printToLog("\n####################", tag = tag)
 				game.printToLog("####################", tag = tag)
 				game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
@@ -152,7 +152,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.printToLog("####################", tag = tag)
 				throw CombatModeException("Exp Gained")
 			}
-			game.imageUtils.confirmLocation("loot_collected", tries = 1, suppressError = true) -> {
+			game.imageUtils.confirmLocation("loot_collected", tries = 1, suppressError = true, bypassGeneralAdjustment = true) -> {
 				game.printToLog("\n####################", tag = tag)
 				game.printToLog("####################", tag = tag)
 				game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
