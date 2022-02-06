@@ -167,9 +167,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	}
 
 	/**
-	 * Check if the current battle is a Raid.
+	 * Check if the current battle is a raid-like battle.
 	 *
-	 * @return True if the current battle is a Raid.
+	 * @return True if the current battle is a raid-like battle.
 	 */
 	private fun checkRaid(): Boolean {
 		val eventRaids = arrayListOf("VH Event Raid", "EX Event Raid", "IM Event Raid")
