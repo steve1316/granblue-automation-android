@@ -1,18 +1,26 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.4.3</latestVersion>
+        <latestVersion>3.5.0</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.4.3 - Changelog
+v3.5.0 - Changelog
 
 New
 ---
-- Add 4 new Combat Mode options in the Adjustments page.
+- Add support for Replicard Sandbox farming for all 4 Zones currently available. No support for Treasures/Defenders/Bosses.
+- Add initial check at bot start to see if AccessibilityService is dead and will notify you to restart it by throwing an Exception.
+- Add preliminary check to see if Quick Summon is ready during Combat Mode before using it.
+- Add support for Lvl 120 Osiris.
+
+Changed
+---
+- Minor optimization to ML Kit's text recognition.
+- Combat Script will be properly empty if none is selected.
 
 Fixed
 ---
-- Fix missing default values for checking for Summon Selection screen.
-- Possible fix for reloading right after combat ended, causing the bot to break navigation by skipping the Loot Collection screen.
+- Fix Discord notifications having the wrong item amounts.
+- Fix possible infinite looping while looking for all matches on screen.
 
         </releaseNotes>
     </update>
