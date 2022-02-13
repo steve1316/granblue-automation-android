@@ -909,7 +909,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.wait(1.0)
 
 				// Check if the Skill requires a target.
-				if (!game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("use_skill", bypassGeneralAdjustment = true)) {
+				if (game.imageUtils.confirmLocation("use_skill", bypassGeneralAdjustment = true)) {
 					if (tempSkillCommandList.isNotEmpty()) {
 						val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
 
@@ -1027,7 +1027,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 								tempSkillCommandList = tempSkillCommandList.drop(1)
 							}
-							!game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("skill_unusable", bypassGeneralAdjustment = true) -> {
+							game.imageUtils.confirmLocation("skill_unusable", bypassGeneralAdjustment = true) -> {
 								game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", tag = tag)
 								game.findAndClickButton("cancel")
 							}
