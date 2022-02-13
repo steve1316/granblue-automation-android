@@ -364,6 +364,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))
 				) {
 					matchLocations.add(tempMatchLocation)
+				} else if (matchLocations.contains(tempMatchLocation)) {
+					// Prevent infinite looping if the same location is found over and over again.
+					break
 				}
 			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
 				val tempMatchLocation: Point = mmr.maxLoc
@@ -390,6 +393,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))
 				) {
 					matchLocations.add(tempMatchLocation)
+				} else if (matchLocations.contains(tempMatchLocation)){
+					// Prevent infinite looping if the same location is found over and over again.
+					break
 				}
 			} else {
 				break
