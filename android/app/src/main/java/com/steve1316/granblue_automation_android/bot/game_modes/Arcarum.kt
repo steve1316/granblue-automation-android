@@ -57,6 +57,12 @@ class Arcarum(private val game: Game, private val mapName: String) {
 		// Now make sure that the Extreme difficulty is selected.
 		game.wait(1.0)
 
+		// Check if bot is at Replicard Sandbox.
+		if (game.imageUtils.confirmLocation("arcarum_sandbox")) {
+			game.findAndClickButton("arcarum_head_back")
+			game.wait(1.0)
+		}
+
 		// Confirm the completion popup if it shows up.
 		if (game.imageUtils.confirmLocation("arcarum_expedition")) {
 			game.findAndClickButton("ok")

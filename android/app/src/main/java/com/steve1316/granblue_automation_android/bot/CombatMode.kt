@@ -182,7 +182,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		return game.configData.farmingMode == "Raid" || eventRaids.contains(game.configData.missionName) || rotbRaids.contains(game.configData.missionName) ||
 				dreadBarrageRaids.contains(game.configData.missionName) || game.configData.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.configData.missionName) ||
 				game.configData.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.configData.missionName) || xenoClashRaids.contains(game.configData.missionName) ||
-				game.configData.farmingMode == "Arcarum"
+				game.configData.farmingMode == "Arcarum" || game.configData.farmingMode == "Arcarum Sandbox"
 	}
 
 	//////////////////////////////////////////////////////////////////////
