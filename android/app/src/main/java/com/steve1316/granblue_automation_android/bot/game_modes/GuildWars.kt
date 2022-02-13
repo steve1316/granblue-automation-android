@@ -191,11 +191,8 @@ class GuildWars(private val game: Game, private val missionName: String) {
 	 * Starts the process to complete a run for this Farming Mode and returns the number of items detected.
 	 *
 	 * @param firstRun Flag that determines whether or not to run the navigation process again. Should be False if the Farming Mode supports the "Play Again" feature for repeated runs.
-	 * @return Number of items detected.
 	 */
-	fun start(firstRun: Boolean): Int {
-		var runsCompleted = 0
-
+	fun start(firstRun: Boolean) {
 		// Start the navigation process.
 		when {
 			firstRun -> {
@@ -224,13 +221,13 @@ class GuildWars(private val game: Game, private val missionName: String) {
 
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode()) {
-					runsCompleted = game.collectLoot(isCompleted = true)
+					game.collectLoot(isCompleted = true)
 				}
 			}
 		} else {
 			throw GuildWarsException("Failed to arrive at the Summon Selection screen.")
 		}
 
-		return runsCompleted
+		return
 	}
 }

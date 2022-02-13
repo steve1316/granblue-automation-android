@@ -182,21 +182,10 @@ class Raid(private val game: Game) {
 	/**
 	 * Starts the process to complete a run for this Farming Mode and returns the number of items detected.
 	 *
-	 * @param firstRun Flag that determines whether or not to run the navigation process again. Should be False if the Farming Mode supports the "Play Again" feature for repeated runs.
-	 * @return Number of items detected.
 	 */
-	fun start(firstRun: Boolean): Int {
-		var numberOfItemsDropped = 0
-
+	fun start() {
 		// Start the navigation process.
-		when {
-			firstRun -> {
-				navigate()
-			}
-			else -> {
-				navigate()
-			}
-		}
+		navigate()
 
 		// Check for EP.
 		game.checkEP()
@@ -212,7 +201,7 @@ class Raid(private val game: Game) {
 					} else {
 						// Now start Combat Mode and detect any item drops.
 						if (game.combatMode.startCombatMode()) {
-							numberOfItemsDropped = game.collectLoot(isCompleted = true)
+							game.collectLoot(isCompleted = true)
 						}
 					}
 				}
@@ -221,6 +210,6 @@ class Raid(private val game: Game) {
 			throw RaidException("Failed to arrive at the Summon Selection screen.")
 		}
 
-		return numberOfItemsDropped
+		return
 	}
 }

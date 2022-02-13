@@ -735,9 +735,8 @@ class Game(private val myContext: Context) {
 	 * @param isEventNightmare Skip the incrementation of runs attempted if this was a Event Nightmare. Defaults to false.
 	 * @param skipInfo Skip printing the information of the run. Defaults to false.
 	 * @param skipPopupCheck Skip checking for popups to get to the Loot Collected screen. Defaults to false
-	 * @return Number of specified items dropped.
 	 */
-	fun collectLoot(isCompleted: Boolean, isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false, skipPopupCheck: Boolean = false): Int {
+	fun collectLoot(isCompleted: Boolean, isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false, skipPopupCheck: Boolean = false) {
 		var amountGained = 0
 
 		// Close all popups until the bot reaches the Loot Collected screen.
@@ -749,7 +748,7 @@ class Game(private val myContext: Context) {
 				findAndClickButton("new_extended_mastery_level", tries = 1, suppressError = true)
 
 				if (imageUtils.confirmLocation("no_loot", tries = 1, suppressError = true, disableAdjustment = true)) {
-					return 0
+					return
 				}
 
 				if (configData.debugMode) {
@@ -768,12 +767,13 @@ class Game(private val myContext: Context) {
 			}
 
 			amountOfRuns += 1
+			itemAmountFarmed += amountGained
 		} else if (isPendingBattle) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this Pending Battle...")
 			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				imageUtils.findFarmedItems(configData.itemName)
 			} else {
-				1
+				0
 			}
 
 			itemAmountFarmed += amountGained
@@ -787,7 +787,7 @@ class Game(private val myContext: Context) {
 				printToLog("[INFO] Mission: ${configData.missionName}")
 				printToLog("[INFO] Summons: ${configData.summonList}")
 				printToLog("[INFO] # of ${configData.itemName} gained this run: $amountGained")
-				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed + amountGained}/${configData.itemAmount}")
+				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed}/${configData.itemAmount}")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("********************")
 				printToLog("********************")
@@ -795,11 +795,11 @@ class Game(private val myContext: Context) {
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
 					val discordString = if (itemAmountFarmed >= configData.itemAmount) {
-						"> ${amountGained}x __${configData.itemName}__ gained this run: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} / " +
-								"${configData.itemAmount}]** :white_check_mark:"
+						"> ${amountGained}x __${configData.itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
+								"**[${itemAmountFarmed} / ${configData.itemAmount}]** :white_check_mark:"
 					} else {
-						"> ${amountGained}x __${configData.itemName}__ gained this run: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} / " +
-								"${configData.itemAmount}]**"
+						"> ${amountGained}x __${configData.itemName}__ gained this run: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
+								"**[${itemAmountFarmed} / ${configData.itemAmount}]**"
 					}
 
 					DiscordUtils.queue.add(discordString)
@@ -816,9 +816,9 @@ class Game(private val myContext: Context) {
 
 				// Construct the message for the Discord private DM.
 				val discordString = if (amountOfRuns >= configData.itemAmount) {
-					"> Runs completed for __${configData.missionName}__: **[${amountOfRuns - 1} / ${configData.itemAmount}]** -> **[$amountOfRuns / ${configData.itemAmount}]** :white_check_mark:"
+					"> Runs completed for __${configData.missionName}__: **[${amountOfRuns - 1} / ${configData.itemAmount}]** -> **[${amountOfRuns} / ${configData.itemAmount}]** :white_check_mark:"
 				} else {
-					"> Runs completed for __${configData.missionName}__: **[${amountOfRuns - 1} / ${configData.itemAmount}]** -> **[$amountOfRuns / ${configData.itemAmount}]**"
+					"> Runs completed for __${configData.missionName}__: **[${amountOfRuns - 1} / ${configData.itemAmount}]** -> **[${amountOfRuns} / ${configData.itemAmount}]**"
 				}
 
 				DiscordUtils.queue.add(discordString)
@@ -831,7 +831,7 @@ class Game(private val myContext: Context) {
 				printToLog("[INFO] Mission: ${configData.missionName}")
 				printToLog("[INFO] Summons: ${configData.summonList}")
 				printToLog("[INFO] # of ${configData.itemName} gained from this Pending Battle: $amountGained")
-				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed + amountGained}/${configData.itemAmount}")
+				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed}/${configData.itemAmount}")
 				printToLog("[INFO] # of runs completed: $amountOfRuns")
 				printToLog("********************")
 				printToLog("********************")
@@ -839,11 +839,11 @@ class Game(private val myContext: Context) {
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
 					val discordString = if (itemAmountFarmed >= configData.itemAmount) {
-						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} /" +
-								" ${configData.itemAmount}]** :white_check_mark:"
+						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
+								"**[${itemAmountFarmed} / ${configData.itemAmount}]** :white_check_mark:"
 					} else {
-						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[$itemAmountFarmed / ${configData.itemAmount}]** -> **[${itemAmountFarmed + amountGained} /" +
-								" ${configData.itemAmount}]**"
+						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
+								"**[${itemAmountFarmed} / ${configData.itemAmount}]**"
 					}
 
 					DiscordUtils.queue.add(discordString)
@@ -851,7 +851,7 @@ class Game(private val myContext: Context) {
 			}
 		}
 
-		return amountGained
+		return
 	}
 
 	/**
@@ -1054,29 +1054,29 @@ class Game(private val myContext: Context) {
 		var firstRun = true
 		while (itemAmountFarmed < configData.itemAmount) {
 			if (configData.farmingMode == "Quest") {
-				itemAmountFarmed += quest.start(firstRun)
+				quest.start(firstRun)
 			} else if (configData.farmingMode == "Special") {
-				itemAmountFarmed += special.start(firstRun)
+				special.start(firstRun)
 			} else if (configData.farmingMode == "Coop") {
-				itemAmountFarmed += coop.start(firstRun)
+				coop.start(firstRun)
 			} else if (configData.farmingMode == "Raid") {
-				itemAmountFarmed += raid.start(firstRun)
+				raid.start()
 			} else if (configData.farmingMode == "Event" || configData.farmingMode == "Event (Token Drawboxes)") {
-				itemAmountFarmed += event.start(firstRun)
+				event.start(firstRun)
 			} else if (configData.farmingMode == "Rise of the Beasts") {
-				itemAmountFarmed += riseOfTheBeasts.start(firstRun)
+				riseOfTheBeasts.start(firstRun)
 			} else if (configData.farmingMode == "Guild Wars") {
-				itemAmountFarmed += guildWars.start(firstRun)
+				guildWars.start(firstRun)
 			} else if (configData.farmingMode == "Dread Barrage") {
-				itemAmountFarmed += dreadBarrage.start(firstRun)
+				dreadBarrage.start(firstRun)
 			} else if (configData.farmingMode == "Proving Grounds") {
-				itemAmountFarmed += provingGrounds.start(firstRun)
+				provingGrounds.start(firstRun)
 			} else if (configData.farmingMode == "Xeno Clash") {
-				itemAmountFarmed += xenoClash.start(firstRun)
+				xenoClash.start(firstRun)
 			} else if (configData.farmingMode == "Arcarum") {
-				itemAmountFarmed += arcarum.start()
+				arcarum.start()
 			} else if (configData.farmingMode == "Generic") {
-				itemAmountFarmed += generic.start()
+				generic.start()
 			}
 
 			if (itemAmountFarmed < configData.itemAmount) {

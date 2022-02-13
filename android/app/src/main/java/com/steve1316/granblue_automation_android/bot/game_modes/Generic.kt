@@ -11,11 +11,8 @@ class Generic(private val game: Game) {
 	/**
 	 * Starts the process of completing a generic setup that supports the 'Play Again' logic.
 	 *
-	 * @return Number of runs completed.
 	 */
-	fun start(): Int {
-		var runsCompleted = 0
-
+	fun start() {
 		game.printToLog("\n[GENERIC] Now checking for run eligibility...", tag = tag)
 
 		// Bot can start either at the Combat screen with the "Attack" button visible, the Loot Collection screen with the "Play Again" button visible, or the Coop Room screen.
@@ -23,7 +20,7 @@ class Generic(private val game: Game) {
 			game.imageUtils.findButton("attack", tries = 10) != null -> {
 				game.printToLog("\n[GENERIC] Bot is at the Combat screen. Starting Combat Mode now...", tag = tag)
 				if (game.combatMode.startCombatMode()) {
-					runsCompleted = game.collectLoot(isCompleted = true)
+					game.collectLoot(isCompleted = true)
 				}
 			}
 			game.findAndClickButton("coop_start", tries = 10) -> {
@@ -32,7 +29,7 @@ class Generic(private val game: Game) {
 				game.wait(3.0)
 
 				if (game.combatMode.startCombatMode()) {
-					runsCompleted = game.collectLoot(isCompleted = true)
+					game.collectLoot(isCompleted = true)
 
 					// Head back to the Coop Room.
 					game.findAndClickButton("coop_room")
@@ -65,7 +62,7 @@ class Generic(private val game: Game) {
 						if (game.findAndClickButton("ok", tries = 30)) {
 							// Now start Combat Mode and detect any item drops.
 							if (game.combatMode.startCombatMode()) {
-								runsCompleted = game.collectLoot(isCompleted = true)
+								game.collectLoot(isCompleted = true)
 							}
 						} else {
 							throw GenericException("Failed to skip party selection.")
@@ -77,6 +74,6 @@ class Generic(private val game: Game) {
 			}
 		}
 
-		return runsCompleted
+		return
 	}
 }

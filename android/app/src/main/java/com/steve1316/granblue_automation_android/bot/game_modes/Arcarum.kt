@@ -179,9 +179,8 @@ class Arcarum(private val game: Game, private val mapName: String) {
 	/**
 	 * Starts the process of completing Arcarum expeditions.
 	 *
-	 * @return Number of completed runs.
 	 */
-	fun start(): Int {
+	fun start() {
 		var runsCompleted = 0
 		while (runsCompleted < game.configData.itemAmount) {
 			navigate()
@@ -229,7 +228,5 @@ class Arcarum(private val game: Game, private val mapName: String) {
 				}
 			}
 		}
-
-		return runsCompleted
 	}
 }

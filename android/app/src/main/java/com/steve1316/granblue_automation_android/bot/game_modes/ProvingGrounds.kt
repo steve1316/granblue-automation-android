@@ -53,11 +53,8 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 	 * Starts the process to complete a run for this Farming Mode and returns the number of items detected.
 	 *
 	 * @param firstRun Flag that determines whether or not to run the navigation process again. Should be False if the Farming Mode supports the "Play Again" feature for repeated runs.
-	 * @return Number of items detected.
 	 */
-	fun start(firstRun: Boolean): Int {
-		var runsCompleted = 0
-
+	fun start(firstRun: Boolean) {
 		// Start the navigation process.
 		when {
 			firstRun && firstTime -> {
@@ -122,7 +119,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 
 					if (game.imageUtils.confirmLocation("proving_grounds_completion_loot")) {
 						game.printToLog("\n[PROVING.GROUNDS] Completion rewards has been acquired.", tag = tag)
-						runsCompleted = game.collectLoot(isCompleted = true, skipPopupCheck = true)
+						game.collectLoot(isCompleted = true, skipPopupCheck = true)
 
 						// Reset the First Time flag so the bot can select a Summon and select the Mission again.
 						if (game.itemAmountFarmed < game.configData.itemAmount) {
@@ -137,6 +134,6 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 			throw ProvingGroundsException("Failed to arrive at the Summon Selection screen.")
 		}
 
-		return runsCompleted
+		return
 	}
 }

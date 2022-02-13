@@ -287,11 +287,8 @@ class Special(private val game: Game, private val mapName: String, private val m
 	 * Starts the process to complete a run for this Farming Mode and returns the number of items detected.
 	 *
 	 * @param firstRun Flag that determines whether or not to run the navigation process again. Should be False if the Farming Mode supports the "Play Again" feature for repeated runs.
-	 * @return Number of items detected.
 	 */
-	fun start(firstRun: Boolean): Int {
-		var numberOfItemsDropped = 0
-
+	fun start(firstRun: Boolean) {
 		// Start the navigation process.
 		when {
 			firstRun -> {
@@ -320,13 +317,13 @@ class Special(private val game: Game, private val mapName: String, private val m
 
 				// Now start Combat Mode and detect any item drops.
 				if (game.combatMode.startCombatMode()) {
-					numberOfItemsDropped = game.collectLoot(isCompleted = true)
+					game.collectLoot(isCompleted = true)
 				}
 			}
 		} else {
 			throw SpecialException("Failed to arrive at the Summon Selection screen.")
 		}
 
-		return numberOfItemsDropped
+		return
 	}
 }
