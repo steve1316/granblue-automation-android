@@ -182,7 +182,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		return game.configData.farmingMode == "Raid" || eventRaids.contains(game.configData.missionName) || rotbRaids.contains(game.configData.missionName) ||
 				dreadBarrageRaids.contains(game.configData.missionName) || game.configData.farmingMode == "Proving Grounds" && provingGroundsRaids.contains(game.configData.missionName) ||
 				game.configData.farmingMode == "Guild Wars" && guildWarsRaids.contains(game.configData.missionName) || xenoClashRaids.contains(game.configData.missionName) ||
-				game.configData.farmingMode == "Arcarum"
+				game.configData.farmingMode == "Arcarum" || game.configData.farmingMode == "Arcarum Sandbox"
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -909,7 +909,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				game.wait(1.0)
 
 				// Check if the Skill requires a target.
-				if (!game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("use_skill", bypassGeneralAdjustment = true)) {
+				if (game.imageUtils.confirmLocation("use_skill", bypassGeneralAdjustment = true)) {
 					if (tempSkillCommandList.isNotEmpty()) {
 						val selectCharacterLocation = game.imageUtils.findButton("select_a_character")
 
@@ -1027,7 +1027,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 								tempSkillCommandList = tempSkillCommandList.drop(1)
 							}
-							!game.configData.enableCombatModeAdjustment && game.imageUtils.confirmLocation("skill_unusable", bypassGeneralAdjustment = true) -> {
+							game.imageUtils.confirmLocation("skill_unusable", bypassGeneralAdjustment = true) -> {
 								game.printToLog("[COMBAT] Character is currently skill-sealed. Unable to execute command.", tag = tag)
 								game.findAndClickButton("cancel")
 							}
@@ -1203,7 +1203,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun quickSummon(command: String = "") {
 		game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
-		if (game.findAndClickButton("quick_summon1", bypassGeneralAdjustment = true) || game.findAndClickButton("quick_summon2", bypassGeneralAdjustment = true)) {
+		if (game.imageUtils.findButton("quick_summon_not_ready") == null &&
+			(game.findAndClickButton("quick_summon1", bypassGeneralAdjustment = true) || game.findAndClickButton("quick_summon2", bypassGeneralAdjustment = true))
+		) {
 			game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
 
 			if (command.contains("wait")) {

@@ -113,7 +113,11 @@ class ConfigData(myContext: Context) {
 		itemName = sharedPreferences.getString("item", "")!!
 		itemAmount = sharedPreferences.getInt("itemAmount", 1)
 		combatScriptName = sharedPreferences.getString("combatScriptName", "")!!
-		combatScript = sharedPreferences.getString("combatScript", "")!!.split("|")
+		combatScript = if (sharedPreferences.getString("combatScript", "")!! == "") {
+			listOf()
+		} else {
+			sharedPreferences.getString("combatScript", "")!!.split("|")
+		}
 		summonList = sharedPreferences.getString("summons", "")!!.split("|")
 		groupNumber = sharedPreferences.getInt("groupNumber", 1)
 		partyNumber = sharedPreferences.getInt("partyNumber", 1)

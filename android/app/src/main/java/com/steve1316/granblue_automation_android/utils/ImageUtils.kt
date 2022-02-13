@@ -364,6 +364,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))
 				) {
 					matchLocations.add(tempMatchLocation)
+				} else if (matchLocations.contains(tempMatchLocation)) {
+					// Prevent infinite looping if the same location is found over and over again.
+					break
 				}
 			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
 				val tempMatchLocation: Point = mmr.maxLoc
@@ -390,6 +393,9 @@ class ImageUtils(context: Context, private val game: Game) {
 					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))
 				) {
 					matchLocations.add(tempMatchLocation)
+				} else if (matchLocations.contains(tempMatchLocation)){
+					// Prevent infinite looping if the same location is found over and over again.
+					break
 				}
 			} else {
 				break
@@ -474,7 +480,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		val beforeCombatStartList = arrayListOf("attack")
 		val dialogList = arrayListOf("dialog_lyria", "dialog_vyrn")
 		val skillUsageList = arrayListOf("use_skill", "skill_unusable")
-		val summonUsageList = arrayListOf("summon_details", "quick_summon1", "quick_summon2")
+		val summonUsageList = arrayListOf("summon_details", "quick_summon1", "quick_summon2", "quick_summon_not_ready")
 		val noLootScreenList = arrayListOf("no_loot")
 		val battleConcludedPopupList = arrayListOf("battle_concluded")
 		val expGainedPopupList = arrayListOf("exp_gained")

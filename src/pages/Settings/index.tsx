@@ -87,6 +87,7 @@ const Settings = () => {
         { label: "Proving Grounds", value: "Proving Grounds" },
         { label: "Xeno Clash", value: "Xeno Clash" },
         { label: "Arcarum", value: "Arcarum" },
+        { label: "Arcarum Sandbox", value: "Arcarum Sandbox" },
         { label: "Generic", value: "Generic" },
     ]
 
@@ -170,6 +171,7 @@ const Settings = () => {
             farmingMode === "Proving Grounds" ||
             farmingMode === "Xeno Clash" ||
             farmingMode === "Arcarum" ||
+            farmingMode === "Arcarum Sandbox" ||
             farmingMode === "Generic"
         ) {
             Object.values(data[farmingMode]).forEach((tempItems) => {
@@ -204,6 +206,7 @@ const Settings = () => {
             bsc.settings.game.farmingMode === "Proving Grounds" ||
             bsc.settings.game.farmingMode === "Xeno Clash" ||
             bsc.settings.game.farmingMode === "Arcarum" ||
+            bsc.settings.game.farmingMode === "Arcarum Sandbox" ||
             bsc.settings.game.farmingMode === "Generic"
         ) {
             Object.entries(data[bsc.settings.game.farmingMode]).forEach((obj) => {
@@ -235,6 +238,7 @@ const Settings = () => {
             bsc.settings.game.farmingMode === "Proving Grounds" ||
             bsc.settings.game.farmingMode === "Xeno Clash" ||
             bsc.settings.game.farmingMode === "Arcarum" ||
+            bsc.settings.game.farmingMode === "Arcarum Sandbox" ||
             bsc.settings.game.farmingMode === "Generic"
         ) {
             Object.entries(data[bsc.settings.game.farmingMode]).every((obj) => {
@@ -454,7 +458,7 @@ const Settings = () => {
     const renderSummonSetting = () => {
         return (
             <View>
-                {bsc.settings.game.farmingMode !== "Coop" && bsc.settings.game.farmingMode !== "Arcarum" ? (
+                {bsc.settings.game.farmingMode !== "Coop" && bsc.settings.game.farmingMode !== "Arcarum" && bsc.settings.game.farmingMode !== "Arcarum Sandbox" ? (
                     <View style={{ zIndex: 9996 }}>
                         {bsc.settings.game.summons.length > 0 ? (
                             <CustomButton title="Select Support Summon(s)" width={"100%"} onPress={() => setModalOpen(true)} />

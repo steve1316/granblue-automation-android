@@ -38,6 +38,7 @@ class Game(private val myContext: Context) {
 	private lateinit var provingGrounds: ProvingGrounds
 	private lateinit var xenoClash: XenoClash
 	private lateinit var arcarum: Arcarum
+	private lateinit var arcarumSandbox: ArcarumSandbox
 	private lateinit var generic: Generic
 
 	val configData: ConfigData = ConfigData(myContext)
@@ -69,6 +70,8 @@ class Game(private val myContext: Context) {
 			xenoClash = XenoClash(this, configData.missionName)
 		} else if (configData.farmingMode == "Arcarum") {
 			arcarum = Arcarum(this, configData.missionName)
+		} else if (configData.farmingMode == "Arcarum Sandbox") {
+			arcarumSandbox = ArcarumSandbox(this)
 		} else if (configData.farmingMode == "Generic") {
 			generic = Generic(this)
 		}
@@ -493,29 +496,42 @@ class Game(private val myContext: Context) {
 			}
 
 			// Search for the location of the "Set" button based on the Group number.
-			while (setLocation == null) {
-				setLocation = if (selectedGroupNumber < 8) {
-					imageUtils.findButton("party_set_a", tries = 10)
-				} else {
-					imageUtils.findButton("party_set_b", tries = 10)
-				}
+			if (configData.farmingMode == "Arcarum Sandbox") {
+				while (setLocation == null) {
+					setLocation = imageUtils.findButton("party_set_extra", tries = 10)
+					if (setLocation == null) {
+						numberOfTries -= 1
 
-				if (setLocation == null) {
-					numberOfTries -= 1
-
-					if (numberOfTries <= 0) {
-						if (selectedGroupNumber < 8) {
-							throw(Resources.NotFoundException("Could not find Set A."))
-						} else {
-							throw(Resources.NotFoundException("Could not find Set B."))
+						if (numberOfTries <= 0) {
+							throw(Resources.NotFoundException("Could not find Set Extra."))
 						}
 					}
-
-					// Switch over and search for the other Set.
+				}
+			} else {
+				while (setLocation == null) {
 					setLocation = if (selectedGroupNumber < 8) {
-						imageUtils.findButton("party_set_b", tries = 10)
-					} else {
 						imageUtils.findButton("party_set_a", tries = 10)
+					} else {
+						imageUtils.findButton("party_set_b", tries = 10)
+					}
+
+					if (setLocation == null) {
+						numberOfTries -= 1
+
+						if (numberOfTries <= 0) {
+							if (selectedGroupNumber < 8) {
+								throw(Resources.NotFoundException("Could not find Set A."))
+							} else {
+								throw(Resources.NotFoundException("Could not find Set B."))
+							}
+						}
+
+						// Switch over and search for the other Set.
+						setLocation = if (selectedGroupNumber < 8) {
+							imageUtils.findButton("party_set_b", tries = 10)
+						} else {
+							imageUtils.findButton("party_set_a", tries = 10)
+						}
 					}
 				}
 			}
@@ -1075,6 +1091,8 @@ class Game(private val myContext: Context) {
 				xenoClash.start(firstRun)
 			} else if (configData.farmingMode == "Arcarum") {
 				arcarum.start()
+			} else if (configData.farmingMode == "Arcarum Sandbox") {
+				arcarumSandbox.start()
 			} else if (configData.farmingMode == "Generic") {
 				generic.start()
 			}
