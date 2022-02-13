@@ -18,11 +18,12 @@ import java.util.concurrent.TimeUnit
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
  */
-class Game(myContext: Context) {
+class Game(private val myContext: Context) {
 	private val tag: String = "${loggerTag}Game"
 
 	var itemAmountFarmed: Int = 0
 	private var amountOfRuns: Int = 0
+
 	private val startTime: Long = System.currentTimeMillis()
 	private var partySelectionFirstRun: Boolean = true
 
@@ -41,7 +42,7 @@ class Game(myContext: Context) {
 
 	val configData: ConfigData = ConfigData(myContext)
 	val imageUtils: ImageUtils = ImageUtils(myContext, this)
-	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
+	lateinit var gestureUtils: MyAccessibilityService
 	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(this)
 	val combatMode: CombatMode = CombatMode(this, configData.debugMode)
 
@@ -1023,6 +1024,15 @@ class Game(myContext: Context) {
 		// Throw an Exception if the user selected Coop or Arcarum that reset Summons and the user started the bot without selecting new Summons.
 		if (configData.farmingMode != "Coop" && configData.farmingMode != "Arcarum" && configData.summonList[0] == "") {
 			throw Exception("You have no summons selected for this Farming Mode.")
+		}
+
+		// Double check if the AccessibilityService is alive or not. Do not continue if it is dead.
+		gestureUtils = if (MyAccessibilityService.checkStatus(myContext)) {
+			MyAccessibilityService.getInstance()
+		} else {
+			throw UninitializedPropertyAccessException(
+				"Accessibility Service appears to be dead. Restart it by turning it on and off in the Accessibility Settings until you see a success popup and try again."
+			)
 		}
 
 		if (configData.itemName != "EXP") {

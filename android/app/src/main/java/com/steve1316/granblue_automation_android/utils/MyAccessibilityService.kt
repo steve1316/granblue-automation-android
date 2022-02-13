@@ -3,6 +3,7 @@ package com.steve1316.granblue_automation_android.utils
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -24,6 +25,8 @@ import kotlinx.coroutines.runBlocking
 
 /**
  * Contains the Accessibility service that will allow the bot to programmatically perform gestures on the screen.
+ *
+ * AccessibilityService by itself has a native bug when force-stopped: https://stackoverflow.com/questions/67410929/accessibility-service-does-not-restart-when-manually-re-enabled-after-app-force
  */
 class MyAccessibilityService : AccessibilityService() {
 	private val tag: String = "${loggerTag}MyAccessibilityService"
@@ -41,6 +44,22 @@ class MyAccessibilityService : AccessibilityService() {
 		 */
 		fun getInstance(): MyAccessibilityService {
 			return instance
+		}
+
+		/**
+		 * Check if this service is alive and running.
+		 *
+		 * @param context The application context.
+		 * @return True if the service is alive.
+		 */
+		fun checkStatus(context: Context): Boolean {
+			val manager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+			for (serviceInfo in manager.getRunningServices(Integer.MAX_VALUE)) {
+				if (serviceInfo.service.className.contains("MyAccessibilityService")) {
+					return true
+				}
+			}
+			return false
 		}
 	}
 
