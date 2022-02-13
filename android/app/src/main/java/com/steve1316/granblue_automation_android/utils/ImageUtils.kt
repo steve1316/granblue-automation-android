@@ -844,23 +844,23 @@ class ImageUtils(context: Context, private val game: Game) {
 			textRecognizer.process(inputImage).addOnSuccessListener {
 				if (it.textBlocks.size == 0) {
 					// If no amount was detected in the cropped region, that means that the amount is 1 as only amounts greater than 1 appear in the cropped region.
-					totalItemAmount += 1
+					totalItemAmount = 1
 				} else {
 					for (block in it.textBlocks) {
-						try {
+						totalItemAmount += try {
 							val detectedAmount: Int = block.text.toInt()
 							if (debugMode) {
 								game.printToLog("[DEBUG] Detected item amount: $detectedAmount", tag = tag)
 							}
 
-							totalItemAmount += detectedAmount
+							detectedAmount
 						} catch (e: NumberFormatException) {
+							1
 						}
 					}
 				}
 			}.addOnFailureListener {
-				game.printToLog("[ERROR] Failed to do text detection on bitmap.", tag = tag, isError = true)// Wait a few seconds for the asynchronous operations of Google's OCR to finish.
-				game.wait(3.0)
+				game.printToLog("[ERROR] Failed to do text detection on bitmap.", tag = tag, isError = true)
 			}
 		}
 
