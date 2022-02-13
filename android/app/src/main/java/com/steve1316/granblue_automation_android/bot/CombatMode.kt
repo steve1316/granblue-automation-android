@@ -1203,7 +1203,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 	 */
 	private fun quickSummon(command: String = "") {
 		game.printToLog("[COMBAT] Quick Summoning now...", tag = tag)
-		if (game.findAndClickButton("quick_summon1", bypassGeneralAdjustment = true) || game.findAndClickButton("quick_summon2", bypassGeneralAdjustment = true)) {
+		if (game.imageUtils.findButton("quick_summon_not_ready") == null &&
+			(game.findAndClickButton("quick_summon1", bypassGeneralAdjustment = true) || game.findAndClickButton("quick_summon2", bypassGeneralAdjustment = true))
+		) {
 			game.printToLog("[COMBAT] Successfully quick summoned!", tag = tag)
 
 			if (command.contains("wait")) {

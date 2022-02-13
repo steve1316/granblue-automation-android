@@ -474,7 +474,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		val beforeCombatStartList = arrayListOf("attack")
 		val dialogList = arrayListOf("dialog_lyria", "dialog_vyrn")
 		val skillUsageList = arrayListOf("use_skill", "skill_unusable")
-		val summonUsageList = arrayListOf("summon_details", "quick_summon1", "quick_summon2")
+		val summonUsageList = arrayListOf("summon_details", "quick_summon1", "quick_summon2", "quick_summon_not_ready")
 		val noLootScreenList = arrayListOf("no_loot")
 		val battleConcludedPopupList = arrayListOf("battle_concluded")
 		val expGainedPopupList = arrayListOf("exp_gained")
