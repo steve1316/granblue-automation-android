@@ -244,6 +244,8 @@ class ArcarumSandbox(private val game: Game) {
 			}
 		}
 
+		game.wait(3.0)
+
 		// Refill AAP if needed.
 		refillAAP()
 
