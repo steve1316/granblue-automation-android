@@ -206,7 +206,7 @@ class ArcarumSandbox(private val game: Game) {
 			game.printToLog("\n[ARCARUM.SANDBOX] Bot ran out of AAP. Refilling now...", tag = tag)
 
 			val useLocations = game.imageUtils.findAll("use")
-			game.gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
+			game.gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
 
 			game.wait(1.0)
 			game.findAndClickButton("ok")
