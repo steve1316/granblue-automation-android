@@ -172,7 +172,8 @@ class TwitterRoomFinder(private val game: Game) {
 		"Lvl 100 Xeno Diablo" to "Lv100 ゼノ・ディアボロス",
 
 		// Ennead Raids
-		"Lvl 120 Osiris" to "Lv120 オシリス"
+		"Lvl 120 Osiris" to "Lv120 オシリス",
+		"Lvl 120 Horus" to "Lv120 ホルス"
 	)
 
 	companion object {
