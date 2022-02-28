@@ -651,95 +651,31 @@ class Game(private val myContext: Context) {
 	}
 
 	/**
-	 * Checks if the user has available AP. If not, then it will refill it.
+	 * Check if the user has enabled the auto-restore option for AP.
 	 *
-	 * @param useFullElixir Will use Full Elixir instead of Half Elixir. Defaults to false.
-	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
-	fun checkAP(useFullElixir: Boolean = false, tries: Int = 3) {
-		if (!configData.enableAutoRestore) {
-			var numberOfTries = tries
+	fun checkAP() {
+		wait(3.0)
 
-			wait(2.0)
-
-			if (!imageUtils.confirmLocation("auto_ap_recovered", tries = 1) && !imageUtils.confirmLocation("auto_ap_recovered2", tries = 1)) {
-				while ((configData.farmingMode != "Coop" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) ||
-					(configData.farmingMode == "Coop" && !imageUtils.confirmLocation("coop_without_support_summon", tries = 1))
-				) {
-					if (imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
-						val useLocations = imageUtils.findAll("use")
-						if (!useFullElixir) {
-							printToLog("[INFO] AP ran out! Using Half Elixir...")
-							gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
-						} else {
-							printToLog("[INFO] AP ran out! Using Full Elixir...")
-							gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
-						}
-
-						wait(1.0)
-
-						// Press the "OK" button to confirm the item usage.
-						findAndClickButton("ok")
-					} else {
-						numberOfTries -= 1
-						if (numberOfTries <= 0) {
-							break
-						}
-					}
-				}
-			} else {
-				findAndClickButton("ok")
-			}
-
-			printToLog("[INFO] AP is available.")
+		if (imageUtils.confirmLocation("not_enough_ap", tries = 2)) {
+			throw Exception("AP auto-restore check failed. Please enable the auto-restore option in the in-game settings according to the GitHub instructions.")
+		} else {
+			printToLog("\n[INFO] AP auto-restore check passed. Continuing to Party Selection...")
 		}
-
-		printToLog("[INFO] AP was auto-restored.")
 	}
 
 	/**
-	 * Checks if the user has available EP. If not, then it will refill it.
+	 * Check if the user has enabled the auto-restore option for EP.
 	 *
-	 * @param useSoulBalm Will use Soul Balm instead of Soul Berry. Defaults to false.
-	 * @param tries Number of tries to try to refill AP. Defaults to 3.
 	 */
-	fun checkEP(useSoulBalm: Boolean = false, tries: Int = 3) {
-		if (!configData.enableAutoRestore) {
-			var numberOfTries = tries
+	fun checkEP() {
+		wait(3.0)
 
-			wait(2.0)
-
-			if (!imageUtils.confirmLocation("auto_ep_recovered", tries = 1)) {
-				while (configData.farmingMode == "Raid" && !imageUtils.confirmLocation("select_a_summon", tries = 1)) {
-					if (imageUtils.confirmLocation("not_enough_ep", tries = 1)) {
-						val useLocations = imageUtils.findAll("use")
-						if (!useSoulBalm) {
-							printToLog("[INFO] EP ran out! Using Soul Berry...")
-							gestureUtils.tap(useLocations[0].x, useLocations[0].y, "use")
-						} else {
-							printToLog("[INFO] EP ran out! Using Soul Balm...")
-							gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
-						}
-
-						wait(1.0)
-
-						// Press the "OK" button to confirm the item usage.
-						findAndClickButton("ok")
-					}
-
-					numberOfTries -= 1
-					if (numberOfTries <= 0) {
-						break
-					}
-				}
-			} else {
-				findAndClickButton("ok")
-			}
-
-			printToLog("[INFO] EP is available.")
+		if (configData.farmingMode == "Raid" && imageUtils.confirmLocation("not_enough_ep", tries = 2)) {
+			throw Exception("AP auto-restore check failed. Please enable the auto-restore option in the in-game settings according to the GitHub instructions.")
+		} else {
+			printToLog("\n[INFO] AP auto-restore check passed. Continuing to Party Selection...")
 		}
-
-		printToLog("[INFO] EP was auto-restored.")
 	}
 
 	/**
