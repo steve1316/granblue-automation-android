@@ -58,6 +58,10 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
             uri: require("../../images/summons/titan.png"),
         },
         {
+            label: "Gorilla",
+            uri: require("../../images/summons/gorilla.png"),
+        },
+        {
             label: "Tiamat Omega",
             uri: require("../../images/summons/tiamat_omega.png"),
         },
@@ -80,6 +84,10 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
         {
             label: "Zeus",
             uri: require("../../images/summons/zeus.png"),
+        },
+        {
+            label: "Thor",
+            uri: require("../../images/summons/thor.png"),
         },
         {
             label: "Celeste Omega",
@@ -110,16 +118,16 @@ const TransferList = ({ isNightmare }: { isNightmare: boolean }) => {
             uri: require("../../images/summons/black_rabbit.png"),
         },
         {
+            label: "Nobiyo",
+            uri: require("../../images/summons/nobiyo.png"),
+        },
+        {
             label: "Huanglong",
             uri: require("../../images/summons/huanglong.png"),
         },
         {
             label: "Qilin",
             uri: require("../../images/summons/qilin.png"),
-        },
-        {
-            label: "Nobiyo",
-            uri: require("../../images/summons/nobiyo.png"),
         },
     ]
 
