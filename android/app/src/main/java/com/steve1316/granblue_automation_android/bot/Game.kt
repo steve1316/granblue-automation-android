@@ -465,6 +465,8 @@ class Game(private val myContext: Context) {
 					printToLog("[SUCCESS] Summons have now been refreshed.")
 				}
 			}
+		} else {
+			printToLog("[WARNING] Failed to reset Summons as the 'Gameplay Extras' button is not visible.")
 		}
 	}
 
@@ -693,7 +695,13 @@ class Game(private val myContext: Context) {
 
 		// Close all popups until the bot reaches the Loot Collected screen.
 		if (!skipPopupCheck) {
+			var lootCollectionTries = 30
 			while (!imageUtils.confirmLocation("loot_collected", tries = 1, disableAdjustment = true)) {
+				lootCollectionTries -= 1
+				if (lootCollectionTries <= 0) {
+					throw Exception("Unable to progress in the Loot Collection process.")
+				}
+
 				findAndClickButton("ok", tries = 1, suppressError = true)
 				findAndClickButton("close", tries = 1, suppressError = true)
 				findAndClickButton("cancel", tries = 1, suppressError = true)
@@ -814,7 +822,13 @@ class Game(private val myContext: Context) {
 	fun checkForPopups(): Boolean {
 		printToLog("\n[INFO] Now beginning process to check for popups...")
 
+		var checkPopupTries = 30
 		while (!imageUtils.confirmLocation("select_a_summon", tries = 1, suppressError = true)) {
+			checkPopupTries -= 1
+			if (checkPopupTries <= 0) {
+				throw Exception("Failed to progress in the Check for Popups process...")
+			}
+
 			if (!configData.enableAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
 				break
 			}
@@ -912,6 +926,8 @@ class Game(private val myContext: Context) {
 
 				return true
 			}
+		} else {
+			printToLog("[INFO] No more Pending Battles left to claim.")
 		}
 
 		return false

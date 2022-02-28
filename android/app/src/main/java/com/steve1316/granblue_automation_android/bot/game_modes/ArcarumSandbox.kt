@@ -170,7 +170,7 @@ class ArcarumSandbox(private val game: Game) {
 		game.wait(2.0)
 
 		// Move to the Zone that the user's mission is at.
-		when (game.configData.mapName) {
+		val navigationCheck: Boolean = when (game.configData.mapName) {
 			"Zone Eletio" -> {
 				game.findAndClickButton("arcarum_sandbox_zone_eletio")
 			}
@@ -186,6 +186,10 @@ class ArcarumSandbox(private val game: Game) {
 			else -> {
 				throw ArcarumSandboxException("Invalid map name provided for Arcarum Replicard Sandbox navigation.")
 			}
+		}
+
+		if (!navigationCheck) {
+			throw ArcarumSandboxException("Failed to navigate into the Sandbox Zone.")
 		}
 
 		game.wait(2.0)

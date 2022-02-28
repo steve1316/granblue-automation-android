@@ -279,7 +279,11 @@ class Special(private val game: Game, private val mapName: String, private val m
 						tries -= 1
 					}
 				}
+			} else {
+				throw SpecialException("Failed to arrive at the Special page to continue with Special navigation.")
 			}
+		} else {
+			throw SpecialException("Failed to arrive at the Quest page to continue with Special navigation.")
 		}
 	}
 

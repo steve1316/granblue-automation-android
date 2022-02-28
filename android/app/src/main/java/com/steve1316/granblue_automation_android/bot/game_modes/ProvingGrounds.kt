@@ -46,6 +46,8 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 				// After the difficulty has been selected, tap "Play" to land the bot at the Proving Grounds Summon Selection screen.
 				game.findAndClickButton("play")
 			}
+		} else {
+			throw ProvingGroundsException("Failed to arrive at Proving Grounds page.")
 		}
 	}
 

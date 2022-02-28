@@ -165,6 +165,8 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 					game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 				}
 			}
+		} else {
+			throw RiseOfTheBeastsException("Failed to arrive at the ROTB page.")
 		}
 	}
 

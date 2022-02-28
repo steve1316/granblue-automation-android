@@ -442,6 +442,8 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				game.findAndClickButton("episode_4")
 				game.findAndClickButton("ok")
 			}
+		} else {
+			throw QuestException("Failed to arrive at the Quest page.")
 		}
 	}
 

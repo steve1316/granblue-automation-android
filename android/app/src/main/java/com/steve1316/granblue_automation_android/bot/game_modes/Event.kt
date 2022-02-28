@@ -119,7 +119,9 @@ class Event(private val game: Game, private val missionName: String) {
 
 		if (formattedMissionName == "Event Quest") {
 			game.printToLog("[EVENT.TOKEN.DRAWBOXES] Now hosting Event Quest...", tag = tag)
-			game.findAndClickButton("event_quests")
+			if (!game.findAndClickButton("event_quests")) {
+				throw EventException("Failed to proceed any further in Event (Token Drawboxes) navigation by missing the Event Quests button.")
+			}
 
 			game.wait(3.0)
 
@@ -138,7 +140,10 @@ class Event(private val game: Game, private val missionName: String) {
 		} else if (formattedMissionName == "Event Raid") {
 			// Bring up the "Raid Battle" popup. Scroll the screen down a bit in case of small screen size.
 			game.printToLog("[EVENT.TOKEN.DRAWBOXES] Now hosting Event Raid...", tag = tag)
-			game.findAndClickButton("event_raid_battle")
+			if (!game.findAndClickButton("event_raid_battle")) {
+				throw EventException("Failed to proceed any further in Event (Token Drawboxes) navigation by missing the Event Raids button.")
+			}
+
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 			game.wait(0.5)
 
@@ -254,6 +259,8 @@ class Event(private val game: Game, private val missionName: String) {
 						game.gestureUtils.tap(playRoundButtonLocations[2].x, playRoundButtonLocations[2].y, "play_round_button")
 					}
 				}
+			} else {
+				throw EventException("Failed to arrive at the Special page")
 			}
 		}
 	}

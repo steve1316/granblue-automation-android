@@ -121,6 +121,8 @@ class XenoClash(private val game: Game, private val missionName: String) {
 
 				game.findAndClickButton("play")
 			}
+		} else {
+			throw XenoClashException("Failed to arrive at the Xeno Special section of the Special page.")
 		}
 	}
 

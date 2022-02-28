@@ -95,6 +95,8 @@ class DreadBarrage(private val game: Game, private val missionName: String) {
 			}
 
 			game.wait(2.0)
+		} else {
+			throw DreadBarrageException("Failed to arrive at Dread Barrage page.")
 		}
 	}
 

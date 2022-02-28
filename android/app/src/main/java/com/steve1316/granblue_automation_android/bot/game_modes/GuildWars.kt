@@ -113,6 +113,8 @@ class GuildWars(private val game: Game, private val missionName: String) {
 							}
 						}
 					}
+				} else {
+					throw GuildWarsException("Failed to open component to host Meat raids in the Guild Wars page.")
 				}
 			} else {
 				game.printToLog("\n[GUILD.WARS] Now proceeding to farm Nightmares.", tag = tag)
@@ -181,9 +183,13 @@ class GuildWars(private val game: Game, private val missionName: String) {
 						game.printToLog("Hosting Extreme+ now.", tag = tag)
 						val meatLocation = game.imageUtils.findButton("guild_wars_meat_very_hard")!!
 						game.gestureUtils.tap(meatLocation.x + 300.0, meatLocation.y, "guild_wars_meat_very_hard")
+					} else {
+						throw GuildWarsException("Failed to open component to host Meat raids in the Guild Wars page due to running out of host materials.")
 					}
 				}
 			}
+		} else {
+			throw GuildWarsException("Failed to arrive at Guild Wars page.")
 		}
 	}
 

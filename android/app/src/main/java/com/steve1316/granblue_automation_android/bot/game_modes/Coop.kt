@@ -147,6 +147,8 @@ class Coop(private val game: Game, private val missionName: String) {
 			// Scroll the screen down to see the "Select Party" button in case of small screens and then tap the button.
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 			game.findAndClickButton("coop_select_party")
+		} else {
+			throw CoopException("Failed to arrive at Coop page.")
 		}
 	}
 
