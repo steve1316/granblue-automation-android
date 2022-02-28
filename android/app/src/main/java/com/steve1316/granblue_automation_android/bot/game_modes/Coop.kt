@@ -25,6 +25,7 @@ class Coop(private val game: Game, private val missionName: String) {
 
 		// Tap the "Menu" button at the top right corner of the Home screen and go to Coop.
 		game.findAndClickButton("home_menu")
+		game.wait(1.0)
 		game.findAndClickButton("coop")
 
 		game.wait(3.0)

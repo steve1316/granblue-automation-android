@@ -77,6 +77,7 @@ class Event(private val game: Game, private val missionName: String) {
 
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
+		game.wait(1.0)
 		var bannerLocations = game.imageUtils.findAll("event_banner")
 		if (bannerLocations.size == 0) {
 			bannerLocations = game.imageUtils.findAll("event_banner_blue")
