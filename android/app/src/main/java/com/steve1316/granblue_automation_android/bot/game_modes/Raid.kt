@@ -78,8 +78,6 @@ class Raid(private val game: Game) {
 				val roomCode = game.twitterRoomFinder.getRoomCode()
 
 				if (roomCode != "") {
-					Log.d(tag, "Room code: $roomCode")
-
 					// Set the room code.
 					RoomCodeData.roomCode = roomCode
 
@@ -124,6 +122,7 @@ class Raid(private val game: Game) {
 				game.wait(1.0)
 			}
 
+			// Exit condition to indicate a successful join and arriving at the Support Summon Selection screen.
 			if (joinSuccessful) {
 				break
 			}
