@@ -93,6 +93,8 @@ class Raid(private val game: Game) {
 					// Now tap the "Join Room" button.
 					game.gestureUtils.tap(joinRoomButtonLocation.x, joinRoomButtonLocation.y, "join_a_room")
 
+					game.wait(2.0)
+
 					if (!game.findAndClickButton("ok")) {
 						// Check for EP.
 						game.checkEP()
