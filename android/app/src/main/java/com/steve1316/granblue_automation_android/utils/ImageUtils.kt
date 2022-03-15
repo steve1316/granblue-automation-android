@@ -19,6 +19,7 @@ import java.text.DecimalFormat
 class ImageUtils(context: Context, private val game: Game) {
 	private val tag: String = "${com.steve1316.granblue_automation_android.MainActivity.loggerTag}ImageUtils"
 	private var myContext = context
+
 	private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
 	private val decimalFormat = DecimalFormat("#.###")
 	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)

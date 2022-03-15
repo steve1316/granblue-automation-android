@@ -52,7 +52,10 @@ class MessageLog {
 				// Now save the Message Log to the new text file.
 				Log.d(TAG, "Now saving Message Log to file named \"$fileName\" at $path")
 				messageLog.add("\nNow saving Message Log to file named \"$fileName\" at $path")
+
+				// Send a event to the React Native frontend.
 				StartModule.sendEvent("MessageLog", "Now saving Message Log to file named \"$fileName\" at $path")
+
 				val file = File(path, "$fileName.txt")
 
 				if (!file.exists()) {
