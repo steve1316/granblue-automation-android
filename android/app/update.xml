@@ -1,15 +1,30 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.5.1</latestVersion>
+        <latestVersion>3.6.0</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.5.1 - Changelog
+v3.6.0 - Changelog
+
+New
+---
+- Add support for Quest Farming Mode to include the items farmable on Nalhegrande and Oarlyegrande skydoms.
+- Add support for Replicard Sandbox Part 2.
+- Add Thor and Gorrilla as support summon options.
+- Add support for Lvl 120 Horus.
+- Add support for Rocket Raid mission for Steel Liquid farming in Agastia.
+- Add standalone "wait(#)" command.
+
+Changed
+---
+- Manual AP/EP restore is now no longer supported.
+- Adjusted exit and error conditions for navigation.
+- Adjusted delay when opening the Home Menu.
+- Adjusted delay when pressing the Join Room button during Raid farming.
+- Update Special Farming Mode to account for 3/10/22 ingame Special rework
 
 Fixed
 ---
-- Add missing image assets for Replicard Sandbox farming.
-- Fix Replicard Sandbox using Full Elixirs to refill AAP.
-- Fix AAP check happening too quickly during Replicard Sandbox navigation.
+- Revamp Summon Selection process to fix existing bugs.
 
         </releaseNotes>
     </update>
