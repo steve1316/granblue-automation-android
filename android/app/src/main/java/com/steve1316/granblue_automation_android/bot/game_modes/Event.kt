@@ -148,6 +148,16 @@ class Event(private val game: Game, private val missionName: String) {
 			game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
 			game.wait(0.5)
 
+			// Select the first category if the raids are split into two sections.
+			val categories = game.imageUtils.findAll("event_raid_category", customConfidence = 0.9)
+			if (categories.size > 0) {
+				if (!game.configData.enableSelectBottomCategory) {
+					game.gestureUtils.tap(categories[0].x - 50, categories[0].y, "event_raid_category")
+				} else {
+					game.gestureUtils.tap(categories[1].x - 50, categories[1].y, "event_raid_category")
+				}
+			}
+
 			val apLocations = game.imageUtils.findAll("ap")
 
 			// Now select the chosen difficulty.

@@ -54,6 +54,7 @@ class ConfigData(myContext: Context) {
 
 	// Event
 	val enableLocationIncrementByOne: Boolean
+	val enableSelectBottomCategory: Boolean
 
 	// Raid
 	val enableAutoExitRaid: Boolean
@@ -174,6 +175,7 @@ class ConfigData(myContext: Context) {
 		}
 
 		enableLocationIncrementByOne = sharedPreferences.getBoolean("enableLocationIncrementByOne", false)
+		enableSelectBottomCategory = sharedPreferences.getBoolean("selectBottomCategory", false)
 
 		enableAutoExitRaid = sharedPreferences.getBoolean("enableAutoExitRaid", false)
 		timeAllowedUntilAutoExitRaid = sharedPreferences.getInt("timeAllowedUntilAutoExitRaid", 1).toLong() * 60L * 1000L

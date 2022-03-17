@@ -112,6 +112,7 @@ class JSONParser {
 			val eventObj = jObj.getJSONObject("event")
 			sharedPreferences.edit {
 				putBoolean("enableLocationIncrementByOne", eventObj.getBoolean("enableLocationIncrementByOne"))
+				putBoolean("selectBottomCategory", eventObj.getBoolean("selectBottomCategory"))
 				commit()
 			}
 		} catch (e: Exception) {
