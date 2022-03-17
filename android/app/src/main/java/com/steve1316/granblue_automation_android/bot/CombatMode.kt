@@ -1491,6 +1491,12 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					enableFullAuto()
 				}
 
+				// Counteract slower instances when the battle finished right when the bot finished executing the script.
+				if (game.findAndClickButton("next", tries = 1, suppressError = true)) {
+					game.wait(3.0)
+					checkForBattleEnd()
+				}
+
 				var sleepPreventionTimer = 0
 
 				// Primary loop workflow for both Semi Auto Full Auto. The bot will progress the Quest/Raid until it ends or the Party wipes.
