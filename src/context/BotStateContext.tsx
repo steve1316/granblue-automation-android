@@ -34,9 +34,6 @@ export interface Settings {
 
     // Configuration settings.
     configuration: {
-        enableAutoRestore: boolean
-        enableFullElixir: boolean
-        enableSoulBalm: boolean
         enableDelayBetweenRuns: boolean
         delayBetweenRuns: number
         enableRandomizedDelayBetweenRuns: boolean
@@ -146,9 +143,6 @@ export const defaultSettings: Settings = {
         discordUserID: "",
     },
     configuration: {
-        enableAutoRestore: true,
-        enableFullElixir: false,
-        enableSoulBalm: false,
         enableDelayBetweenRuns: false,
         delayBetweenRuns: 15,
         enableRandomizedDelayBetweenRuns: false,
