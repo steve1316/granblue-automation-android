@@ -64,7 +64,39 @@ class ArcarumSandbox(private val game: Game) {
 		"Demanding Stormgod" to Mission(1, 610, 565),
 		"Harbinger Tyrant" to Mission(2, 845, 455),
 		"Phantasmagoric Aberration" to Mission(2, 525, 710),
-		"Dimensional Riftwalker" to Mission(2, 260, 555)
+		"Dimensional Riftwalker" to Mission(2, 260, 555),
+
+		// Zone Invidia
+		"Infernal Hellbeast" to Mission(0, 795, 475),
+		"Spikeball" to Mission(0, 265, 580),
+		"Blushing Groom" to Mission(0, 110, 410),
+		"Unworldly Guardian" to Mission(1, 660, 580),
+		"Deva of Wisdom" to Mission(1, 415, 295),
+		"Sword Aberration" to Mission(1, 395, 505),
+
+		// Zone Joculator
+		"Dreadful Scourge" to Mission(1, 535, 805),
+		"Nebulous One" to Mission(1, 70, 635),
+		"Bloody Soothsayer" to Mission(1, 595, 765),
+		"Maiden of the Depths" to Mission(0, 330, 760),
+		"Giant Sea Plant" to Mission(0, 855, 635),
+		"Glacial Hellbeast" to Mission(0, 110, 425),
+
+		// Zone Kalendae
+		"Watcher from Above" to Mission(1, 45, 480),
+		"Tainted Hellmaiden" to Mission(1, 230, 760),
+		"Bedeviled Plague" to Mission(1, 675, 405),
+		"Hellbeast of Doom" to Mission(0, 280, 770),
+		"Scintillant Matter" to Mission(0, 820, 545),
+		"Ebony Executioner" to Mission(0, 575, 315),
+
+		// Zone Liber
+		"Mounted Toxophilite" to Mission(0, 515, 325),
+		"Beetle of Damnation" to Mission(0, 520, 780),
+		"Ageless Guardian Beast" to Mission(0, 280, 565),
+		"Solar Princess" to Mission(1, 750, 605),
+		"Drifting Blade Demon" to Mission(1, 510, 335),
+		"Simpering Beast" to Mission(1, 505, 760)
 	)
 
 	/**
@@ -183,6 +215,18 @@ class ArcarumSandbox(private val game: Game) {
 			"Zone Harbinger" -> {
 				game.findAndClickButton("arcarum_sandbox_zone_harbinger")
 			}
+			"Zone Invidia" -> {
+				game.findAndClickButton("arcarum_sandbox_zone_invidia")
+			}
+			"Zone Joculator" -> {
+				game.findAndClickButton("arcarum_sandbox_zone_joculator")
+			}
+			"Zone Kalendae" -> {
+				game.findAndClickButton("arcarum_sandbox_zone_kalendae")
+			}
+			"Zone Liber" -> {
+				game.findAndClickButton("arcarum_sandbox_zone_liber")
+			}
 			else -> {
 				throw ArcarumSandboxException("Invalid map name provided for Arcarum Replicard Sandbox navigation.")
 			}
@@ -206,7 +250,7 @@ class ArcarumSandbox(private val game: Game) {
 	 *
 	 */
 	private fun refillAAP() {
-		if (game.imageUtils.confirmLocation("aap")) {
+		if (game.imageUtils.confirmLocation("aap", tries = 10)) {
 			game.printToLog("\n[ARCARUM.SANDBOX] Bot ran out of AAP. Refilling now...", tag = tag)
 
 			val useLocations = game.imageUtils.findAll("use")
