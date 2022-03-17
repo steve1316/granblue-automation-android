@@ -383,6 +383,15 @@ const Settings = () => {
                         onPress={() => bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, enableNightmare: !bsc.settings.nightmare.enableNightmare } })}
                     />
                 ) : null}
+
+                {bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
+                    <Checkbox
+                        text="Enable Selecting the Bottom Category"
+                        subtitle="In the event of the raids being split between 2 categories, the bot selects the top category by default. Enable this to select the bottom category instead."
+                        isChecked={bsc.settings.event.selectBottomCategory}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, selectBottomCategory: !bsc.settings.event.selectBottomCategory } })}
+                    />
+                ) : null}
             </View>
         )
     }

@@ -59,6 +59,7 @@ export interface Settings {
     // Settings specific to certain Farming Modes.
     event: {
         enableLocationIncrementByOne: boolean
+        selectBottomCategory: boolean
     }
 
     raid: {
@@ -164,6 +165,7 @@ export const defaultSettings: Settings = {
     },
     event: {
         enableLocationIncrementByOne: false,
+        selectBottomCategory: false,
     },
     raid: {
         enableAutoExitRaid: false,
