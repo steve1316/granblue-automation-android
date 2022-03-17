@@ -1436,6 +1436,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 
 							turnNumber += 1
 						}
+						command.indexOf("wait") == 0 -> {
+							waitExecute(listOf(command))
+						}
 						command == "exit" -> {
 							// End Combat Mode by heading back to the Home screen without retreating.
 							game.printToLog("\n[COMBAT] Leaving this Raid without retreating.", tag = tag)
@@ -1450,6 +1453,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					}
 				}
 
+				////////////////////////////////////////////////////////////////////////////////
+				////////////////////////////////////////////////////////////////////////////////
 				// Handle certain commands that could be present outside of a Turn block.
 				if (!semiAuto && !fullAuto && command == "enablesemiauto") {
 					enableSemiAuto()
@@ -1458,6 +1463,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 				} else if (command.contains("repeatmanualattackandreload")) {
 					game.printToLog("[Combat] Enabling manually pressing the Attack button and reloading (if the mission supports it) until battle ends.", tag = tag)
 					manualAttackAndReload = true
+				} else if (command.indexOf("wait") == 0) {
+					waitExecute(listOf(command))
 				}
 			}
 
