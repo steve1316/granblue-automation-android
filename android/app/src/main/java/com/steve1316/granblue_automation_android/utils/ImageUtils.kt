@@ -834,9 +834,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param templateName File name of the template image.
 	 * @param isItem Whether or not the user wants to search for items instead of buttons.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
+	 * @param customConfidence Accuracy threshold for matching. Defaults to 0.8.
 	 * @return An ArrayList of Point objects containing all the occurrences of the specified image or null if not found.
 	 */
-	fun findAll(templateName: String, isItem: Boolean = false, region: IntArray = intArrayOf(0, 0, 0, 0)): ArrayList<Point> {
+	fun findAll(templateName: String, isItem: Boolean = false, region: IntArray = intArrayOf(0, 0, 0, 0), customConfidence: Double = 0.8): ArrayList<Point> {
 		val folderName = if (!isItem) {
 			"buttons"
 		} else {
@@ -853,7 +854,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		matchLocations.clear()
 
 		if (sourceBitmap != null && templateBitmap != null) {
-			matchAll(sourceBitmap, templateBitmap, region = region)
+			matchAll(sourceBitmap, templateBitmap, region = region, customConfidence = customConfidence)
 		}
 
 		// Sort the match locations by ascending x and y coordinates.
