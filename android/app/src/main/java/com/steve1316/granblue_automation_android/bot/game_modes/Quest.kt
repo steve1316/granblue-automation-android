@@ -533,7 +533,12 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					game.gestureUtils.tap(worldButtonLocation.x + 200, worldButtonLocation.y + 195, "template_node")
 				}
 			}
-		} else {
+		} else if (missionName == "Rocket Raid") {
+			game.printToLog("\n[QUEST] Moving to Chapter 59 node...", tag = tag)
+			game.gestureUtils.tap(worldButtonLocation.x + 155, worldButtonLocation.y + 185, "template_node")
+		}
+
+		else {
 			throw QuestException("Selected mission of $missionName does not exist.")
 		}
 	}
