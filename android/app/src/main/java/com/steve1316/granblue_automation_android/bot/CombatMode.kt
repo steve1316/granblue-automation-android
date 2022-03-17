@@ -421,7 +421,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			quickSummon()
 		}
 
-		game.printToLog("[COMBAT] Enabling Full Auto.", tag = tag)
+
 		var enabledAuto = game.findAndClickButton("full_auto") || game.findAndClickButton("full_auto_enabled")
 
 		// If the bot failed to find and click the "Full Auto" button, fallback to the "Semi Auto" button.
@@ -441,6 +441,8 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 					game.printToLog("[COMBAT] Semi Auto is now enabled.", tag = tag)
 				}
 			}
+		} else {
+			game.printToLog("[COMBAT] Enabled Full Auto.", tag = tag)
 		}
 
 		return enabledAuto
