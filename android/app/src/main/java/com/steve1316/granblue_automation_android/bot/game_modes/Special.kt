@@ -3,7 +3,6 @@ package com.steve1316.granblue_automation_android.bot.game_modes
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 import org.opencv.core.Point
-import java.util.*
 
 class SpecialException(message: String) : Exception(message)
 
@@ -151,22 +150,33 @@ class Special(private val game: Game, private val mapName: String, private val m
 
 						game.wait(3.0)
 
-						if (mapName == "Basic Treasure Quests") {
-							// Open up "Basic Treasure Quests" sub-missions popup.
+						if (mapName == "Uncap Treasure Quests") {
 							var roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
 
 							when (formattedMissionName) {
-								"Scarlet Trial" -> {
-									game.printToLog("[SPECIAL] Opening up Scarlet Trial mission popup...", tag = tag)
+								"Fire Trial" -> {
+									game.printToLog("[SPECIAL] Opening up Fire Trial mission popup...", tag = tag)
 									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
 								}
-								"Cerulean Trial" -> {
-									game.printToLog("[SPECIAL] Opening up Cerulean Trial mission popup...", tag = tag)
+								"Water Trial" -> {
+									game.printToLog("[SPECIAL] Opening up Water Trial mission popup...", tag = tag)
 									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
 								}
-								"Violet Trial" -> {
-									game.printToLog("[SPECIAL] Opening up Violet Trial mission popup...", tag = tag)
+								"Earth Trial" -> {
+									game.printToLog("[SPECIAL] Opening up Earth Trial mission popup...", tag = tag)
 									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
+								}
+								"Wind Trial" -> {
+									game.printToLog("[SPECIAL] Opening up Wind Trial mission popup...", tag = tag)
+									game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y, "play_round_button")
+								}
+								"Light Trial" -> {
+									game.printToLog("[SPECIAL] Opening up Light Trial mission popup...", tag = tag)
+									game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y, "play_round_button")
+								}
+								"Dark Trial" -> {
+									game.printToLog("[SPECIAL] Opening up Dark Trial mission popup...", tag = tag)
+									game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y, "play_round_button")
 								}
 							}
 
@@ -185,7 +195,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
 								}
 							}
-						} else if (mapName == "Shiny Slime Search!" || mapName == "Six Dragon Trial" || mapName == "Angel Halo") {
+						} else if (mapName == "Shiny Slime Search!" || mapName == "Angel Halo") {
 							// Open up the mission's difficulty selection popup and then select its difficulty.
 							game.printToLog("[SPECIAL] Now selecting $difficulty $mapName...", tag = tag)
 							val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
@@ -199,30 +209,6 @@ class Special(private val game: Game, private val mapName: String, private val m
 								}
 								"Very Hard" -> {
 									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
-								}
-							}
-						} else if (mapName == "Elemental Treasure Quests") {
-							game.printToLog("[SPECIAL] Now selecting $missionName...", tag = tag)
-							val roundPlayButtonLocations: ArrayList<Point> = game.imageUtils.findAll("play_round_button")
-
-							when (formattedMissionName) {
-								"The Hellfire Trial" -> {
-									game.gestureUtils.tap(roundPlayButtonLocations[0].x, roundPlayButtonLocations[0].y, "play_round_button")
-								}
-								"The Deluge Trial" -> {
-									game.gestureUtils.tap(roundPlayButtonLocations[1].x, roundPlayButtonLocations[1].y, "play_round_button")
-								}
-								"The Wasteland Trial" -> {
-									game.gestureUtils.tap(roundPlayButtonLocations[2].x, roundPlayButtonLocations[2].y, "play_round_button")
-								}
-								"The Typhoon Trial" -> {
-									game.gestureUtils.tap(roundPlayButtonLocations[3].x, roundPlayButtonLocations[3].y, "play_round_button")
-								}
-								"The Aurora Trial" -> {
-									game.gestureUtils.tap(roundPlayButtonLocations[4].x, roundPlayButtonLocations[4].y, "play_round_button")
-								}
-								"The Oblivion Trial" -> {
-									game.gestureUtils.tap(roundPlayButtonLocations[5].x, roundPlayButtonLocations[5].y, "play_round_button")
 								}
 							}
 						} else if (mapName == "Showdowns") {
