@@ -394,7 +394,7 @@ class ImageUtils(context: Context, private val game: Game) {
 					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))
 				) {
 					matchLocations.add(tempMatchLocation)
-				} else if (matchLocations.contains(tempMatchLocation)){
+				} else if (matchLocations.contains(tempMatchLocation)) {
 					// Prevent infinite looping if the same location is found over and over again.
 					break
 				}
@@ -707,9 +707,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	 *
 	 * @param summonList List of selected Summons sorted from greatest to least priority.
 	 * @param summonElementList List of Summon Elements that correspond to the summonList.
+	 * @param suppressError Suppresses template matching error if True. Defaults to False.
 	 * @return Point object containing the location of the match or null if not found.
 	 */
-	fun findSummon(summonList: List<String>, summonElementList: List<String>): Point? {
+	fun findSummon(summonList: List<String>, summonElementList: List<String>, suppressError: Boolean = false): Point? {
 		val folderName = "summons"
 
 		if (debugMode) {
@@ -719,15 +720,16 @@ class ImageUtils(context: Context, private val game: Game) {
 
 		var lastSummonElement = ""
 		var summonIndex = 0
+		var summonElementIndex = 0
 		var summonLocation: Point? = null
 
 		// Make sure that the bot is at the Summon Selection screen.
-		var tries = 3
+		var tries = 10
 		while (!confirmLocation("select_a_summon")) {
 			game.findAndClickButton("reload")
 			tries -= 1
 			if (tries <= 0 && !confirmLocation("select_a_summon", tries = 1)) {
-				throw(Exception("Could not reach the Summon Selection screen."))
+				throw Exception("Could not reach the Summon Selection screen.")
 			}
 		}
 
@@ -738,49 +740,92 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 		}
 
-		while (summonLocation == null) {
-			if (summonSelectionFirstRun || !summonSelectionSameElement) {
-				val currentSummonElement = summonElementList[summonIndex]
-				if (currentSummonElement != lastSummonElement) {
-					game.findAndClickButton("summon_$currentSummonElement")
-					lastSummonElement = currentSummonElement
-				}
+		// Make the first summon element category active for first run.
+		if (summonSelectionFirstRun) {
+			val currentSummonElement: String = summonElementList[summonElementIndex]
+			game.findAndClickButton("summon_$currentSummonElement")
+			lastSummonElement = currentSummonElement
+			summonSelectionFirstRun = false
+		}
 
-				summonSelectionFirstRun = false
-			}
-
+		tries = 30
+		while (true) {
+			// Reset the summon index.
 			summonIndex = 0
 			while (summonIndex < summonList.size) {
-				// Go through each Summon detected on the Summon Selection screen and see if they match with the selected Summon.
+				// Switch over to a different element for this summon index if it is different.
+				if (!summonSelectionSameElement) {
+					val currentSummonElement: String = summonElementList[summonElementIndex]
+					if (currentSummonElement != lastSummonElement) {
+						if (!game.findAndClickButton("summon_$currentSummonElement")) {
+							throw Exception("Unable to switch summon element categories from ${lastSummonElement.uppercase()} to ${currentSummonElement.uppercase()}.")
+						}
+					}
+				}
+
 				val summonName = summonList[summonIndex]
 				val (sourceBitmap, templateBitmap) = getBitmaps(summonName, folderName)
 
-				if (sourceBitmap != null && templateBitmap != null && match(sourceBitmap, templateBitmap, customConfidence = 0.7)) {
-					summonLocation = matchLocation
-					break
-				} else {
-					game.printToLog("[WARNING] Could not locate ${summonName.uppercase()} Summon.", tag = tag)
+				val resultFlag: Boolean = match(sourceBitmap!!, templateBitmap!!, customConfidence = 0.7)
 
-					summonIndex += 1
+				if (resultFlag) {
+					if (game.configData.debugMode) {
+						game.printToLog("[SUCCESS] Found ${summonList[summonIndex].uppercase()} Summon at $matchLocation.", tag = tag)
+					}
+
+					return matchLocation
+				} else {
+					if (!suppressError) {
+						game.printToLog("[WARNING] Could not locate ${summonList[summonIndex].uppercase()} Summon.", tag = tag)
+					}
+
+					if (summonSelectionSameElement) {
+						summonIndex += 1
+					} else {
+						// Keep searching for the same summon until the bot reaches the bottom of the page. Then reset the page and move to the next summon's element.
+						if (findButton("bottom_of_summon_selection", tries = 1) != null) {
+							summonIndex += 1
+							summonElementIndex += 1
+
+							// If the bot cycled through the list of summon elements without find a match, reset Summons.
+							if (!summonSelectionSameElement && summonElementIndex >= summonElementList.size) {
+								game.printToLog("[WARNING] Bot has gone through the entire summon list without finding a match. Resetting Summons now...", tag = tag)
+								return null
+							}
+
+							game.printToLog("[INFO] Bot has reached the bottom of the page. Moving on to the next summon's element...", tag = tag)
+							if (!game.findAndClickButton("reload")) {
+								game.gestureUtils.scroll(scrollDown = false)
+							}
+
+
+							game.wait(2.0)
+						} else {
+							// If matching failed and the bottom of the page has not been reached, scroll the screen down to see more Summons and try again.
+							game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
+						}
+					}
+
+					tries -= 1
 				}
 			}
 
-			if (summonLocation != null) {
-				break
+			// Perform check here to prevent infinite loop for rare cases.
+			if (tries <= 0) {
+				game.printToLog("[WARNING] Summon Selection process was not able to find any valid summons. Resetting Summons now...", tag = tag)
+				return null
 			}
 
-			// If it reached the bottom of the Summon Selection page, reset summons.
+			// If the bot reached the bottom of the page, reset Summons.
 			if (findButton("bottom_of_summon_selection", tries = 1) != null) {
 				game.printToLog("[WARNING] Bot has reached the bottom of the page and found no suitable Summons. Resetting Summons now...", tag = tag)
 				return null
 			}
 
+			// If matching failed and the bottom of the page has not been reached, scroll the screen down to see more Summons and try again.
 			game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
 			game.wait(1.0)
 		}
-
-		game.printToLog("[SUCCESS] Found ${summonList[summonIndex].uppercase()} Summon at $summonLocation.")
-		return summonLocation
 	}
 
 	/**
