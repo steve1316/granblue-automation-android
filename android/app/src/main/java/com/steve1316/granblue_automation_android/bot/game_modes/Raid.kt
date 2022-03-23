@@ -93,19 +93,21 @@ class Raid(private val game: Game) {
 
 					game.wait(2.0)
 
-					if (!game.findAndClickButton("ok")) {
-						// Check for EP.
-						game.checkEP()
+					if (!game.checkPendingBattles()) {
+						if (!game.findAndClickButton("ok")) {
+							// Check for EP.
+							game.checkEP()
 
-						game.printToLog("[SUCCESS] Joining $roomCode was successful.", tag = tag)
-						numberOfRaidsJoined += 1
-						joinSuccessful = true
-						break
-					} else if (!game.checkPendingBattles()) {
-						// Clear the text box by reloading the page.
-						game.printToLog("[WARNING] $roomCode already ended or invalid.", tag = tag)
-						game.findAndClickButton("reload")
-						game.findAndClickButton("enter_id", tries = 5)
+							game.printToLog("[SUCCESS] Joining $roomCode was successful.", tag = tag)
+							numberOfRaidsJoined += 1
+							joinSuccessful = true
+							break
+						} else {
+							// Clear the text box by reloading the page.
+							game.printToLog("[WARNING] $roomCode already ended or invalid.", tag = tag)
+							game.findAndClickButton("reload")
+							game.findAndClickButton("enter_id", tries = 5)
+						}
 					} else {
 						// Move from the Home screen back to the Backup Requests screen after clearing out all the Pending Battles.
 						game.findAndClickButton("quest")
