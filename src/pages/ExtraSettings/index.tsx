@@ -189,6 +189,130 @@ const ExtraSettings = () => {
         }
     }
 
+    const renderSandboxDefenderSettings = () => {
+        if (bsc.settings.sandbox.enableDefender && bsc.settings.game.farmingMode === "Arcarum Sandbox") {
+            return (
+                <View>
+                    <TitleDivider title="Defender Settings" hasIcon={true} iconName="sword-cross" />
+
+                    <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>If none of these settings are changed, then the bot will reuse the settings for the Farming Mode.</Text>
+
+                    <Checkbox
+                        text="Enable Custom Settings for Defender"
+                        subtitle="Enable customizing individual settings for Defender"
+                        isChecked={bsc.settings.sandbox.enableCustomDefenderSettings}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, enableCustomDefenderSettings: !bsc.settings.nightmare.enableCustomNightmareSettings } })}
+                    />
+
+                    {bsc.settings.sandbox.enableCustomDefenderSettings ? (
+                        <View style={{ marginTop: -10, marginLeft: 10, marginBottom: 10, marginRight: 10 }}>
+                            <CustomButton
+                                title={bsc.settings.nightmare.nightmareCombatScriptName === "" ? "Select Defender Combat Script" : `Selected: ${bsc.settings.nightmare.nightmareCombatScriptName}`}
+                                width={200}
+                                borderRadius={20}
+                                onPress={async () => {
+                                    try {
+                                        const pickerResult = await DocumentPicker.pickSingle({
+                                            type: "text/plain",
+                                        })
+
+                                        const uri = pickerResult.uri
+                                        if (uri.startsWith("content://")) {
+                                            // Convert content uri to file uri.
+                                            // Source: https://stackoverflow.com/a/62677483
+                                            const uriComponents = uri.split("/")
+                                            const fileNameAndExtension = uriComponents[uriComponents.length - 1]
+                                            const destPath = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`
+                                            await RNFS.copyFile(uri, destPath)
+
+                                            // Now read the file using the newly converted file uri.
+                                            await RNFS.readFile("file://" + destPath).then((data) => {
+                                                console.log("Read combat script: ", data)
+
+                                                const newCombatScript: string[] = data
+                                                    .replace(/\r\n/g, "\n") // Replace LF with CRLF.
+                                                    .replace(/[\r\n]/g, "\n")
+                                                    .replace("\t", "") // Replace tab characters.
+                                                    .replace(/\t/g, "")
+                                                    .split("\n")
+
+                                                bsc.setSettings({
+                                                    ...bsc.settings,
+                                                    sandbox: { ...bsc.settings.sandbox, defenderCombatScriptName: pickerResult.name, defenderCombatScript: newCombatScript },
+                                                })
+                                            })
+                                        }
+                                    } catch (e) {
+                                        console.warn(e)
+                                        bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, defenderCombatScriptName: "", defenderCombatScript: [] } })
+                                    }
+                                }}
+                            />
+
+                            <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>
+                                To deselect, cancel/back out of the document picker. If no combat script is selected, Full/Semi Auto is used by default.
+                            </Text>
+
+                            <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                                <Text>How many times to run</Text>
+                                <Picker
+                                    selectedValue={bsc.settings.sandbox.numberOfDefenders}
+                                    onValueChange={(value) => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, numberOfDefenders: value } })}
+                                    mode="dropdown"
+                                    style={{ color: "#000" }}
+                                    dropdownIconColor={"#000"}
+                                >
+                                    {[...Array(100).keys()]
+                                        .map((x) => x + 1)
+                                        .map((value) => {
+                                            return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                        })}
+                                </Picker>
+                            </View>
+
+                            <Divider />
+
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                                    <Text>Group #:</Text>
+                                    <Picker
+                                        selectedValue={bsc.settings.sandbox.defenderGroupNumber}
+                                        onValueChange={(value) => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, defenderGroupNumber: value } })}
+                                        mode="dropdown"
+                                        style={{ color: "#000" }}
+                                        dropdownIconColor={"#000"}
+                                    >
+                                        {[...Array(7 - 1 + 1).keys()]
+                                            .map((x) => x + 1)
+                                            .map((value) => {
+                                                return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                            })}
+                                    </Picker>
+                                </View>
+                                <View style={{ width: Dimensions.get("window").width * 0.3 }}>
+                                    <Text>Party #:</Text>
+                                    <Picker
+                                        selectedValue={bsc.settings.sandbox.defenderPartyNumber}
+                                        onValueChange={(value) => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, defenderPartyNumber: value } })}
+                                        mode="dropdown"
+                                        style={{ color: "#000" }}
+                                        dropdownIconColor={"#000"}
+                                    >
+                                        {[...Array(6 - 1 + 1).keys()]
+                                            .map((x) => x + 1)
+                                            .map((value) => {
+                                                return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
+                                            })}
+                                    </Picker>
+                                </View>
+                            </View>
+                        </View>
+                    ) : null}
+                </View>
+            )
+        }
+    }
+
     const renderTwitterSettings = () => {
         return (
             <View>
@@ -541,6 +665,8 @@ const ExtraSettings = () => {
         <View style={styles.root}>
             <ScrollView>
                 {renderNightmareSettings()}
+
+                {renderSandboxDefenderSettings()}
 
                 {renderTwitterSettings()}
 

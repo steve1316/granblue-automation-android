@@ -135,6 +135,16 @@ const Settings = () => {
                     ...bsc.settings.arcarum,
                     enableStopOnArcarumBoss: true,
                 },
+                sandbox: {
+                    ...bsc.settings.sandbox,
+                    enableDefender: false,
+                    enableCustomDefenderSettings: false,
+                    numberOfDefenders: 1,
+                    defenderCombatScriptName: "",
+                    defenderCombatScript: [],
+                    defenderGroupNumber: 1,
+                    defenderPartyNumber: 1,
+                },
             })
 
             setFirstTime2(false)
@@ -350,6 +360,15 @@ const Settings = () => {
                         subtitle="Enable this if the event has its N/H missions at the very top so the bot can correctly select the correct quest. Or in otherwords, enable this if the Event tab in the Special page has 3 'Select' buttons instead of 2."
                         isChecked={bsc.settings.event.enableLocationIncrementByOne}
                         onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableLocationIncrementByOne: !bsc.settings.event.enableLocationIncrementByOne } })}
+                    />
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Arcarum Sandbox" ? (
+                    <Checkbox
+                        text="Enable Defender settings"
+                        subtitle="Enable additional settings to show up in the Extra Settings page."
+                        isChecked={bsc.settings.sandbox.enableDefender}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, enableDefender: !bsc.settings.arcarum.enableStopOnArcarumBoss } })}
                     />
                 ) : null}
 

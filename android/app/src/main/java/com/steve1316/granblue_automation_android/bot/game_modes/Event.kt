@@ -40,7 +40,10 @@ class Event(private val game: Game, private val missionName: String) {
 				// Once the bot is at the Summon Selection screen, select your Summon and Party and start the mission.
 				if (game.imageUtils.confirmLocation("select_a_summon")) {
 					game.selectSummon(optionalSummonList = game.configData.nightmareSummons)
-					val startCheck: Boolean = game.selectPartyAndStartMission(optionalGroupNumber = game.configData.nightmareGroupNumber, optionalPartyNumber = game.configData.nightmarePartyNumber)
+					val startCheck: Boolean = game.selectPartyAndStartMission(
+						optionalGroupNumber = game.configData.nightmareGroupNumber, optionalPartyNumber = game.configData.nightmarePartyNumber,
+						bypassFirstRun = true
+					)
 
 					// Once preparations are completed, start Combat Mode.
 					if (startCheck && game.combatMode.startCombatMode(optionalCombatScript = game.configData.nightmareCombatScript)) {

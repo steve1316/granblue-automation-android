@@ -134,6 +134,10 @@ class ArcarumSandbox(private val game: Game) {
 		val actionLocations = game.imageUtils.findAll("arcarum_sandbox_action")
 		if (actionLocations.size == 1) {
 			game.gestureUtils.tap(actionLocations[0].x, actionLocations[0].y, "arcarum_sandbox_action")
+		} else if (game.configData.enableDefender && game.configData.numberOfDefeatedDefenders < game.configData.numberOfDefenders) {
+			game.gestureUtils.tap(actionLocations[0].x, actionLocations[0].y, "arcarum_sandbox_action")
+			game.printToLog("\n[ARCARUM.SANDBOX] Found Defender and fighting it...", tag = tag)
+			game.configData.engagedDefenderBattle = true
 		} else {
 			game.gestureUtils.tap(actionLocations[1].x, actionLocations[1].y, "arcarum_sandbox_action")
 		}
@@ -299,9 +303,17 @@ class ArcarumSandbox(private val game: Game) {
 
 		game.wait(3.0)
 
-		if (game.selectPartyAndStartMission()) {
-			if (game.combatMode.startCombatMode()) {
-				game.collectLoot(isCompleted = true)
+		if (game.configData.engagedDefenderBattle) {
+			if (game.selectPartyAndStartMission(game.configData.defenderGroupNumber, game.configData.defenderPartyNumber, bypassFirstRun = true)) {
+				if (game.combatMode.startCombatMode(game.configData.defenderCombatScript)) {
+					game.collectLoot(isCompleted = true, isDefender = game.configData.engagedDefenderBattle)
+				}
+			}
+		} else {
+			if (game.selectPartyAndStartMission()) {
+				if (game.combatMode.startCombatMode()) {
+					game.collectLoot(isCompleted = true)
+				}
 			}
 		}
 	}

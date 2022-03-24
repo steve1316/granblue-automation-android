@@ -476,10 +476,11 @@ class Game(private val myContext: Context) {
 	 * @param optionalGroupNumber Overrides the Group Number. Defaults to the one selected for Farming Mode.
 	 * @param optionalPartyNumber Overrides the Party Number. Defaults to the one selected for Farming Mode.
 	 * @param tries Number of tries to select a Set before failing. Defaults to 3.
+	 * @param bypassFirstRun Determines if the bot should reselect the party in subsequent runs. Defaults to False.
 	 * @return True if the mission was successfully started. False otherwise.
 	 */
-	fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3): Boolean {
-		if (partySelectionFirstRun) {
+	fun selectPartyAndStartMission(optionalGroupNumber: Int = 0, optionalPartyNumber: Int = 0, tries: Int = 3, bypassFirstRun: Boolean = false): Boolean {
+		if (partySelectionFirstRun || bypassFirstRun) {
 			wait(1.0)
 
 			var setLocation: Point? = null
@@ -689,8 +690,12 @@ class Game(private val myContext: Context) {
 	 * @param isEventNightmare Skip the incrementation of runs attempted if this was a Event Nightmare. Defaults to false.
 	 * @param skipInfo Skip printing the information of the run. Defaults to false.
 	 * @param skipPopupCheck Skip checking for popups to get to the Loot Collected screen. Defaults to false
+	 * @param isDefender Skip the incrementation of runs attempted if this was a Defender. Defaults to False.
 	 */
-	fun collectLoot(isCompleted: Boolean, isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false, skipPopupCheck: Boolean = false) {
+	fun collectLoot(
+		isCompleted: Boolean, isPendingBattle: Boolean = false, isEventNightmare: Boolean = false, skipInfo: Boolean = false, skipPopupCheck: Boolean = false, isDefender: Boolean =
+			false
+	) {
 		var amountGained = 0
 
 		// Close all popups until the bot reaches the Loot Collected screen.
@@ -718,7 +723,7 @@ class Game(private val myContext: Context) {
 		}
 
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
-		if (isCompleted && !isPendingBattle && !isEventNightmare) {
+		if (isCompleted && !isPendingBattle && !isEventNightmare && !isDefender) {
 			printToLog("\n[INFO] Detecting if any user-specified loot dropped this run...")
 			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				imageUtils.findFarmedItems(configData.itemName)
@@ -739,7 +744,7 @@ class Game(private val myContext: Context) {
 			itemAmountFarmed += amountGained
 		}
 
-		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo) {
+		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo && !isDefender) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				printToLog("\n********************")
 				printToLog("********************")
@@ -809,6 +814,17 @@ class Game(private val myContext: Context) {
 					DiscordUtils.queue.add(discordString)
 				}
 			}
+		} else if (isDefender) {
+			configData.engagedDefenderBattle = false
+			configData.numberOfDefeatedDefenders += 1
+			printToLog("\n********************")
+			printToLog("********************")
+			printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
+			printToLog("[INFO] Mission: ${configData.missionName}")
+			printToLog("[INFO] Summons: ${configData.summonList}")
+			printToLog("[INFO] Amount of Defenders defeated: ${configData.numberOfDefeatedDefenders}/${configData.numberOfDefenders}")
+			printToLog("********************")
+			printToLog("********************")
 		}
 
 		return

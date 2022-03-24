@@ -139,6 +139,21 @@ class JSONParser {
 		}
 
 		try {
+			val sandboxObj = jObj.getJSONObject("sandbox")
+			sharedPreferences.edit {
+				putBoolean("enableDefender", sandboxObj.getBoolean("enableDefender"))
+				putBoolean("enableCustomDefenderSettings", sandboxObj.getBoolean("enableCustomDefenderSettings"))
+				putString("defenderCombatScriptName", sandboxObj.getString("defenderCombatScriptName"))
+				putString("defenderCombatScript", toArrayList(sandboxObj.getJSONArray("defenderCombatScript")).joinToString("|"))
+				putInt("numberOfDefenders", sandboxObj.getInt("numberOfDefenders"))
+				putInt("defenderGroupNumber", sandboxObj.getInt("defenderGroupNumber"))
+				putInt("defenderPartyNumber", sandboxObj.getInt("defenderPartyNumber"))
+				commit()
+			}
+		} catch (e: Exception) {
+		}
+
+		try {
 			val genericObj = jObj.getJSONObject("generic")
 			sharedPreferences.edit {
 				putBoolean("enableForceReload", genericObj.getBoolean("enableForceReload"))

@@ -72,6 +72,17 @@ export interface Settings {
         enableStopOnArcarumBoss: boolean
     }
 
+    // Arcarum Sandbox settings
+    sandbox: {
+        enableDefender: boolean
+        enableCustomDefenderSettings: boolean
+        numberOfDefenders: number
+        defenderCombatScriptName: string
+        defenderCombatScript: string[]
+        defenderGroupNumber: number
+        defenderPartyNumber: number
+    }
+
     generic: {
         enableForceReload: boolean
     }
@@ -174,6 +185,15 @@ export const defaultSettings: Settings = {
     },
     arcarum: {
         enableStopOnArcarumBoss: true,
+    },
+    sandbox: {
+        enableDefender: false,
+        enableCustomDefenderSettings: false,
+        numberOfDefenders: 1,
+        defenderCombatScriptName: "",
+        defenderCombatScript: [],
+        defenderGroupNumber: 1,
+        defenderPartyNumber: 1,
     },
     generic: {
         enableForceReload: false,

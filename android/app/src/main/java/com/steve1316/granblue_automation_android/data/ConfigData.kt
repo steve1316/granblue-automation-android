@@ -64,6 +64,17 @@ class ConfigData(myContext: Context) {
 	// Arcarum
 	val enableStopOnArcarumBoss: Boolean
 
+	// Sandbox
+	val enableDefender: Boolean
+	val enableCustomDefenderSettings: Boolean
+	val numberOfDefenders: Int
+	var numberOfDefeatedDefenders: Int
+	var engagedDefenderBattle: Boolean
+	val defenderCombatScriptName: String
+	val defenderCombatScript: List<String>
+	val defenderGroupNumber: Int
+	val defenderPartyNumber: Int
+
 	// Generic
 	val enableForceReload: Boolean
 
@@ -183,6 +194,15 @@ class ConfigData(myContext: Context) {
 
 		enableStopOnArcarumBoss = sharedPreferences.getBoolean("enableStopOnArcarumBoss", true)
 
+		enableDefender = sharedPreferences.getBoolean("enableDefender", false)
+		enableCustomDefenderSettings = sharedPreferences.getBoolean("enableCustomDefenderSettings", false)
+		numberOfDefenders = sharedPreferences.getInt("numberOfDefenders", 1)
+		numberOfDefeatedDefenders = 0
+		engagedDefenderBattle = false
+		defenderCombatScriptName = sharedPreferences.getString("defenderCombatScriptName", "")!!
+		defenderCombatScript = sharedPreferences.getString("defenderCombatScript", "")!!.split("|")
+		defenderGroupNumber = sharedPreferences.getInt("defenderGroupNumber", 1)
+		defenderPartyNumber = sharedPreferences.getInt("defenderPartyNumber", 1)
 		enableForceReload = sharedPreferences.getBoolean("enableForceReload", false)
 
 		enableCalibrationAdjustment = sharedPreferences.getBoolean("enableCalibrationAdjustment", false)
