@@ -34,7 +34,6 @@ class ConfigData(myContext: Context) {
 	val discordUserID: String
 
 	// Configuration
-	val enableAutoRestore: Boolean
 	val enableDelayBetweenRuns: Boolean
 	val delayBetweenRuns: Int
 	val enableRandomizedDelayBetweenRuns: Boolean
@@ -119,6 +118,7 @@ class ConfigData(myContext: Context) {
 
 		val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 
+		// Game
 		farmingMode = sharedPreferences.getString("farmingMode", "")!!
 		mapName = sharedPreferences.getString("map", "")!!
 		missionName = sharedPreferences.getString("mission", "")!!
@@ -135,16 +135,18 @@ class ConfigData(myContext: Context) {
 		partyNumber = sharedPreferences.getInt("partyNumber", 1)
 		debugMode = sharedPreferences.getBoolean("debugMode", false)
 
+		// Twitter
 		twitterAPIKey = sharedPreferences.getString("twitterAPIKey", "")!!
 		twitterAPIKeySecret = sharedPreferences.getString("twitterAPIKeySecret", "")!!
 		twitterAccessToken = sharedPreferences.getString("twitterAccessToken", "")!!
 		twitterAccessTokenSecret = sharedPreferences.getString("twitterAccessTokenSecret", "")!!
 
+		// Discord
 		enableDiscordNotifications = sharedPreferences.getBoolean("enableDiscordNotifications", false)
 		discordToken = sharedPreferences.getString("discordToken", "")!!
 		discordUserID = sharedPreferences.getString("discordUserID", "")!!
 
-		enableAutoRestore = sharedPreferences.getBoolean("enableAutoRestore", false)
+		// Configuration
 		enableDelayBetweenRuns = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
 		delayBetweenRuns = sharedPreferences.getInt("delayBetweenRuns", 5)
 		enableRandomizedDelayBetweenRuns = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)
@@ -154,6 +156,7 @@ class ConfigData(myContext: Context) {
 		enableAutoQuickSummon = sharedPreferences.getBoolean("enableAutoQuickSummon", false)
 		enableBypassResetSummon = sharedPreferences.getBoolean("enableBypassResetSummon", false)
 
+		// Nightmare
 		enableNightmare = sharedPreferences.getBoolean("enableNightmare", false)
 		if (sharedPreferences.getBoolean("enableCustomNightmareSettings", false)) {
 			Log.d(tag, "[NIGHTMARE] Settings initializing...")
@@ -185,15 +188,19 @@ class ConfigData(myContext: Context) {
 			nightmarePartyNumber = sharedPreferences.getInt("nightmarePartyNumber", 1)
 		}
 
+		// Event
 		enableLocationIncrementByOne = sharedPreferences.getBoolean("enableLocationIncrementByOne", false)
 		enableSelectBottomCategory = sharedPreferences.getBoolean("selectBottomCategory", false)
 
+		// Raid
 		enableAutoExitRaid = sharedPreferences.getBoolean("enableAutoExitRaid", false)
 		timeAllowedUntilAutoExitRaid = sharedPreferences.getInt("timeAllowedUntilAutoExitRaid", 1).toLong() * 60L * 1000L
 		enableNoTimeout = sharedPreferences.getBoolean("enableNoTimeout", false)
 
+		// Arcarum
 		enableStopOnArcarumBoss = sharedPreferences.getBoolean("enableStopOnArcarumBoss", true)
 
+		// Sandbox
 		enableDefender = sharedPreferences.getBoolean("enableDefender", false)
 		enableCustomDefenderSettings = sharedPreferences.getBoolean("enableCustomDefenderSettings", false)
 		numberOfDefenders = sharedPreferences.getInt("numberOfDefenders", 1)
@@ -203,8 +210,11 @@ class ConfigData(myContext: Context) {
 		defenderCombatScript = sharedPreferences.getString("defenderCombatScript", "")!!.split("|")
 		defenderGroupNumber = sharedPreferences.getInt("defenderGroupNumber", 1)
 		defenderPartyNumber = sharedPreferences.getInt("defenderPartyNumber", 1)
+
+		// Generic
 		enableForceReload = sharedPreferences.getBoolean("enableForceReload", false)
 
+		// Adjustment
 		enableCalibrationAdjustment = sharedPreferences.getBoolean("enableCalibrationAdjustment", false)
 		adjustCalibration = sharedPreferences.getInt("adjustCalibration", 5)
 		enableGeneralAdjustment = sharedPreferences.getBoolean("enableGeneralAdjustment", false)
@@ -232,6 +242,7 @@ class ConfigData(myContext: Context) {
 		adjustArcarumAction = sharedPreferences.getInt("adjustArcarumAction", 3)
 		adjustArcarumStageEffect = sharedPreferences.getInt("adjustArcarumStageEffect", 10)
 
+		// Android
 		enableDelayTap = sharedPreferences.getBoolean("enableDelayTap", false)
 		delayTapMilliseconds = sharedPreferences.getInt("delayTapMilliseconds", 1000)
 		confidence = sharedPreferences.getFloat("confidence", 0.8f).toDouble() / 100.0

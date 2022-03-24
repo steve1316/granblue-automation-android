@@ -845,15 +845,6 @@ class Game(private val myContext: Context) {
 				throw Exception("Failed to progress in the Check for Popups process...")
 			}
 
-			if (!configData.enableAutoRestore && (imageUtils.confirmLocation("auto_ap_recovered", tries = 1) || imageUtils.confirmLocation("auto_ap_recovered2", tries = 1))) {
-				break
-			}
-
-			// Break out of the loop if the bot detected the "Not Enough AP" popup.
-			if (!configData.enableAutoRestore && imageUtils.confirmLocation("not_enough_ap", tries = 1)) {
-				break
-			}
-
 			if (configData.farmingMode == "Rise of the Beasts" && imageUtils.confirmLocation("rotb_proud_solo_quest", tries = 1)) {
 				// Scroll down the screen a little bit because the popup itself is too long.
 				gestureUtils.scroll()
