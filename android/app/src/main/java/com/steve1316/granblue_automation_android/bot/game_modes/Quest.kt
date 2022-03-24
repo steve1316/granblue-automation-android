@@ -396,9 +396,9 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 */
 	private fun selectPhantagrandeChapterNode() {
 		// Grab the location of the "World" button.
-		var worldButtonLocation = game.imageUtils.findButton("world", tries = 5)
+		var worldButtonLocation = game.imageUtils.findButton("world", tries = 30)
 		if (worldButtonLocation == null) {
-			worldButtonLocation = game.imageUtils.findButton("world2", tries = 5)!!
+			worldButtonLocation = game.imageUtils.findButton("world2", tries = 30)!!
 		}
 
 		if (missionName == "Scattered Cargo") {
@@ -536,9 +536,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 		} else if (missionName == "Rocket Raid") {
 			game.printToLog("\n[QUEST] Moving to Chapter 59 node...", tag = tag)
 			game.gestureUtils.tap(worldButtonLocation.x + 155, worldButtonLocation.y + 185, "template_node")
-		}
-
-		else {
+		} else {
 			throw QuestException("Selected mission of $missionName does not exist.")
 		}
 	}
@@ -549,9 +547,9 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 */
 	private fun selectNalhegrandeChapterNode() {
 		// Grab the location of the "World" button.
-		var worldButtonLocation = game.imageUtils.findButton("world", tries = 5)
+		var worldButtonLocation = game.imageUtils.findButton("world", tries = 30)
 		if (worldButtonLocation == null) {
-			worldButtonLocation = game.imageUtils.findButton("world2", tries = 5)!!
+			worldButtonLocation = game.imageUtils.findButton("world2", tries = 30)!!
 		}
 
 		if (missionName == "Stocking Up for Winter") {
@@ -597,9 +595,9 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 */
 	private fun selectOarlyegrandeChapterNode() {
 		// Grab the location of the "World" button.
-		var worldButtonLocation = game.imageUtils.findButton("world", tries = 5)
+		var worldButtonLocation = game.imageUtils.findButton("world", tries = 30)
 		if (worldButtonLocation == null) {
-			worldButtonLocation = game.imageUtils.findButton("world2", tries = 5)!!
+			worldButtonLocation = game.imageUtils.findButton("world2", tries = 30)!!
 		}
 
 		if (missionName == "House of Happiness") {
@@ -701,14 +699,26 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			}
 
 			// From the World page, move to the target island and then select the target chapter node.
-			if (phantagrandePage1Islands.contains(currentIsland) || phantagrandePage2Islands.contains(currentIsland)) {
-				navigateToPhantagrandeSkydomIsland(mapName, currentIsland)
+			if (phantagrandePage1Islands.contains(mapName) || phantagrandePage2Islands.contains(mapName)) {
+				if (!checkLocation) {
+					navigateToPhantagrandeSkydomIsland(mapName, currentIsland)
+					game.wait(3.0)
+				}
+
 				selectPhantagrandeChapterNode()
-			} else if (nalhegrandePage1Islands.contains(currentIsland) || nalhegrandePage2Islands.contains(currentIsland)) {
-				navigateToNalhegrandeSkydomIsland(mapName, currentIsland)
+			} else if (nalhegrandePage1Islands.contains(mapName) || nalhegrandePage2Islands.contains(mapName)) {
+				if (!checkLocation) {
+					navigateToNalhegrandeSkydomIsland(mapName, currentIsland)
+					game.wait(3.0)
+				}
+
 				selectNalhegrandeChapterNode()
-			} else if (oarlyegrandePage1Islands.contains(currentIsland)) {
-				navigateToOarlyegrandeSkydomIsland(mapName)
+			} else if (oarlyegrandePage1Islands.contains(mapName)) {
+				if (!checkLocation) {
+					navigateToOarlyegrandeSkydomIsland(mapName)
+					game.wait(3.0)
+				}
+
 				selectOarlyegrandeChapterNode()
 			}
 
