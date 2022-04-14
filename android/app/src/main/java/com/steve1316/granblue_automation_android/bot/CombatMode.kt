@@ -920,7 +920,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 								game.wait(0.5)
 
 								// Select the targeted Character.
-								when (tempSkillCommandList[0]) {
+								when (tempSkillCommandList[0]) { // 538, 688
 									"target(1)" -> {
 										game.printToLog("[COMBAT] Targeting Character 1 for Skill.", tag = tag)
 										if (!game.imageUtils.isTablet) {
@@ -957,15 +957,15 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 										game.printToLog("[COMBAT] Targeting Character 3 for Skill.", tag = tag)
 										if (!game.imageUtils.isTablet) {
 											if (game.imageUtils.isLowerEnd) {
-												game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 125.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 135.0, selectCharacterLocation.y + 125.0, "template_target")
 											} else {
-												game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 195.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 210.0, selectCharacterLocation.y + 195.0, "template_target")
 											}
 										} else {
 											if (!game.imageUtils.isLandscape) {
-												game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 135.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 155.0, selectCharacterLocation.y + 135.0, "template_target")
 											} else {
-												game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 115.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 125.0, selectCharacterLocation.y + 115.0, "template_target")
 											}
 										}
 									}
@@ -1005,15 +1005,15 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 										game.printToLog("[COMBAT] Targeting Character 6 for Skill.", tag = tag)
 										if (!game.imageUtils.isTablet) {
 											if (game.imageUtils.isLowerEnd) {
-												game.gestureUtils.tap(selectCharacterLocation.x - 135.0, selectCharacterLocation.y + 375.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 135.0, selectCharacterLocation.y + 375.0, "template_target")
 											} else {
-												game.gestureUtils.tap(selectCharacterLocation.x - 210.0, selectCharacterLocation.y + 570.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 210.0, selectCharacterLocation.y + 570.0, "template_target")
 											}
 										} else {
 											if (!game.imageUtils.isLandscape) {
-												game.gestureUtils.tap(selectCharacterLocation.x - 155.0, selectCharacterLocation.y + 415.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 155.0, selectCharacterLocation.y + 415.0, "template_target")
 											} else {
-												game.gestureUtils.tap(selectCharacterLocation.x - 125.0, selectCharacterLocation.y + 315.0, "template_target")
+												game.gestureUtils.tap(selectCharacterLocation.x + 125.0, selectCharacterLocation.y + 315.0, "template_target")
 											}
 										}
 									}
