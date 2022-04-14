@@ -17,8 +17,21 @@ class DreadBarrage(private val game: Game, private val missionName: String) {
 
 		// Scroll the screen down a little bit and then click on the Dread Barrage banner.
 		game.printToLog("\n[DREAD.BARRAGE] Now navigating to Dread Barrage...", tag = tag)
-		game.gestureUtils.swipe(500f, 1000f, 500f, 700f)
-		game.findAndClickButton("dread_barrage")
+
+		var tries = 10
+		while (true) {
+			game.gestureUtils.swipe(500f, 1000f, 500f, 500f)
+
+			if (game.findAndClickButton("dread_barrage")) {
+				break
+			} else {
+				tries -= 1
+
+				if (tries <= 0) {
+					throw DreadBarrageException("Failed to find the Dread Barrage banner to start navigation.")
+				}
+			}
+		}
 
 		game.wait(3.0)
 
