@@ -32,6 +32,13 @@ export interface Settings {
         discordUserID: string
     }
 
+    // API settings.
+    api: {
+        enableOptInAPI: boolean
+        username: string
+        password: string
+    }
+
     // Configuration settings.
     configuration: {
         enableDelayBetweenRuns: boolean
@@ -153,6 +160,11 @@ export const defaultSettings: Settings = {
         enableDiscordNotifications: false,
         discordToken: "",
         discordUserID: "",
+    },
+    api: {
+        enableOptInAPI: false,
+        username: "",
+        password: "",
     },
     configuration: {
         enableDelayBetweenRuns: false,

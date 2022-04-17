@@ -393,6 +393,47 @@ const ExtraSettings = () => {
         )
     }
 
+    const renderAPIIntegrationSettings = () => {
+        return (
+            <View>
+                <TitleDivider
+                    title="API Integration"
+                    subtitle="You can opt-in to this feature where the bot will automatically send successful results from the Loot Collection process and you can view your results and similar ones over on the
+                    Granblue Automation Statistics website."
+                    hasIcon={true}
+                    iconName="web"
+                />
+                <Checkbox
+                    text="Enable Opt-in for API Integration"
+                    subtitle="Enable API Integration with Granblue Automation Statistics"
+                    isChecked={bsc.settings.api.enableOptInAPI}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, api: { ...bsc.settings.api, enableOptInAPI: !bsc.settings.api.enableOptInAPI } })}
+                />
+                {bsc.settings.api.enableOptInAPI ? (
+                    <View>
+                        <Text style={{ marginBottom: 10 }}>
+                            {`How this works:\n\nInput your username and password below that you used to register a new account on the website. \n\nThe account registered on the website will be used to associate your success results from the Loot Collection process. A success result describes the Loot Collection process detecting a item drop after each run.`}
+                        </Text>
+                        <Input
+                            label="Username"
+                            containerStyle={{ marginLeft: -10 }}
+                            value={bsc.settings.api.username}
+                            placeholder="Insert your username here"
+                            onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, api: { ...bsc.settings.api, username: value } })}
+                        />
+                        <Input
+                            label="Password"
+                            containerStyle={{ marginLeft: -10 }}
+                            value={bsc.settings.api.password}
+                            placeholder="Insert your password here"
+                            onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, api: { ...bsc.settings.api, password: value } })}
+                        />
+                    </View>
+                ) : null}
+            </View>
+        )
+    }
+
     const renderConfigurationSettings = () => {
         return (
             <View>
@@ -671,6 +712,8 @@ const ExtraSettings = () => {
                 {renderTwitterSettings()}
 
                 {renderDiscordSettings()}
+
+                {renderAPIIntegrationSettings()}
 
                 {renderConfigurationSettings()}
 
