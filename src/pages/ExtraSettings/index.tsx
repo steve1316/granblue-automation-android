@@ -12,6 +12,10 @@ import { Dimensions, Modal, ScrollView, StyleSheet, TouchableOpacity, View } fro
 import { Divider, Input, Text } from "react-native-elements"
 import { Picker } from "@react-native-picker/picker"
 import { RangeSlider, Slider } from "@sharcoux/slider"
+import LoadingButton from "../../components/LoadingButton"
+import axios, { AxiosError } from "axios"
+import SnackBar from "rn-snackbar-component"
+import MIcon from "react-native-vector-icons/MaterialCommunityIcons"
 
 const styles = StyleSheet.create({
     root: {
@@ -40,6 +44,10 @@ const styles = StyleSheet.create({
 
 const ExtraSettings = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
+    const [showSnackbar, setShowSnackbar] = useState<boolean>(false)
+    const [testInProgress, setTestInProgress] = useState<boolean>(false)
+    const [testFailed, setTestFailed] = useState<boolean>(false)
+    const [testErrorMessage, setTestErrorMessage] = useState<string>("")
 
     const bsc = useContext(BotStateContext)
 
@@ -428,6 +436,7 @@ const ExtraSettings = () => {
                             placeholder="Insert your password here"
                             onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, api: { ...bsc.settings.api, password: value } })}
                         />
+                        <LoadingButton title="Test Login into API" loadingTitle="In progress..." isLoading={testInProgress} onPress={() => testAPIIntegration()} />
                     </View>
                 ) : null}
             </View>
@@ -702,6 +711,23 @@ const ExtraSettings = () => {
         )
     }
 
+    const testAPIIntegration = () => {
+        setTestInProgress(true)
+        axios
+            .post("https://granblue-automation-statistics.com/api/login", { username: bsc.settings.api.username, password: bsc.settings.api.password }, { withCredentials: true })
+            .then(() => {
+                setTestFailed(false)
+            })
+            .catch((e: AxiosError) => {
+                setTestFailed(true)
+                setTestErrorMessage(e.message)
+            })
+            .finally(() => {
+                setTestInProgress(false)
+                setShowSnackbar(true)
+            })
+    }
+
     return (
         <View style={styles.root}>
             <ScrollView>
@@ -719,6 +745,16 @@ const ExtraSettings = () => {
 
                 {renderDeviceSettings()}
             </ScrollView>
+
+            <SnackBar
+                visible={showSnackbar}
+                message={testFailed ? testErrorMessage : "Test was successful."}
+                actionHandler={() => setShowSnackbar(false)}
+                action={<MIcon name="close" size={25} />}
+                autoHidingTime={10000}
+                containerStyle={{ backgroundColor: testFailed ? "red" : "green", borderRadius: 10 }}
+                native={false}
+            />
         </View>
     )
 }
