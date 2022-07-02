@@ -1,21 +1,19 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.6.1</latestVersion>
+        <latestVersion>3.7.0</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.6.1 - Changelog
+v3.7.0 - Changelog
 
 New
 ---
-- Added Defender handling logic by @KoiKomei.
-
-Changed
----
-- Data adjustment and corrections for Arcarum Sandbox missions to have "Repeated Run" item added to all of them.
+- Added support for optional API integration with the Granblue Automation Statistics website.
+- Added 2 buttons in Extra Settings page to test connection to Twitter and Discord APIs.
 
 Fixed
 ---
-- Fix several bugs related to Quest navigation.
+- Fix edge cases where Dread Barrage banner was too far down the page.
+- Fix incorrect skill targeting for targets 3 and 6.
 
         </releaseNotes>
     </update>
