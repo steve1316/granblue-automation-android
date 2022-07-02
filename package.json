@@ -27,6 +27,7 @@
         "react-native-safe-area-context": "^3.3.2",
         "react-native-screens": "^3.10.1",
         "react-native-vector-icons": "^9.0.0",
+        "react-native-version-number": "^0.3.6",
         "react-native-web": "^0.17.5",
         "rn-snackbar-component": "^0.0.5"
     },
