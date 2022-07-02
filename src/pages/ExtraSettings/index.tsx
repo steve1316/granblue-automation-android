@@ -711,16 +711,16 @@ const ExtraSettings = () => {
         )
     }
 
-    const testAPIIntegration = () => {
+    const testAPIIntegration = async () => {
         setTestInProgress(true)
-        axios
-            .post("https://granblue-automation-statistics.com/api/login", { username: bsc.settings.api.username, password: bsc.settings.api.password }, { withCredentials: true })
+        await axios
+            .post(`${bsc.entryPoint}/api/login`, { username: bsc.settings.api.username, password: bsc.settings.api.password }, { withCredentials: true })
             .then(() => {
                 setTestFailed(false)
             })
             .catch((e: AxiosError) => {
                 setTestFailed(true)
-                setTestErrorMessage(e.message)
+                setTestErrorMessage(`${e}`)
             })
             .finally(() => {
                 setTestInProgress(false)
