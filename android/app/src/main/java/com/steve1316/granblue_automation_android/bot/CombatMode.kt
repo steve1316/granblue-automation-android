@@ -1594,6 +1594,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 			if (listOfExitEventsForFalse.contains(e.message)) {
 				return false
 			} else if (listOfExitEventsForTrue.contains(e.message)) {
+				// Calculate elapsed time for the API.
+				if (game.configData.enableOptInAPI) {
+					game.configData.combatElapsedTime = System.currentTimeMillis() - startTime
+				}
+
 				return true
 			}
 		}
@@ -1606,6 +1611,11 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		game.printToLog("[COMBAT] Ending Combat Mode.", tag = tag)
 		game.printToLog("####################", tag = tag)
 		game.printToLog("####################", tag = tag)
+
+		// Calculate elapsed time for the API.
+		if (game.configData.enableOptInAPI) {
+			game.configData.combatElapsedTime = System.currentTimeMillis() - startTime
+		}
 
 		return if (!retreatCheckFlag) {
 			game.printToLog("\n[INFO] Bot has reached the Quest Results screen.", tag = tag)

@@ -21,6 +21,7 @@ class ConfigData(myContext: Context) {
 	val groupNumber: Int
 	val partyNumber: Int
 	val debugMode: Boolean
+	var combatElapsedTime: Long = 0L
 
 	// Twitter
 	val twitterAPIKey: String
@@ -32,6 +33,9 @@ class ConfigData(myContext: Context) {
 	val enableDiscordNotifications: Boolean
 	val discordToken: String
 	val discordUserID: String
+
+	// API
+	val enableOptInAPI: Boolean
 
 	// Configuration
 	val enableDelayBetweenRuns: Boolean
@@ -145,6 +149,9 @@ class ConfigData(myContext: Context) {
 		enableDiscordNotifications = sharedPreferences.getBoolean("enableDiscordNotifications", false)
 		discordToken = sharedPreferences.getString("discordToken", "")!!
 		discordUserID = sharedPreferences.getString("discordUserID", "")!!
+
+		// API
+		enableOptInAPI = sharedPreferences.getBoolean("enableOptInAPI", false)
 
 		// Configuration
 		enableDelayBetweenRuns = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
