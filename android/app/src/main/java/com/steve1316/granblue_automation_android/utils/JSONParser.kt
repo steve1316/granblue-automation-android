@@ -75,6 +75,15 @@ class JSONParser {
 		}
 
 		try {
+			val apiObj = jObj.getJSONObject("api")
+			sharedPreferences.edit {
+				putBoolean("enableOptInAPI", apiObj.getBoolean("enableOptInAPI"))
+				commit()
+			}
+		} catch (e: Exception) {
+		}
+
+		try {
 			val configurationObj = jObj.getJSONObject("configuration")
 			sharedPreferences.edit {
 				putBoolean("enableFullElixir", configurationObj.getBoolean("enableFullElixir"))
