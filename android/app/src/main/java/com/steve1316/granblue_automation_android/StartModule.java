@@ -21,13 +21,20 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.steve1316.granblue_automation_android.bot.Game;
-import com.steve1316.granblue_automation_android.utils.DiscordUtils;
 import com.steve1316.granblue_automation_android.utils.JSONParser;
 import com.steve1316.granblue_automation_android.utils.MediaProjectionService;
 import com.steve1316.granblue_automation_android.utils.MyAccessibilityService;
 import com.steve1316.granblue_automation_android.utils.TwitterRoomFinder;
 
+import org.javacord.api.DiscordApi;
+import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.channel.PrivateChannel;
+import org.javacord.api.entity.user.User;
+import org.javacord.api.entity.user.UserStatus;
+
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Queue;
 
 public class StartModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private final String tag = loggerTag + "StartModule";
@@ -49,15 +56,103 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
         }
     }
 
-    @ReactMethod(isBlockingSynchronousMethod = true)
-    public String startTwitterTest() {
-        // Initialize settings.
-        JSONParser parser = new JSONParser();
-        parser.initializeSettings(context);
-        Game game = new Game(context);
-        TwitterRoomFinder twitter = new TwitterRoomFinder(game, true);
-        return twitter.testConnection();
+    @ReactMethod()
+    public void startTwitterTest() {
+        new Thread(() -> {
+            // Initialize settings.
+            JSONParser parser = new JSONParser();
+            parser.initializeSettings(context);
+            Game game = new Game(context);
+            TwitterRoomFinder twitter = new TwitterRoomFinder(game, true);
+            sendEvent("testTwitter", twitter.testConnection());
+        }).start();
     }
+
+    @ReactMethod()
+    public void startDiscordTest() {
+        class DiscordRunner {
+            DiscordApi api = null;
+            User user = null;
+            PrivateChannel privateChannel = null;
+
+            public void disconnect() {
+                if (api != null && api.getStatus() == UserStatus.ONLINE) {
+                    api.disconnect();
+                }
+            }
+
+            public void sendMessage(String message) {
+                if (privateChannel != null) {
+                    privateChannel.sendMessage(message).join();
+                }
+            }
+
+            public void main() {
+                JSONParser parser = new JSONParser();
+                parser.initializeSettings(context);
+                Game game = new Game(context);
+                Queue<String> queue = new LinkedList<>();
+
+                Log.d(tag, "Starting Discord test now...");
+
+                try {
+                    api = new DiscordApiBuilder().setToken(game.getConfigData().getDiscordToken()).login().join();
+                } catch (Exception e) {
+                    sendEvent("testDiscord", "[DISCORD] Failed to connect to Discord API using provided token.");
+                    return;
+                }
+
+                try {
+                    user = api.getUserById(game.getConfigData().getDiscordUserID()).join();
+                } catch (Exception e) {
+                    sendEvent("testDiscord", "[DISCORD] Failed to find user using provided user ID.");
+                    return;
+                }
+
+                try {
+                    privateChannel = user.openPrivateChannel().join();
+                } catch (Exception e) {
+                    sendEvent("testDiscord", "[DISCORD] Failed to open private channel with user.");
+                    return;
+                }
+
+                Log.d(tag, "Successfully fetched reference to user and their private channel.");
+
+                queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```");
+                queue.add("Testing 1 2 3");
+                queue.add("```diff\n- Terminated connection to Discord API for Granblue Automation Android\n```");
+
+                try {
+                    // Loop and send any messages inside the Queue.
+                    while (true) {
+                        if (!queue.isEmpty()) {
+                            String message = queue.remove();
+                            sendMessage(message);
+
+                            if (message.contains("Terminated connection to Discord API")) {
+                                break;
+                            }
+                        }
+                    }
+
+                    Log.d(tag, "Terminated connection to Discord API.");
+                } catch (Exception e) {
+                    Log.e(tag, e.getMessage());
+                    sendEvent("testDiscord", e.getMessage());
+                    return;
+                }
+
+                sendEvent("testDiscord", "Test successfully completed.");
+            }
+        }
+
+        new Thread(() -> {
+            DiscordRunner discord = new DiscordRunner();
+            discord.main();
+            discord.disconnect();
+        }).start();
+    }
+
     public static void sendEvent(String eventName, String message) {
         WritableMap params = Arguments.createMap();
         params.putString("message", message);

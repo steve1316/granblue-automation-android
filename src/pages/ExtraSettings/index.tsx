@@ -8,7 +8,7 @@ import RNFS from "react-native-fs"
 import TitleDivider from "../../components/TitleDivider"
 import TransferList from "../../components/TransferList"
 import { BotStateContext } from "../../context/BotStateContext"
-import { Dimensions, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
+import { DeviceEventEmitter, Dimensions, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { Divider, Input, Text } from "react-native-elements"
 import { Picker } from "@react-native-picker/picker"
 import { RangeSlider, Slider } from "@sharcoux/slider"
@@ -399,6 +399,7 @@ const ExtraSettings = () => {
                             value={bsc.settings.discord.discordUserID}
                             onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, discord: { ...bsc.settings.discord, discordUserID: value } })}
                         />
+                        <LoadingButton title="Test Discord API" loadingTitle="In progress..." isLoading={testInProgress} onPress={() => testDiscord()} />
                     </View>
                 ) : null}
             </View>
@@ -732,22 +733,42 @@ const ExtraSettings = () => {
             })
     }
 
-    const testTwitter = async () => {
-        setTestInProgress(true)
-        try {
-            let result: string = await StartModule.startTwitterTest()
+    const testTwitter = () => {
+        // Add listener to work around the UI freezing issue associated with Javacord blocking the thread.
+        DeviceEventEmitter.addListener("testTwitter", (data) => {
+            let result: string = data["message"]
             if (result !== "Test successfully completed.") {
-                throw Error(result)
+                setTestFailed(true)
+                setTestErrorMessage(result)
+            } else {
+                setTestFailed(false)
             }
 
-            setTestFailed(false)
-        } catch (e) {
-            setTestFailed(true)
-            setTestErrorMessage(`${e}`)
-        } finally {
             setTestInProgress(false)
             setShowSnackbar(true)
-        }
+        })
+
+        setTestInProgress(true)
+        StartModule.startTwitterTest()
+    }
+
+    const testDiscord = () => {
+        // Add listener to work around the UI freezing issue associated with Javacord blocking the thread.
+        DeviceEventEmitter.addListener("testDiscord", (data) => {
+            let result: string = data["message"]
+            if (result !== "Test successfully completed.") {
+                setTestFailed(true)
+                setTestErrorMessage(result)
+            } else {
+                setTestFailed(false)
+            }
+
+            setTestInProgress(false)
+            setShowSnackbar(true)
+        })
+
+        setTestInProgress(true)
+        StartModule.startDiscordTest()
     }
 
     useEffect(() => {
