@@ -190,7 +190,7 @@ const Start = () => {
 
     const handleStart = async () => {
         // Login to API.
-        if (bsc.settings.api.enableOptInAPI) {
+        if (bsc.settings.api.enableOptInAPI && !successfulAPILogin) {
             await loginToAPI()
         }
     }
@@ -209,7 +209,6 @@ const Start = () => {
                 }
             )
             .then(() => {
-                console.log("I AM LOGGED IN")
                 let newLog = [...mlc.asyncMessages, `Successfully logged into Granblue Automation Statistics API.\n`]
                 mlc.setAsyncMessages(newLog)
                 setSuccessfulAPILogin(true)
