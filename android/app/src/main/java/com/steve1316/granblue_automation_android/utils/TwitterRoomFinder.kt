@@ -1,10 +1,7 @@
 package com.steve1316.granblue_automation_android.utils
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.StrictMode
 import android.util.Log
-import androidx.preference.PreferenceManager
 import com.steve1316.granblue_automation_android.MainActivity
 import com.steve1316.granblue_automation_android.bot.Game
 import twitter4j.*
@@ -56,7 +53,7 @@ class MyListener(private val game: Game) : StatusListener {
 /**
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
-class TwitterRoomFinder(private val game: Game) {
+class TwitterRoomFinder(private val game: Game, test: Boolean = false) {
 	private lateinit var twitter: Twitter
 	private val listener = MyListener(game)
 
@@ -187,7 +184,7 @@ class TwitterRoomFinder(private val game: Game) {
 	}
 
 	init {
-		if (game.configData.farmingMode == "Raid") {
+		if (game.configData.farmingMode == "Raid" && !test) {
 			game.printToLog("\n[INFO] Connecting to Twitter API...", tag = tag)
 
 			// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
@@ -216,7 +213,7 @@ class TwitterRoomFinder(private val game: Game) {
 
 				// Test connection by fetching user's timeline.
 				twitter = TwitterFactory(configurationBuilder.build()).instance
-				twitter.timelines().homeTimeline
+				twitter.verifyCredentials()
 
 				game.printToLog("[SUCCESS] Connection to Twitter API is successful.", tag = tag)
 
@@ -224,6 +221,36 @@ class TwitterRoomFinder(private val game: Game) {
 			} catch (e: Exception) {
 				game.printToLog("[ERROR] Failed to connect to Twitter API: ${e.stackTraceToString()}", tag = tag, isError = true)
 			}
+		}
+	}
+
+	fun testConnection(): String {
+		Log.d(tag, "[INFO] Connecting to Twitter API...")
+
+		// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
+		val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+		StrictMode.setThreadPolicy(policy)
+
+		Log.d(tag, game.configData.twitterAPIKey)
+		Log.d(tag, game.configData.twitterAPIKeySecret)
+		Log.d(tag, game.configData.twitterAccessToken)
+		Log.d(tag, game.configData.twitterAccessTokenSecret)
+
+		val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
+			.setDebugEnabled(true)
+			.setOAuthConsumerKey(game.configData.twitterAPIKey)
+			.setOAuthConsumerSecret(game.configData.twitterAPIKeySecret)
+			.setOAuthAccessToken(game.configData.twitterAccessToken)
+			.setOAuthAccessTokenSecret(game.configData.twitterAccessTokenSecret)
+
+		return try {
+			// Test connection by fetching user's timeline.
+			val twitter = TwitterFactory(configurationBuilder.build()).instance
+			twitter.verifyCredentials()
+			"Test successfully completed."
+		} catch (e: Exception) {
+			Log.d(tag, e.toString())
+			"[ERROR] Failed to connect to the Twitter API. Check your keys and tokens."
 		}
 	}
 

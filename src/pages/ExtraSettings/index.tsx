@@ -3,7 +3,7 @@ import Checkbox from "../../components/Checkbox"
 import CustomButton from "../../components/CustomButton"
 import DocumentPicker from "react-native-document-picker"
 import NumericInput from "react-native-numeric-input"
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import RNFS from "react-native-fs"
 import TitleDivider from "../../components/TitleDivider"
 import TransferList from "../../components/TransferList"
@@ -16,6 +16,7 @@ import LoadingButton from "../../components/LoadingButton"
 import axios, { AxiosError } from "axios"
 import SnackBar from "rn-snackbar-component"
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons"
+import { NativeModules } from "react-native" // Import native Java module.
 
 const styles = StyleSheet.create({
     root: {
@@ -50,6 +51,8 @@ const ExtraSettings = () => {
     const [testErrorMessage, setTestErrorMessage] = useState<string>("")
 
     const bsc = useContext(BotStateContext)
+
+    const { StartModule } = NativeModules
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -359,6 +362,7 @@ const ExtraSettings = () => {
                     value={bsc.settings.twitter.twitterAccessTokenSecret}
                     onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, twitter: { ...bsc.settings.twitter, twitterAccessTokenSecret: value } })}
                 />
+                <LoadingButton title="Test Twitter API" loadingTitle="In progress..." isLoading={testInProgress} onPress={() => testTwitter()} />
             </View>
         )
     }
@@ -727,6 +731,32 @@ const ExtraSettings = () => {
                 setShowSnackbar(true)
             })
     }
+
+    const testTwitter = async () => {
+        setTestInProgress(true)
+        try {
+            let result: string = await StartModule.startTwitterTest()
+            if (result !== "Test successfully completed.") {
+                throw Error(result)
+            }
+
+            setTestFailed(false)
+        } catch (e) {
+            setTestFailed(true)
+            setTestErrorMessage(`${e}`)
+        } finally {
+            setTestInProgress(false)
+            setShowSnackbar(true)
+        }
+    }
+
+    useEffect(() => {
+        if (showSnackbar) {
+            setTimeout(() => {
+                setShowSnackbar(false)
+            }, 10000)
+        }
+    }, [showSnackbar])
 
     return (
         <View style={styles.root}>

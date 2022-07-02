@@ -20,20 +20,26 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.steve1316.granblue_automation_android.bot.Game;
+import com.steve1316.granblue_automation_android.utils.DiscordUtils;
+import com.steve1316.granblue_automation_android.utils.JSONParser;
 import com.steve1316.granblue_automation_android.utils.MediaProjectionService;
 import com.steve1316.granblue_automation_android.utils.MyAccessibilityService;
+import com.steve1316.granblue_automation_android.utils.TwitterRoomFinder;
 
 import java.util.Objects;
 
 public class StartModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private final String tag = loggerTag + "StartModule";
     private static ReactApplicationContext reactContext;
+    private final Context context;
     private static DeviceEventManagerModule.RCTDeviceEventEmitter emitter = null;
 
     public StartModule(ReactApplicationContext reactContext) {
         super(reactContext); //required by React Native
         StartModule.reactContext = reactContext;
         StartModule.reactContext.addActivityEventListener(this);
+        context = reactContext.getApplicationContext();
     }
 
     @ReactMethod
@@ -43,6 +49,15 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
         }
     }
 
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String startTwitterTest() {
+        // Initialize settings.
+        JSONParser parser = new JSONParser();
+        parser.initializeSettings(context);
+        Game game = new Game(context);
+        TwitterRoomFinder twitter = new TwitterRoomFinder(game, true);
+        return twitter.testConnection();
+    }
     public static void sendEvent(String eventName, String message) {
         WritableMap params = Arguments.createMap();
         params.putString("message", message);
