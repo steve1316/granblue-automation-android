@@ -231,11 +231,6 @@ class TwitterRoomFinder(private val game: Game, test: Boolean = false) {
 		val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 		StrictMode.setThreadPolicy(policy)
 
-		Log.d(tag, game.configData.twitterAPIKey)
-		Log.d(tag, game.configData.twitterAPIKeySecret)
-		Log.d(tag, game.configData.twitterAccessToken)
-		Log.d(tag, game.configData.twitterAccessTokenSecret)
-
 		val configurationBuilder: ConfigurationBuilder = ConfigurationBuilder()
 			.setDebugEnabled(true)
 			.setOAuthConsumerKey(game.configData.twitterAPIKey)
