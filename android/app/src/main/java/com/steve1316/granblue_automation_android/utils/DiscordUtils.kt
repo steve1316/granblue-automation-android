@@ -3,13 +3,11 @@ package com.steve1316.granblue_automation_android.utils
 import android.util.Log
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
-import java.util.*
-import org.javacord.api.DiscordApiBuilder
-
 import org.javacord.api.DiscordApi
+import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.entity.channel.PrivateChannel
 import org.javacord.api.entity.user.User
-import org.javacord.api.entity.user.UserStatus
+import java.util.*
 
 
 /**
@@ -21,31 +19,43 @@ class DiscordUtils(val game: Game) {
 	companion object {
 		val queue: Queue<String> = LinkedList()
 		lateinit var client: DiscordApi
-		lateinit var privateChannel: PrivateChannel
-
-		fun disconnectClient() {
-			if (this::client.isInitialized && client.status == UserStatus.ONLINE) {
-				client.disconnect()
-			}
-		}
+		var privateChannel: PrivateChannel? = null
 	}
 
 	private fun sendMessage(message: String) {
-		privateChannel.sendMessage(message).join()
+		privateChannel?.sendMessage(message)?.join()
 	}
 
 	fun main() {
+		Log.d(tag, "Starting Discord process now...")
+
 		try {
-			Log.d(tag, "Starting Discord process now...")
-
 			client = DiscordApiBuilder().setToken(game.configData.discordToken).login().join()
-			val user: User = client.getUserById(game.configData.discordUserID).join()
+		} catch (e: Exception) {
+			Log.d(tag, "[DISCORD] Failed to connect to Discord API using provided token.")
+			return
+		}
+
+		val user: User
+		try {
+			user = client.getUserById(game.configData.discordUserID).join()
+		} catch (e: Exception) {
+			Log.d(tag, "[DISCORD] Failed to find user using provided user ID.")
+			return
+		}
+
+		try {
 			privateChannel = user.openPrivateChannel().join()
+		} catch (e: Exception) {
+			Log.d(tag, "[DISCORD] Failed to open private channel with user.")
+			return
+		}
 
-			Log.d(tag, "Successfully fetched reference to user and their private channel.")
+		Log.d(tag, "Successfully fetched reference to user and their private channel.")
 
-			queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
+		queue.add("```diff\n+ Successful connection to Discord API for Granblue Automation Android\n```")
 
+		try {
 			// Loop and send any messages inside the Queue.
 			while (true) {
 				if (queue.isNotEmpty()) {
@@ -59,10 +69,8 @@ class DiscordUtils(val game: Game) {
 			}
 
 			Log.d(tag, "Terminated connection to Discord API.")
-			disconnectClient()
 		} catch (e: Exception) {
-			Log.e(tag, "Failed to initialize JDA client: ${e.stackTraceToString()}")
-			disconnectClient()
+			Log.e(tag, e.stackTraceToString())
 		}
 	}
 }

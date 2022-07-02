@@ -134,12 +134,6 @@ class BotService : Service() {
 										game.goBackHome(confirmLocationCheck = true, testMode = true)
 									}
 
-									thread {
-										runBlocking {
-											DiscordUtils.disconnectClient()
-										}
-									}
-
 									TwitterRoomFinder.disconnect()
 									performCleanUp()
 								} catch (e: Exception) {
@@ -161,14 +155,6 @@ class BotService : Service() {
 											DiscordUtils.queue.add("> $message2")
 										} else {
 											DiscordUtils.queue.add("> Bot encountered exception in Farming Mode: \n${e.stackTraceToString()}")
-										}
-
-										if (game.configData.enableDiscordNotifications) {
-											thread {
-												runBlocking {
-													DiscordUtils.disconnectClient()
-												}
-											}
 										}
 									}
 
