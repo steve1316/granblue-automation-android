@@ -5,6 +5,7 @@ import { BotStateContext } from "../../context/BotStateContext"
 import { DeviceEventEmitter, StyleSheet, View } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { NativeModules } from "react-native" // Import native Java module.
+import VersionNumber from "react-native-version-number"
 
 const styles = StyleSheet.create({
     root: {
@@ -36,10 +37,14 @@ const Home = () => {
             }
         })
 
-        DeviceEventEmitter.addListener("MessageLog", (data) => {
-            mlc.setAsyncMessages([...mlc.asyncMessages, "\n" + data["message"]])
-        })
+        getVersion()
     }, [])
+
+    // Grab the program version.
+    const getVersion = () => {
+        console.log("Version is ", VersionNumber.appVersion)
+        bsc.setAppVersion(VersionNumber.appVersion)
+    }
 
     return (
         <View style={styles.root}>

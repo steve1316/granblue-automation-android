@@ -32,6 +32,13 @@ export interface Settings {
         discordUserID: string
     }
 
+    // API settings.
+    api: {
+        enableOptInAPI: boolean
+        username: string
+        password: string
+    }
+
     // Configuration settings.
     configuration: {
         enableDelayBetweenRuns: boolean
@@ -154,6 +161,11 @@ export const defaultSettings: Settings = {
         discordToken: "",
         discordUserID: "",
     },
+    api: {
+        enableOptInAPI: false,
+        username: "",
+        password: "",
+    },
     configuration: {
         enableDelayBetweenRuns: false,
         delayBetweenRuns: 15,
@@ -249,6 +261,9 @@ interface IProviderProps {
     setRefreshAlert: (refreshAlert: boolean) => void
     settings: Settings
     setSettings: (settings: Settings) => void
+    entryPoint: string
+    appVersion: string
+    setAppVersion: (appVersion: string) => void
 }
 
 export const BotStateContext = createContext<IProviderProps>({} as IProviderProps)
@@ -260,8 +275,11 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
     const [startBot, setStartBot] = useState<boolean>(false)
     const [stopBot, setStopBot] = useState<boolean>(false)
     const [refreshAlert, setRefreshAlert] = useState<boolean>(false)
+    const [appVersion, setAppVersion] = useState<string>("")
 
     const [settings, setSettings] = useState<Settings>(defaultSettings)
+
+    const entryPoint = "https://granblue-automation-statistics.com"
 
     const providerValues: IProviderProps = {
         readyStatus,
@@ -276,6 +294,9 @@ export const BotStateProvider = ({ children }: any): JSX.Element => {
         setRefreshAlert,
         settings,
         setSettings,
+        entryPoint,
+        appVersion,
+        setAppVersion,
     }
 
     return <BotStateContext.Provider value={providerValues}>{children}</BotStateContext.Provider>

@@ -744,6 +744,15 @@ class Game(private val myContext: Context) {
 			itemAmountFarmed += amountGained
 		}
 
+		// If there were item drops detected and the user opt in to sending their result to Granblue Automation Statistics, then have the frontend send the API request.
+		if (amountGained != 0 && configData.enableOptInAPI) {
+			if (isPendingBattle) {
+				sendApiResult(amountGained, 0L)
+			} else {
+				sendApiResult(amountGained, configData.combatElapsedTime)
+			}
+		}
+
 		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo && !isDefender) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				printToLog("\n********************")
@@ -988,6 +997,27 @@ class Game(private val myContext: Context) {
 
 		printToLog("[INFO] No Pending Battles needed to be cleared.")
 		return false
+	}
+
+	/**
+	 * Prints a formatted message as a way to send the event back to the frontend in order to have it send the result to the database.
+	 *
+	 * @param amount Amount of items detected for this run.
+	 * @param elapsedTime Elapsed time for Combat Mode from start to finish.
+	 */
+	private fun sendApiResult(amount: Int, elapsedTime: Long) {
+		var formattedElapsedTime = elapsedTime.toString()
+		if (elapsedTime != 0L) {
+			formattedElapsedTime = String.format(
+				"%02d:%02d:%02d",
+				TimeUnit.MILLISECONDS.toHours(elapsedTime),
+				TimeUnit.MILLISECONDS.toMinutes(elapsedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedTime)),
+				TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime))
+			)
+		}
+
+		printToLog("\nSending API request to Granblue Automation Statistics...")
+		printToLog("API-RESULT|${configData.itemName}|${amount}|${formattedElapsedTime}")
 	}
 
 	/**

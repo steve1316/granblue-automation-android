@@ -60,8 +60,9 @@ By downloading this application, you consent to your account potentially getting
     1. Download and extract the project repository.
     2. Go to `https://opencv.org/releases/` and download OpenCV 4.5.1 (make sure to download the Android version of OpenCV) and extract it.
     3. Create a new folder inside the root of the `android` folder named `opencv` and copy the extracted files in `/OpenCV-android-sdk/sdk/` from Step 2 into it.
-    4. Open the `android` folder in `Android Studio` and you can now build and run on your Android Device or build your own .apk file.
-    5. You can set `universalApk` to `true` in the `build.gradle` for the application to build a one-for-all .apk file or adjust the `include` to customize which ABI(s) to build the .apk file for.
+    4. Build the Javascript portion of the project by running `yarn install` in the root of the project folder as well.
+    5. You can now build and run on your Android Device or create your own .apk file.
+    6. You can set `universalApk` to `true` in the `build.gradle` for the application to build a one-for-all .apk file or adjust the `include` to customize which ABI(s) to build the .apk file for.
 2. Once the application has started, navigate to the `Settings` page to fill out the necessary sections. Additional settings may be found in the `Extra Settings` page.
 3. Once settings have been filled out, a snackbar will pop up indicating when the bot is ready to start.
 4. Now you can tap on the `Start` button back in the `Home` page. If this is the first time, it will ask you to give the application `Overlay` permission and then to enable its `Accessibility Service`.

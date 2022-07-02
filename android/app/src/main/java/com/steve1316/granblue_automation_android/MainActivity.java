@@ -19,7 +19,7 @@ public class MainActivity extends ReactActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
 
         // Set application locale to combat cases where user's language uses commas instead of decimal points for floating numbers.
         Configuration config = this.getResources().getConfiguration();
