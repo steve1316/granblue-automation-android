@@ -263,6 +263,9 @@ dependencies {
 
     // react-native-bootsplash for the bootsplash during app startup.
     implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
+
+    // This is needed to return the version number of the app back to the frontend.
+    implementation project(':react-native-version-number')
 }
 
 // Run this once to be able to run the application with BUCK
