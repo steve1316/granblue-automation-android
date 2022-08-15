@@ -1,19 +1,17 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.7.0</latestVersion>
+        <latestVersion>3.7.1</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.7.0 - Changelog
+v3.7.1 - Changelog
 
 New
 ---
-- Added support for optional API integration with the Granblue Automation Statistics website.
-- Added 2 buttons in Extra Settings page to test connection to Twitter and Discord APIs.
+- Added new option to support updated Xeno Clash UI. This was already present in the PC version.
 
-Fixed
+Changed
 ---
-- Fix edge cases where Dread Barrage banner was too far down the page.
-- Fix incorrect skill targeting for targets 3 and 6.
+- Update Combat Script button description on the location requirement of where the combat script files should be located (/storage/emulated/0/).
 
         </releaseNotes>
     </update>
