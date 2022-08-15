@@ -281,7 +281,6 @@ const Start = () => {
                     mlc.setAsyncMessages(newLog)
                 })
         } else {
-            console.log("I AM MAKING A SECOND REQUEST")
             let newLog: string[] = []
             await axios
                 .post(
