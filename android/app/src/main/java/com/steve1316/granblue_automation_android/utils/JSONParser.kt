@@ -171,6 +171,15 @@ class JSONParser {
 		}
 
 		try {
+			val genericObj = jObj.getJSONObject("xenoClash")
+			sharedPreferences.edit {
+				putBoolean("selectTopOption", genericObj.getBoolean("selectTopOption"))
+				commit()
+			}
+		} catch (e: Exception) {
+		}
+
+		try {
 			val adjustmentObj = jObj.getJSONObject("adjustment")
 			sharedPreferences.edit {
 				putBoolean("enableCalibrationAdjustment", adjustmentObj.getBoolean("enableCalibrationAdjustment"))

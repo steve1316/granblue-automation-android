@@ -98,28 +98,34 @@ class XenoClash(private val game: Game, private val missionName: String) {
 		if (game.findAndClickButton("xeno_special")) {
 			game.wait(2.0)
 
-			// Check if there is a Nightmare already available.
-			val nightmareIsAvailable: Int = if (game.imageUtils.findButton("event_nightmare") != null) {
-				1
-			} else {
-				0
-			}
-
 			// Find the locations of all the "Select" buttons.
+			game.gestureUtils.swipe(500f, 1000f, 500f, 500f)
+			game.wait(1.0)
 			val selectButtonLocations = game.imageUtils.findAll("select")
 
-			// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
+			// Open up Event Quests or Event Raids.
 			if (missionName == "Xeno Clash Extreme") {
+				// The Xeno Extremes are the two above the last two on the list.
 				game.printToLog("[XENO.CLASH] Now hosting Xeno Clash Extreme...", tag = tag)
-				game.gestureUtils.tap(selectButtonLocations[1 + nightmareIsAvailable].x, selectButtonLocations[1 + nightmareIsAvailable].y, "select")
+				if (game.configData.selectTopOption) {
+					game.gestureUtils.tap(selectButtonLocations[selectButtonLocations.size - 3].x, selectButtonLocations[selectButtonLocations.size - 3].y, "select")
+				} else {
+					game.gestureUtils.tap(selectButtonLocations[selectButtonLocations.size - 4].x, selectButtonLocations[selectButtonLocations.size - 4].y, "select")
+				}
+
 
 				game.wait(1.0)
 
 				val playRoundButtonLocations = game.imageUtils.findAll("play_round_button")
 				game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
 			} else if (missionName == "Xeno Clash Raid") {
+				// The Xeno Raids are the last two on the list.
 				game.printToLog("[XENO.CLASH] Now hosting Xeno Clash Raid...", tag = tag)
-				game.gestureUtils.tap(selectButtonLocations[2 + nightmareIsAvailable].x, selectButtonLocations[2 + nightmareIsAvailable].y, "select")
+				if (game.configData.selectTopOption) {
+					game.gestureUtils.tap(selectButtonLocations[selectButtonLocations.size - 1].x, selectButtonLocations[selectButtonLocations.size - 1].y, "select")
+				} else {
+					game.gestureUtils.tap(selectButtonLocations[selectButtonLocations.size - 2].x, selectButtonLocations[selectButtonLocations.size - 2].y, "select")
+				}
 
 				game.wait(1.0)
 

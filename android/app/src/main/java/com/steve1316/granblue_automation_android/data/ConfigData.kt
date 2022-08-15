@@ -81,6 +81,9 @@ class ConfigData(myContext: Context) {
 	// Generic
 	val enableForceReload: Boolean
 
+	// Xeno Clash
+	val selectTopOption: Boolean
+
 	// Adjustment
 	val enableCalibrationAdjustment: Boolean
 	val adjustCalibration: Int
@@ -220,6 +223,9 @@ class ConfigData(myContext: Context) {
 
 		// Generic
 		enableForceReload = sharedPreferences.getBoolean("enableForceReload", false)
+
+		// Xeno Clash
+		selectTopOption = sharedPreferences.getBoolean("selectTopOption", false)
 
 		// Adjustment
 		enableCalibrationAdjustment = sharedPreferences.getBoolean("enableCalibrationAdjustment", false)
