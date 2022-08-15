@@ -316,7 +316,8 @@ const Settings = () => {
                 />
 
                 <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>
-                    To deselect, cancel/back out of the document picker. If no combat script is selected, Full/Semi Auto is used by default.
+                    Combat Scripts need to be located in the root of the storage (/storage/emulated/0/), otherwise the app would not be able to open it due to Android SDK changes. To deselect,
+                    cancel/back out of the document picker. If no combat script is selected, Full/Semi Auto is used by default.
                 </Text>
             </View>
         )
