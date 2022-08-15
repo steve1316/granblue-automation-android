@@ -94,6 +94,10 @@ export interface Settings {
         enableForceReload: boolean
     }
 
+    xenoClash: {
+        selectTopOption: false
+    }
+
     android: {
         enableDelayTap: boolean
         delayTapMilliseconds: number
@@ -209,6 +213,9 @@ export const defaultSettings: Settings = {
     },
     generic: {
         enableForceReload: false,
+    },
+    xenoClash: {
+        selectTopOption: false,
     },
     adjustment: {
         enableCalibrationAdjustment: false,

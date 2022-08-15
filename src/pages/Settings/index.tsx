@@ -381,6 +381,15 @@ const Settings = () => {
                     />
                 ) : null}
 
+                {bsc.settings.game.farmingMode === "Xeno Clash" ? (
+                    <Checkbox
+                        text="Enable Selection of Bottom Option"
+                        subtitle="Enabling this will select the bottom Xeno Clash option. By default, it selects the top option."
+                        isChecked={bsc.settings.xenoClash.selectTopOption}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, selectTopOption: !bsc.settings.xenoClash.selectTopOption } })}
+                    />
+                ) : null}
+
                 {bsc.settings.game.farmingMode === "Generic" ? (
                     <Checkbox
                         text="Enable Forcing Reload after Attack"
