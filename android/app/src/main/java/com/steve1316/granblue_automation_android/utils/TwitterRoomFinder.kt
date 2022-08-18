@@ -143,6 +143,7 @@ class TwitterRoomFinder(private val game: Game, test: Boolean = false) {
 		"Lvl 150 Lucilius" to "Lv150 ルシファー",
 		"Lvl 250 Lucilius" to "Lv250 ルシファー",
 		"Lvl 200 Lindwurm" to "Lv200 リンドヴルム",
+		"Lvl 275 Diaspora" to "Lv275 ディアスポラ",
 
 		// Malice Raids
 		"Lvl 150 Tiamat Malice" to "Lv150 ティアマト・マリス",
@@ -170,7 +171,12 @@ class TwitterRoomFinder(private val game: Game, test: Boolean = false) {
 
 		// Ennead Raids
 		"Lvl 120 Osiris" to "Lv120 オシリス",
-		"Lvl 120 Horus" to "Lv120 ホルス"
+		"Lvl 120 Horus" to "Lv120 ホルス",
+		"Lvl 120 Horus" to "Lv120 ホルス",
+		"Lvl 120 Bennu" to "Lv120 ベンヌ",
+		"Lvl 120 Atum" to "Lv120 アトゥム",
+		"Lvl 120 Tefnut" to "Lv120 テフヌト",
+		"Lvl 120 Ra" to "Lv120 ラー",
 	)
 
 	companion object {
