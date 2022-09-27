@@ -1,17 +1,23 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.7.1</latestVersion>
+        <latestVersion>3.8.0</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.7.1 - Changelog
+v3.8.0 - Changelog
 
 New
 ---
-- Added new option to support updated Xeno Clash UI. This was already present in the PC version.
+- Added support for the newly recent raids such as Atum, Diaspora, Mugen, etc.
 
 Changed
 ---
-- Update Combat Script button description on the location requirement of where the combat script files should be located (/storage/emulated/0/).
+- Hide warnings about React state changes.
+- Adjusted image asset used for the loot collection process to generalize and future-proof it.
+- Generalized detection for Event Nightmares for claiming.
+
+Fixed
+---
+- Account for certain Raids that only allow parties from Extra set.
 
         </releaseNotes>
     </update>
