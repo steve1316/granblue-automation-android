@@ -511,32 +511,40 @@ class Game(private val myContext: Context) {
 					}
 				}
 			} else {
-				while (setLocation == null) {
-					setLocation = if (selectedGroupNumber < 8) {
-						imageUtils.findButton("party_set_a", tries = 10)
-					} else {
-						imageUtils.findButton("party_set_b", tries = 10)
-					}
-
-					if (setLocation == null) {
-						numberOfTries -= 1
-
-						if (numberOfTries <= 0) {
-							if (selectedGroupNumber < 8) {
-								throw(Resources.NotFoundException("Could not find Set A."))
-							} else {
-								throw(Resources.NotFoundException("Could not find Set B."))
-							}
+				if (configData.farmingMode == "Raid" && imageUtils.findButton("party_set_extra", tries = 3) != null) {
+					printToLog("[INFO] Skipping Set Selection due to Raid only allowing parties from the Extra category.")
+				} else {
+					while (setLocation == null) {
+						setLocation = if (selectedGroupNumber < 8) {
+							imageUtils.findButton("party_set_a", tries = 10)
+						} else {
+							imageUtils.findButton("party_set_b", tries = 10)
 						}
 
-						// Switch over and search for the other Set.
-						setLocation = if (selectedGroupNumber < 8) {
-							imageUtils.findButton("party_set_b", tries = 10)
-						} else {
-							imageUtils.findButton("party_set_a", tries = 10)
+						if (setLocation == null) {
+							numberOfTries -= 1
+
+							if (numberOfTries <= 0) {
+								if (selectedGroupNumber < 8) {
+									throw(Resources.NotFoundException("Could not find Set A."))
+								} else {
+									throw(Resources.NotFoundException("Could not find Set B."))
+								}
+							}
+
+							// Switch over and search for the other Set.
+							setLocation = if (selectedGroupNumber < 8) {
+								imageUtils.findButton("party_set_b", tries = 10)
+							} else {
+								imageUtils.findButton("party_set_a", tries = 10)
+							}
 						}
 					}
 				}
+			}
+
+			if (setLocation == null) {
+				throw(NullPointerException("The set location was set to null for party selection."))
 			}
 
 			// Select the Group.
