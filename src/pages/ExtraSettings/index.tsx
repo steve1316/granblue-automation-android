@@ -133,7 +133,9 @@ const ExtraSettings = () => {
                                             })
                                         }
                                     } catch (e) {
-                                        console.warn(e)
+                                        if (!e.message.contains("Can't perform a React")) {
+                                            console.warn(e)
+                                        }
                                         bsc.setSettings({ ...bsc.settings, nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: "", nightmareCombatScript: [] } })
                                     }
                                 }}
@@ -254,7 +256,9 @@ const ExtraSettings = () => {
                                             })
                                         }
                                     } catch (e) {
-                                        console.warn(e)
+                                        if (!e.message.contains("Can't perform a React")) {
+                                            console.warn(e)
+                                        }
                                         bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, defenderCombatScriptName: "", defenderCombatScript: [] } })
                                     }
                                 }}

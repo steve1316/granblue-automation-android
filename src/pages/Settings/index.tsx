@@ -309,7 +309,9 @@ const Settings = () => {
                                 })
                             }
                         } catch (e) {
-                            console.warn(e)
+                            if (!e.message.contains("Can't perform a React")) {
+                                console.warn(e)
+                            }
                             bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, combatScriptName: "", combatScript: [] } })
                         }
                     }}
