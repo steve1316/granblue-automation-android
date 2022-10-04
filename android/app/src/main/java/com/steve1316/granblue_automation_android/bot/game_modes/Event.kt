@@ -14,7 +14,7 @@ class Event(private val game: Game, private val missionName: String) {
 	 * @return True if Event Nightmare was detected and successfully completed. False otherwise.
 	 */
 	fun checkEventNightmare(): Boolean {
-		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("event_claim_loot")) {
+		if (game.configData.enableNightmare && game.imageUtils.findButton("event_claim_loot") != null) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot")) {
 				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
@@ -52,7 +52,7 @@ class Event(private val game: Game, private val missionName: String) {
 					}
 				}
 			}
-		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("event_claim_loot")) {
+		} else if (!game.configData.enableNightmare && game.imageUtils.findButton("event_claim_loot") != null) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot")) {
 				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
