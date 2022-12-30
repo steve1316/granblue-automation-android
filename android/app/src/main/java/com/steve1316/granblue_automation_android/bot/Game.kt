@@ -532,31 +532,30 @@ class Game(private val myContext: Context) {
 			} else {
 				if (configData.farmingMode == "Raid" && imageUtils.findButton("party_set_extra", tries = 3) != null) {
 					printToLog("[INFO] Skipping Set Selection due to Raid only allowing parties from the Extra category.")
-				} else {
+				} else if (selectedGroupNumber < 8) {
 					while (setLocation == null) {
-						setLocation = if (selectedGroupNumber < 8) {
-							imageUtils.findButton("party_set_a", tries = 10)
-						} else {
-							imageUtils.findButton("party_set_b", tries = 10)
-						}
-
+						setLocation = imageUtils.findButton("party_set_a", customConfidence = 0.90)
 						if (setLocation == null) {
 							numberOfTries -= 1
-
-							if (numberOfTries <= 0) {
-								if (selectedGroupNumber < 8) {
-									throw(Resources.NotFoundException("Could not find Set A."))
-								} else {
-									throw(Resources.NotFoundException("Could not find Set B."))
-								}
+							if (tries <= 0) {
+								throw Exception("Could not find Set A")
 							}
 
-							// Switch over and search for the other Set.
-							setLocation = if (selectedGroupNumber < 8) {
-								imageUtils.findButton("party_set_b", tries = 10)
-							} else {
-								imageUtils.findButton("party_set_a", tries = 10)
+							// See if the user had Set B active instead of Set A if matching failed.
+							findAndClickButton("party_set_b", customConfidence = 0.90)
+						}
+					}
+				} else {
+					while (setLocation == null) {
+						setLocation = imageUtils.findButton("party_set_b", customConfidence = 0.90)
+						if (setLocation == null) {
+							numberOfTries -= 1
+							if (tries <= 0) {
+								throw Exception("Could not find Set B")
 							}
+
+							// See if the user had Set A active instead of Set A if matching failed.
+							findAndClickButton("party_set_a", customConfidence = 0.90)
 						}
 					}
 				}
