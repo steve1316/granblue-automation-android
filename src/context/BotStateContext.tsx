@@ -95,7 +95,7 @@ export interface Settings {
     }
 
     xenoClash: {
-        selectTopOption: false
+        selectTopOption: boolean
     }
 
     android: {
