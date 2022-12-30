@@ -247,7 +247,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.1'
 
     // Twitter4j is used to connect to the Twitter API.
-    implementation 'org.twitter4j:twitter4j-stream:4.0.7'
+    implementation "org.twitter4j:twitter4j-core:4.1.2"
 
     // AppUpdater for notifying users when there is a new update available.
     implementation 'com.github.javiersantos:AppUpdater:2.7'
