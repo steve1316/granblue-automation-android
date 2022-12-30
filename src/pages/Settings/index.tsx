@@ -68,9 +68,9 @@ const Settings = () => {
     const [missionList, setMissionList] = useState<Item[]>([])
 
     // Certain individual states are necessary as react-native-dropdown-picker requires a setValue state parameter for DropDownPicker.
-    const [farmingMode, setFarmingMode] = useState<ValueType | null>("")
-    const [item, setItem] = useState<ValueType | null>("")
-    const [mission, setMission] = useState<ValueType | null>("")
+    const [farmingMode, setFarmingMode] = useState<ValueType>("")
+    const [item, setItem] = useState<ValueType>("")
+    const [mission, setMission] = useState<ValueType>("")
 
     const bsc = useContext(BotStateContext)
 
