@@ -73,7 +73,7 @@ class Raid(private val game: Game) {
 
 		// Loop and try to join a Raid from the parsed list of room codes. If none of the codes worked, wait before trying again.
 		while (tries > 0) {
-			var roomCodeTries = 10
+			var roomCodeTries = 30
 			while (roomCodeTries > 0) {
 				val roomCode = game.twitterRoomFinder.getRoomCode()
 
