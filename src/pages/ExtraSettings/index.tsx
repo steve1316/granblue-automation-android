@@ -616,7 +616,7 @@ const ExtraSettings = () => {
                     onPress={() => bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, enableAutoQuickSummon: !bsc.settings.configuration.enableAutoQuickSummon } })}
                 />
                 <Checkbox
-                    text="Enable Bypassing Reset Summon Procedure"
+                    text={`Enable Bypassing Reset\nSummon Procedure`}
                     subtitle={
                         "Enables bypassing the bot resetting Summons if there are none of your chosen found during Summon Selection. The bot will reload the page and select the very first summon at the top of the list."
                     }
