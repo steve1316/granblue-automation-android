@@ -546,6 +546,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param templateName File name of the template image.
 	 * @param tries Number of tries before failing. Note that this gets overridden if the templateName is one of the adjustments. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
+	 * @param customConfidence Use a custom confidence for the template matching. Defaults to 0.80.
 	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
 	 * @param disableAdjustment Disable the usage of adjustment to tries. Defaults to False.
 	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
@@ -553,7 +554,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @return Point object containing the location of the match or null if not found.
 	 */
 	fun findButton(
-		templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false,
+		templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), customConfidence: Double = confidence, suppressError: Boolean = false,
 		disableAdjustment: Boolean = false, bypassGeneralAdjustment: Boolean = false, testMode: Boolean = false
 	): Point? {
 		val folderName = "buttons"
@@ -582,7 +583,7 @@ class ImageUtils(context: Context, private val game: Game) {
 
 		while (numberOfTries > 0) {
 			if (sourceBitmap != null && templateBitmap != null) {
-				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region, useSingleScale = true)
+				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region, customConfidence = customConfidence, useSingleScale = true)
 				if (!resultFlag) {
 					if (testMode) {
 						// Increment scale by 0.01 until a match is found if Test Mode is enabled.
@@ -637,13 +638,14 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param templateName File name of the template image.
 	 * @param tries Number of tries before failing. Note that this gets overridden if the templateName is one of the adjustments. Defaults to 5.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
+	 * @param customConfidence customConfidence Use a custom confidence for the template matching. Defaults to 0.80.
 	 * @param suppressError Whether or not to suppress saving error messages to the log.
 	 * @param disableAdjustment Disable the usage of adjustment to tries. Defaults to False.
 	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
 	 * @return True if the current location is at the specified location. False otherwise.
 	 */
 	fun confirmLocation(
-		templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false,
+		templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), customConfidence: Double = confidence, suppressError: Boolean = false,
 		disableAdjustment: Boolean = false, bypassGeneralAdjustment: Boolean = false
 	): Boolean {
 		val folderName = "headers"
@@ -666,7 +668,7 @@ class ImageUtils(context: Context, private val game: Game) {
 
 		while (numberOfTries > 0) {
 			if (sourceBitmap != null && templateBitmap != null) {
-				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region)
+				val resultFlag: Boolean = match(sourceBitmap, templateBitmap, region, customConfidence = customConfidence)
 				if (!resultFlag) {
 					numberOfTries -= 1
 					if (numberOfTries <= 0) {
@@ -719,9 +721,8 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 
 		var lastSummonElement = ""
-		var summonIndex = 0
+		var summonIndex: Int
 		var summonElementIndex = 0
-		var summonLocation: Point? = null
 
 		// Make sure that the bot is at the Summon Selection screen.
 		var tries = 10
@@ -834,10 +835,10 @@ class ImageUtils(context: Context, private val game: Game) {
 	 * @param templateName File name of the template image.
 	 * @param isItem Whether or not the user wants to search for items instead of buttons.
 	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
-	 * @param customConfidence Accuracy threshold for matching. Defaults to 0.8.
+	 * @param customConfidence Accuracy threshold for matching all. Defaults to the device default.
 	 * @return An ArrayList of Point objects containing all the occurrences of the specified image or null if not found.
 	 */
-	fun findAll(templateName: String, isItem: Boolean = false, region: IntArray = intArrayOf(0, 0, 0, 0), customConfidence: Double = 0.8): ArrayList<Point> {
+	fun findAll(templateName: String, isItem: Boolean = false, region: IntArray = intArrayOf(0, 0, 0, 0), customConfidence: Double = confidenceAll): ArrayList<Point> {
 		val folderName = if (!isItem) {
 			"buttons"
 		} else {
