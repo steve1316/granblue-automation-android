@@ -190,7 +190,7 @@ class ConfigData(myContext: Context) {
 
 			Log.d(tag, "[NIGHTMARE] Settings initialized.")
 		} else {
-			Log.d(tag, "[NIGHTMARE] Reusing settings from Farming Mode for $farmingMode Nightmare.")
+			Log.d(tag, "[NIGHTMARE] Reusing settings from Farming Mode for Nightmare.")
 			nightmareCombatScriptName = sharedPreferences.getString("nightmareCombatScriptName", "")!!
 			nightmareCombatScript = sharedPreferences.getString("nightmareCombatScript", "")!!.split("|")
 			nightmareSummons = sharedPreferences.getString("nightmareSummons", "")!!.split("|")
