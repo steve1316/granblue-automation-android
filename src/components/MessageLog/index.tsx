@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     logText: {
         color: "white",
         margin: 20,
-        fontSize: 12,
+        fontSize: 8,
     },
 })
 
