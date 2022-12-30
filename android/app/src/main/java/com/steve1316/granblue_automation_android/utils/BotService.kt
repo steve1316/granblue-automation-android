@@ -134,7 +134,6 @@ class BotService : Service() {
 										game.goBackHome(confirmLocationCheck = true, testMode = true)
 									}
 
-									TwitterRoomFinder.disconnect()
 									performCleanUp()
 								} catch (e: Exception) {
 									if (e.toString() == "java.lang.InterruptedException") {
@@ -158,12 +157,10 @@ class BotService : Service() {
 										}
 									}
 
-									TwitterRoomFinder.disconnect()
 									performCleanUp(isException = true)
 								}
 							}
 						} else {
-							TwitterRoomFinder.disconnect()
 							thread.interrupt()
 							performCleanUp()
 						}

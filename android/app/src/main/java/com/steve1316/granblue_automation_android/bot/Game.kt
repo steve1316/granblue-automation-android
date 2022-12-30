@@ -1064,6 +1064,10 @@ class Game(private val myContext: Context) {
 			printToLog("####################")
 		}
 
+		if (configData.farmingMode == "Raid") {
+			twitterRoomFinder.connect()
+		}
+
 		var firstRun = true
 		while (itemAmountFarmed < configData.itemAmount) {
 			if (configData.farmingMode == "Quest") {
