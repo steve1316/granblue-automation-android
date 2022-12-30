@@ -41,6 +41,7 @@ export interface Settings {
 
     // Configuration settings.
     configuration: {
+        reduceDelaySeconds: number
         enableDelayBetweenRuns: boolean
         delayBetweenRuns: number
         enableRandomizedDelayBetweenRuns: boolean
@@ -82,6 +83,7 @@ export interface Settings {
     // Arcarum Sandbox settings
     sandbox: {
         enableDefender: boolean
+        enableGoldChest: boolean
         enableCustomDefenderSettings: boolean
         numberOfDefenders: number
         defenderCombatScriptName: string
@@ -171,11 +173,12 @@ export const defaultSettings: Settings = {
         password: "",
     },
     configuration: {
+        reduceDelaySeconds: 0.0,
         enableDelayBetweenRuns: false,
         delayBetweenRuns: 15,
         enableRandomizedDelayBetweenRuns: false,
-        delayBetweenRunsLowerBound: 5,
-        delayBetweenRunsUpperBound: 15,
+        delayBetweenRunsLowerBound: 15,
+        delayBetweenRunsUpperBound: 60,
         enableRefreshDuringCombat: true,
         enableAutoQuickSummon: false,
         enableBypassResetSummon: false,
@@ -196,26 +199,17 @@ export const defaultSettings: Settings = {
     },
     raid: {
         enableAutoExitRaid: false,
-        timeAllowedUntilAutoExitRaid: 1,
+        timeAllowedUntilAutoExitRaid: 10,
         enableNoTimeout: false,
     },
     arcarum: {
         enableStopOnArcarumBoss: true,
     },
-    sandbox: {
-        enableDefender: false,
-        enableCustomDefenderSettings: false,
-        numberOfDefenders: 1,
-        defenderCombatScriptName: "",
-        defenderCombatScript: [],
-        defenderGroupNumber: 1,
-        defenderPartyNumber: 1,
-    },
     generic: {
         enableForceReload: false,
     },
     xenoClash: {
-        selectTopOption: false,
+        selectTopOption: true,
     },
     adjustment: {
         enableCalibrationAdjustment: false,
@@ -244,6 +238,16 @@ export const defaultSettings: Settings = {
         enableArcarumAdjustment: false,
         adjustArcarumAction: 3,
         adjustArcarumStageEffect: 10,
+    },
+    sandbox: {
+        enableDefender: false,
+        enableGoldChest: false,
+        enableCustomDefenderSettings: false,
+        numberOfDefenders: 1,
+        defenderCombatScriptName: "",
+        defenderCombatScript: [],
+        defenderGroupNumber: 1,
+        defenderPartyNumber: 1,
     },
     android: {
         enableDelayTap: false,

@@ -333,11 +333,12 @@ const ExtraSettings = () => {
             <View>
                 <TitleDivider
                     title="Twitter Settings"
-                    subtitle="Please visit the wiki on the GitHub page for instructions on how to get these keys and tokens."
+                    subtitle="Please visit the wiki on the GitHub page for instructions on how to get these keys and tokens. In addition, API v1.1 is supported but not API v2."
                     hasIcon={true}
                     iconName="twitter"
                     iconColor="#1da1f2"
                 />
+
                 <Input
                     label="Twitter API Key"
                     multiline
@@ -366,7 +367,8 @@ const ExtraSettings = () => {
                     value={bsc.settings.twitter.twitterAccessTokenSecret}
                     onChangeText={(value: string) => bsc.setSettings({ ...bsc.settings, twitter: { ...bsc.settings.twitter, twitterAccessTokenSecret: value } })}
                 />
-                <LoadingButton title="Test Twitter API" loadingTitle="In progress..." isLoading={testInProgress} onPress={() => testTwitter()} />
+
+                <LoadingButton title="Test Twitter API v1.1" loadingTitle="In progress..." isLoading={testInProgress} onPress={() => testTwitter()} />
             </View>
         )
     }
@@ -462,36 +464,29 @@ const ExtraSettings = () => {
                     isChecked={bsc.settings.game.debugMode}
                     onPress={() => bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, debugMode: !bsc.settings.game.debugMode } })}
                 />
-                <Checkbox
-                    text="Enable Auto Exit Raid"
-                    subtitle="Enables backing out of a Raid without retreating while under Semi/Full Auto after a certain period of time has passed."
-                    isChecked={bsc.settings.raid.enableAutoExitRaid}
-                    onPress={() => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, enableAutoExitRaid: !bsc.settings.raid.enableAutoExitRaid } })}
-                />
-                {bsc.settings.raid.enableAutoExitRaid ? (
-                    <View>
-                        <Text style={{ marginBottom: 10 }}>Max Time Allowed for Semi/Full Auto: {bsc.settings.raid.timeAllowedUntilAutoExitRaid} minutes</Text>
-                        <NumericInput
-                            type="plus-minus"
-                            leftButtonBackgroundColor="#eb5056"
-                            rightButtonBackgroundColor="#EA3788"
-                            rounded
-                            valueType="integer"
-                            minValue={1}
-                            maxValue={15}
-                            value={bsc.settings.raid.timeAllowedUntilAutoExitRaid}
-                            onChange={(value) => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, timeAllowedUntilAutoExitRaid: value } })}
-                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
-                            totalWidth={Dimensions.get("screen").width * 0.9}
-                            totalHeight={50}
-                        />
-                    </View>
-                ) : null}
-                <Checkbox
-                    text="Enable No Timeout"
-                    subtitle="Enable no timeouts when attempting to farm Raids that appear infrequently."
-                    isChecked={bsc.settings.raid.enableNoTimeout}
-                    onPress={() => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, enableNoTimeout: !bsc.settings.raid.enableNoTimeout } })}
+
+                <Text style={{ marginVertical: 10 }}>
+                    Reduce Delays by X Seconds:{" "}
+                    {bsc.settings.configuration.reduceDelaySeconds % 1 === 0 ? `${bsc.settings.configuration.reduceDelaySeconds}.0` : bsc.settings.configuration.reduceDelaySeconds}
+                </Text>
+                <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7 }}>
+                    The following setting below is useful if you have a fast enough connection that pages load almost instantly. If the amount selected reduces the delay to the negatives, then it will
+                    default back to its original delay. Beware that changing this setting may lead to unintended behavior as the bot will be going faster, depending on how much you reduce each delay
+                    by.
+                </Text>
+                <NumericInput
+                    type="plus-minus"
+                    leftButtonBackgroundColor="#eb5056"
+                    rightButtonBackgroundColor="#EA3788"
+                    rounded
+                    valueType="real"
+                    minValue={0.0}
+                    step={0.1}
+                    value={bsc.settings.configuration.reduceDelaySeconds}
+                    onChange={(value) => bsc.setSettings({ ...bsc.settings, configuration: { ...bsc.settings.configuration, reduceDelaySeconds: value } })}
+                    containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                    totalWidth={Dimensions.get("screen").width * 0.9}
+                    totalHeight={50}
                 />
 
                 {!bsc.settings.configuration.enableRandomizedDelayBetweenRuns ? (
@@ -596,6 +591,40 @@ const ExtraSettings = () => {
                         />
                     </View>
                 ) : null}
+
+                <Checkbox
+                    text="Enable Auto Exit Raid"
+                    subtitle="Enables backing out of a Raid without retreating while under Semi/Full Auto after a certain period of time has passed."
+                    isChecked={bsc.settings.raid.enableAutoExitRaid}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, enableAutoExitRaid: !bsc.settings.raid.enableAutoExitRaid } })}
+                />
+
+                {bsc.settings.raid.enableAutoExitRaid ? (
+                    <View>
+                        <Text style={{ marginBottom: 10 }}>Max Time Allowed for Semi/Full Auto: {bsc.settings.raid.timeAllowedUntilAutoExitRaid} minutes</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={1}
+                            maxValue={15}
+                            value={bsc.settings.raid.timeAllowedUntilAutoExitRaid}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, timeAllowedUntilAutoExitRaid: value } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                    </View>
+                ) : null}
+
+                <Checkbox
+                    text="Enable No Timeout"
+                    subtitle="Enable no timeouts when attempting to farm Raids that appear infrequently."
+                    isChecked={bsc.settings.raid.enableNoTimeout}
+                    onPress={() => bsc.setSettings({ ...bsc.settings, raid: { ...bsc.settings.raid, enableNoTimeout: !bsc.settings.raid.enableNoTimeout } })}
+                />
 
                 <Checkbox
                     text="Enable Refreshing during Combat"
