@@ -448,6 +448,8 @@ const Settings = () => {
                 value={item}
                 setValue={setItem}
                 zIndex={9998}
+                disabled={farmingMode === ""}
+                disabledStyle={[styles.picker, { backgroundColor: "#808080", opacity: 0.7 }]}
             />
         )
     }
@@ -470,6 +472,8 @@ const Settings = () => {
                 value={mission}
                 setValue={setMission}
                 zIndex={9997}
+                disabled={farmingMode === "" || item === ""}
+                disabledStyle={[styles.picker, { backgroundColor: "#808080", opacity: 0.7 }]}
             />
         )
     }
