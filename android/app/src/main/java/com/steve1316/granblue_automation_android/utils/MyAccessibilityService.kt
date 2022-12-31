@@ -180,12 +180,11 @@ class MyAccessibilityService : AccessibilityService() {
 	 * @param x The x coordinate of the point.
 	 * @param y The y coordinate of the point.
 	 * @param buttonName The name of the image to tap.
-	 * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
 	 * @param longPress Whether or not to long press.
 	 * @param taps How many taps to execute.
 	 * @return True if the tap gesture was executed successfully. False otherwise.
 	 */
-	fun tap(x: Double, y: Double, buttonName: String, ignoreWait: Boolean = false, longPress: Boolean = false, taps: Int = 1): Boolean {
+	fun tap(x: Double, y: Double, buttonName: String, longPress: Boolean = false, taps: Int = 1): Boolean {
 		// Randomize the tapping location.
 		val (newX, newY) = randomizeTapLocation(x, y, buttonName)
 		Log.d(tag, "Tapping $newX, $newY for image: ${buttonName.uppercase()}")
@@ -215,16 +214,12 @@ class MyAccessibilityService : AccessibilityService() {
 
 		while (tries > 0) {
 			dispatchGesture(gesture, null, null)
-			if (!ignoreWait) {
-				0.5.wait()
-			}
+			0.25.wait()
 
 			tries -= 1
 		}
 
-		if (!ignoreWait) {
-			0.5.wait()
-		}
+		0.25.wait()
 
 		return dispatchResult
 	}
@@ -234,10 +229,9 @@ class MyAccessibilityService : AccessibilityService() {
 	 *
 	 * @param scrollDown The scrolling action, either up or down the screen. Defaults to true which is scrolling down.
 	 * @param duration How long the scroll should take. Defaults to 100L.
-	 * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
 	 * @return True if the scroll gesture was executed successfully. False otherwise.
 	 */
-	fun scroll(scrollDown: Boolean = true, duration: Long = 500L, ignoreWait: Boolean = false): Boolean {
+	fun scroll(scrollDown: Boolean = true, duration: Long = 500L): Boolean {
 		val scrollPath = Path()
 
 		// Get certain portions of the screen's dimensions.
@@ -284,9 +278,7 @@ class MyAccessibilityService : AccessibilityService() {
 		}.build()
 
 		val dispatchResult = dispatchGesture(gesture, null, null)
-		if (!ignoreWait) {
-			0.5.wait()
-		}
+		(duration.toDouble() / 1000).wait()
 
 		if (!dispatchResult) {
 			Log.e(tag, "Failed to dispatch scroll gesture.")
@@ -310,10 +302,9 @@ class MyAccessibilityService : AccessibilityService() {
 	 * @param newX The x coordinate of the new position.
 	 * @param newY The y coordinate of the new position.
 	 * @param duration How long the swipe should take. Defaults to 500L.
-	 * @param ignoreWait Whether or not to not wait 0.5 seconds after dispatching the gesture.
 	 * @return True if the swipe gesture was executed successfully. False otherwise.
 	 */
-	fun swipe(oldX: Float, oldY: Float, newX: Float, newY: Float, duration: Long = 500L, ignoreWait: Boolean = false): Boolean {
+	fun swipe(oldX: Float, oldY: Float, newX: Float, newY: Float, duration: Long = 500L): Boolean {
 		// Set up the Path by swiping from the old position coordinates to the new position coordinates.
 		val swipePath = Path().apply {
 			moveTo(oldX, oldY)
@@ -325,9 +316,9 @@ class MyAccessibilityService : AccessibilityService() {
 		}.build()
 
 		val dispatchResult = dispatchGesture(gesture, null, null)
-		if (!ignoreWait) {
-			0.5.wait()
-		}
+
+		// Wait for the stroke gesture to actually complete.
+		(duration.toDouble() / 1000).wait()
 
 		return dispatchResult
 	}
