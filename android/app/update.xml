@@ -1,15 +1,31 @@
 <AppUpdater>
     <update>
-        <latestVersion>3.8.1</latestVersion>
+        <latestVersion>3.9.0</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v3.8.1 - Changelog
+v3.9.0 - Changelog
+
+New
+---
+- New attack chain command for `useSkill(#)`, `summon(#)`, and `quicksummon`. Chaining `.attack` after those commands will click the Attack button and immediately end the Turn. Useful if you want to skip the process of clicking Back to exit out of the Skill / Summon menus if that was the last action and save some seconds.
+- New setting in the Extra Settings page to reduce each and every delay by X amount of seconds. This will be helpful for people with very fast connections such that the pages load almost instantly especially with the help of the recent HTTPS change. This comes with the caveat that the entire application being unreliable since the default experience was made with the current delays in mind but you are welcome to reduce it by 0.5s for example and see how much you can increase it without encountering instabilities.
+- Add Device dimensions log message at the start of operations for debugging.
+
+Changed
+---
+- Reached content and bugfix parity with GA v2.1.0 as of 12/30/22. This includes the Arcarum Sandbox improvements by @KoiKomei and the various changes and improvements made to Combat Mode.
+- Item and Mission dropdown pickers are automatically disabled based on previous values to guide the user.
+- Reduced the Message Log text size from 12 to 8.
+- Fix the `Enable Bypassing Reset Summon Procedure` checkbox text not wrapping.
+- Increase number of attempts to get a room code from 5 to 30.
+- Increase number of tries to close out the Items Picked Up popup.
+- Adjust naming of log and json files being saved.
 
 Fixed
 ---
-- Fix wrong function being used for Event Nightmare handling.
-- Fix bug where combat scripts could not be deselected.
-- Fix bug where Event raid farming navigation could not proceed where the necessary image asset was slightly changed in a recent game update.
+- Twitter API v1.1 has been reworked to not use streams anymore as that has now been locked behind API v2. For the foreseeable future however, this tool will only use API v1.1.
+- Fix certain settings in the Extra Settings page either having the wrong types or referencing the wrong variables. Most notably for Xeno Clash and Arcarum Sandbox.
+- Fix AccessibilityService not waiting for the gestures to finish.
 
         </releaseNotes>
     </update>
