@@ -138,6 +138,7 @@ const Settings = () => {
                 sandbox: {
                     ...bsc.settings.sandbox,
                     enableDefender: false,
+                    enableGoldChest: false,
                     enableCustomDefenderSettings: false,
                     numberOfDefenders: 1,
                     defenderCombatScriptName: "",
@@ -371,7 +372,16 @@ const Settings = () => {
                         text="Enable Defender settings"
                         subtitle="Enable additional settings to show up in the Extra Settings page."
                         isChecked={bsc.settings.sandbox.enableDefender}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, enableDefender: !bsc.settings.arcarum.enableStopOnArcarumBoss } })}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, enableDefender: !bsc.settings.sandbox.enableDefender } })}
+                    />
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Arcarum Sandbox" ? (
+                    <Checkbox
+                        text="Enable gold chest opening"
+                        subtitle="Experimental, it uses default party and the chosen script for combat."
+                        isChecked={bsc.settings.sandbox.enableGoldChest}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, enableGoldChest: !bsc.settings.sandbox.enableGoldChest } })}
                     />
                 ) : null}
 
