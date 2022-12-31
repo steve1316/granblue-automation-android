@@ -41,11 +41,11 @@ class MessageLog {
 				// Generate the file name.
 				val fileName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					val current = LocalDateTime.now()
-					val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+					val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH_mm_ss")
 					"log @ ${current.format(formatter)}"
 				} else {
-					val current = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-					val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+					val current = SimpleDateFormat("HH_mm_ss", Locale.getDefault()).format(Date())
+					val sdf = SimpleDateFormat("yyyy-MM-dd HH_mm_ss", Locale.getDefault())
 					"log @ ${current.format(sdf)}"
 				}
 
