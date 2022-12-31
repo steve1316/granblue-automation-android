@@ -1606,6 +1606,9 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 						command.contains("attackback") -> {
 							attackBack()
 						}
+						command.contains("attack") -> {
+							attack(command)
+						}
 						command.contains("back") -> {
 							back()
 						}
