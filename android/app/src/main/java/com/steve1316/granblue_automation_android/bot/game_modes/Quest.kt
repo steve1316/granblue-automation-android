@@ -779,7 +779,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				game.wait(1.0)
 
 				// Close the "Items Picked Up" popup.
-				if (game.imageUtils.confirmLocation("items_picked_up")) {
+				if (game.imageUtils.confirmLocation("items_picked_up", tries = 10)) {
 					game.findAndClickButton("ok")
 				}
 
