@@ -467,11 +467,12 @@ const Settings = () => {
     const renderMissionSetting = () => {
         return (
             <DropDownPicker
-                listMode="SCROLLVIEW"
+                listMode={missionList.length > 10 ? "MODAL" : "SCROLLVIEW"}
                 style={[styles.picker, { backgroundColor: mission !== "" ? "azure" : "pink" }]}
                 dropDownContainerStyle={styles.dropdown}
                 placeholder="Select Mission"
                 searchTextInputStyle={{ fontStyle: "italic" }}
+                searchable={missionList.length > 10}
                 dropDownDirection="BOTTOM"
                 items={missionList}
                 open={isMissionPickerOpen}
