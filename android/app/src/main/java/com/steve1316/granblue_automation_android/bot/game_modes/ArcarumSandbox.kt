@@ -21,6 +21,8 @@ class ArcarumSandbox(private val game: Game) {
 
 	class Mission(override val section: Int, override val x: Int, override val y: Int) : MissionInterface
 
+	// The x and y coordinates are the difference between the center of the Menu button at the top-right and the center of the node itself.
+	// The section refers to the left most page that the node is located in starting at page 0.
 	private val missionData: Map<String, Mission> = mapOf(
 		// Zone Eletio
 		"Slithering Seductress" to Mission(0, 760, 465),
@@ -32,6 +34,7 @@ class ArcarumSandbox(private val game: Game) {
 		"Hundred-Armed Hulk" to Mission(2, 680, 415),
 		"Terror Trifecta" to Mission(2, 475, 585),
 		"Rageborn One" to Mission(2, 640, 780),
+		"Eletion Glider" to Mission(2, 140, 560),
 
 		// Zone Faym
 		"Trident Grandmaster" to Mission(0, 790, 475),
@@ -43,6 +46,7 @@ class ArcarumSandbox(private val game: Game) {
 		"Azureflame Dragon" to Mission(2, 770, 485),
 		"Eyes of Sorrow" to Mission(2, 715, 780),
 		"Mad Shearwielder" to Mission(2, 140, 490),
+		"Faymian Gun" to Mission(2, 460, 605),
 
 		// Zone Goliath
 		"Avatar of Avarice" to Mission(0, 640, 785),
@@ -54,6 +58,7 @@ class ArcarumSandbox(private val game: Game) {
 		"Goliath Vanguard" to Mission(1, 150, 770),
 		"Vestige of Truth" to Mission(2, 845, 470),
 		"Writhing Despair" to Mission(2, 565, 585),
+		"Goliath Triune" to Mission(2, 115, 715),
 
 		// Zone Harbinger
 		"Vengeful Demigod" to Mission(0, 545, 410),
@@ -62,6 +67,7 @@ class ArcarumSandbox(private val game: Game) {
 		"Harbinger Simurgh" to Mission(0, 265, 585),
 		"Harbinger Hardwood" to Mission(1, 830, 720),
 		"Demanding Stormgod" to Mission(1, 610, 565),
+		"Harbinger Stormer" to Mission(1, 415, 355),
 		"Harbinger Tyrant" to Mission(2, 845, 455),
 		"Phantasmagoric Aberration" to Mission(2, 525, 710),
 		"Dimensional Riftwalker" to Mission(2, 260, 555),
@@ -73,22 +79,25 @@ class ArcarumSandbox(private val game: Game) {
 		"Unworldly Guardian" to Mission(1, 660, 580),
 		"Deva of Wisdom" to Mission(1, 415, 295),
 		"Sword Aberration" to Mission(1, 395, 505),
+		"Athena Militis" to Mission(1, 410, 745),
 
 		// Zone Joculator
-		"Dreadful Scourge" to Mission(1, 535, 805),
-		"Nebulous One" to Mission(1, 70, 635),
-		"Bloody Soothsayer" to Mission(1, 595, 765),
-		"Maiden of the Depths" to Mission(0, 330, 760),
-		"Giant Sea Plant" to Mission(0, 855, 635),
 		"Glacial Hellbeast" to Mission(0, 110, 425),
+		"Giant Sea Plant" to Mission(0, 855, 635),
+		"Maiden of the Depths" to Mission(0, 330, 760),
+		"Bloody Soothsayer" to Mission(1, 595, 765),
+		"Nebulous One" to Mission(1, 70, 635),
+		"Dreadful Scourge" to Mission(1, 535, 805),
+		"Grani Militis" to Mission(1, 445, 560),
 
 		// Zone Kalendae
-		"Watcher from Above" to Mission(1, 45, 480),
-		"Tainted Hellmaiden" to Mission(1, 230, 760),
 		"Bedeviled Plague" to Mission(1, 675, 405),
-		"Hellbeast of Doom" to Mission(0, 280, 770),
+		"Tainted Hellmaiden" to Mission(1, 230, 760),
+		"Watcher from Above" to Mission(1, 45, 480),
 		"Scintillant Matter" to Mission(0, 820, 545),
 		"Ebony Executioner" to Mission(0, 575, 315),
+		"Hellbeast of Doom" to Mission(0, 280, 770),
+		"Baal Militis" to Mission(0, 455, 540),
 
 		// Zone Liber
 		"Mounted Toxophilite" to Mission(0, 515, 325),
@@ -96,7 +105,8 @@ class ArcarumSandbox(private val game: Game) {
 		"Ageless Guardian Beast" to Mission(0, 280, 565),
 		"Solar Princess" to Mission(1, 750, 605),
 		"Drifting Blade Demon" to Mission(1, 510, 335),
-		"Simpering Beast" to Mission(1, 505, 760)
+		"Simpering Beast" to Mission(1, 505, 760),
+		"Garuda Militis" to Mission(1, 95, 545)
 	)
 
 	/**
@@ -149,7 +159,6 @@ class ArcarumSandbox(private val game: Game) {
 	 */
 	private fun resetPosition() {
 		game.printToLog("[ARCARUM.SANDBOX] Now determining if bot is starting all the way at the left edge of the Zone...", tag = tag)
-
 		while (game.findAndClickButton("arcarum_sandbox_left_arrow", tries = 1, suppressError = true)) {
 			game.wait(1.0)
 		}
@@ -170,7 +179,7 @@ class ArcarumSandbox(private val game: Game) {
 			val tempFix: Boolean = game.imageUtils.findButton("home_menu", tries = 1) == null
 
 			// Navigate to the Arcarum banner.
-			var tries = 5
+			var tries = 30
 			while (tries > 0) {
 				if (!game.findAndClickButton("arcarum_banner", tries = 1)) {
 					if (tempFix) {
@@ -191,7 +200,6 @@ class ArcarumSandbox(private val game: Game) {
 			}
 
 			firstRun = false
-			game.wait(1.0)
 		} else {
 			game.wait(4.0)
 		}
@@ -202,8 +210,6 @@ class ArcarumSandbox(private val game: Game) {
 			game.wait(1.0)
 			game.findAndClickButton("arcarum_sandbox_banner")
 		}
-
-		game.wait(2.0)
 
 		// Move to the Zone that the user's mission is at.
 		val navigationCheck: Boolean = when (game.configData.mapName) {
@@ -256,7 +262,6 @@ class ArcarumSandbox(private val game: Game) {
 	private fun refillAAP() {
 		if (game.imageUtils.confirmLocation("aap", tries = 10)) {
 			game.printToLog("\n[ARCARUM.SANDBOX] Bot ran out of AAP. Refilling now...", tag = tag)
-
 			val useLocations = game.imageUtils.findAll("use")
 			game.gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
 
@@ -266,6 +271,43 @@ class ArcarumSandbox(private val game: Game) {
 
 			game.printToLog("[ARCARUM.SANDBOX] AAP is now refilled.", tag = tag)
 		}
+	}
+
+	/**
+	 * Clicks on Play if you are fighting a zone boss.
+	 *
+	 */
+	private fun playZoneBoss() {
+		val playButton = game.imageUtils.findButton("play")
+		if (playButton != null) {
+			game.printToLog("\n[ARCARUM.SANDBOX] Now fighting zone boss...", tag)
+			game.gestureUtils.tap(playButton.x, playButton.y, "play")
+		}
+	}
+
+	/**
+	 * Clicks on a gold chest. If it is a mimic, fight it, if not, click ok. Courtesy of KoiKomei.
+	 *
+	 */
+	private fun openGoldChest() {
+		val actionLocations = game.imageUtils.findAll("arcarum_sandbox_action")
+		game.gestureUtils.tap(actionLocations[0].x, actionLocations[0].y, "arcarum_sandbox_action")
+		game.findAndClickButton("ok")
+		game.wait(3.0)
+		if (!game.findAndClickButton("ok", suppressError = true)) {
+			game.gestureUtils.tap(actionLocations[0].x, actionLocations[0].y, "arcarum_sandbox_action")
+			game.wait(3.0)
+			if (game.selectPartyAndStartMission()) {
+				if (game.combatMode.startCombatMode()) {
+					game.collectLoot(isCompleted = true)
+				}
+			}
+			game.findAndClickButton("expedition")
+		}
+
+		game.wait(2.0)
+		resetPosition()
+		navigateToMission()
 	}
 
 	/**
@@ -289,16 +331,18 @@ class ArcarumSandbox(private val game: Game) {
 
 				// Click away the Treasure popup if it shows up.
 				game.findAndClickButton("ok", suppressError = true)
-
-				// Start the mission again.
-				game.wait(3.0)
-				navigateToMission(skipToAction = true)
+				if (game.configData.enableGoldChest && game.findAndClickButton("arcarum_gold_chest")) {
+					openGoldChest()
+				} else {
+					// Start the mission again.
+					game.wait(3.0)
+					navigateToMission(skipToAction = true)
+				}
 			}
 		}
 
-		game.wait(3.0)
-
 		// Refill AAP if needed.
+		playZoneBoss()
 		refillAAP()
 
 		game.wait(3.0)

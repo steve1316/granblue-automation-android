@@ -149,6 +149,7 @@ class JSONParser {
 			val sandboxObj = jObj.getJSONObject("sandbox")
 			sharedPreferences.edit {
 				putBoolean("enableDefender", sandboxObj.getBoolean("enableDefender"))
+				putBoolean("enableGoldChest", sandboxObj.getBoolean("enableGoldChest"))
 				putBoolean("enableCustomDefenderSettings", sandboxObj.getBoolean("enableCustomDefenderSettings"))
 				putString("defenderCombatScriptName", sandboxObj.getString("defenderCombatScriptName"))
 				putString("defenderCombatScript", toArrayList(sandboxObj.getJSONArray("defenderCombatScript")).joinToString("|"))

@@ -70,6 +70,7 @@ class ConfigData(myContext: Context) {
 
 	// Sandbox
 	val enableDefender: Boolean
+	val enableGoldChest: Boolean
 	val enableCustomDefenderSettings: Boolean
 	val numberOfDefenders: Int
 	var numberOfDefeatedDefenders: Int
@@ -214,6 +215,7 @@ class ConfigData(myContext: Context) {
 
 		// Sandbox
 		enableDefender = sharedPreferences.getBoolean("enableDefender", false)
+		enableGoldChest = sharedPreferences.getBoolean("enableGoldChest", false)
 		enableCustomDefenderSettings = sharedPreferences.getBoolean("enableCustomDefenderSettings", false)
 		numberOfDefenders = sharedPreferences.getInt("numberOfDefenders", 1)
 		numberOfDefeatedDefenders = 0
