@@ -279,7 +279,7 @@ class CombatMode(private val game: Game, private val debugMode: Boolean = false)
 		}
 
 		// Double tap the Character portrait to avoid any popups caused by other Raid participants.
-		game.gestureUtils.tap(x, y, "template_character", ignoreWait = true)
+		game.gestureUtils.tap(x, y, "template_character")
 		game.gestureUtils.tap(x, y, "template_character")
 	}
 
