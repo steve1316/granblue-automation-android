@@ -169,11 +169,23 @@ class Game(private val myContext: Context) {
 	/**
 	 * Wait the specified seconds to account for ping or loading.
 	 *
-	 * @param seconds Number of seconds to pause execution.
+	 * @param seconds umber of seconds for the execution to wait for. Defaults to 3.0.
 	 */
-	fun wait(seconds: Double) {
-		runBlocking {
-			delay((seconds * 1000).toLong())
+	fun wait(seconds: Double = 3.0) {
+		if (configData.reduceDelaySeconds > 0.0) {
+			if (seconds - configData.reduceDelaySeconds < 0.0) {
+				runBlocking {
+					delay((seconds * 1000).toLong())
+				}
+			} else {
+				runBlocking {
+					delay(((seconds - configData.reduceDelaySeconds) * 1000).toLong())
+				}
+			}
+		} else {
+			runBlocking {
+				delay((seconds * 1000).toLong())
+			}
 		}
 	}
 

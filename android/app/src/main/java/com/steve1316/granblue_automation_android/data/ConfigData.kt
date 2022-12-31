@@ -38,6 +38,7 @@ class ConfigData(myContext: Context) {
 	val enableOptInAPI: Boolean
 
 	// Configuration
+	val reduceDelaySeconds: Double
 	val enableDelayBetweenRuns: Boolean
 	val delayBetweenRuns: Int
 	val enableRandomizedDelayBetweenRuns: Boolean
@@ -157,6 +158,7 @@ class ConfigData(myContext: Context) {
 		enableOptInAPI = sharedPreferences.getBoolean("enableOptInAPI", false)
 
 		// Configuration
+		reduceDelaySeconds = sharedPreferences.getFloat("reduceDelaySeconds", 0.0f).toDouble()
 		enableDelayBetweenRuns = sharedPreferences.getBoolean("enableDelayBetweenRuns", false)
 		delayBetweenRuns = sharedPreferences.getInt("delayBetweenRuns", 5)
 		enableRandomizedDelayBetweenRuns = sharedPreferences.getBoolean("enableRandomizedDelayBetweenRuns", false)

@@ -86,8 +86,7 @@ class JSONParser {
 		try {
 			val configurationObj = jObj.getJSONObject("configuration")
 			sharedPreferences.edit {
-				putBoolean("enableFullElixir", configurationObj.getBoolean("enableFullElixir"))
-				putBoolean("enableSoulBalm", configurationObj.getBoolean("enableSoulBalm"))
+				putFloat("reduceDelaySeconds", configurationObj.getDouble("reduceDelaySeconds").toFloat())
 				putBoolean("enableDelayBetweenRuns", configurationObj.getBoolean("enableDelayBetweenRuns"))
 				putInt("delayBetweenRuns", configurationObj.getInt("delayBetweenRuns"))
 				putBoolean("enableRandomizedDelayBetweenRuns", configurationObj.getBoolean("enableRandomizedDelayBetweenRuns"))
