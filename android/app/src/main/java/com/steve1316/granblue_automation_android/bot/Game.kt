@@ -14,6 +14,7 @@ import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
 import java.util.*
 import java.util.concurrent.TimeUnit
+import com.steve1316.granblue_automation_android.utils.MediaProjectionService as MPS
 
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
@@ -145,7 +146,7 @@ class Game(private val myContext: Context) {
 			// Wait a few seconds for the page to load and to prevent the bot from prematurely scrolling all the way to the bottom.
 			wait(4.0)
 
-			printToLog("\n[INFO] Screen Width: ${MediaProjectionService.displayWidth}, Screen Height: ${MediaProjectionService.displayHeight}, Screen DPI: ${MediaProjectionService.displayDPI}")
+			printToLog("\n[INFO] Screen Width: ${MPS.displayWidth}, Screen Height: ${MPS.displayHeight}, Screen DPI: ${MPS.displayDPI}")
 
 			// Check for any misc popups.
 			findAndClickButton("close")
@@ -1068,6 +1069,8 @@ class Game(private val myContext: Context) {
 		if (configData.farmingMode != "Coop" && configData.farmingMode != "Arcarum" && configData.summonList[0] == "") {
 			throw Exception("You have no summons selected for this Farming Mode.")
 		}
+
+		printToLog("Device dimensions: ${MPS.displayHeight}x${MPS.displayWidth}\n", tag)
 
 		// Double check if the AccessibilityService is alive or not. Do not continue if it is dead.
 		gestureUtils = if (MyAccessibilityService.checkStatus(myContext)) {
