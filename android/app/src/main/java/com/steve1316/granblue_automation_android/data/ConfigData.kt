@@ -176,15 +176,11 @@ class ConfigData(myContext: Context) {
 
 			nightmareCombatScriptName = sharedPreferences.getString("nightmareCombatScriptName", "")!!
 
-			nightmareCombatScript = if (sharedPreferences.getString("nightmareCombatScript", "")!!.split("|").isNotEmpty()) {
-				sharedPreferences.getString("nightmareCombatScript", "")!!.split("|")
-			} else {
+			nightmareCombatScript = sharedPreferences.getString("nightmareCombatScript", "")!!.split("|").ifEmpty {
 				combatScript
 			}
 
-			nightmareSummons = if (sharedPreferences.getString("nightmareSummons", "")!!.split("|").isNotEmpty()) {
-				sharedPreferences.getString("nightmareSummons", "")!!.split("|")
-			} else {
+			nightmareSummons = sharedPreferences.getString("nightmareSummons", "")!!.split("|").ifEmpty {
 				summonList
 			}
 

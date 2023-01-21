@@ -14,5 +14,5 @@
 .cxx
 local.properties
 
-// OpenCV
-/opencv
+// The Automation Library is managed in its own GitHub repo.
+/automation_library

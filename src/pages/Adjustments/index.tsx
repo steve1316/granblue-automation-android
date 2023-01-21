@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from "react"
-import { BotStateContext } from "../../context/BotStateContext"
-import { ScrollView, StyleSheet, View, Dimensions } from "react-native"
-import { Text } from "react-native-elements"
-import TitleDivider from "../../components/TitleDivider"
 import Checkbox from "../../components/Checkbox"
 import NumericInput from "react-native-numeric-input"
+import React, { useContext } from "react"
+import TitleDivider from "../../components/TitleDivider"
+import { BotStateContext } from "../../context/BotStateContext"
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native"
+import { Text } from "react-native-elements"
 
 const styles = StyleSheet.create({
     root: {

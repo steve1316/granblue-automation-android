@@ -1,9 +1,9 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class ArcarumSandboxException(message: String) : Exception(message)
 
 /**
  * Provides the navigation and any necessary utility functions to handle the Arcarum Replicard Sandbox game mode.
@@ -13,13 +13,15 @@ class ArcarumSandbox(private val game: Game) {
 
 	private var firstRun: Boolean = true
 
+	private class ArcarumSandboxException(message: String) : Exception(message)
+
 	interface MissionInterface {
 		val section: Int
 		val x: Int
 		val y: Int
 	}
 
-	class Mission(override val section: Int, override val x: Int, override val y: Int) : MissionInterface
+	inner class Mission(override val section: Int, override val x: Int, override val y: Int) : MissionInterface
 
 	// The x and y coordinates are the difference between the center of the Menu button at the top-right and the center of the node itself.
 	// The section refers to the left most page that the node is located in starting at page 0.
@@ -115,7 +117,7 @@ class ArcarumSandbox(private val game: Game) {
 	 * @param skipToAction True if the mission is already selected. Defaults to False.
 	 */
 	private fun navigateToMission(skipToAction: Boolean = false) {
-		game.printToLog("[ARCARUM.SANDBOX] Now beginning navigation to ${game.configData.missionName} inside ${game.configData.mapName}...", tag = tag)
+		MessageLog.printToLog("[ARCARUM.SANDBOX] Now beginning navigation to ${game.configData.missionName} inside ${game.configData.mapName}...", tag)
 
 		if (!skipToAction) {
 			val section = missionData[game.configData.missionName]!!.section
@@ -146,7 +148,7 @@ class ArcarumSandbox(private val game: Game) {
 			game.gestureUtils.tap(actionLocations[0].x, actionLocations[0].y, "arcarum_sandbox_action")
 		} else if (game.configData.enableDefender && game.configData.numberOfDefeatedDefenders < game.configData.numberOfDefenders) {
 			game.gestureUtils.tap(actionLocations[0].x, actionLocations[0].y, "arcarum_sandbox_action")
-			game.printToLog("\n[ARCARUM.SANDBOX] Found Defender and fighting it...", tag = tag)
+			MessageLog.printToLog("\n[ARCARUM.SANDBOX] Found Defender and fighting it...", tag)
 			game.configData.engagedDefenderBattle = true
 		} else {
 			game.gestureUtils.tap(actionLocations[1].x, actionLocations[1].y, "arcarum_sandbox_action")
@@ -158,12 +160,12 @@ class ArcarumSandbox(private val game: Game) {
 	 *
 	 */
 	private fun resetPosition() {
-		game.printToLog("[ARCARUM.SANDBOX] Now determining if bot is starting all the way at the left edge of the Zone...", tag = tag)
+		MessageLog.printToLog("[ARCARUM.SANDBOX] Now determining if bot is starting all the way at the left edge of the Zone...", tag)
 		while (game.findAndClickButton("arcarum_sandbox_left_arrow", tries = 1, suppressError = true)) {
 			game.wait(1.0)
 		}
 
-		game.printToLog("[ARCARUM.SANDBOX] Left edge of the Zone has been reached.", tag = tag)
+		MessageLog.printToLog("[ARCARUM.SANDBOX] Left edge of the Zone has been reached.", tag)
 	}
 
 	/**
@@ -172,7 +174,7 @@ class ArcarumSandbox(private val game: Game) {
 	 */
 	private fun navigateToZone() {
 		if (firstRun) {
-			game.printToLog("\n[ARCARUM.SANDBOX] Now beginning navigation to ${game.configData.mapName}...", tag = tag)
+			MessageLog.printToLog("\n[ARCARUM.SANDBOX] Now beginning navigation to ${game.configData.mapName}...", tag)
 			game.goBackHome()
 
 			// Scroll up in case of the rare cases where refreshing the page lead to being loaded in on the bottom of the Home page.
@@ -192,7 +194,7 @@ class ArcarumSandbox(private val game: Game) {
 
 					tries -= 1
 					if (tries <= 0) {
-						throw(IllegalStateException("Failed to navigate to Arcarum from the Home screen."))
+						throw (IllegalStateException("Failed to navigate to Arcarum from the Home screen."))
 					}
 				} else {
 					break
@@ -261,7 +263,7 @@ class ArcarumSandbox(private val game: Game) {
 	 */
 	private fun refillAAP() {
 		if (game.imageUtils.confirmLocation("aap", tries = 10)) {
-			game.printToLog("\n[ARCARUM.SANDBOX] Bot ran out of AAP. Refilling now...", tag = tag)
+			MessageLog.printToLog("\n[ARCARUM.SANDBOX] Bot ran out of AAP. Refilling now...", tag)
 			val useLocations = game.imageUtils.findAll("use")
 			game.gestureUtils.tap(useLocations[1].x, useLocations[1].y, "use")
 
@@ -269,7 +271,7 @@ class ArcarumSandbox(private val game: Game) {
 			game.findAndClickButton("ok")
 			game.wait(1.0)
 
-			game.printToLog("[ARCARUM.SANDBOX] AAP is now refilled.", tag = tag)
+			MessageLog.printToLog("[ARCARUM.SANDBOX] AAP is now refilled.", tag)
 		}
 	}
 
@@ -280,7 +282,7 @@ class ArcarumSandbox(private val game: Game) {
 	private fun playZoneBoss() {
 		val playButton = game.imageUtils.findButton("play")
 		if (playButton != null) {
-			game.printToLog("\n[ARCARUM.SANDBOX] Now fighting zone boss...", tag)
+			MessageLog.printToLog("\n[ARCARUM.SANDBOX] Now fighting zone boss...", tag)
 			game.gestureUtils.tap(playButton.x, playButton.y, "play")
 		}
 	}

@@ -5,20 +5,27 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.steve1316.granblue_automation_android.MainActivity.loggerTag
+import com.steve1316.automation_library.utils.JSONParser
+import com.steve1316.granblue_automation_android.MainActivity
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-class JSONParser {
-	private val tag = "${loggerTag}JSONParser"
+/**
+ * Custom JSONParser implementation to suit whatever settings the developer needs to pull from the settings.json file.
+ *
+ * Available helper methods are toStringArrayList() and toIntArrayList().
+ *
+ */
+class CustomJSONParser : JSONParser() {
+	private val tag = "${MainActivity.loggerTag}CustomJSONParser"
 
 	/**
 	 * Initialize settings into SharedPreferences from the JSON file.
 	 *
 	 * @param myContext The application context.
 	 */
-	fun initializeSettings(myContext: Context) {
+	override fun initializeSettings(myContext: Context) {
 		Log.d(tag, "Loading settings from JSON file to SharedPreferences...")
 
 		// Grab the JSON object from the file.
@@ -27,7 +34,9 @@ class JSONParser {
 
 		//////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////
-		// Manually save all key-value pairs from JSON object to SharedPreferences.
+
+		// Here you can parse out each property from the JSONObject via key iteration. You can create a static class
+		// elsewhere to hold the JSON data. Or you can save them all into SharedPreferences.
 
 		val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
 
@@ -35,20 +44,20 @@ class JSONParser {
 			val gameObj = jObj.getJSONObject("game")
 			sharedPreferences.edit {
 				putString("combatScriptName", gameObj.getString("combatScriptName"))
-				putString("combatScript", toArrayList(gameObj.getJSONArray("combatScript")).joinToString("|"))
+				putString("combatScript", toStringArrayList(gameObj.getJSONArray("combatScript")).joinToString("|"))
 				putString("farmingMode", gameObj.getString("farmingMode"))
 				putString("item", gameObj.getString("item"))
 				putString("mission", gameObj.getString("mission"))
 				putString("map", gameObj.getString("map"))
 				putInt("itemAmount", gameObj.getInt("itemAmount"))
-				putString("summons", toArrayList(gameObj.getJSONArray("summons")).joinToString("|"))
-				putString("summonElements", toArrayList(gameObj.getJSONArray("summonElements")).joinToString("|"))
+				putString("summons", toStringArrayList(gameObj.getJSONArray("summons")).joinToString("|"))
+				putString("summonElements", toStringArrayList(gameObj.getJSONArray("summonElements")).joinToString("|"))
 				putInt("groupNumber", gameObj.getInt("groupNumber"))
 				putInt("partyNumber", gameObj.getInt("partyNumber"))
 				putBoolean("debugMode", gameObj.getBoolean("debugMode"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -60,7 +69,7 @@ class JSONParser {
 				putString("twitterAccessTokenSecret", twitterObj.getString("twitterAccessTokenSecret"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -71,7 +80,7 @@ class JSONParser {
 				putString("discordUserID", discordObj.getString("discordUserID"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -80,7 +89,7 @@ class JSONParser {
 				putBoolean("enableOptInAPI", apiObj.getBoolean("enableOptInAPI"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -97,7 +106,7 @@ class JSONParser {
 				putBoolean("enableBypassResetSummon", configurationObj.getBoolean("enableBypassResetSummon"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -105,14 +114,14 @@ class JSONParser {
 			sharedPreferences.edit {
 				putBoolean("enableNightmare", nightmareObj.getBoolean("enableNightmare"))
 				putString("nightmareCombatScriptName", nightmareObj.getString("nightmareCombatScriptName"))
-				putString("nightmareCombatScript", toArrayList(nightmareObj.getJSONArray("nightmareCombatScript")).joinToString("|"))
-				putString("nightmareSummons", toArrayList(nightmareObj.getJSONArray("nightmareSummons")).joinToString("|"))
-				putString("nightmareSummonElements", toArrayList(nightmareObj.getJSONArray("nightmareSummonElements")).joinToString("|"))
+				putString("nightmareCombatScript", toStringArrayList(nightmareObj.getJSONArray("nightmareCombatScript")).joinToString("|"))
+				putString("nightmareSummons", toStringArrayList(nightmareObj.getJSONArray("nightmareSummons")).joinToString("|"))
+				putString("nightmareSummonElements", toStringArrayList(nightmareObj.getJSONArray("nightmareSummonElements")).joinToString("|"))
 				putInt("nightmareGroupNumber", nightmareObj.getInt("nightmareGroupNumber"))
 				putInt("nightmarePartyNumber", nightmareObj.getInt("nightmarePartyNumber"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -122,7 +131,7 @@ class JSONParser {
 				putBoolean("selectBottomCategory", eventObj.getBoolean("selectBottomCategory"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -133,7 +142,7 @@ class JSONParser {
 				putBoolean("enableNoTimeout", raidObj.getBoolean("enableNoTimeout"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -142,7 +151,7 @@ class JSONParser {
 				putBoolean("enableStopOnArcarumBoss", arcarumObj.getBoolean("enableStopOnArcarumBoss"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -152,13 +161,13 @@ class JSONParser {
 				putBoolean("enableGoldChest", sandboxObj.getBoolean("enableGoldChest"))
 				putBoolean("enableCustomDefenderSettings", sandboxObj.getBoolean("enableCustomDefenderSettings"))
 				putString("defenderCombatScriptName", sandboxObj.getString("defenderCombatScriptName"))
-				putString("defenderCombatScript", toArrayList(sandboxObj.getJSONArray("defenderCombatScript")).joinToString("|"))
+				putString("defenderCombatScript", toStringArrayList(sandboxObj.getJSONArray("defenderCombatScript")).joinToString("|"))
 				putInt("numberOfDefenders", sandboxObj.getInt("numberOfDefenders"))
 				putInt("defenderGroupNumber", sandboxObj.getInt("defenderGroupNumber"))
 				putInt("defenderPartyNumber", sandboxObj.getInt("defenderPartyNumber"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -167,7 +176,7 @@ class JSONParser {
 				putBoolean("enableForceReload", genericObj.getBoolean("enableForceReload"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -176,7 +185,7 @@ class JSONParser {
 				putBoolean("selectTopOption", genericObj.getBoolean("selectTopOption"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -210,7 +219,7 @@ class JSONParser {
 				putInt("adjustArcarumStageEffect", adjustmentObj.getInt("adjustArcarumStageEffect"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
 
 		try {
@@ -224,27 +233,12 @@ class JSONParser {
 				putBoolean("enableTestForHomeScreen", androidObj.getBoolean("enableTestForHomeScreen"))
 				commit()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
 
 		Log.d(tag, "Successfully loaded settings into SharedPreferences.")
-	}
-
-	/**
-	 * Convert JSONArray to ArrayList object.
-	 *
-	 * @param jsonArray The JSONArray object to be converted.
-	 * @return The converted ArrayList object.
-	 */
-	private fun toArrayList(jsonArray: JSONArray): ArrayList<String> {
-		val newArrayList: ArrayList<String> = arrayListOf()
-
-		var i = 0
-		while (i < jsonArray.length()) {
-			newArrayList.add(jsonArray.get(i) as String)
-			i++
-		}
-
-		return newArrayList
 	}
 }

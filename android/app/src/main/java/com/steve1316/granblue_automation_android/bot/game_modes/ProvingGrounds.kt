@@ -1,20 +1,22 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class ProvingGroundsException(message: String) : Exception(message)
 
 class ProvingGrounds(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}ProvingGrounds"
 
 	private var firstTime: Boolean = true
 
+	private class ProvingGroundsException(message: String) : Exception(message)
+
 	/**
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
-		game.printToLog("\n[PROVING.GROUNDS] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		MessageLog.printToLog("\n[PROVING.GROUNDS] Now beginning process to navigate to the mission: $missionName...", tag)
 
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -64,7 +66,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 				navigate()
 			}
 			firstTime && game.findAndClickButton("play_again") -> {
-				game.printToLog("\n[PROVING.GROUNDS] Starting Proving Grounds Mission again...", tag = tag)
+				MessageLog.printToLog("\n[PROVING.GROUNDS] Starting Proving Grounds Mission again...", tag)
 			}
 		}
 
@@ -81,7 +83,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 
 				game.wait(2.0)
 
-				game.printToLog("\n[PROVING.GROUNDS] Now starting Mission for Proving Grounds...", tag = tag)
+				MessageLog.printToLog("\n[PROVING.GROUNDS] Now starting Mission for Proving Grounds...", tag)
 				game.findAndClickButton("proving_grounds_start")
 
 				// Now start Combat Mode and detect any item drops.
@@ -90,7 +92,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 
 					// Tap the "Next Battle" button if there are any battles left.
 					if (game.findAndClickButton("proving_grounds_next_battle")) {
-						game.printToLog("\n[PROVING.GROUNDS] Moving onto the next battle for Proving Grounds...", tag = tag)
+						MessageLog.printToLog("\n[PROVING.GROUNDS] Moving onto the next battle for Proving Grounds...", tag)
 						game.findAndClickButton("ok")
 						firstTime = false
 					}
@@ -103,11 +105,11 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 
 				// Tap the "Next Battle" button if there are any battles left.
 				if (game.findAndClickButton("proving_grounds_next_battle")) {
-					game.printToLog("\n[PROVING.GROUNDS] Moving onto the next battle for Proving Grounds...", tag = tag)
+					MessageLog.printToLog("\n[PROVING.GROUNDS] Moving onto the next battle for Proving Grounds...", tag)
 					game.findAndClickButton("ok")
 				} else {
 					// Otherwise, all battles for the Mission has been completed. Collect the completion rewards at the end.
-					game.printToLog("\n[PROVING.GROUNDS] Proving Grounds Mission has been completed.", tag = tag)
+					MessageLog.printToLog("\n[PROVING.GROUNDS] Proving Grounds Mission has been completed.", tag)
 					game.findAndClickButton("event")
 
 					// Check for friend request.
@@ -121,7 +123,7 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 					game.findAndClickButton("proving_grounds_open_chest")
 
 					if (game.imageUtils.confirmLocation("proving_grounds_completion_loot")) {
-						game.printToLog("\n[PROVING.GROUNDS] Completion rewards has been acquired.", tag = tag)
+						MessageLog.printToLog("\n[PROVING.GROUNDS] Completion rewards has been acquired.", tag)
 						game.collectLoot(isCompleted = true, skipPopupCheck = true)
 
 						// Reset the First Time flag so the bot can select a Summon and select the Mission again.

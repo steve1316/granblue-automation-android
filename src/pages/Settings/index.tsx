@@ -3,15 +3,14 @@ import CustomButton from "../../components/CustomButton"
 import data from "../../data/data.json"
 import DocumentPicker from "react-native-document-picker"
 import DropDownPicker, { ValueType } from "react-native-dropdown-picker"
-import Ionicons from "react-native-vector-icons/Ionicons"
 import React, { useContext, useEffect, useState } from "react"
 import RNFS from "react-native-fs"
-import SnackBar from "rn-snackbar-component"
 import TransferList from "../../components/TransferList"
 import { BotStateContext } from "../../context/BotStateContext"
 import { Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Divider } from "react-native-elements"
 import { Picker } from "@react-native-picker/picker"
+import { Snackbar } from "react-native-paper"
 
 const styles = StyleSheet.create({
     root: {
@@ -306,10 +305,10 @@ const Settings = () => {
                                         .replace(/\t/g, "")
                                         .split("\n")
 
-                                    bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, combatScriptName: pickerResult.name, combatScript: newCombatScript } })
+                                    bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, combatScriptName: pickerResult.name ? pickerResult.name : "", combatScript: newCombatScript } })
                                 })
                             }
-                        } catch (e) {
+                        } catch (e: any) {
                             if (!e.message.includes("Can't perform a React")) {
                                 console.warn(e)
                             }
@@ -575,15 +574,20 @@ const Settings = () => {
 
     return (
         <View style={styles.root}>
-            <SnackBar
+            <Snackbar
                 visible={snackbarOpen}
-                message={bsc.readyStatus ? "Bot is ready!" : "Bot is not ready!"}
-                actionHandler={() => setSnackbarOpen(false)}
-                action={<Ionicons name="close" size={30} />}
-                autoHidingTime={1500}
-                containerStyle={{ backgroundColor: bsc.readyStatus ? "green" : "red", borderRadius: 10 }}
-                native={false}
-            />
+                onDismiss={() => setSnackbarOpen(false)}
+                action={{
+                    label: "Close",
+                    onPress: () => {
+                        setSnackbarOpen(false)
+                    },
+                }}
+                duration={1500}
+                style={{ backgroundColor: bsc.readyStatus ? "green" : "red", borderRadius: 10 }}
+            >
+                {bsc.readyStatus ? "Bot is ready!" : "Bot is not ready!"}
+            </Snackbar>
 
             <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={{ marginHorizontal: 20 }}>

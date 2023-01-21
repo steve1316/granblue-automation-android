@@ -1,9 +1,9 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class QuestException(message: String) : Exception(message)
 
 class Quest(private val game: Game, private val mapName: String, private val missionName: String) {
 	private val tag: String = "${loggerTag}Quest"
@@ -13,6 +13,8 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	private val nalhegrandePage1Islands = listOf("Merkmal Island", "Groz Island", "Kluger Island", "The Edgelands")
 	private val nalhegrandePage2Islands = listOf("Bestia Island", "Reiche Island", "Starke Island")
 	private val oarlyegrandePage1Islands = listOf("New Utopia")
+
+	private class QuestException(message: String) : Exception(message)
 
 	/**
 	 * Exit out of the current skydom onto the world map.
@@ -73,7 +75,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 * @param currentIsland Name of the Island inside the Phantagrande Skydom that the bot is currently at.
 	 */
 	private fun navigateToPhantagrandeSkydomIsland(mapName: String, currentIsland: String) {
-		game.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Phantagrande Skydom: $mapName...", tag = tag)
+		MessageLog.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Phantagrande Skydom: $mapName...", tag)
 
 		if (phantagrandePage1Islands.contains(mapName)) {
 			// Switch pages if bot is on Page 2.
@@ -89,13 +91,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				when (mapName) {
 					"Port Breeze Archipelago" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x - 485, arrowLocation.y - 225, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 717, arrowLocation.y - 289, "world_right_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 526, arrowLocation.y - 250, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 420, arrowLocation.y - 190, "world_right_arrow")
@@ -104,13 +106,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Valtz Duchy" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x - 230, arrowLocation.y - 110, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 344, arrowLocation.y - 118, "world_right_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 250, arrowLocation.y - 122, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 205, arrowLocation.y - 90, "world_right_arrow")
@@ -119,13 +121,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Auguste Isles" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x - 560, arrowLocation.y + 5, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 840, arrowLocation.y + 54, "world_right_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 620, arrowLocation.y + 6, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 480, arrowLocation.y + 15, "world_right_arrow")
@@ -134,13 +136,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Lumacie Archipelago" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x - 130, arrowLocation.y + 75, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 177, arrowLocation.y + 159, "world_right_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 140, arrowLocation.y + 88, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 115, arrowLocation.y + 70, "world_right_arrow")
@@ -149,13 +151,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Albion Citadel" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x - 400, arrowLocation.y + 200, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 589, arrowLocation.y + 344, "world_right_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x - 435, arrowLocation.y + 200, "world_right_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x - 345, arrowLocation.y + 180, "world_right_arrow")
@@ -178,13 +180,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				when (mapName) {
 					"Mist-Shrouded Isle" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x + 240, arrowLocation.y + 190, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 379, arrowLocation.y + 342, "world_left_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 270, arrowLocation.y + 200, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 210, arrowLocation.y + 175, "world_left_arrow")
@@ -193,13 +195,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Golonzo Island" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x + 540, arrowLocation.y + 145, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 820, arrowLocation.y + 255, "world_left_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 526, arrowLocation.y + 146, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 460, arrowLocation.y + 125, "world_left_arrow")
@@ -208,13 +210,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Amalthea Island" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x + 190, arrowLocation.y + 5, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 288, arrowLocation.y + 34, "world_left_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 220, arrowLocation.y + 11, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 170, arrowLocation.y + 5, "world_left_arrow")
@@ -223,13 +225,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Former Capital Mephorash" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x + 535, arrowLocation.y - 60, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 802, arrowLocation.y - 43, "world_left_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 595, arrowLocation.y - 67, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 460, arrowLocation.y - 50, "world_left_arrow")
@@ -238,13 +240,13 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 					}
 					"Agastia" -> {
 						if (!game.imageUtils.isTablet) {
-							if (game.imageUtils.isLowerEnd) {
+							if (game.imageUtils.is720p) {
 								game.gestureUtils.tap(arrowLocation.x + 290, arrowLocation.y - 200, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 440, arrowLocation.y - 267, "world_left_arrow")
 							}
 						} else {
-							if (!game.imageUtils.isLandscape) {
+							if (!game.imageUtils.isTabletLandscape) {
 								game.gestureUtils.tap(arrowLocation.x + 320, arrowLocation.y - 226, "world_left_arrow")
 							} else {
 								game.gestureUtils.tap(arrowLocation.x + 250, arrowLocation.y - 175, "world_left_arrow")
@@ -271,7 +273,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 * @param currentIsland Name of the Island inside the Nalhegrande Skydom that the bot is currently at.
 	 */
 	private fun navigateToNalhegrandeSkydomIsland(mapName: String, currentIsland: String) {
-		game.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Nalhegrande Skydom: $mapName...", tag = tag)
+		MessageLog.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Nalhegrande Skydom: $mapName...", tag)
 
 		if (nalhegrandePage1Islands.contains(mapName)) {
 			// Switch pages if bot is on Page 2.
@@ -340,7 +342,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 * @param mapName Name of the expected Island inside the Oarlyegrande Skydom.
 	 */
 	private fun navigateToOarlyegrandeSkydomIsland(mapName: String) {
-		game.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Oarlyegrande Skydom: $mapName...", tag = tag)
+		MessageLog.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Oarlyegrande Skydom: $mapName...", tag)
 
 		if (oarlyegrandePage1Islands.contains(mapName)) {
 			// Move to the expected Island.
@@ -402,139 +404,139 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 		}
 
 		if (missionName == "Scattered Cargo") {
-			game.printToLog("\n[QUEST] Moving to Chapter 1 (115) node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 1 (115) node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 227, worldButtonLocation.y + 213, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 155, worldButtonLocation.y + 170, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 115, worldButtonLocation.y + 135, "template_node")
 				}
 			}
 		} else if (missionName == "Lucky Charm Hunt") {
-			game.printToLog("\n[QUEST] Moving to Chapter 6 (122) node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 6 (122) node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 757, worldButtonLocation.y + 43, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 545, worldButtonLocation.y + 40, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 425, worldButtonLocation.y + 30, "template_node")
 				}
 			}
 		} else if (missionName == "Special Op's Request") {
-			game.printToLog("\n[QUEST] Moving to Chapter 8 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 8 node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 577, worldButtonLocation.y + 343, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 420, worldButtonLocation.y + 263, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 330, worldButtonLocation.y + 205, "template_node")
 				}
 			}
 		} else if (missionName == "Threat to the Fisheries") {
-			game.printToLog("\n[QUEST] Moving to Chapter 9 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 9 node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 497, worldButtonLocation.y + 258, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 200, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 275, worldButtonLocation.y + 160, "template_node")
 				}
 			}
 		} else if (missionName == "The Fruit of Lumacie" || missionName == "Whiff of Danger") {
-			game.printToLog("\n[QUEST] Moving to Chapter 13 (39/52) node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 13 (39/52) node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 197, worldButtonLocation.y + 208, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 125, worldButtonLocation.y + 160, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 95, worldButtonLocation.y + 125, "template_node")
 				}
 			}
 		} else if (missionName == "I Challenge You!") {
-			game.printToLog("\n[QUEST] Moving to Chapter 17 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 17 node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 262, worldButtonLocation.y + 268, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 180, worldButtonLocation.y + 206, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 140, worldButtonLocation.y + 165, "template_node")
 				}
 			}
 		} else if (missionName == "For Whom the Bell Tolls") {
-			game.printToLog("\n[QUEST] Moving to Chapter 22 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 22 node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 417, worldButtonLocation.y + 78, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 295, worldButtonLocation.y + 65, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 230, worldButtonLocation.y + 50, "template_node")
 				}
 			}
 		} else if (missionName == "Golonzo's Battles of Old") {
-			game.printToLog("\n[QUEST] Moving to Chapter 25 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 25 node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 457, worldButtonLocation.y + 18, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 325, worldButtonLocation.y + 25, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 255, worldButtonLocation.y + 15, "template_node")
 				}
 			}
 		} else if (missionName == "The Dungeon Diet") {
-			game.printToLog("\n[QUEST] Moving to Chapter 30 (44/65) node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 30 (44/65) node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 557, worldButtonLocation.y + 48, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 400, worldButtonLocation.y + 50, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 310, worldButtonLocation.y + 40, "template_node")
 				}
 			}
 		} else if (missionName == "Trust Busting Dustup") {
-			game.printToLog("\n[QUEST] Moving to Chapter 36 (123) node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 36 (123) node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 714, worldButtonLocation.y + 30, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 530, worldButtonLocation.y + 33, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 415, worldButtonLocation.y + 30, "template_node")
 				}
 			}
 		} else if (missionName == "Erste Kingdom Episode 4") {
-			game.printToLog("\n[QUEST] Moving to Chapter 70 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 70 node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 587, worldButtonLocation.y + 318, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 420, worldButtonLocation.y + 235, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 325, worldButtonLocation.y + 185, "template_node")
 				}
 			}
 		} else if (missionName == "Imperial Wanderer's Soul") {
-			game.printToLog("\n[QUEST] Moving to Chapter 55 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 55 node...", tag)
 			if (!game.imageUtils.isTablet) {
 				game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 320, "template_node")
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					game.gestureUtils.tap(worldButtonLocation.x + 260, worldButtonLocation.y + 245, "template_node")
 				} else {
 					game.gestureUtils.tap(worldButtonLocation.x + 200, worldButtonLocation.y + 195, "template_node")
 				}
 			}
 		} else if (missionName == "Rocket Raid") {
-			game.printToLog("\n[QUEST] Moving to Chapter 59 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 59 node...", tag)
 			game.gestureUtils.tap(worldButtonLocation.x + 155, worldButtonLocation.y + 185, "template_node")
 		} else {
 			throw QuestException("Selected mission of $missionName does not exist.")
@@ -552,40 +554,52 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			worldButtonLocation = game.imageUtils.findButton("world2", tries = 30)!!
 		}
 
-		if (missionName == "Stocking Up for Winter") {
-			game.printToLog("\n[QUEST] Moving to Chapter 80 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 35, worldButtonLocation.y + 150, "template_node")
-		} else if (missionName == "The Mysterious Room") {
-			game.printToLog("\n[QUEST] Moving to Chapter 81 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 460, worldButtonLocation.y + 105, "template_node")
-		} else if (missionName == "The Right of Might" || missionName == "Idelva Kingdom Episode 4") {
-			game.printToLog("\n[QUEST] Moving to Chapter 124 node...", tag = tag)
-			game.findAndClickButton("arcarum_sandbox_right_arrow", tries = 1, suppressError = true)
-			game.gestureUtils.tap(worldButtonLocation.x + 540, worldButtonLocation.y + 110, "template_node")
-		} else if (missionName == "Pholia the Maiden Episode 1" || missionName == "Pholia the Maiden Episode 3") {
-			game.printToLog("\n[QUEST] Moving to Chapter 85 node...", tag = tag)
-			game.findAndClickButton("arcarum_sandbox_right_arrow", tries = 1, suppressError = true)
-			game.gestureUtils.tap(worldButtonLocation.x + 370, worldButtonLocation.y + 290, "template_node")
-		} else if (missionName == "Teachings of the Sage Episode 2") {
-			game.printToLog("\n[QUEST] Moving to Chapter 89 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 755, worldButtonLocation.y + 150, "template_node")
-		} else if (missionName == "Isle of Primals Episode 3") {
-			game.printToLog("\n[QUEST] Moving to Chapter 129 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 500, worldButtonLocation.y + 305, "template_node")
-		} else if (missionName == "Deception's Inception Episode 4") {
-			game.printToLog("\n[QUEST] Moving to Chapter 100 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 645, worldButtonLocation.y + 155, "template_node")
-		} else if (missionName == "Be ALl That You Can Be") {
-			game.printToLog("\n[QUEST] Moving to Chapter 102 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 30, worldButtonLocation.y + 180, "template_node")
-		} else if (missionName == "Once Lost, Once Found") {
-			game.printToLog("\n[QUEST] Moving to Chapter 108 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 665, worldButtonLocation.y + 160, "template_node")
-		} else if (missionName == "A Girl Named Mika Episode 2") {
-			game.printToLog("\n[QUEST] Moving to Chapter 113 node...", tag = tag)
-			game.gestureUtils.tap(worldButtonLocation.x + 405, worldButtonLocation.y + 150, "template_node")
-		} else {
-			throw QuestException("Selected mission of $missionName does not exist.")
+		when (missionName) {
+			"Stocking Up for Winter" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 80 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 35, worldButtonLocation.y + 150, "template_node")
+			}
+			"The Mysterious Room" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 81 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 460, worldButtonLocation.y + 105, "template_node")
+			}
+			"The Right of Might", "Idelva Kingdom Episode 4" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 124 node...", tag)
+				game.findAndClickButton("arcarum_sandbox_right_arrow", tries = 1, suppressError = true)
+				game.gestureUtils.tap(worldButtonLocation.x + 540, worldButtonLocation.y + 110, "template_node")
+			}
+			"Pholia the Maiden Episode 1", "Pholia the Maiden Episode 3" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 85 node...", tag)
+				game.findAndClickButton("arcarum_sandbox_right_arrow", tries = 1, suppressError = true)
+				game.gestureUtils.tap(worldButtonLocation.x + 370, worldButtonLocation.y + 290, "template_node")
+			}
+			"Teachings of the Sage Episode 2" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 89 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 755, worldButtonLocation.y + 150, "template_node")
+			}
+			"Isle of Primals Episode 3" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 129 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 500, worldButtonLocation.y + 305, "template_node")
+			}
+			"Deception's Inception Episode 4" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 100 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 645, worldButtonLocation.y + 155, "template_node")
+			}
+			"Be ALl That You Can Be" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 102 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 30, worldButtonLocation.y + 180, "template_node")
+			}
+			"Once Lost, Once Found" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 108 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 665, worldButtonLocation.y + 160, "template_node")
+			}
+			"A Girl Named Mika Episode 2" -> {
+				MessageLog.printToLog("\n[QUEST] Moving to Chapter 113 node...", tag)
+				game.gestureUtils.tap(worldButtonLocation.x + 405, worldButtonLocation.y + 150, "template_node")
+			}
+			else -> {
+				throw QuestException("Selected mission of $missionName does not exist.")
+			}
 		}
 	}
 
@@ -601,7 +615,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 		}
 
 		if (missionName == "House of Happiness") {
-			game.printToLog("\n[QUEST] Moving to Chapter 132 node...", tag = tag)
+			MessageLog.printToLog("\n[QUEST] Moving to Chapter 132 node...", tag)
 			game.gestureUtils.tap(worldButtonLocation.x + 350, worldButtonLocation.y + 300, "template_node")
 		} else {
 			throw QuestException("Selected mission of $missionName does not exist.")
@@ -612,7 +626,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
-		game.printToLog("\n[QUEST] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		MessageLog.printToLog("\n[QUEST] Now beginning process to navigate to the mission: $missionName...", tag)
 
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -637,11 +651,11 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 
 		// Check which island the bot is at.
 		if (game.imageUtils.confirmLocation("map_$formattedMapName", tries = 1)) {
-			game.printToLog("[QUEST] Bot is currently on the correct island.", tag = tag)
+			MessageLog.printToLog("[QUEST] Bot is currently on the correct island.", tag)
 			checkLocation = true
 			currentSkydom = targetSkydom
 		} else {
-			game.printToLog("[QUEST] Bot is currently not on the current island.", tag = tag)
+			MessageLog.printToLog("[QUEST] Bot is currently not on the current island.", tag)
 			checkLocation = false
 
 			val locationList = phantagrandePage1Islands + phantagrandePage2Islands + nalhegrandePage1Islands + nalhegrandePage2Islands + oarlyegrandePage1Islands
@@ -653,7 +667,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 
 				val tempFormattedMapLocation = tempMapLocation.lowercase().replace(" ", "").replace("-", "_")
 				if (game.imageUtils.confirmLocation("map_$tempFormattedMapLocation", tries = 1)) {
-					game.printToLog("[QUEST] Bot's current location is at $tempMapLocation. Now moving to $mapName...", tag = tag)
+					MessageLog.printToLog("[QUEST] Bot's current location is at $tempMapLocation. Now moving to $mapName...", tag)
 					currentIsland = tempMapLocation
 					break
 				}
@@ -723,7 +737,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			}
 
 			// After being on the correct chapter node, scroll down the screen as far as possible and then click the mission to start.
-			game.printToLog("[QUEST] Now bringing up the Summon Selection screen for \"$missionName\"...", tag = tag)
+			MessageLog.printToLog("[QUEST] Now bringing up the Summon Selection screen for \"$missionName\"...", tag)
 			game.gestureUtils.scroll()
 
 			game.wait(2.0)
