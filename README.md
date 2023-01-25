@@ -53,8 +53,9 @@ By downloading this application, you consent to your account potentially getting
     - (Experimental) Tablets supported with minimum 1600 pixel width like the Galaxy Tab S7. If oriented portrait, Chrome needs to have Desktop Mode turned off and situated on the left half of the tablet. If landscape, Chrome needs to have Desktop Mode turned on and situated on the left half of the tablet.
     - Tested emulator was Bluestacks 5. Make sure to have the device be in Portrait Mode BEFORE starting the bot as emulators do not have a way to tell the bot that it rotated.
         - In addition, use SkyLeap instead of Google Chrome. Room codes are not able to be properly pasted into Google Chrome while Raid farming on emulators.
-2. [Granblue Fantasy account](http://game.granbluefantasy.jp/)
-3. [Twitter Developer account (optional, needed to farm Raids)](https://developer.twitter.com/en)
+2. Display is set to FHD (1080p). If not, then will need to adjust scales in the Extra Settings page to accommodate.
+3. [Granblue Fantasy account](http://game.granbluefantasy.jp/)
+4. [Twitter Developer account (optional, needed to farm Raids)](https://developer.twitter.com/en)
 
 # Instructions
 
