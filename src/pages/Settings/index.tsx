@@ -574,21 +574,6 @@ const Settings = () => {
 
     return (
         <View style={styles.root}>
-            <Snackbar
-                visible={snackbarOpen}
-                onDismiss={() => setSnackbarOpen(false)}
-                action={{
-                    label: "Close",
-                    onPress: () => {
-                        setSnackbarOpen(false)
-                    },
-                }}
-                duration={1500}
-                style={{ backgroundColor: bsc.readyStatus ? "green" : "red", borderRadius: 10 }}
-            >
-                {bsc.readyStatus ? "Bot is ready!" : "Bot is not ready!"}
-            </Snackbar>
-
             <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={{ marginHorizontal: 20 }}>
                     {renderCombatScriptSetting()}
@@ -608,6 +593,20 @@ const Settings = () => {
                     {renderGroupPartySettings()}
                 </View>
             </ScrollView>
+
+            <Snackbar
+                visible={snackbarOpen}
+                onDismiss={() => setSnackbarOpen(false)}
+                action={{
+                    label: "Close",
+                    onPress: () => {
+                        setSnackbarOpen(false)
+                    },
+                }}
+                style={{ backgroundColor: bsc.readyStatus ? "green" : "red", borderRadius: 10 }}
+            >
+                {bsc.readyStatus ? "Bot is ready!" : "Bot is not ready!"}
+            </Snackbar>
         </View>
     )
 }
