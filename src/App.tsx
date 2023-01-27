@@ -1,3 +1,4 @@
+import Adjustments from "./pages/Adjustments"
 import ExtraSettings from "./pages/ExtraSettings"
 import Home from "./pages/Home"
 import Ionicons from "react-native-vector-icons/Ionicons"
@@ -9,7 +10,6 @@ import { BotStateProvider } from "./context/BotStateContext"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { MessageLogProvider } from "./context/MessageLogContext"
 import { NavigationContainer } from "@react-navigation/native"
-import Adjustments from "./pages/Adjustments"
 
 const Tab = createBottomTabNavigator()
 

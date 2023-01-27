@@ -1,12 +1,14 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class XenoClashException(message: String) : Exception(message)
 
 class XenoClash(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}XenoClash"
+
+	private class XenoClashException(message: String) : Exception(message)
 
 	/**
 	 * Checks for Xeno Clash Nightmare and if it appeared and the user enabled it in settings, start it.
@@ -17,20 +19,20 @@ class XenoClash(private val game: Game, private val missionName: String) {
 		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 3)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
-				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
+				MessageLog.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag)
 				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
 			} else {
-				game.printToLog("\n[XENO] Detected Event Nightmare. Starting it now...", tag = tag)
+				MessageLog.printToLog("\n[XENO] Detected Event Nightmare. Starting it now...", tag)
 
-				game.printToLog("\n********************", tag = tag)
-				game.printToLog("********************", tag = tag)
-				game.printToLog("[XENO] Xeno Clash Nightmare", tag = tag)
-				game.printToLog("[XENO] Xeno Clash Nightmare Summons: ${game.configData.nightmareSummons}", tag = tag)
-				game.printToLog("[XENO] Xeno Clash Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
-				game.printToLog("[XENO] Xeno Clash Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
-				game.printToLog("********************", tag = tag)
-				game.printToLog("\n********************", tag = tag)
+				MessageLog.printToLog("\n********************", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("[XENO] Xeno Clash Nightmare", tag)
+				MessageLog.printToLog("[XENO] Xeno Clash Nightmare Summons: ${game.configData.nightmareSummons}", tag)
+				MessageLog.printToLog("[XENO] Xeno Clash Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag)
+				MessageLog.printToLog("[XENO] Xeno Clash Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("\n********************", tag)
 
 				// Tap the "Play Next" button to head to the Summon Selection screen.
 				game.findAndClickButton("play_next")
@@ -61,15 +63,15 @@ class XenoClash(private val game: Game, private val missionName: String) {
 		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("limited_time_quests", tries = 3)) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot", tries = 1)) {
-				game.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag = tag)
+				MessageLog.printToLog("\n[XENO] Skippable Xeno Clash Nightmare detected. Claiming it now...", tag)
 				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
 			} else {
-				game.printToLog("\n[XENO] Xeno Clash Nightmare detected but user opted to not run it. Moving on...", tag = tag)
+				MessageLog.printToLog("\n[XENO] Xeno Clash Nightmare detected but user opted to not run it. Moving on...", tag)
 				game.findAndClickButton("close")
 			}
 		} else {
-			game.printToLog("\n[XENO] No Xeno Clash Nightmare detected. Moving on...", tag = tag)
+			MessageLog.printToLog("\n[XENO] No Xeno Clash Nightmare detected. Moving on...", tag)
 		}
 
 		return false
@@ -82,7 +84,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 
-		game.printToLog("\n[XENO.CLASH] Now navigating to Xeno Clash...", tag = tag)
+		MessageLog.printToLog("\n[XENO.CLASH] Now navigating to Xeno Clash...", tag)
 
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
@@ -106,7 +108,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 			// Open up Event Quests or Event Raids.
 			if (missionName == "Xeno Clash Extreme") {
 				// The Xeno Extremes are the two above the last two on the list.
-				game.printToLog("[XENO.CLASH] Now hosting Xeno Clash Extreme...", tag = tag)
+				MessageLog.printToLog("[XENO.CLASH] Now hosting Xeno Clash Extreme...", tag)
 				if (game.configData.selectTopOption) {
 					game.gestureUtils.tap(selectButtonLocations[selectButtonLocations.size - 3].x, selectButtonLocations[selectButtonLocations.size - 3].y, "select")
 				} else {
@@ -120,7 +122,7 @@ class XenoClash(private val game: Game, private val missionName: String) {
 				game.gestureUtils.tap(playRoundButtonLocations[0].x, playRoundButtonLocations[0].y, "play_round_button")
 			} else if (missionName == "Xeno Clash Raid") {
 				// The Xeno Raids are the last two on the list.
-				game.printToLog("[XENO.CLASH] Now hosting Xeno Clash Raid...", tag = tag)
+				MessageLog.printToLog("[XENO.CLASH] Now hosting Xeno Clash Raid...", tag)
 				if (game.configData.selectTopOption) {
 					game.gestureUtils.tap(selectButtonLocations[selectButtonLocations.size - 1].x, selectButtonLocations[selectButtonLocations.size - 1].y, "select")
 				} else {

@@ -1,49 +1,16 @@
 import Checkbox from "../../components/Checkbox"
 import CustomButton from "../../components/CustomButton"
+import CustomDropDownPicker from "../../components/CustomDropdownPicker"
 import data from "../../data/data.json"
 import DocumentPicker from "react-native-document-picker"
-import DropDownPicker, { ValueType } from "react-native-dropdown-picker"
-import Ionicons from "react-native-vector-icons/Ionicons"
 import React, { useContext, useEffect, useState } from "react"
 import RNFS from "react-native-fs"
-import SnackBar from "rn-snackbar-component"
 import TransferList from "../../components/TransferList"
 import { BotStateContext } from "../../context/BotStateContext"
 import { Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Divider } from "react-native-elements"
 import { Picker } from "@react-native-picker/picker"
-
-const styles = StyleSheet.create({
-    root: {
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "center",
-        margin: 10,
-    },
-    picker: {
-        marginVertical: 10,
-        backgroundColor: "azure",
-    },
-    dropdown: {
-        marginTop: 20,
-    },
-    modal: {
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(80,80,80,0.3)",
-    },
-    outsideModal: {
-        position: "absolute",
-        height: "100%",
-        width: "100%",
-    },
-    componentContainer: {
-        width: Dimensions.get("window").width * 0.7,
-        height: Dimensions.get("window").height * 0.9,
-    },
-})
+import { Snackbar } from "react-native-paper"
 
 interface Item {
     label: string
@@ -56,9 +23,6 @@ export interface CombatScript {
 }
 
 const Settings = () => {
-    const [isFarmingModePickerOpen, setIsFarmingModePickerOpen] = useState<boolean>(false)
-    const [isItemPickerOpen, setIsItemPickerOpen] = useState<boolean>(false)
-    const [isMissionPickerOpen, setIsMissionPickerOpen] = useState<boolean>(false)
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const [firstTime, setFirstTime] = useState<boolean>(true)
     const [firstTime2, setFirstTime2] = useState<boolean>(true)
@@ -67,36 +31,72 @@ const Settings = () => {
     const [itemList, setItemList] = useState<Item[]>([])
     const [missionList, setMissionList] = useState<Item[]>([])
 
-    // Certain individual states are necessary as react-native-dropdown-picker requires a setValue state parameter for DropDownPicker.
-    const [farmingMode, setFarmingMode] = useState<ValueType>("")
-    const [item, setItem] = useState<ValueType>("")
-    const [mission, setMission] = useState<ValueType>("")
+    const [farmingMode, setFarmingMode] = useState<string>("")
+    const [item, setItem] = useState<string>("")
+    const [mission, setMission] = useState<string>("")
 
     const bsc = useContext(BotStateContext)
 
-    const farmingModes = [
-        { label: "Quest", value: "Quest" },
-        { label: "Special", value: "Special" },
-        { label: "Coop", value: "Coop" },
-        { label: "Raid", value: "Raid" },
-        { label: "Event", value: "Event" },
-        { label: "Event (Token Drawboxes)", value: "Event (Token Drawboxes)" },
-        { label: "Rise of the Beasts", value: "Rise of the Beasts" },
-        { label: "Guild Wars", value: "Guild Wars" },
-        { label: "Dread Barrage", value: "Dread Barrage" },
-        { label: "Proving Grounds", value: "Proving Grounds" },
-        { label: "Xeno Clash", value: "Xeno Clash" },
-        { label: "Arcarum", value: "Arcarum" },
-        { label: "Arcarum Sandbox", value: "Arcarum Sandbox" },
-        { label: "Generic", value: "Generic" },
-    ]
+    const styles = StyleSheet.create({
+        root: {
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+            margin: 10,
+        },
+        farmingModePicker: {
+            marginTop: 10,
+            backgroundColor: farmingMode !== "" ? "azure" : "pink",
+        },
+        itemPicker: {
+            marginTop: 10,
+            backgroundColor: item !== "" ? "azure" : "pink",
+        },
+        missionPicker: {
+            marginVertical: 10,
+            backgroundColor: mission !== "" ? "azure" : "pink",
+        },
+        disabledPicker: {
+            backgroundColor: "#808080",
+            opacity: 0.7,
+        },
+        dropdown: {
+            marginTop: 20,
+        },
+        modal: {
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(80,80,80,0.3)",
+        },
+        outsideModal: {
+            position: "absolute",
+            height: "100%",
+            width: "100%",
+        },
+        componentContainer: {
+            width: Dimensions.get("window").width * 0.7,
+            height: Dimensions.get("window").height * 0.9,
+        },
+    })
 
-    // Manually close all pickers as react-native-dropdown-picker does not handle that automatically.
-    const closeAllPickers = () => {
-        setIsFarmingModePickerOpen(false)
-        setIsItemPickerOpen(false)
-        setIsMissionPickerOpen(false)
-    }
+    const farmingModes = [
+        { value: "Quest" },
+        { value: "Special" },
+        { value: "Coop" },
+        { value: "Raid" },
+        { value: "Event" },
+        { value: "Event (Token Drawboxes)" },
+        { value: "Rise of the Beasts" },
+        { value: "Guild Wars" },
+        { value: "Dread Barrage" },
+        { value: "Proving Grounds" },
+        { value: "Xeno Clash" },
+        { value: "Arcarum" },
+        { value: "Arcarum Sandbox" },
+        { value: "Generic" },
+    ]
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -306,10 +306,10 @@ const Settings = () => {
                                         .replace(/\t/g, "")
                                         .split("\n")
 
-                                    bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, combatScriptName: pickerResult.name, combatScript: newCombatScript } })
+                                    bsc.setSettings({ ...bsc.settings, game: { ...bsc.settings.game, combatScriptName: pickerResult.name ? pickerResult.name : "", combatScript: newCombatScript } })
                                 })
                             }
-                        } catch (e) {
+                        } catch (e: any) {
                             if (!e.message.includes("Can't perform a React")) {
                                 console.warn(e)
                             }
@@ -329,22 +329,7 @@ const Settings = () => {
     const renderFarmingModeSetting = () => {
         return (
             <View>
-                <DropDownPicker
-                    listMode="SCROLLVIEW"
-                    style={[styles.picker, { backgroundColor: bsc.settings.game.farmingMode !== "" ? "azure" : "pink" }]}
-                    dropDownContainerStyle={styles.dropdown}
-                    placeholder="Select Farming Mode"
-                    searchTextInputStyle={{ fontStyle: "italic" }}
-                    items={farmingModes}
-                    open={isFarmingModePickerOpen}
-                    setOpen={(flag) => {
-                        closeAllPickers()
-                        setIsFarmingModePickerOpen(flag)
-                    }}
-                    value={farmingMode}
-                    setValue={setFarmingMode}
-                    zIndex={9999}
-                />
+                <CustomDropDownPicker containerStyle={styles.farmingModePicker} placeholder="Select Farming Mode" data={farmingModes} value={farmingMode} setValue={setFarmingMode} />
 
                 {bsc.settings.game.farmingMode === "Generic" ? (
                     <View>
@@ -439,59 +424,39 @@ const Settings = () => {
 
     const renderItemSetting = () => {
         return (
-            <DropDownPicker
-                listMode={itemList.length > 10 ? "MODAL" : "SCROLLVIEW"}
-                modalProps={{
-                    animationType: "slide",
-                }}
-                style={[styles.picker, { backgroundColor: item !== "" ? "azure" : "pink" }]}
-                dropDownContainerStyle={styles.dropdown}
+            <CustomDropDownPicker
+                containerStyle={styles.itemPicker}
                 placeholder="Select Item"
-                searchTextInputStyle={{ fontStyle: "italic" }}
-                searchable={itemList.length > 10}
-                items={itemList}
-                open={isItemPickerOpen}
-                setOpen={(flag) => {
-                    closeAllPickers()
-                    setIsItemPickerOpen(flag)
-                }}
+                search={itemList.length > 10}
+                showModal={itemList.length > 10}
+                data={itemList}
                 value={item}
                 setValue={setItem}
-                zIndex={9998}
                 disabled={farmingMode === ""}
-                disabledStyle={[styles.picker, { backgroundColor: "#808080", opacity: 0.7 }]}
+                disabledContainerStyle={[styles.itemPicker, styles.disabledPicker]}
             />
         )
     }
 
     const renderMissionSetting = () => {
         return (
-            <DropDownPicker
-                listMode={missionList.length > 10 ? "MODAL" : "SCROLLVIEW"}
-                style={[styles.picker, { backgroundColor: mission !== "" ? "azure" : "pink" }]}
-                dropDownContainerStyle={styles.dropdown}
+            <CustomDropDownPicker
+                containerStyle={[styles.missionPicker, { marginBottom: 0 }]}
                 placeholder="Select Mission"
-                searchTextInputStyle={{ fontStyle: "italic" }}
-                searchable={missionList.length > 10}
-                dropDownDirection="BOTTOM"
-                items={missionList}
-                open={isMissionPickerOpen}
-                setOpen={(flag) => {
-                    closeAllPickers()
-                    setIsMissionPickerOpen(flag)
-                }}
+                search={missionList.length > 10}
+                showModal={missionList.length > 10}
+                data={missionList}
                 value={mission}
                 setValue={setMission}
-                zIndex={9997}
                 disabled={farmingMode === "" || item === ""}
-                disabledStyle={[styles.picker, { backgroundColor: "#808080", opacity: 0.7 }]}
+                disabledContainerStyle={[styles.missionPicker, styles.disabledPicker]}
             />
         )
     }
 
     const renderItemAmountSetting = () => {
         return (
-            <View>
+            <View style={{ marginTop: 10 }}>
                 <Text style={{ color: "#000" }}>Item Amount:</Text>
                 <Picker
                     selectedValue={bsc.settings.game.itemAmount}
@@ -575,16 +540,6 @@ const Settings = () => {
 
     return (
         <View style={styles.root}>
-            <SnackBar
-                visible={snackbarOpen}
-                message={bsc.readyStatus ? "Bot is ready!" : "Bot is not ready!"}
-                actionHandler={() => setSnackbarOpen(false)}
-                action={<Ionicons name="close" size={30} />}
-                autoHidingTime={1500}
-                containerStyle={{ backgroundColor: bsc.readyStatus ? "green" : "red", borderRadius: 10 }}
-                native={false}
-            />
-
             <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={{ marginHorizontal: 20 }}>
                     {renderCombatScriptSetting()}
@@ -604,6 +559,20 @@ const Settings = () => {
                     {renderGroupPartySettings()}
                 </View>
             </ScrollView>
+
+            <Snackbar
+                visible={snackbarOpen}
+                onDismiss={() => setSnackbarOpen(false)}
+                action={{
+                    label: "Close",
+                    onPress: () => {
+                        setSnackbarOpen(false)
+                    },
+                }}
+                style={{ backgroundColor: bsc.readyStatus ? "green" : "red", borderRadius: 10 }}
+            >
+                {bsc.readyStatus ? "Bot is ready!" : "Bot is not ready!"}
+            </Snackbar>
         </View>
     )
 }

@@ -1,12 +1,14 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class EventException(message: String) : Exception(message)
 
 class Event(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}Event"
+
+	private class EventException(message: String) : Exception(message)
 
 	/**
 	 * Checks for Event Nightmare and if it appeared and the user enabled it in settings, start it.
@@ -17,20 +19,20 @@ class Event(private val game: Game, private val missionName: String) {
 		if (game.configData.enableNightmare && game.imageUtils.findButton("event_claim_loot") != null) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot")) {
-				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
+				MessageLog.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag)
 				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
 			} else {
-				game.printToLog("\n[EVENT] Detected Event Nightmare. Starting it now...", tag = tag)
+				MessageLog.printToLog("\n[EVENT] Detected Event Nightmare. Starting it now...", tag)
 
-				game.printToLog("\n********************", tag = tag)
-				game.printToLog("********************", tag = tag)
-				game.printToLog("[EVENT] Event Nightmare", tag = tag)
-				game.printToLog("[EVENT] Event Nightmare Summons: ${game.configData.nightmareSummons}", tag = tag)
-				game.printToLog("[EVENT] Event Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
-				game.printToLog("[EVENT] Event Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
-				game.printToLog("********************", tag = tag)
-				game.printToLog("\n********************", tag = tag)
+				MessageLog.printToLog("\n********************", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("[EVENT] Event Nightmare", tag)
+				MessageLog.printToLog("[EVENT] Event Nightmare Summons: ${game.configData.nightmareSummons}", tag)
+				MessageLog.printToLog("[EVENT] Event Nightmare Group Number: ${game.configData.nightmareGroupNumber}", tag)
+				MessageLog.printToLog("[EVENT] Event Nightmare Party Number: ${game.configData.nightmarePartyNumber}", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("\n********************", tag)
 
 				// Tap the "Play Next" button to head to the Summon Selection screen.
 				game.findAndClickButton("play_next")
@@ -55,15 +57,15 @@ class Event(private val game: Game, private val missionName: String) {
 		} else if (!game.configData.enableNightmare && game.imageUtils.findButton("event_claim_loot") != null) {
 			// First check if the Nightmare is skippable.
 			if (game.findAndClickButton("event_claim_loot")) {
-				game.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag = tag)
+				MessageLog.printToLog("\n[EVENT] Skippable Event Nightmare detected. Claiming it now...", tag)
 				game.collectLoot(isCompleted = false, isEventNightmare = true)
 				return true
 			} else {
-				game.printToLog("\n[EVENT] Event Nightmare detected but user opted to not run it. Moving on...", tag = tag)
+				MessageLog.printToLog("\n[EVENT] Event Nightmare detected but user opted to not run it. Moving on...", tag)
 				game.findAndClickButton("close")
 			}
 		} else {
-			game.printToLog("\n[EVENT] No Event Nightmare detected. Moving on...", tag = tag)
+			MessageLog.printToLog("\n[EVENT] No Event Nightmare detected. Moving on...", tag)
 		}
 
 		return false
@@ -73,7 +75,7 @@ class Event(private val game: Game, private val missionName: String) {
 	 * Navigates to the specified Event (Token Drawboxes) mission.
 	 */
 	private fun navigateTokenDrawboxes() {
-		game.printToLog("\n[EVENT.TOKEN.DRAWBOXES] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		MessageLog.printToLog("\n[EVENT.TOKEN.DRAWBOXES] Now beginning process to navigate to the mission: $missionName...", tag)
 
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -91,7 +93,7 @@ class Event(private val game: Game, private val missionName: String) {
 
 		// Check if there is a "Daily Missions" popup and close it.
 		if (game.imageUtils.confirmLocation("event_daily_missions", tries = 3)) {
-			game.printToLog("\n[EVENT.TOKEN.DRAWBOXES] Detected \"Daily Missions\" popup. Closing it...", tag = tag)
+			MessageLog.printToLog("\n[EVENT.TOKEN.DRAWBOXES] Detected \"Daily Missions\" popup. Closing it...", tag)
 			game.findAndClickButton("cancel")
 		}
 
@@ -122,7 +124,7 @@ class Event(private val game: Game, private val missionName: String) {
 		game.wait(1.0)
 
 		if (formattedMissionName == "Event Quest") {
-			game.printToLog("[EVENT.TOKEN.DRAWBOXES] Now hosting Event Quest...", tag = tag)
+			MessageLog.printToLog("[EVENT.TOKEN.DRAWBOXES] Now hosting Event Quest...", tag)
 			if (!game.findAndClickButton("event_quests")) {
 				throw EventException("Failed to proceed any further in Event (Token Drawboxes) navigation by missing the Event Quests button.")
 			}
@@ -143,7 +145,7 @@ class Event(private val game: Game, private val missionName: String) {
 			}
 		} else if (formattedMissionName == "Event Raid") {
 			// Bring up the "Raid Battle" popup. Scroll the screen down a bit in case of small screen size.
-			game.printToLog("[EVENT.TOKEN.DRAWBOXES] Now hosting Event Raid...", tag = tag)
+			MessageLog.printToLog("[EVENT.TOKEN.DRAWBOXES] Now hosting Event Raid...", tag)
 			if (!game.findAndClickButton("event_raid_battle")) {
 				throw EventException("Failed to proceed any further in Event (Token Drawboxes) navigation by missing the Event Raids button.")
 			}
@@ -178,10 +180,10 @@ class Event(private val game: Game, private val missionName: String) {
 
 			// If the user does not have enough Treasures to host a Extreme or Impossible Raid, host a Very Hard Raid instead.
 			if (difficulty == "Extreme" && !game.imageUtils.waitVanish("ap", timeout = 10)) {
-				game.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...", tag = tag)
+				MessageLog.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Extreme Raid. Hosting Very Hard Raid instead...", tag)
 				game.gestureUtils.tap(apLocations[0].x, apLocations[0].y, "ap")
 			} else if (difficulty == "Impossible" && !game.imageUtils.waitVanish("ap", timeout = 10)) {
-				game.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...", tag = tag)
+				MessageLog.printToLog("[EVENT.TOKEN.DRAWBOXES] Not enough treasures to host Impossible Raid. Hosting Very Hard Raid instead...", tag)
 				game.gestureUtils.tap(apLocations[0].x, apLocations[0].y, "ap")
 			}
 		}
@@ -194,7 +196,7 @@ class Event(private val game: Game, private val missionName: String) {
 		if (game.configData.farmingMode == "Event (Token Drawboxes)") {
 			navigateTokenDrawboxes()
 		} else {
-			game.printToLog("\n[EVENT] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+			MessageLog.printToLog("\n[EVENT] Now beginning process to navigate to the mission: $missionName...", tag)
 
 			// Go to the Home screen.
 			game.goBackHome(confirmLocationCheck = true)
@@ -249,10 +251,10 @@ class Event(private val game: Game, private val missionName: String) {
 
 				// Open up Event Quests or Event Raids. Offset by 1 if there is a Nightmare available.
 				if (formattedMissionName == "Event Quest") {
-					game.printToLog("[EVENT] Now hosting Event Quest...", tag = tag)
+					MessageLog.printToLog("[EVENT] Now hosting Event Quest...", tag)
 					game.gestureUtils.tap(selectButtonLocations[position + nightmareIsAvailable].x, selectButtonLocations[position + nightmareIsAvailable].y, "select")
 				} else if (formattedMissionName == "Event Raid") {
-					game.printToLog("[EVENT] Now hosting Event Raid...", tag = tag)
+					MessageLog.printToLog("[EVENT] Now hosting Event Raid...", tag)
 					game.gestureUtils.tap(selectButtonLocations[(position + 1) + nightmareIsAvailable].x, selectButtonLocations[(position + 1) + nightmareIsAvailable].y, "select")
 				}
 

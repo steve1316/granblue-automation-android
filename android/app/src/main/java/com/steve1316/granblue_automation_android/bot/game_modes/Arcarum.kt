@@ -1,9 +1,9 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class ArcarumException(message: String) : Exception(message)
 
 /**
  * Provides the navigation and any necessary utility functions to handle the Arcarum game mode.
@@ -13,6 +13,8 @@ class Arcarum(private val game: Game, private val mapName: String) {
 
 	private var firstRun: Boolean = true
 
+	private class ArcarumException(message: String) : Exception(message)
+
 	/**
 	 * Navigates to the specified Arcarum expedition.
 	 *
@@ -20,7 +22,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 	 */
 	private fun navigateToMap(): Boolean {
 		if (firstRun) {
-			game.printToLog("\n[ARCARUM] Now beginning navigation to $mapName.", tag = tag)
+			MessageLog.printToLog("\n[ARCARUM] Now beginning navigation to $mapName.", tag)
 			game.goBackHome()
 
 			game.wait(3.0)
@@ -42,7 +44,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 
 					tries -= 1
 					if (tries <= 0) {
-						throw(IllegalStateException("Failed to navigate to Arcarum from the Home screen."))
+						throw (IllegalStateException("Failed to navigate to Arcarum from the Home screen."))
 					}
 				} else {
 					break
@@ -71,14 +73,14 @@ class Arcarum(private val game: Game, private val mapName: String) {
 		game.findAndClickButton("arcarum_extreme")
 
 		// Finally, navigate to the specified map to start it.
-		game.printToLog("[ARCARUM] Now starting the specified expedition: $mapName", tag = tag)
+		MessageLog.printToLog("[ARCARUM] Now starting the specified expedition: $mapName", tag)
 		val formattedMapName: String = mapName.lowercase().replace(" ", "_")
 
 		if (!game.findAndClickButton("arcarum_${formattedMapName}", tries = 10)) {
 			// Resume the expedition if it is already in-progress.
 			game.findAndClickButton("arcarum_exploring")
 		} else if (game.imageUtils.confirmLocation("arcarum_departure_check")) {
-			game.printToLog("[ARCARUM] Now using 1 Arcarum ticket to start this expedition...", tag = tag)
+			MessageLog.printToLog("[ARCARUM] Now using 1 Arcarum ticket to start this expedition...", tag)
 			val resultCheck = game.findAndClickButton("start_expedition")
 			game.wait(6.0)
 			return resultCheck
@@ -86,7 +88,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 			game.wait(3.0)
 			return true
 		} else {
-			throw(IllegalStateException("Failed to encounter the Departure Check to confirm starting the expedition."))
+			throw (IllegalStateException("Failed to encounter the Departure Check to confirm starting the expedition."))
 		}
 
 		return false
@@ -104,7 +106,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 		// Determine what action to take.
 		var tries = 3
 		while (tries > 0) {
-			game.printToLog("\n[ARCARUM] Now determining what action to take with $tries tries remaining...", tag = tag)
+			MessageLog.printToLog("\n[ARCARUM] Now determining what action to take with $tries tries remaining...", tag)
 
 			// Prioritise any enemies/chests/thorns that are available on the current node.
 			val arcarumActions = game.imageUtils.findAll("arcarum_action")
@@ -129,14 +131,14 @@ class Arcarum(private val game: Game, private val mapName: String) {
 			}
 
 			// Clear any detected Treasure popup after claiming a chest.
-			game.printToLog("[ARCARUM] No action found for the current node. Looking for Treasure popup...", tag)
+			MessageLog.printToLog("[ARCARUM] No action found for the current node. Looking for Treasure popup...", tag)
 			if (game.imageUtils.confirmLocation("arcarum_treasure", tries = 3, bypassGeneralAdjustment = true)) {
 				game.findAndClickButton("ok")
 				return "Claimed Treasure"
 			}
 
 			// Next, determine if there is a available node to move to. Any bound monsters should have been destroyed by now.
-			game.printToLog("[ARCARUM] No Treasure popup detected. Looking for an available node to move to...", tag)
+			MessageLog.printToLog("[ARCARUM] No Treasure popup detected. Looking for an available node to move to...", tag)
 			if (game.findAndClickButton("arcarum_node", tries = 3, bypassGeneralAdjustment = true)) {
 				game.wait(1.0)
 				return "Navigating"
@@ -147,7 +149,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 			}
 
 			// If all else fails, attempt to navigate to a node that is occupied by mob(s).
-			game.printToLog("[ARCARUM] No available node to move to. Looking for nodes with mobs on them...", tag)
+			MessageLog.printToLog("[ARCARUM] No available node to move to. Looking for nodes with mobs on them...", tag)
 			if (game.findAndClickButton("arcarum_mob", tries = 3, bypassGeneralAdjustment = true) ||
 				game.findAndClickButton("arcarum_red_mob", tries = 3, bypassGeneralAdjustment = true)
 			) {
@@ -156,7 +158,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 			}
 
 			// If all else fails, see if there are any unclaimed chests, like the ones spawned by a random special event that spawns chests on all nodes.
-			game.printToLog("[ARCARUM] No nodes with mobs on them. Looking for nodes with chests on them...", tag)
+			MessageLog.printToLog("[ARCARUM] No nodes with mobs on them. Looking for nodes with chests on them...", tag)
 			if (game.findAndClickButton("arcarum_silver_chest", tries = 3, bypassGeneralAdjustment = true) ||
 				game.findAndClickButton("arcarum_gold_chest", tries = 3, bypassGeneralAdjustment = true)
 			) {
@@ -167,7 +169,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 			tries -= 1
 		}
 
-		game.printToLog("[ARCARUM] No action can be taken. Defaulting to moving to the next area.", tag)
+		MessageLog.printToLog("[ARCARUM] No action can be taken. Defaulting to moving to the next area.", tag)
 		return "Next Area"
 	}
 
@@ -177,7 +179,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 	 * @return Flag on whether or not a Boss was detected.
 	 */
 	private fun checkForBoss(): Boolean {
-		game.printToLog("\n[ARCARUM] Checking if boss is available...", tag)
+		MessageLog.printToLog("\n[ARCARUM] Checking if boss is available...", tag)
 
 		return if (game.configData.enableStopOnArcarumBoss) {
 			return game.imageUtils.findButton("arcarum_boss", tries = 3, bypassGeneralAdjustment = true) != null ||
@@ -198,15 +200,15 @@ class Arcarum(private val game: Game, private val mapName: String) {
 
 			while (true) {
 				val action = chooseAction()
-				game.printToLog("[ARCARUM] Action to take will be: $action", tag = tag)
+				MessageLog.printToLog("[ARCARUM] Action to take will be: $action", tag)
 
 				if (action == "Combat") {
 					// Start Combat Mode.
 					if (game.selectPartyAndStartMission()) {
 						if (game.imageUtils.confirmLocation("elemental_damage")) {
-							throw(IllegalStateException("Encountered an important mob for Arcarum and the selected party does not conform to the enemy's weakness. Perhaps you would like to do this battle yourself?"))
+							throw (IllegalStateException("Encountered an important mob for Arcarum and the selected party does not conform to the enemy's weakness. Perhaps you would like to do this battle yourself?"))
 						} else if (game.imageUtils.confirmLocation("arcarum_restriction")) {
-							throw(IllegalStateException("Encountered a party restriction for Arcarum. Perhaps you would like to complete this section by yourself?"))
+							throw (IllegalStateException("Encountered a party restriction for Arcarum. Perhaps you would like to complete this section by yourself?"))
 						}
 
 						if (game.combatMode.startCombatMode()) {
@@ -221,10 +223,10 @@ class Arcarum(private val game: Game, private val mapName: String) {
 					// Either navigate to the next area or confirm the expedition's conclusion.
 					if (game.findAndClickButton("arcarum_next_stage")) {
 						game.findAndClickButton("ok")
-						game.printToLog("[ARCARUM] Moving to the next area...", tag = tag)
+						MessageLog.printToLog("[ARCARUM] Moving to the next area...", tag)
 					} else if (game.findAndClickButton("arcarum_checkpoint")) {
 						game.findAndClickButton("arcarum")
-						game.printToLog("[ARCARUM] Expedition is complete", tag = tag)
+						MessageLog.printToLog("[ARCARUM] Expedition is complete", tag)
 						runsCompleted += 1
 
 						game.wait(1.0)
@@ -232,7 +234,7 @@ class Arcarum(private val game: Game, private val mapName: String) {
 						break
 					}
 				} else if (action == "Boss Detected") {
-					game.printToLog("[ARCARUM] Boss has been detected. Stopping the bot.", tag)
+					MessageLog.printToLog("[ARCARUM] Boss has been detected. Stopping the bot.", tag)
 					throw ArcarumException("Boss has been detected. Stopping the bot.")
 				}
 			}

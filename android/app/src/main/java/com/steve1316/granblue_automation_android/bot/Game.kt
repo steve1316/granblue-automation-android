@@ -2,9 +2,11 @@ package com.steve1316.granblue_automation_android.bot
 
 import android.content.Context
 import android.content.res.Resources
-import android.util.Log
+import com.steve1316.automation_library.utils.DiscordUtils
+import com.steve1316.automation_library.utils.MessageLog
+import com.steve1316.automation_library.utils.MyAccessibilityService
+import com.steve1316.automation_library.utils.MediaProjectionService as MPS
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
-import com.steve1316.granblue_automation_android.StartModule
 import com.steve1316.granblue_automation_android.bot.game_modes.*
 import com.steve1316.granblue_automation_android.data.ConfigData
 import com.steve1316.granblue_automation_android.data.SummonData
@@ -14,7 +16,6 @@ import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
 import java.util.*
 import java.util.concurrent.TimeUnit
-import com.steve1316.granblue_automation_android.utils.MediaProjectionService as MPS
 
 /**
  * Main driver for bot activity and navigation for the web browser game, Granblue Fantasy.
@@ -34,7 +35,7 @@ class Game(private val myContext: Context) {
 	private lateinit var raid: Raid
 	private lateinit var event: Event
 	private lateinit var dreadBarrage: DreadBarrage
-	private lateinit var riseOfTheBeasts: RiseOfTheBeasts
+	private lateinit var riseOfTheBeasts: ROTB
 	private lateinit var guildWars: GuildWars
 	private lateinit var provingGrounds: ProvingGrounds
 	private lateinit var xenoClash: XenoClash
@@ -43,84 +44,53 @@ class Game(private val myContext: Context) {
 	private lateinit var generic: Generic
 
 	val configData: ConfigData = ConfigData(myContext)
-	val imageUtils: ImageUtils = ImageUtils(myContext, this)
+	val imageUtils: CustomImageUtils = CustomImageUtils(myContext, this)
 	lateinit var gestureUtils: MyAccessibilityService
-	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(this)
+	var twitterRoomFinder: TwitterRoomFinder = TwitterRoomFinder(myContext, configData)
 	val combatMode: CombatMode = CombatMode(this, configData.debugMode)
 
 	init {
-		if (configData.farmingMode == "Quest") {
-			quest = Quest(this, configData.mapName, configData.missionName)
-		} else if (configData.farmingMode == "Special") {
-			special = Special(this, configData.mapName, configData.missionName)
-		} else if (configData.farmingMode == "Coop") {
-			coop = Coop(this, configData.missionName)
-		} else if (configData.farmingMode == "Raid") {
-			raid = Raid(this)
-		} else if (configData.farmingMode == "Event" || configData.farmingMode == "Event (Token Drawboxes)") {
-			event = Event(this, configData.missionName)
-		} else if (configData.farmingMode == "Dread Barrage") {
-			dreadBarrage = DreadBarrage(this, configData.missionName)
-		} else if (configData.farmingMode == "Rise of the Beasts") {
-			riseOfTheBeasts = RiseOfTheBeasts(this, configData.missionName)
-		} else if (configData.farmingMode == "Guild Wars") {
-			guildWars = GuildWars(this, configData.missionName)
-		} else if (configData.farmingMode == "Proving Grounds") {
-			provingGrounds = ProvingGrounds(this, configData.missionName)
-		} else if (configData.farmingMode == "Xeno Clash") {
-			xenoClash = XenoClash(this, configData.missionName)
-		} else if (configData.farmingMode == "Arcarum") {
-			arcarum = Arcarum(this, configData.missionName)
-		} else if (configData.farmingMode == "Arcarum Sandbox") {
-			arcarumSandbox = ArcarumSandbox(this)
-		} else if (configData.farmingMode == "Generic") {
-			generic = Generic(this)
+		when (configData.farmingMode) {
+			"Quest" -> {
+				quest = Quest(this, configData.mapName, configData.missionName)
+			}
+			"Special" -> {
+				special = Special(this, configData.mapName, configData.missionName)
+			}
+			"Coop" -> {
+				coop = Coop(this, configData.missionName)
+			}
+			"Raid" -> {
+				raid = Raid(this)
+			}
+			"Event", "Event (Token Drawboxes)" -> {
+				event = Event(this, configData.missionName)
+			}
+			"Dread Barrage" -> {
+				dreadBarrage = DreadBarrage(this, configData.missionName)
+			}
+			"Rise of the Beasts" -> {
+				riseOfTheBeasts = ROTB(this, configData.missionName)
+			}
+			"Guild Wars" -> {
+				guildWars = GuildWars(this, configData.missionName)
+			}
+			"Proving Grounds" -> {
+				provingGrounds = ProvingGrounds(this, configData.missionName)
+			}
+			"Xeno Clash" -> {
+				xenoClash = XenoClash(this, configData.missionName)
+			}
+			"Arcarum" -> {
+				arcarum = Arcarum(this, configData.missionName)
+			}
+			"Arcarum Sandbox" -> {
+				arcarumSandbox = ArcarumSandbox(this)
+			}
+			"Generic" -> {
+				generic = Generic(this)
+			}
 		}
-	}
-
-	/**
-	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
-	 *
-	 * Source is from https://stackoverflow.com/questions/9027317/how-to-convert-milliseconds-to-hhmmss-format/9027379
-	 *
-	 * @return String of HH:MM:SS format of the elapsed time.
-	 */
-	private fun printTime(): String {
-		val elapsedMillis: Long = System.currentTimeMillis() - startTime
-
-		return String.format(
-			"%02d:%02d:%02d",
-			TimeUnit.MILLISECONDS.toHours(elapsedMillis),
-			TimeUnit.MILLISECONDS.toMinutes(elapsedMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)),
-			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
-		)
-	}
-
-	/**
-	 * Print the specified message to debug console and then saves the message to the log.
-	 *
-	 * @param message Message to be saved.
-	 * @param tag Tag to distinguish between messages for where they came from. Defaults to Game's tag.
-	 * @param isError Flag to determine whether to display log message in console as debug or error.
-	 */
-	fun printToLog(message: String, tag: String = this.tag, isError: Boolean = false) {
-		if (!isError) {
-			Log.d(tag, message)
-		} else {
-			Log.e(tag, message)
-		}
-
-		// Remove the newline prefix if needed and place it where it should be.
-		val newMessage = if (message.startsWith("\n")) {
-			"\n" + printTime() + " " + message.removePrefix("\n")
-		} else {
-			printTime() + " " + message
-		}
-
-		MessageLog.messageLog.add(newMessage)
-
-		// Send the message to the frontend.
-		StartModule.sendEvent("MessageLog", newMessage)
 	}
 
 	/**
@@ -131,13 +101,13 @@ class Game(private val myContext: Context) {
 	 */
 	fun goBackHome(confirmLocationCheck: Boolean = false, testMode: Boolean = false) {
 		if (!imageUtils.confirmLocation("home", bypassGeneralAdjustment = true)) {
-			printToLog("[INFO] Moving back to the Home screen...")
+			MessageLog.printToLog("[INFO] Moving back to the Home screen...", tag)
 
 			if (!findAndClickButton("home", bypassGeneralAdjustment = true)) {
 				if (!testMode) {
 					throw Exception("HOME button is not found. Stopping bot to prevent cascade of errors. Please readjust your confidences/scales.")
 				} else {
-					printToLog("\n[DEBUG] Failed to find the HOME button. Now beginning test to find a valid scale for this device...")
+					MessageLog.printToLog("\n[DEBUG] Failed to find the HOME button. Now beginning test to find a valid scale for this device...", tag)
 					imageUtils.findButton("home", testMode = true)
 					return
 				}
@@ -146,7 +116,7 @@ class Game(private val myContext: Context) {
 			// Wait a few seconds for the page to load and to prevent the bot from prematurely scrolling all the way to the bottom.
 			wait(4.0)
 
-			printToLog("\n[INFO] Screen Width: ${MPS.displayWidth}, Screen Height: ${MPS.displayHeight}, Screen DPI: ${MPS.displayDPI}")
+			MessageLog.printToLog("\n[INFO] Screen Width: ${MPS.displayWidth}, Screen Height: ${MPS.displayHeight}, Screen DPI: ${MPS.displayDPI}", tag)
 
 			// Check for any misc popups.
 			findAndClickButton("close")
@@ -163,7 +133,7 @@ class Game(private val myContext: Context) {
 				}
 			}
 		} else {
-			printToLog("[INFO] Bot is already at the Home screen.")
+			MessageLog.printToLog("[INFO] Bot is already at the Home screen.", tag)
 		}
 	}
 
@@ -202,7 +172,7 @@ class Game(private val myContext: Context) {
 	 */
 	fun findAndClickButton(buttonName: String, tries: Int = 0, customConfidence: Double = configData.confidence, suppressError: Boolean = false, bypassGeneralAdjustment: Boolean = true): Boolean {
 		if (configData.debugMode) {
-			printToLog("[DEBUG] Now attempting to find and click the \"$buttonName\" button.")
+			MessageLog.printToLog("[DEBUG] Now attempting to find and click the \"$buttonName\" button.", tag)
 		}
 
 		var tempLocation: Point?
@@ -327,7 +297,7 @@ class Game(private val myContext: Context) {
 		return if (tempLocation != null) {
 			if (configData.enableDelayTap) {
 				val newDelay: Double = ((configData.delayTapMilliseconds - 100)..(configData.delayTapMilliseconds + 100)).random().toDouble() / 1000
-				if (configData.debugMode) printToLog("[DEBUG] Adding an additional delay of ${newDelay}s...")
+				if (configData.debugMode) MessageLog.printToLog("[DEBUG] Adding an additional delay of ${newDelay}s...", tag)
 				wait(newDelay)
 			}
 
@@ -342,9 +312,9 @@ class Game(private val myContext: Context) {
 	 */
 	fun checkForCAPTCHA() {
 		if (imageUtils.confirmLocation("captcha", bypassGeneralAdjustment = true)) {
-			throw(Exception("[CAPTCHA] CAPTCHA has been detected! Stopping the bot now."))
+			throw (Exception("[CAPTCHA] CAPTCHA has been detected! Stopping the bot now."))
 		} else {
-			printToLog("\n[CAPTCHA] CAPTCHA not detected.")
+			MessageLog.printToLog("\n[CAPTCHA] CAPTCHA not detected.", tag)
 		}
 	}
 
@@ -353,20 +323,20 @@ class Game(private val myContext: Context) {
 	 */
 	private fun delayBetweenRuns() {
 		if (configData.enableDelayBetweenRuns) {
-			printToLog("\n[INFO] Now waiting for ${configData.delayBetweenRuns} seconds as the resting period. Please do not navigate from the current screen.")
+			MessageLog.printToLog("\n[INFO] Now waiting for ${configData.delayBetweenRuns} seconds as the resting period. Please do not navigate from the current screen.", tag)
 
 			wait(configData.delayBetweenRuns.toDouble())
-		} else if (!configData.enableDelayBetweenRuns && configData.enableRandomizedDelayBetweenRuns) {
+		} else if (configData.enableRandomizedDelayBetweenRuns) {
 			val newSeconds = Random().nextInt(configData.delayBetweenRunsUpperBound - configData.delayBetweenRunsLowerBound) + configData.delayBetweenRunsLowerBound
-			printToLog(
+			MessageLog.printToLog(
 				"\n[INFO] Given the bounds of (${configData.delayBetweenRunsLowerBound}, ${configData.delayBetweenRunsUpperBound}), bot will now wait for $newSeconds seconds as a resting " +
-						"period. Please do not navigate from the current screen."
+						"period. Please do not navigate from the current screen.", tag
 			)
 
 			wait(newSeconds.toDouble())
 		}
 
-		printToLog("\n[INFO] Resting period complete.")
+		MessageLog.printToLog("\n[INFO] Resting period complete.", tag)
 	}
 
 	/**
@@ -379,9 +349,7 @@ class Game(private val myContext: Context) {
 	fun selectSummon(optionalSummonList: List<String> = arrayListOf()): Boolean {
 		// Format the Summon strings.
 		val newSummonList = mutableListOf<String>()
-		val unformattedSummonList = if (optionalSummonList.isNotEmpty()) {
-			optionalSummonList
-		} else {
+		val unformattedSummonList = optionalSummonList.ifEmpty {
 			configData.summonList
 		}
 
@@ -418,8 +386,8 @@ class Game(private val myContext: Context) {
 			}
 		}
 
-		printToLog("Summon list: $newSummonList")
-		printToLog("Summon Element list: $summonElementList")
+		MessageLog.printToLog("Summon list: $newSummonList", tag)
+		MessageLog.printToLog("Summon Element list: $summonElementList", tag)
 
 		// Find the location of one of the Summons.
 		val summonLocation = imageUtils.findSummon(newSummonList, summonElementList)
@@ -435,7 +403,7 @@ class Game(private val myContext: Context) {
 				true
 			}
 			configData.enableBypassResetSummon -> {
-				printToLog("[INFO] Bypassing procedure to reset Summons. Reloading page and selecting the very first one now...")
+				MessageLog.printToLog("[INFO] Bypassing procedure to reset Summons. Reloading page and selecting the very first one now...", tag)
 
 				findAndClickButton("reload")
 				wait(3.0)
@@ -459,7 +427,7 @@ class Game(private val myContext: Context) {
 	 * Reset the available Summons by starting and then retreating from an Old Lignoid Trial Battle.
 	 */
 	private fun resetSummons() {
-		printToLog("[INFO] Resetting Summons...")
+		MessageLog.printToLog("[INFO] Resetting Summons...", tag)
 
 		// Go back Home.
 		goBackHome(confirmLocationCheck = true)
@@ -494,11 +462,11 @@ class Game(private val myContext: Context) {
 				goBackHome()
 
 				if (imageUtils.confirmLocation("home")) {
-					printToLog("[SUCCESS] Summons have now been refreshed.")
+					MessageLog.printToLog("[SUCCESS] Summons have now been refreshed.", tag)
 				}
 			}
 		} else {
-			printToLog("[WARNING] Failed to reset Summons as the 'Gameplay Extras' button is not visible.")
+			MessageLog.printToLog("[WARNING] Failed to reset Summons as the 'Gameplay Extras' button is not visible.", tag)
 		}
 	}
 
@@ -538,13 +506,13 @@ class Game(private val myContext: Context) {
 						numberOfTries -= 1
 
 						if (numberOfTries <= 0) {
-							throw(Resources.NotFoundException("Could not find Set Extra."))
+							throw (Resources.NotFoundException("Could not find Set Extra."))
 						}
 					}
 				}
 			} else {
 				if (configData.farmingMode == "Raid" && imageUtils.findButton("party_set_extra", tries = 3) != null) {
-					printToLog("[INFO] Skipping Set Selection due to Raid only allowing parties from the Extra category.")
+					MessageLog.printToLog("[INFO] Skipping Set Selection due to Raid only allowing parties from the Extra category.", tag)
 				} else if (selectedGroupNumber < 8) {
 					while (setLocation == null) {
 						setLocation = imageUtils.findButton("party_set_a", customConfidence = 0.90)
@@ -575,26 +543,26 @@ class Game(private val myContext: Context) {
 			}
 
 			if (setLocation == null) {
-				throw(NullPointerException("The set location was set to null for party selection."))
+				throw (NullPointerException("The set location was set to null for party selection."))
 			}
 
 			// Select the Group.
 			var equation: Double = if (!imageUtils.isTablet) {
 				if (selectedGroupNumber == 1) {
-					if (imageUtils.isLowerEnd) {
+					if (imageUtils.is720p) {
 						537.0
 					} else {
 						787.0
 					}
 				} else {
-					if (imageUtils.isLowerEnd) {
+					if (imageUtils.is720p) {
 						537.0 - (93 * (selectedGroupNumber - 1))
 					} else {
 						787.0 - (140 * (selectedGroupNumber - 1))
 					}
 				}
 			} else {
-				if (!imageUtils.isLandscape) {
+				if (!imageUtils.isTabletLandscape) {
 					if (selectedGroupNumber == 1) {
 						588.0
 					} else {
@@ -610,13 +578,13 @@ class Game(private val myContext: Context) {
 			}
 
 			if (!imageUtils.isTablet) {
-				if (imageUtils.isLowerEnd) {
+				if (imageUtils.is720p) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 80.0, "template_group")
 				} else {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 140.0, "template_group")
 				}
 			} else {
-				if (!imageUtils.isLandscape) {
+				if (!imageUtils.isTabletLandscape) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 90.0, "template_group")
 				} else {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 70.0, "template_group")
@@ -628,20 +596,20 @@ class Game(private val myContext: Context) {
 			// Select the Party.
 			equation = if (!imageUtils.isTablet) {
 				if (selectedPartyNumber == 1) {
-					if (imageUtils.isLowerEnd) {
+					if (imageUtils.is720p) {
 						468.0
 					} else {
 						690.0
 					}
 				} else {
-					if (imageUtils.isLowerEnd) {
+					if (imageUtils.is720p) {
 						468.0 - (85 * (selectedPartyNumber - 1))
 					} else {
 						690.0 - (130 * (selectedPartyNumber - 1))
 					}
 				}
 			} else {
-				if (!imageUtils.isLandscape) {
+				if (!imageUtils.isTabletLandscape) {
 					if (selectedPartyNumber == 1) {
 						516.0
 					} else {
@@ -657,13 +625,13 @@ class Game(private val myContext: Context) {
 			}
 
 			if (!imageUtils.isTablet) {
-				if (imageUtils.isLowerEnd) {
+				if (imageUtils.is720p) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 490.0, "template_party")
 				} else {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 740.0, "template_party")
 				}
 			} else {
-				if (!imageUtils.isLandscape) {
+				if (!imageUtils.isTabletLandscape) {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 540.0, "template_party")
 				} else {
 					gestureUtils.tap(setLocation.x - equation, setLocation.y + 425.0, "template_party")
@@ -675,7 +643,7 @@ class Game(private val myContext: Context) {
 			partySelectionFirstRun = false
 		}
 
-		printToLog("[SUCCESS] Selected Group and Party successfully.")
+		MessageLog.printToLog("[SUCCESS] Selected Group and Party successfully.", tag)
 
 		// Start the mission by clicking "OK".
 		findAndClickButton("ok")
@@ -683,7 +651,7 @@ class Game(private val myContext: Context) {
 
 		// Detect if a "This raid battle has already ended" popup appeared.
 		if (configData.farmingMode == "Raid" && findAndClickButton("ok")) {
-			printToLog("[WARNING] Raid unfortunately just ended. Backing out now...")
+			MessageLog.printToLog("[WARNING] Raid unfortunately just ended. Backing out now...", tag)
 			wait(3.0)
 			return false
 		}
@@ -702,7 +670,7 @@ class Game(private val myContext: Context) {
 		if (imageUtils.confirmLocation("not_enough_ap", tries = 2)) {
 			throw Exception("AP auto-restore check failed. Please enable the auto-restore option in the in-game settings according to the GitHub instructions.")
 		} else {
-			printToLog("\n[INFO] AP auto-restore check passed. Continuing to Party Selection...")
+			MessageLog.printToLog("\n[INFO] AP auto-restore check passed. Continuing to Party Selection...", tag)
 		}
 	}
 
@@ -716,7 +684,7 @@ class Game(private val myContext: Context) {
 		if (configData.farmingMode == "Raid" && imageUtils.confirmLocation("not_enough_ep", tries = 2)) {
 			throw Exception("AP auto-restore check failed. Please enable the auto-restore option in the in-game settings according to the GitHub instructions.")
 		} else {
-			printToLog("\n[INFO] AP auto-restore check passed. Continuing to Party Selection...")
+			MessageLog.printToLog("\n[INFO] AP auto-restore check passed. Continuing to Party Selection...", tag)
 		}
 	}
 
@@ -756,14 +724,14 @@ class Game(private val myContext: Context) {
 				}
 
 				if (configData.debugMode) {
-					printToLog("[DEBUG] Have not detected the Loot Collection screen yet...")
+					MessageLog.printToLog("[DEBUG] Have not detected the Loot Collection screen yet...", tag)
 				}
 			}
 		}
 
 		// Now that the bot is at the Loot Collected screen, detect any user-specified items.
 		if (isCompleted && !isPendingBattle && !isEventNightmare && !isDefender) {
-			printToLog("\n[INFO] Detecting if any user-specified loot dropped this run...")
+			MessageLog.printToLog("\n[INFO] Detecting if any user-specified loot dropped this run...", tag)
 			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				imageUtils.findFarmedItems(configData.itemName)
 			} else {
@@ -773,7 +741,7 @@ class Game(private val myContext: Context) {
 			amountOfRuns += 1
 			itemAmountFarmed += amountGained
 		} else if (isPendingBattle) {
-			printToLog("\n[INFO] Detecting if any user-specified loot dropped this Pending Battle...")
+			MessageLog.printToLog("\n[INFO] Detecting if any user-specified loot dropped this Pending Battle...", tag)
 			amountGained = if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
 				imageUtils.findFarmedItems(configData.itemName)
 			} else {
@@ -794,16 +762,16 @@ class Game(private val myContext: Context) {
 
 		if (isCompleted && !isPendingBattle && !isEventNightmare && !skipInfo && !isDefender) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
-				printToLog("\n********************")
-				printToLog("********************")
-				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
-				printToLog("[INFO] Mission: ${configData.missionName}")
-				printToLog("[INFO] Summons: ${configData.summonList}")
-				printToLog("[INFO] # of ${configData.itemName} gained this run: $amountGained")
-				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed}/${configData.itemAmount}")
-				printToLog("[INFO] # of runs completed: $amountOfRuns")
-				printToLog("********************")
-				printToLog("********************")
+				MessageLog.printToLog("\n********************", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("[INFO] Farming Mode: ${configData.farmingMode}", tag)
+				MessageLog.printToLog("[INFO] Mission: ${configData.missionName}", tag)
+				MessageLog.printToLog("[INFO] Summons: ${configData.summonList}", tag)
+				MessageLog.printToLog("[INFO] # of ${configData.itemName} gained this run: $amountGained", tag)
+				MessageLog.printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed}/${configData.itemAmount}", tag)
+				MessageLog.printToLog("[INFO] # of runs completed: $amountOfRuns", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("********************", tag)
 
 				// Construct the message for the Discord private DM.
 				if (amountGained > 0) {
@@ -818,14 +786,14 @@ class Game(private val myContext: Context) {
 					DiscordUtils.queue.add(discordString)
 				}
 			} else {
-				printToLog("\n********************")
-				printToLog("********************")
-				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
-				printToLog("[INFO] Mission: ${configData.missionName}")
-				printToLog("[INFO] Summons: ${configData.summonList}")
-				printToLog("[INFO] # of runs completed: $amountOfRuns / ${configData.itemAmount}")
-				printToLog("********************")
-				printToLog("********************")
+				MessageLog.printToLog("\n********************", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("[INFO] Farming Mode: ${configData.farmingMode}", tag)
+				MessageLog.printToLog("[INFO] Mission: ${configData.missionName}", tag)
+				MessageLog.printToLog("[INFO] Summons: ${configData.summonList}", tag)
+				MessageLog.printToLog("[INFO] # of runs completed: $amountOfRuns / ${configData.itemAmount}", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("********************", tag)
 
 				// Construct the message for the Discord private DM.
 				val discordString = if (amountOfRuns >= configData.itemAmount) {
@@ -838,41 +806,39 @@ class Game(private val myContext: Context) {
 			}
 		} else if (isPendingBattle && amountGained > 0 && !skipInfo) {
 			if (!listOf("EXP", "Angel Halo Weapons", "Repeated Runs").contains(configData.itemName)) {
-				printToLog("\n********************")
-				printToLog("********************")
-				printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
-				printToLog("[INFO] Mission: ${configData.missionName}")
-				printToLog("[INFO] Summons: ${configData.summonList}")
-				printToLog("[INFO] # of ${configData.itemName} gained from this Pending Battle: $amountGained")
-				printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed}/${configData.itemAmount}")
-				printToLog("[INFO] # of runs completed: $amountOfRuns")
-				printToLog("********************")
-				printToLog("********************")
+				MessageLog.printToLog("\n********************", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("[INFO] Farming Mode: ${configData.farmingMode}", tag)
+				MessageLog.printToLog("[INFO] Mission: ${configData.missionName}", tag)
+				MessageLog.printToLog("[INFO] Summons: ${configData.summonList}", tag)
+				MessageLog.printToLog("[INFO] # of ${configData.itemName} gained from this Pending Battle: $amountGained", tag)
+				MessageLog.printToLog("[INFO] # of ${configData.itemName} gained in total: ${itemAmountFarmed}/${configData.itemAmount}", tag)
+				MessageLog.printToLog("[INFO] # of runs completed: $amountOfRuns", tag)
+				MessageLog.printToLog("********************", tag)
+				MessageLog.printToLog("********************", tag)
 
 				// Construct the message for the Discord private DM.
-				if (amountGained > 0) {
-					val discordString = if (itemAmountFarmed >= configData.itemAmount) {
-						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
-								"**[${itemAmountFarmed} / ${configData.itemAmount}]** :white_check_mark:"
-					} else {
-						"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
-								"**[${itemAmountFarmed} / ${configData.itemAmount}]**"
-					}
-
-					DiscordUtils.queue.add(discordString)
+				val discordString = if (itemAmountFarmed >= configData.itemAmount) {
+					"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
+							"**[${itemAmountFarmed} / ${configData.itemAmount}]** :white_check_mark:"
+				} else {
+					"> ${amountGained}x __${configData.itemName}__ gained from this Pending Battle: **[${itemAmountFarmed - amountGained} / ${configData.itemAmount}]** -> " +
+							"**[${itemAmountFarmed} / ${configData.itemAmount}]**"
 				}
+
+				DiscordUtils.queue.add(discordString)
 			}
 		} else if (isDefender) {
 			configData.engagedDefenderBattle = false
 			configData.numberOfDefeatedDefenders += 1
-			printToLog("\n********************")
-			printToLog("********************")
-			printToLog("[INFO] Farming Mode: ${configData.farmingMode}")
-			printToLog("[INFO] Mission: ${configData.missionName}")
-			printToLog("[INFO] Summons: ${configData.summonList}")
-			printToLog("[INFO] Amount of Defenders defeated: ${configData.numberOfDefeatedDefenders}/${configData.numberOfDefenders}")
-			printToLog("********************")
-			printToLog("********************")
+			MessageLog.printToLog("\n********************", tag)
+			MessageLog.printToLog("********************", tag)
+			MessageLog.printToLog("[INFO] Farming Mode: ${configData.farmingMode}", tag)
+			MessageLog.printToLog("[INFO] Mission: ${configData.missionName}", tag)
+			MessageLog.printToLog("[INFO] Summons: ${configData.summonList}", tag)
+			MessageLog.printToLog("[INFO] Amount of Defenders defeated: ${configData.numberOfDefeatedDefenders}/${configData.numberOfDefenders}", tag)
+			MessageLog.printToLog("********************", tag)
+			MessageLog.printToLog("********************", tag)
 		}
 
 		return
@@ -884,7 +850,7 @@ class Game(private val myContext: Context) {
 	 * @return True if there was a Nightmare mission detected or some other popup appeared that requires the navigation process to be restarted.
 	 */
 	fun checkForPopups(): Boolean {
-		printToLog("\n[INFO] Now beginning process to check for popups...")
+		MessageLog.printToLog("\n[INFO] Now beginning process to check for popups...", tag)
 
 		var checkPopupTries = 30
 		while (!imageUtils.confirmLocation("select_a_summon", tries = 1, suppressError = true)) {
@@ -919,12 +885,12 @@ class Game(private val myContext: Context) {
 			}
 
 			if (imageUtils.findButton("bottom_of_summon_selection", tries = 1, suppressError = true) != null) {
-				printToLog("[INFO] Detected bottom of Summon Selection screen. Reloading now to continue with process to check for popups...")
+				MessageLog.printToLog("[INFO] Detected bottom of Summon Selection screen. Reloading now to continue with process to check for popups...", tag)
 				findAndClickButton("reload")
 			}
 
 			if (configData.debugMode) {
-				printToLog("[DEBUG] Have not detected the Support Summon Selection screen yet...")
+				MessageLog.printToLog("[DEBUG] Have not detected the Support Summon Selection screen yet...", tag)
 			}
 		}
 
@@ -958,11 +924,11 @@ class Game(private val myContext: Context) {
 	 */
 	private fun clearPendingBattle(): Boolean {
 		if (findAndClickButton("tap_here_to_see_rewards", tries = 10)) {
-			printToLog("[INFO] Clearing this Pending Battle...")
+			MessageLog.printToLog("[INFO] Clearing this Pending Battle...", tag)
 			wait(2.0)
 
 			if (imageUtils.confirmLocation("no_loot", disableAdjustment = true)) {
-				printToLog("[INFO] No loot can be collected. Backing out...")
+				MessageLog.printToLog("[INFO] No loot can be collected. Backing out...", tag)
 
 				// Navigate back to the Quests screen.
 				findAndClickButton("quests")
@@ -982,7 +948,7 @@ class Game(private val myContext: Context) {
 				return true
 			}
 		} else {
-			printToLog("[INFO] No more Pending Battles left to claim.")
+			MessageLog.printToLog("[INFO] No more Pending Battles left to claim.", tag)
 		}
 
 		return false
@@ -994,7 +960,7 @@ class Game(private val myContext: Context) {
 	 * @return True if Pending Battles were detected. False otherwise.
 	 */
 	fun checkPendingBattles(): Boolean {
-		printToLog("\n[INFO] Starting process of checking for Pending Battles...")
+		MessageLog.printToLog("\n[INFO] Starting process of checking for Pending Battles...", tag)
 
 		if (configData.enablePendingBattleAdjustment) {
 			wait(configData.adjustBeforePendingBattle.toDouble())
@@ -1008,7 +974,7 @@ class Game(private val myContext: Context) {
 			imageUtils.confirmLocation("pending_battles", tries = 2, bypassGeneralAdjustment = true) ||
 			findAndClickButton("quest_results_pending_battles", tries = 2, bypassGeneralAdjustment = true)
 		) {
-			printToLog("[INFO] Found Pending Battles that need collecting from.")
+			MessageLog.printToLog("[INFO] Found Pending Battles that need collecting from.", tag)
 			findAndClickButton("ok")
 
 			wait(3.0)
@@ -1030,11 +996,11 @@ class Game(private val myContext: Context) {
 				}
 			}
 
-			printToLog("[INFO] Pending Battles have been cleared.")
+			MessageLog.printToLog("[INFO] Pending Battles have been cleared.", tag)
 			return true
 		}
 
-		printToLog("[INFO] No Pending Battles needed to be cleared.")
+		MessageLog.printToLog("[INFO] No Pending Battles needed to be cleared.", tag)
 		return false
 	}
 
@@ -1055,8 +1021,8 @@ class Game(private val myContext: Context) {
 			)
 		}
 
-		printToLog("\nSending API request to Granblue Automation Statistics...")
-		printToLog("API-RESULT|${configData.itemName}|${amount}|${formattedElapsedTime}")
+		MessageLog.printToLog("\nSending API request to Granblue Automation Statistics...", tag)
+		MessageLog.printToLog("API-RESULT|${configData.itemName}|${amount}|${formattedElapsedTime}", tag)
 	}
 
 	/**
@@ -1064,13 +1030,18 @@ class Game(private val myContext: Context) {
 	 *
 	 * @return True if Farming Mode completed successfully. False otherwise.
 	 */
-	fun startFarmingMode(): Boolean {
+	fun start(): Boolean {
+		MessageLog.printToLog("[INFO] Device dimensions: ${MPS.displayHeight}x${MPS.displayWidth}\n", tag)
+
 		// Throw an Exception if the user selected Coop or Arcarum that reset Summons and the user started the bot without selecting new Summons.
 		if (configData.farmingMode != "Coop" && configData.farmingMode != "Arcarum" && configData.summonList[0] == "") {
 			throw Exception("You have no summons selected for this Farming Mode.")
 		}
 
-		printToLog("Device dimensions: ${MPS.displayHeight}x${MPS.displayWidth}\n", tag)
+		if (configData.enableTestForHomeScreen) {
+			goBackHome(confirmLocationCheck = true, testMode = true)
+			return true
+		}
 
 		// Double check if the AccessibilityService is alive or not. Do not continue if it is dead.
 		gestureUtils = if (MyAccessibilityService.checkStatus(myContext)) {
@@ -1082,19 +1053,19 @@ class Game(private val myContext: Context) {
 		}
 
 		if (configData.itemName != "EXP") {
-			printToLog("\n####################")
-			printToLog("####################")
-			printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.")
-			printToLog("[FARM] Farming ${configData.itemAmount}x ${configData.itemName} at ${configData.missionName}.")
-			printToLog("####################")
-			printToLog("####################")
+			MessageLog.printToLog("\n####################", tag)
+			MessageLog.printToLog("####################", tag)
+			MessageLog.printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.", tag)
+			MessageLog.printToLog("[FARM] Farming ${configData.itemAmount}x ${configData.itemName} at ${configData.missionName}.", tag)
+			MessageLog.printToLog("####################", tag)
+			MessageLog.printToLog("####################", tag)
 		} else {
-			printToLog("\n####################")
-			printToLog("####################")
-			printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.")
-			printToLog("[FARM] Doing ${configData.itemAmount}x runs for ${configData.itemName} at ${configData.missionName}.")
-			printToLog("####################")
-			printToLog("####################")
+			MessageLog.printToLog("\n####################", tag)
+			MessageLog.printToLog("####################", tag)
+			MessageLog.printToLog("[FARM] Starting Farming Mode for ${configData.farmingMode}.", tag)
+			MessageLog.printToLog("[FARM] Doing ${configData.itemAmount}x runs for ${configData.itemName} at ${configData.missionName}.", tag)
+			MessageLog.printToLog("####################", tag)
+			MessageLog.printToLog("####################", tag)
 		}
 
 		if (configData.farmingMode == "Raid") {
@@ -1103,32 +1074,46 @@ class Game(private val myContext: Context) {
 
 		var firstRun = true
 		while (itemAmountFarmed < configData.itemAmount) {
-			if (configData.farmingMode == "Quest") {
-				quest.start(firstRun)
-			} else if (configData.farmingMode == "Special") {
-				special.start(firstRun)
-			} else if (configData.farmingMode == "Coop") {
-				coop.start(firstRun)
-			} else if (configData.farmingMode == "Raid") {
-				raid.start()
-			} else if (configData.farmingMode == "Event" || configData.farmingMode == "Event (Token Drawboxes)") {
-				event.start(firstRun)
-			} else if (configData.farmingMode == "Rise of the Beasts") {
-				riseOfTheBeasts.start(firstRun)
-			} else if (configData.farmingMode == "Guild Wars") {
-				guildWars.start(firstRun)
-			} else if (configData.farmingMode == "Dread Barrage") {
-				dreadBarrage.start(firstRun)
-			} else if (configData.farmingMode == "Proving Grounds") {
-				provingGrounds.start(firstRun)
-			} else if (configData.farmingMode == "Xeno Clash") {
-				xenoClash.start(firstRun)
-			} else if (configData.farmingMode == "Arcarum") {
-				arcarum.start()
-			} else if (configData.farmingMode == "Arcarum Sandbox") {
-				arcarumSandbox.start()
-			} else if (configData.farmingMode == "Generic") {
-				generic.start()
+			when (configData.farmingMode) {
+				"Quest" -> {
+					quest.start(firstRun)
+				}
+				"Special" -> {
+					special.start(firstRun)
+				}
+				"Coop" -> {
+					coop.start(firstRun)
+				}
+				"Raid" -> {
+					raid.start()
+				}
+				"Event", "Event (Token Drawboxes)" -> {
+					event.start(firstRun)
+				}
+				"Rise of the Beasts" -> {
+					riseOfTheBeasts.start(firstRun)
+				}
+				"Guild Wars" -> {
+					guildWars.start(firstRun)
+				}
+				"Dread Barrage" -> {
+					dreadBarrage.start(firstRun)
+				}
+				"Proving Grounds" -> {
+					provingGrounds.start(firstRun)
+				}
+				"Xeno Clash" -> {
+					xenoClash.start(firstRun)
+				}
+				"Arcarum" -> {
+					arcarum.start()
+				}
+				"Arcarum Sandbox" -> {
+					arcarumSandbox.start()
+				}
+				"Generic" -> {
+					generic.start()
+				}
 			}
 
 			if (itemAmountFarmed < configData.itemAmount) {
@@ -1138,11 +1123,13 @@ class Game(private val myContext: Context) {
 			}
 		}
 
-		printToLog("\n********************")
-		printToLog("********************")
-		printToLog("[INFO] Farming Mode has ended")
-		printToLog("********************")
-		printToLog("********************")
+		MessageLog.printToLog("\n********************", tag)
+		MessageLog.printToLog("********************", tag)
+		MessageLog.printToLog("[INFO] Farming Mode has ended", tag)
+		MessageLog.printToLog("********************", tag)
+		MessageLog.printToLog("********************", tag)
+
+		MessageLog.printToLog("\nTotal Runtime: ${System.currentTimeMillis() - startTime}ms", tag)
 
 		return true
 	}

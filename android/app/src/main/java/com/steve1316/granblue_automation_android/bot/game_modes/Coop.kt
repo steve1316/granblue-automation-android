@@ -1,9 +1,10 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class CoopException(message: String) : Exception(message)
+
 
 class Coop(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}Coop"
@@ -14,11 +15,13 @@ class Coop(private val game: Game, private val missionName: String) {
 	private val listForCoopEX3 = arrayListOf("EX3-2 Rule of the Tundra", "EX3-3 Rule of the Plains", "EX3-4 Rule of the Twilight")
 	private val listForCoopEX4 = arrayListOf("EX4-2 Amidst the Waves", "EX4-3 Amidst the Petals", "EX4-4 Amidst Severe Cliffs", "EX4-5 Amidst the Flames")
 
+	private class CoopException(message: String) : Exception(message)
+
 	/**
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
-		game.printToLog("\n[COOP] Now beginning process to navigate to the mission: $missionName...", tag = tag)
+		MessageLog.printToLog("\n[COOP] Now beginning process to navigate to the mission: $missionName...", tag)
 
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -48,10 +51,10 @@ class Coop(private val game: Game, private val missionName: String) {
 
 				game.wait(3.0)
 
-				game.printToLog("[COOP] Hard difficulty for Coop is now selected.", tag = tag)
+				MessageLog.printToLog("[COOP] Hard difficulty for Coop is now selected.", tag)
 
 				// Select the category, "Save the Oceans", which should be the 3rd category.
-				game.printToLog("[COOP] Now navigating to \"In a Dusk Dream\" for Hard difficulty...", tag = tag)
+				MessageLog.printToLog("[COOP] Now navigating to \"In a Dusk Dream\" for Hard difficulty...", tag)
 				game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y, "coop_host_quest")
 
 				if (game.imageUtils.confirmLocation("coop_save_the_oceans")) {
@@ -66,15 +69,15 @@ class Coop(private val game: Game, private val missionName: String) {
 
 				game.wait(3.0)
 
-				game.printToLog("[COOP] Extra difficulty for Coop is now selected.", tag = tag)
+				MessageLog.printToLog("[COOP] Extra difficulty for Coop is now selected.", tag)
 
 				// Select the category for the specified EX mission. For EX2 to EX4, skip past the first missions of each.
 				if (listForCoopEX1.contains(missionName)) {
-					game.printToLog("[COOP] Now navigating to \"$missionName\" for EX1...", tag = tag)
+					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX1...", tag)
 
 					game.gestureUtils.tap(hostButtonLocations[0].x, hostButtonLocations[0].y, "coop_host_quest")
 					if (game.imageUtils.confirmLocation("coop_ex1")) {
-						game.printToLog("[COOP] Now selecting \"$missionName\"...", tag = tag)
+						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
 
 						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 						game.gestureUtils.tap(
@@ -84,11 +87,11 @@ class Coop(private val game: Game, private val missionName: String) {
 						)
 					}
 				} else if (listForCoopEX2.contains(missionName)) {
-					game.printToLog("[COOP] Now navigating to \"$missionName\" for EX2...", tag = tag)
+					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX2...", tag)
 
 					game.gestureUtils.tap(hostButtonLocations[1].x, hostButtonLocations[1].y, "coop_host_quest")
 					if (game.imageUtils.confirmLocation("coop_ex2")) {
-						game.printToLog("[COOP] Now selecting \"$missionName\"...", tag = tag)
+						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
 
 						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 						game.gestureUtils.tap(
@@ -98,11 +101,11 @@ class Coop(private val game: Game, private val missionName: String) {
 						)
 					}
 				} else if (listForCoopEX3.contains(missionName)) {
-					game.printToLog("[COOP] Now navigating to \"$missionName\" for EX3...", tag = tag)
+					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX3...", tag)
 
 					game.gestureUtils.tap(hostButtonLocations[2].x, hostButtonLocations[2].y, "coop_host_quest")
 					if (game.imageUtils.confirmLocation("coop_ex3")) {
-						game.printToLog("[COOP] Now selecting \"$missionName\"...", tag = tag)
+						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
 
 						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 						game.gestureUtils.tap(
@@ -112,11 +115,11 @@ class Coop(private val game: Game, private val missionName: String) {
 						)
 					}
 				} else if (listForCoopEX4.contains(missionName)) {
-					game.printToLog("[COOP] Now navigating to \"$missionName\" for EX4...", tag = tag)
+					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX4...", tag)
 
 					game.gestureUtils.tap(hostButtonLocations[3].x, hostButtonLocations[3].y, "coop_host_quest")
 					if (game.imageUtils.confirmLocation("coop_ex4")) {
-						game.printToLog("[COOP] Now selecting \"$missionName\"...", tag = tag)
+						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
 
 						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
 						game.gestureUtils.tap(
@@ -131,7 +134,7 @@ class Coop(private val game: Game, private val missionName: String) {
 			game.wait(3.0)
 
 			// After selecting the mission, create a new Coop Room.
-			game.printToLog("\n[COOP] Now opening up a new Coop room...", tag = tag)
+			MessageLog.printToLog("\n[COOP] Now opening up a new Coop room...", tag)
 			game.findAndClickButton("coop_post_to_crew_chat")
 
 			// Scroll the screen down to see the "OK" button in case of small screens.
@@ -171,7 +174,7 @@ class Coop(private val game: Game, private val missionName: String) {
 				game.wait(1.0)
 
 				if (game.imageUtils.confirmLocation("coop_daily_missions")) {
-					game.printToLog("\n[COOP] Coop room has closed due to time running out.", tag = tag)
+					MessageLog.printToLog("\n[COOP] Coop room has closed due to time running out.", tag)
 					return
 				}
 			}
@@ -194,7 +197,7 @@ class Coop(private val game: Game, private val missionName: String) {
 				game.collectLoot(isCompleted = true)
 			}
 		} else if (!firstRun) {
-			game.printToLog("\n[COOP] Starting Coop mission again.", tag = tag)
+			MessageLog.printToLog("\n[COOP] Starting Coop mission again.", tag)
 
 			// Now start Combat Mode and detect any item drops.
 			if (game.combatMode.startCombatMode()) {

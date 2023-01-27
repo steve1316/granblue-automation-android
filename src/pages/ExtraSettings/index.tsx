@@ -1,7 +1,9 @@
+import axios, { AxiosError } from "axios"
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import Checkbox from "../../components/Checkbox"
 import CustomButton from "../../components/CustomButton"
 import DocumentPicker from "react-native-document-picker"
+import LoadingButton from "../../components/LoadingButton"
 import NumericInput from "react-native-numeric-input"
 import React, { useContext, useEffect, useState } from "react"
 import RNFS from "react-native-fs"
@@ -10,13 +12,10 @@ import TransferList from "../../components/TransferList"
 import { BotStateContext } from "../../context/BotStateContext"
 import { DeviceEventEmitter, Dimensions, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { Divider, Input, Text } from "react-native-elements"
+import { NativeModules } from "react-native"
 import { Picker } from "@react-native-picker/picker"
 import { RangeSlider, Slider } from "@sharcoux/slider"
-import LoadingButton from "../../components/LoadingButton"
-import axios, { AxiosError } from "axios"
-import SnackBar from "rn-snackbar-component"
-import MIcon from "react-native-vector-icons/MaterialCommunityIcons"
-import { NativeModules } from "react-native" // Import native Java module.
+import { Snackbar } from "react-native-paper"
 
 const styles = StyleSheet.create({
     root: {
@@ -128,11 +127,15 @@ const ExtraSettings = () => {
 
                                                 bsc.setSettings({
                                                     ...bsc.settings,
-                                                    nightmare: { ...bsc.settings.nightmare, nightmareCombatScriptName: pickerResult.name, nightmareCombatScript: newCombatScript },
+                                                    nightmare: {
+                                                        ...bsc.settings.nightmare,
+                                                        nightmareCombatScriptName: pickerResult.name ? pickerResult.name : "",
+                                                        nightmareCombatScript: newCombatScript,
+                                                    },
                                                 })
                                             })
                                         }
-                                    } catch (e) {
+                                    } catch (e: any) {
                                         if (!e.message.includes("Can't perform a React")) {
                                             console.warn(e)
                                         }
@@ -251,11 +254,11 @@ const ExtraSettings = () => {
 
                                                 bsc.setSettings({
                                                     ...bsc.settings,
-                                                    sandbox: { ...bsc.settings.sandbox, defenderCombatScriptName: pickerResult.name, defenderCombatScript: newCombatScript },
+                                                    sandbox: { ...bsc.settings.sandbox, defenderCombatScriptName: pickerResult.name ? pickerResult.name : "", defenderCombatScript: newCombatScript },
                                                 })
                                             })
                                         }
-                                    } catch (e) {
+                                    } catch (e: any) {
                                         if (!e.message.includes("Can't perform a React")) {
                                             console.warn(e)
                                         }
@@ -830,15 +833,20 @@ const ExtraSettings = () => {
                 {renderDeviceSettings()}
             </ScrollView>
 
-            <SnackBar
+            <Snackbar
                 visible={showSnackbar}
-                message={testFailed ? testErrorMessage : "Test was successful."}
-                actionHandler={() => setShowSnackbar(false)}
-                action={<MIcon name="close" size={25} />}
-                autoHidingTime={10000}
-                containerStyle={{ backgroundColor: testFailed ? "red" : "green", borderRadius: 10 }}
-                native={false}
-            />
+                onDismiss={() => setShowSnackbar(false)}
+                action={{
+                    label: "Close",
+                    onPress: () => {
+                        setShowSnackbar(false)
+                    },
+                }}
+                duration={10000}
+                style={{ backgroundColor: testFailed ? "red" : "green", borderRadius: 10 }}
+            >
+                {testFailed ? testErrorMessage : "Test was successful."}
+            </Snackbar>
         </View>
     )
 }

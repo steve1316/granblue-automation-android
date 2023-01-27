@@ -1,9 +1,9 @@
+import axios, { AxiosError, AxiosResponse } from "axios"
 import RNFS from "react-native-fs"
 import { BotStateContext, defaultSettings, Settings } from "../../context/BotStateContext"
+import { DeviceEventEmitter } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { useContext, useEffect, useState } from "react"
-import axios, { AxiosError, AxiosResponse } from "axios"
-import { DeviceEventEmitter } from "react-native"
 
 const Start = () => {
     const [firstTime, setFirstTime] = useState<boolean>(true)

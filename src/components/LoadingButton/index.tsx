@@ -1,5 +1,5 @@
 import React, { FC } from "react"
-import { Text, StyleSheet, View, ActivityIndicator, TouchableOpacity, GestureResponderEvent, Alert } from "react-native"
+import { ActivityIndicator, Alert, GestureResponderEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 interface Props {
     title: string

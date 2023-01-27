@@ -1,12 +1,14 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
-class RiseOfTheBeastsException(message: String) : Exception(message)
 
-class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
+class ROTB(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}RiseOfTheBeasts"
+
+	private class RiseOfTheBeastsException(message: String) : Exception(message)
 
 	/**
 	 * Checks for Extreme Plus during Rise of the Beasts and if it appeared and the user enabled it in settings, start it.
@@ -15,16 +17,16 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 	 */
 	fun checkROTBExtremePlus(): Boolean {
 		if (game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 3)) {
-			game.printToLog("\n[ROTB] Detected Extreme+. Starting it now...", tag = tag)
+			MessageLog.printToLog("\n[ROTB] Detected Extreme+. Starting it now...", tag)
 
-			game.printToLog("\n********************", tag = tag)
-			game.printToLog("********************", tag = tag)
-			game.printToLog("[ROTB] Rise of the Beasts Extreme+", tag = tag)
-			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Summons: ${game.configData.nightmareSummons}", tag = tag)
-			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Group Number: ${game.configData.nightmareGroupNumber}", tag = tag)
-			game.printToLog("[ROTB] Rise of the Beasts Extreme+ Party Number: ${game.configData.nightmarePartyNumber}", tag = tag)
-			game.printToLog("********************", tag = tag)
-			game.printToLog("\n********************", tag = tag)
+			MessageLog.printToLog("\n********************", tag)
+			MessageLog.printToLog("********************", tag)
+			MessageLog.printToLog("[ROTB] Rise of the Beasts Extreme+", tag)
+			MessageLog.printToLog("[ROTB] Rise of the Beasts Extreme+ Summons: ${game.configData.nightmareSummons}", tag)
+			MessageLog.printToLog("[ROTB] Rise of the Beasts Extreme+ Group Number: ${game.configData.nightmareGroupNumber}", tag)
+			MessageLog.printToLog("[ROTB] Rise of the Beasts Extreme+ Party Number: ${game.configData.nightmarePartyNumber}", tag)
+			MessageLog.printToLog("********************", tag)
+			MessageLog.printToLog("\n********************", tag)
 
 			// Tap the "Play Next" button to head to the Summon Selection screen.
 			game.findAndClickButton("play_next")
@@ -46,10 +48,10 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 				}
 			}
 		} else if (!game.configData.enableNightmare && game.imageUtils.confirmLocation("rotb_extreme_plus", tries = 3)) {
-			game.printToLog("\n[ROTB] Rise of the Beasts Extreme+ detected but user opted to not run it. Moving on...", tag = tag)
+			MessageLog.printToLog("\n[ROTB] Rise of the Beasts Extreme+ detected but user opted to not run it. Moving on...", tag)
 			game.findAndClickButton("close")
 		} else {
-			game.printToLog("\n[ROTB] No Rise of the Beasts Extreme+ detected. Moving on...", tag = tag)
+			MessageLog.printToLog("\n[ROTB] No Rise of the Beasts Extreme+ detected. Moving on...", tag)
 		}
 
 		return false
@@ -62,7 +64,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 
-		game.printToLog("\n[INFO] Now navigating to Rise of the Beasts...", tag = tag)
+		MessageLog.printToLog("\n[INFO] Now navigating to Rise of the Beasts...", tag)
 
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
@@ -95,7 +97,7 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 
 			// Only Raids are marked with Extreme difficulty.
 			if (difficulty == "Extreme") {
-				game.printToLog("[INFO] Now hosting $formattedMissionName Raid...", tag = tag)
+				MessageLog.printToLog("[INFO] Now hosting $formattedMissionName Raid...", tag)
 
 				// Tap on the Raid banner.
 				game.findAndClickButton("rotb_extreme")
@@ -103,34 +105,34 @@ class RiseOfTheBeasts(private val game: Game, private val missionName: String) {
 				if (game.imageUtils.confirmLocation("rotb_battle_the_beasts")) {
 					when (formattedMissionName) {
 						"Zhuque" -> {
-							game.printToLog("[INFO] Now starting EX Zhuque Raid...", tag = tag)
+							MessageLog.printToLog("[INFO] Now starting EX Zhuque Raid...", tag)
 							game.findAndClickButton("rotb_raid_zhuque")
 						}
 						"Xuanwu" -> {
-							game.printToLog("[INFO] Now starting EX Xuanwu Raid...", tag = tag)
+							MessageLog.printToLog("[INFO] Now starting EX Xuanwu Raid...", tag)
 							game.findAndClickButton("rotb_raid_xuanwu")
 						}
 						"Baihu" -> {
-							game.printToLog("[INFO] Now starting EX Baihu Raid...", tag = tag)
+							MessageLog.printToLog("[INFO] Now starting EX Baihu Raid...", tag)
 							game.findAndClickButton("rotb_raid_baihu")
 						}
 						"Qinglong" -> {
-							game.printToLog("[INFO] Now starting EX Qinglong Raid...", tag = tag)
+							MessageLog.printToLog("[INFO] Now starting EX Qinglong Raid...", tag)
 							game.findAndClickButton("rotb_raid_qinglong")
 						}
 					}
 				}
 			} else if (missionName == "Lvl 100 Shenxian") {
 				// Tap on Shenxian to host.
-				game.printToLog("[INFO] Now hosting Shenxian Raid...", tag = tag)
+				MessageLog.printToLog("[INFO] Now hosting Shenxian Raid...", tag)
 				game.findAndClickButton("rotb_shenxian_host")
 
 				if (!game.imageUtils.waitVanish("rotb_shenxian_host", timeout = 10)) {
-					game.printToLog("[INFO] There are no more Shenxian hosts left. Alerting user...", tag = tag)
-					throw(IllegalStateException("There are no more Shenxian hosts left."))
+					MessageLog.printToLog("[INFO] There are no more Shenxian hosts left. Alerting user...", tag)
+					throw (IllegalStateException("There are no more Shenxian hosts left."))
 				}
 			} else {
-				game.printToLog("[INFO] Now hosting $formattedMissionName Quest...", tag = tag)
+				MessageLog.printToLog("[INFO] Now hosting $formattedMissionName Quest...", tag)
 
 				// Scroll the screen to make way for smaller screens.
 				game.gestureUtils.scroll()

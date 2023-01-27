@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
     <!-- BootTheme should inherit from Theme.SplashScreen -->
     <style name="BootTheme" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#000</item>
+        <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>

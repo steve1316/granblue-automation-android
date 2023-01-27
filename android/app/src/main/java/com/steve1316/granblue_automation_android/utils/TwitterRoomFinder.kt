@@ -1,17 +1,17 @@
 package com.steve1316.granblue_automation_android.utils
 
-import android.os.StrictMode
+import android.content.Context
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity
-import com.steve1316.granblue_automation_android.bot.Game
-import twitter4j.Twitter
+import com.steve1316.automation_library.utils.TwitterUtils
+import com.steve1316.granblue_automation_android.data.ConfigData
 import twitter4j.v1.Query
 import twitter4j.v1.Status
-import twitter4j.v1.TwitterV1
 
 /**
  * Provides the functions needed to perform Twitter API-related tasks such as searching tweets for room codes.
  */
-class TwitterRoomFinder(private val game: Game, private val test: Boolean = false) {
+class TwitterRoomFinder(context: Context, private val configData: ConfigData, test: Boolean = false) : TwitterUtils(context, test) {
 	private val alreadyVisitedRoomCodes: ArrayList<String> = arrayListOf()
 
 	private val listOfRaids = mapOf(
@@ -134,8 +134,6 @@ class TwitterRoomFinder(private val game: Game, private val test: Boolean = fals
 		"Lvl 120 Ra" to "Lv120 ラー",
 	)
 
-	// For Twitter API v1.1
-	private lateinit var oldTwitterClient: TwitterV1
 	private val oldTwitterClientTweets: ArrayList<Status> = arrayListOf()
 
 	private val twitterClientIDs: ArrayList<String> = arrayListOf()
@@ -145,63 +143,15 @@ class TwitterRoomFinder(private val game: Game, private val test: Boolean = fals
 	}
 
 	/**
-	 * Connect to Twitter API V1.1
-	 *
-	 */
-	fun connect() {
-		if (!test) {
-			game.printToLog("\n[TWITTER] Authenticating provided consumer keys and access tokens with the Twitter API V1.1...", tag)
-			val result = testConnection()
-			if (result == "Test successfully completed.") {
-				game.printToLog("[TWITTER] Successfully connected to the Twitter API V1.1.", tag)
-				game.printToLog("\n[TWITTER] Now ready for manual searching of tweets for ${game.configData.missionName}.", tag)
-			} else {
-				throw Exception(result)
-			}
-		}
-	}
-
-	/**
-	 * Test connection to the API using the consumer keys/tokens for V1.1.
-	 *
-	 * @return Either a success message or an error message depending on the connection to the API.
-	 */
-	fun testConnection(): String {
-		// Allow Network IO to be run on the main thread without throwing the NetworkOnMainThreadException.
-		val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-		StrictMode.setThreadPolicy(policy)
-
-		val size = try {
-			// Create the Twitter client object to use the Twitter API V1.1.
-			oldTwitterClient = Twitter.newBuilder().apply {
-				oAuthConsumer(game.configData.twitterAPIKey, game.configData.twitterAPIKeySecret)
-				oAuthAccessToken(game.configData.twitterAccessToken, game.configData.twitterAccessTokenSecret)
-			}.build().v1()
-
-			val queryResult = oldTwitterClient.search().search(Query.of("Hello World"))
-			queryResult.count
-		} catch (e: Exception) {
-			game.printToLog("[ERROR] Cannot connect to Twitter API v1.1 due to keys and access tokens being incorrect.", tag, isError = true)
-			return "[ERROR] Cannot connect to Twitter API v1.1 due to keys and access tokens being incorrect."
-		}
-
-		return if (size > 0) {
-			"Test successfully completed."
-		} else {
-			"[ERROR] Connection was successful but test search came up empty."
-		}
-	}
-
-	/**
 	 * Start collected tweets containing room codes from EN and JP players. For use with Twitter API v1.1 only.
 	 *
 	 * @param count Number of IDs to be found.
 	 */
 	private fun findMostRecent(count: Int = 10) {
-		game.printToLog("\n[TWITTER] Now finding the $count most recent tweets for ${game.configData.missionName} using Twitter API v1.1.", tag)
+		MessageLog.printToLog("\n[TWITTER] Now finding the $count most recent tweets for ${configData.missionName} using Twitter API v1.1.", tag)
 
-		val queryEN = "+(:Battle ID) AND +(${game.configData.missionName})"
-		val queryJP = "+(:参戦ID) AND +(${listOfRaids[game.configData.missionName]})"
+		val queryEN = "+(:Battle ID) AND +(${configData.missionName})"
+		val queryJP = "+(:参戦ID) AND +(${listOfRaids[configData.missionName]})"
 
 		// Search JP tweets first and filter for tweets that the bot has not processed yet.
 		val tweetListJP = oldTwitterClient.search().search(Query.of(queryJP)).tweets
@@ -235,11 +185,11 @@ class TwitterRoomFinder(private val game: Game, private val test: Boolean = fals
 		findMostRecent()
 
 		if (oldTwitterClientTweets.size == 0) {
-			game.printToLog("[TWITTER] There are no recent or detected tweets available for the given raid.", tag)
+			MessageLog.printToLog("[TWITTER] There are no recent or detected tweets available for the given raid.", tag)
 			return ""
 		}
 
-		game.printToLog("[TWITTER] Now cleaning up the tweets and parsing for room codes...", tag)
+		MessageLog.printToLog("[TWITTER] Now cleaning up the tweets and parsing for room codes...", tag)
 
 		while (oldTwitterClientTweets.size > 0) {
 			val tweetText: String = oldTwitterClientTweets.removeFirst().text
@@ -249,7 +199,7 @@ class TwitterRoomFinder(private val game: Game, private val test: Boolean = fals
 			var index = 0
 
 			// For each split element, parse the Room Code and save it.
-			if (tweetText.contains(game.configData.missionName) || tweetText.contains(listOfRaids[game.configData.missionName]!!)) {
+			if (tweetText.contains(configData.missionName) || tweetText.contains(listOfRaids[configData.missionName]!!)) {
 				splitText.forEach { text ->
 					if (text.contains(":Battle") || text.contains(":参戦ID")) {
 						val roomCode = splitText[index - 1]
@@ -258,14 +208,14 @@ class TwitterRoomFinder(private val game: Game, private val test: Boolean = fals
 							alreadyVisitedRoomCodes.add(roomCode)
 							return roomCode
 						} else {
-							game.printToLog("[TWITTER] Already visited $roomCode before in this session. Skipping this code...", tag)
+							MessageLog.printToLog("[TWITTER] Already visited $roomCode before in this session. Skipping this code...", tag)
 						}
 					}
 
 					index += 1
 				}
 			} else {
-				game.printToLog("[TWITTER] Skipping tweet as it is for a different raid.", tag)
+				MessageLog.printToLog("[TWITTER] Skipping tweet as it is for a different raid.", tag)
 			}
 		}
 

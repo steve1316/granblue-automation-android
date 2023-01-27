@@ -1,12 +1,11 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
-import android.util.Log
+import com.steve1316.automation_library.utils.MessageLog
+import com.steve1316.automation_library.utils.MyAccessibilityService
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
-import com.steve1316.granblue_automation_android.data.RoomCodeData
 import org.opencv.core.Point
 
-class RaidException(message: String) : Exception(message)
 
 class Raid(private val game: Game) {
 	private val tag: String = "${loggerTag}Raid"
@@ -16,19 +15,21 @@ class Raid(private val game: Game) {
 	private var numberOfRaidsJoined = 0
 	private var firstInitialization = true
 
+	private class RaidException(message: String) : Exception(message)
+
 	/**
 	 * Check and updates the number of Raids currently joined.
 	 */
 	private fun checkJoinedRaids() {
 		val joinedLocations = game.imageUtils.findAll("joined")
 		numberOfRaidsJoined = joinedLocations.size
-		game.printToLog("\n[RAID] There are currently $numberOfRaidsJoined raids joined.", tag = tag)
+		MessageLog.printToLog("\n[RAID] There are currently $numberOfRaidsJoined raids joined.", tag)
 	}
 
 	private fun clearJoinedRaids() {
 		// While the user has passed the limit of 3 Raids currently joined, wait and recheck to see if any finish.
 		while (numberOfRaidsJoined >= 3) {
-			game.printToLog("[RAID] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", tag = tag)
+			MessageLog.printToLog("[RAID] Detected maximum of 3 raids joined. Waiting 30 seconds to see if any finish.", tag)
 			game.wait(30.0)
 
 			game.goBackHome(confirmLocationCheck = true)
@@ -55,13 +56,13 @@ class Raid(private val game: Game) {
 			game.wait(2.0)
 			joinRoomButtonLocation = game.imageUtils.findButton("join_a_room")!!
 			roomCodeTextBoxLocation = if (!game.imageUtils.isTablet) {
-				if (game.imageUtils.isLowerEnd) {
+				if (game.imageUtils.is720p) {
 					Point(joinRoomButtonLocation.x - 200.0, joinRoomButtonLocation.y)
 				} else {
 					Point(joinRoomButtonLocation.x - 400.0, joinRoomButtonLocation.y)
 				}
 			} else {
-				if (!game.imageUtils.isLandscape) {
+				if (!game.imageUtils.isTabletLandscape) {
 					Point(joinRoomButtonLocation.x - 300.0, joinRoomButtonLocation.y)
 				} else {
 					Point(joinRoomButtonLocation.x - 250.0, joinRoomButtonLocation.y)
@@ -79,7 +80,7 @@ class Raid(private val game: Game) {
 
 				if (roomCode != "") {
 					// Set the room code.
-					RoomCodeData.roomCode = roomCode
+					MyAccessibilityService.textToPaste = roomCode
 
 					// Select the "Room Code" text box. The AccessibilityService should pick up that the textbox is a EditText and will paste the
 					// room code into it.
@@ -98,13 +99,13 @@ class Raid(private val game: Game) {
 							// Check for EP.
 							game.checkEP()
 
-							game.printToLog("[SUCCESS] Joining $roomCode was successful.", tag = tag)
+							MessageLog.printToLog("[SUCCESS] Joining $roomCode was successful.", tag)
 							numberOfRaidsJoined += 1
 							joinSuccessful = true
 							break
 						} else {
 							// Clear the text box by reloading the page.
-							game.printToLog("[WARNING] $roomCode already ended or invalid.", tag = tag)
+							MessageLog.printToLog("[WARNING] $roomCode already ended or invalid.", tag)
 							game.findAndClickButton("reload")
 							game.findAndClickButton("enter_id", tries = 5)
 						}
@@ -132,9 +133,9 @@ class Raid(private val game: Game) {
 			tries -= 1
 			if (game.configData.enableNoTimeout) {
 				tries += 1
-				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again...", tag = tag)
+				MessageLog.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again...", tag)
 			} else {
-				game.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again with $tries tries left before exiting...", tag = tag)
+				MessageLog.printToLog("[WARNING] Could not find any valid room codes. \nWaiting $recoveryTime seconds and then trying again with $tries tries left before exiting...", tag)
 			}
 			game.wait(recoveryTime)
 		}
@@ -144,7 +145,7 @@ class Raid(private val game: Game) {
 	 * Navigates to the specified mission.
 	 */
 	private fun navigate() {
-		game.printToLog("\n[RAID] Now beginning process to navigate to the mission: ${game.configData.missionName}...", tag = tag)
+		MessageLog.printToLog("\n[RAID] Now beginning process to navigate to the mission: ${game.configData.missionName}...", tag)
 
 		// Go to the Home screen and then to the Quests screen.
 		game.goBackHome(confirmLocationCheck = true)
@@ -173,7 +174,7 @@ class Raid(private val game: Game) {
 			clearJoinedRaids()
 
 			// Move to the "Enter ID" section of the Backup Requests screen.
-			game.printToLog("[RAID] Moving to the \"Enter ID\" section of the Backup Requests screen...", tag = tag)
+			MessageLog.printToLog("[RAID] Moving to the \"Enter ID\" section of the Backup Requests screen...", tag)
 			if (game.findAndClickButton("enter_id")) {
 				joinRaid()
 			}
@@ -187,6 +188,9 @@ class Raid(private val game: Game) {
 	 *
 	 */
 	fun start() {
+		// Enable pasting logic in the accessibility service.
+		MyAccessibilityService.enableTextToPaste = true
+
 		// Start the navigation process.
 		navigate()
 
@@ -200,7 +204,7 @@ class Raid(private val game: Game) {
 				if (game.selectPartyAndStartMission()) {
 					// Handle the rare case where joining the Raid after selecting the Summon and Party led the bot to the Quest Results screen with no loot to collect.
 					if (game.imageUtils.confirmLocation("no_loot", disableAdjustment = true)) {
-						game.printToLog("\n[RAID] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...", tag = tag)
+						MessageLog.printToLog("\n[RAID] Seems that the Raid just ended. Moving back to the Home screen and joining another Raid...", tag)
 					} else {
 						// Now start Combat Mode and detect any item drops.
 						if (game.combatMode.startCombatMode()) {
