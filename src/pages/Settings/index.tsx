@@ -511,7 +511,7 @@ const Settings = () => {
                         style={{ color: "#000" }}
                         dropdownIconColor={"#000"}
                     >
-                        {[...Array(7 - 1 + 1).keys()]
+                        {[...Array(14).keys()]
                             .map((x) => x + 1)
                             .map((value) => {
                                 return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
@@ -527,7 +527,7 @@ const Settings = () => {
                         style={{ color: "#000" }}
                         dropdownIconColor={"#000"}
                     >
-                        {[...Array(6 - 1 + 1).keys()]
+                        {[...Array(6).keys()]
                             .map((x) => x + 1)
                             .map((value) => {
                                 return <Picker.Item key={`key-${value}`} label={`${value}`} value={value} />
