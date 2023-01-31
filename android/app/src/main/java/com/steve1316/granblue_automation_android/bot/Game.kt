@@ -2,10 +2,10 @@ package com.steve1316.granblue_automation_android.bot
 
 import android.content.Context
 import android.content.res.Resources
+import com.steve1316.automation_library.data.SharedData
 import com.steve1316.automation_library.utils.DiscordUtils
 import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.automation_library.utils.MyAccessibilityService
-import com.steve1316.automation_library.utils.MediaProjectionService as MPS
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.game_modes.*
 import com.steve1316.granblue_automation_android.data.ConfigData
@@ -116,7 +116,7 @@ class Game(private val myContext: Context) {
 			// Wait a few seconds for the page to load and to prevent the bot from prematurely scrolling all the way to the bottom.
 			wait(4.0)
 
-			MessageLog.printToLog("\n[INFO] Screen Width: ${MPS.displayWidth}, Screen Height: ${MPS.displayHeight}, Screen DPI: ${MPS.displayDPI}", tag)
+			MessageLog.printToLog("\n[INFO] Screen Width: ${SharedData.displayWidth}, Screen Height: ${SharedData.displayHeight}, Screen DPI: ${SharedData.displayDPI}", tag)
 
 			// Check for any misc popups.
 			findAndClickButton("close")
@@ -1031,7 +1031,7 @@ class Game(private val myContext: Context) {
 	 * @return True if Farming Mode completed successfully. False otherwise.
 	 */
 	fun start(): Boolean {
-		MessageLog.printToLog("[INFO] Device dimensions: ${MPS.displayHeight}x${MPS.displayWidth}\n", tag)
+		MessageLog.printToLog("[INFO] Device dimensions: ${SharedData.displayHeight}x${SharedData.displayWidth}\n", tag)
 
 		// Throw an Exception if the user selected Coop or Arcarum that reset Summons and the user started the bot without selecting new Summons.
 		if (configData.farmingMode != "Coop" && configData.farmingMode != "Arcarum" && configData.summonList[0] == "") {
