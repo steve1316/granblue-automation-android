@@ -665,7 +665,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			while (locationIndex < locationList.size) {
 				val tempMapLocation: String = locationList[locationIndex]
 
-				val tempFormattedMapLocation = tempMapLocation.lowercase().replace(" ", "").replace("-", "_")
+				val tempFormattedMapLocation = tempMapLocation.lowercase().replace(" ", "_").replace("-", "_")
 				if (game.imageUtils.confirmLocation("map_$tempFormattedMapLocation", tries = 1)) {
 					MessageLog.printToLog("[QUEST] Bot's current location is at $tempMapLocation. Now moving to $mapName...", tag)
 					currentIsland = tempMapLocation
