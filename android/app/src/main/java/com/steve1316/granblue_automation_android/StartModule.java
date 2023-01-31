@@ -20,6 +20,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.steve1316.automation_library.events.ExceptionEvent;
 import com.steve1316.automation_library.events.JSEvent;
 import com.steve1316.automation_library.events.StartEvent;
 import com.steve1316.automation_library.utils.MediaProjectionService;
@@ -333,7 +334,13 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
             parser.initializeSettings(context);
 
             Game entryPoint = new Game(context);
-            entryPoint.start();
+
+            try {
+                entryPoint.start();
+            } catch (Exception e) {
+                Log.d(tag, e.toString());
+                EventBus.getDefault().postSticky(new ExceptionEvent(e));
+            }
         }
     }
 
@@ -372,10 +379,9 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
     @Subscribe
     public void onSubscriberExceptionEvent(SubscriberExceptionEvent event) {
         MessageLog.Companion.printToLog(event.throwable.toString(), loggerTag, false, true, false);
-        StringBuilder result = new StringBuilder();
         for (StackTraceElement line : event.throwable.getStackTrace()) {
-            result.append(line.toString()).append("\n");
+            MessageLog.Companion.printToLog("\t" + line.toString(), loggerTag, false, true, true);
         }
-        MessageLog.Companion.printToLog(result.toString(), loggerTag, false, true, true);
+        MessageLog.Companion.printToLog("", loggerTag, false, false, true);
     }
 }
