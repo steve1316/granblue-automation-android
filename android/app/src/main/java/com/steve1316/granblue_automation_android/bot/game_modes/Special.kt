@@ -112,7 +112,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 				// Try to select the specified Special mission for a number of tries.
 				while (tries > 0) {
 					// Scroll the screen down if its any of the Special Quests that are more towards the bottom of the page to alleviate problems for smaller screens.
-					if (mapName != "Campaign-Exclusive Quest" && mapName != "Basic Treasure Quests" && mapName != "Shiny Slime Search!" && mapName != "Six Dragon Trial") {
+					if (mapName != "Campaign-Exclusive Quest" && mapName != "Uncap Treasure Quests" && mapName != "Shiny Slime Search!" && mapName != "Six Dragon Trial") {
 						// Scroll the screen down if the selected mission is located on the bottom half of the page.
 						game.gestureUtils.scroll()
 						game.wait(1.0)
