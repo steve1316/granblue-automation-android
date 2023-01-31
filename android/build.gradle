@@ -24,6 +24,7 @@ buildscript {
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("de.undercouch:gradle-download-task:5.0.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.21")
+        classpath("com.likethesalad.android:stem-plugin:2.3.0") // This allows string concatenation in XML files.
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GAA</string>
+    <string name="accessibility_service_label">Accessibility Service for ${app_name}</string>
 </resources>
