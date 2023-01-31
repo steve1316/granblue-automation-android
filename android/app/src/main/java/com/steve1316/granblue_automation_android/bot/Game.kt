@@ -1052,6 +1052,9 @@ class Game(private val myContext: Context) {
 			)
 		}
 
+		// Set the subfolder to the buttons subfolder for tap location randomization.
+		MyAccessibilityService.imageSubFolder = "buttons/"
+
 		if (configData.itemName != "EXP") {
 			MessageLog.printToLog("\n####################", tag)
 			MessageLog.printToLog("####################", tag)
