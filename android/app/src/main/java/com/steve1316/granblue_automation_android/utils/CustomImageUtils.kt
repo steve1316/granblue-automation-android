@@ -19,6 +19,10 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	private var summonSelectionFirstRun: Boolean = true
 	private var summonSelectionSameElement: Boolean = true
 
+	init {
+		setTemplateSubfolderPath("buttons/")
+	}
+
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 
