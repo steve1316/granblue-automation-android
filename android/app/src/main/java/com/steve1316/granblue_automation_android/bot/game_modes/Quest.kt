@@ -77,6 +77,8 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	private fun navigateToPhantagrandeSkydomIsland(mapName: String, currentIsland: String) {
 		MessageLog.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Phantagrande Skydom: $mapName...", tag)
 
+		val tempFormattedMapLocation = "map_" + mapName.lowercase().replace(" ", "_").replace("-", "_")
+
 		if (phantagrandePage1Islands.contains(mapName)) {
 			// Switch pages if bot is on Page 2.
 			if (phantagrandePage2Islands.contains(currentIsland) && !game.findAndClickButton("world_left_arrow")) {
@@ -84,7 +86,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			}
 
 			// Move to the expected Island.
-			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
+			if (!game.findAndClickButton(tempFormattedMapLocation)) {
 				// If the name of the island is obscured, like by the "Next" text indicating that the user's next quest is there, fallback to the manual method.
 				val arrowLocation = game.imageUtils.findButton("world_right_arrow") ?: throw QuestException("Unable to find the location of the right arrow for the World.")
 
@@ -174,7 +176,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 				throw QuestException("Failed to move to Page 2 of Phantagrande Skydom.")
 			}
 
-			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
+			if (!game.findAndClickButton(tempFormattedMapLocation)) {
 				val arrowLocation = game.imageUtils.findButton("world_left_arrow") ?: throw Exception("Unable to find the location of the left arrow for the World.")
 
 				when (mapName) {
@@ -275,6 +277,8 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 	private fun navigateToNalhegrandeSkydomIsland(mapName: String, currentIsland: String) {
 		MessageLog.printToLog("\n[QUEST] Beginning process to navigate to the island inside the Nalhegrande Skydom: $mapName...", tag)
 
+		val tempFormattedMapLocation = "map_" + mapName.lowercase().replace(" ", "_").replace("-", "_")
+
 		if (nalhegrandePage1Islands.contains(mapName)) {
 			// Switch pages if bot is on Page 2.
 			if (nalhegrandePage2Islands.contains(currentIsland) && !game.findAndClickButton("world_left_arrow")) {
@@ -282,7 +286,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			}
 
 			// Move to the expected Island.
-			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
+			if (!game.findAndClickButton(tempFormattedMapLocation)) {
 				val arrowLocation = game.imageUtils.findButton("world_right_arrow") ?: throw Exception("Unable to find the location of the right arrow for the World.")
 
 				when (mapName) {
@@ -310,7 +314,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			}
 
 			// Move to the expected Island.
-			if (!game.findAndClickButton(mapName.lowercase().replace(" ", "_").replace("-", "_"))) {
+			if (!game.findAndClickButton(tempFormattedMapLocation)) {
 				val arrowLocation = game.imageUtils.findButton("world_left_arrow") ?: throw Exception("Unable to find the location of the left arrow for the World.")
 
 				when (mapName) {
@@ -743,7 +747,7 @@ class Quest(private val game: Game, private val mapName: String, private val mis
 			game.wait(2.0)
 
 			// Now tap on the mission node to start.
-			val formattedMissionName = missionName.lowercase().replace(" ", "_")
+			val formattedMissionName = "mission_" + missionName.lowercase().replace(" ", "_")
 			if (!game.findAndClickButton(formattedMissionName)) {
 				// If the bot failed to find and click on the mission node the first time, scroll down the screen again.
 				game.gestureUtils.scroll()
