@@ -23,6 +23,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.steve1316.automation_library.events.JSEvent;
 import com.steve1316.automation_library.events.StartEvent;
 import com.steve1316.automation_library.utils.MediaProjectionService;
+import com.steve1316.automation_library.utils.MessageLog;
 import com.steve1316.automation_library.utils.MyAccessibilityService;
 import com.steve1316.automation_library.utils.TwitterUtils;
 import com.steve1316.granblue_automation_android.bot.Game;
@@ -31,12 +32,14 @@ import com.steve1316.granblue_automation_android.utils.CustomJSONParser;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.SubscriberExceptionEvent;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.PrivateChannel;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.entity.user.UserStatus;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -359,5 +362,19 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
     @Subscribe
     public void onJSEvent(JSEvent event) {
         sendEvent(event.getEventName(), event.getMessage());
+    }
+
+    /**
+     * Listener function to send Exception messages back to the Javascript frontend.
+     *
+     * @param event The SubscriberExceptionEvent object to parse its event name and message.
+     */
+    @Subscribe
+    public void onSubscriberExceptionEvent(SubscriberExceptionEvent event) {
+        MessageLog.Companion.printToLog(event.throwable.toString(), loggerTag, false, true, false);
+        for (StackTraceElement line : event.throwable.getStackTrace()) {
+            MessageLog.Companion.printToLog("\t" + line.toString(), loggerTag, false, true, true);
+        }
+        MessageLog.Companion.printToLog("", loggerTag, false, false, true);
     }
 }
