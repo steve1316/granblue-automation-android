@@ -372,9 +372,10 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
     @Subscribe
     public void onSubscriberExceptionEvent(SubscriberExceptionEvent event) {
         MessageLog.Companion.printToLog(event.throwable.toString(), loggerTag, false, true, false);
+        StringBuilder result = new StringBuilder();
         for (StackTraceElement line : event.throwable.getStackTrace()) {
-            MessageLog.Companion.printToLog("\t" + line.toString(), loggerTag, false, true, true);
+            result.append(line.toString()).append("\n");
         }
-        MessageLog.Companion.printToLog("", loggerTag, false, false, true);
+        MessageLog.Companion.printToLog(result.toString(), loggerTag, false, true, true);
     }
 }
