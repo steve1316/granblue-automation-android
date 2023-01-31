@@ -151,7 +151,7 @@ class Special(private val game: Game, private val mapName: String, private val m
 								95
 							}
 						}
-						game.gestureUtils.tap(missionLocation.x, missionLocation.y, formattedMapName)
+						game.gestureUtils.tap(missionLocation.x, missionLocation.y, "select")
 
 						game.wait(3.0)
 
