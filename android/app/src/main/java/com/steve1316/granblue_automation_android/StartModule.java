@@ -338,7 +338,6 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
             try {
                 entryPoint.start();
             } catch (Exception e) {
-                Log.d(tag, e.toString());
                 EventBus.getDefault().postSticky(new ExceptionEvent(e));
             }
         }
