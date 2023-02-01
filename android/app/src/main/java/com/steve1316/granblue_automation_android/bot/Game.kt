@@ -548,28 +548,35 @@ class Game(private val myContext: Context) {
 
 			// Select the Group.
 			var equation: Double = if (!imageUtils.isTablet) {
-				if (selectedGroupNumber == 1) {
+				if (selectedGroupNumber == 1 || selectedGroupNumber == 8) {
 					if (imageUtils.is720p) {
 						537.0
 					} else {
 						787.0
 					}
 				} else {
-					if (imageUtils.is720p) {
-						537.0 - (93 * (selectedGroupNumber - 1))
+					// Account for groups in Set B.
+					val newSelectedGroupNumber = if (selectedGroupNumber > 7) {
+						selectedGroupNumber - 7
 					} else {
-						787.0 - (140 * (selectedGroupNumber - 1))
+						selectedGroupNumber
+					}
+
+					if (imageUtils.is720p) {
+						537.0 - (93 * (newSelectedGroupNumber - 1))
+					} else {
+						787.0 - (140 * (newSelectedGroupNumber - 1))
 					}
 				}
 			} else {
 				if (!imageUtils.isTabletLandscape) {
-					if (selectedGroupNumber == 1) {
+					if (selectedGroupNumber == 1 || selectedGroupNumber == 8) {
 						588.0
 					} else {
 						588.0 - (100 * (selectedGroupNumber - 1))
 					}
 				} else {
-					if (selectedGroupNumber == 1) {
+					if (selectedGroupNumber == 1 || selectedGroupNumber == 8) {
 						467.0
 					} else {
 						467.0 - (80 * (selectedGroupNumber - 1))
