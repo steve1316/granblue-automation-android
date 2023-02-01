@@ -305,7 +305,7 @@ dependencies {
     //////// Automation Library ////////
 
     // Note that the dependencies necessary are already available for the whole project via the library's build.gradle using the api configuration.
-    implementation("com.github.steve1316:android-cv-automation-library:1.0.9")
+    implementation("com.github.steve1316:android-cv-automation-library:1.1.8")
 
     //////// Project specific ////////
 
