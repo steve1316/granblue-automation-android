@@ -24,6 +24,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 	init {
 		setTemplateSubfolderPath("buttons/")
+		adjustTriggerNewImageSwipeBehavior(500f, 500f, 500f, 450f)
 	}
 
 	////////////////////////////////////////////////////////////////////
