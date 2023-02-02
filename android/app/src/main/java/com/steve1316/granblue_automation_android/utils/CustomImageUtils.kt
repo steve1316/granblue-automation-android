@@ -477,7 +477,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 					}
 					text.toInt()
 				} catch (_: Exception) {
-					MessageLog.printToLog("[ERROR] Failed to convert $text to integer. Defaulting to 1.", tag, isError = true)
+					MessageLog.printToLog("[WARNING] Failed to convert \"$text\" to integer. Defaulting to 1.", tag, isWarning = true)
 					1
 				}
 			} catch (e: Exception) {
