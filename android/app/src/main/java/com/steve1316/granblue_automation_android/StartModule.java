@@ -102,6 +102,9 @@ public class StartModule extends ReactContextBaseJavaModule implements ActivityE
      * Register this module with EventBus in order to allow listening to certain events and then begin starting up the MediaProjection service.
      */
     private void startProjection() {
+        // This extra call to unregister is to account for the user stopping the service from the notification which bypasses the call to
+        // unregister in stopProjection().
+        EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
         Log.d(tag, "Event Bus registered for StartModule");
         MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) reactContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
