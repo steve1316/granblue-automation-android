@@ -435,6 +435,8 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	 * @return Sum of all the item's amounts.
 	 */
 	fun findFarmedItems(templateName: String): Int {
+		checkTesseractInitialization("eng")
+
 		MessageLog.printToLog("[INFO] Now detecting item rewards.", tag = tag)
 
 		// Reset the total item amount.
