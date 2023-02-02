@@ -1,23 +1,19 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.0</latestVersion>
+        <latestVersion>4.0.1</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.0 - Changelog
-
-New
----
-- Added Legendary Merit farming.
+v4.0.1 - Changelog
 
 Changed
 ---
-- Stripped most of the framework code and put them into its own library in another repo.
+- Adjusted swiping behavior for generating new images to be smaller.
+- Use old method of OCR using ML Kit instead of Tesseract.
 
 Fixed
 ---
-- Fix Special navigation due to the recent ingame update.
-- Fix Quest navigation due to typos.
-- Fix Set B selection when selecting a party.
+- Fix Tesseract initialization.
+- Fix EventBus registering itself again twice.
 
         </releaseNotes>
     </update>
