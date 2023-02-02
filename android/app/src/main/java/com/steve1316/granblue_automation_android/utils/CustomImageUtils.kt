@@ -2,12 +2,13 @@ package com.steve1316.granblue_automation_android.utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.steve1316.automation_library.utils.ImageUtils
 import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.bot.Game
-import org.opencv.android.Utils
 import org.opencv.core.*
-import org.opencv.imgproc.Imgproc
 
 /**
  * Utility functions for image processing via CV like OpenCV.
@@ -18,6 +19,8 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	// Used for skipping selecting the Summon Element every time on repeated runs.
 	private var summonSelectionFirstRun: Boolean = true
 	private var summonSelectionSameElement: Boolean = true
+
+	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
 	init {
 		setTemplateSubfolderPath("buttons/")
@@ -435,7 +438,61 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	 * @return Sum of all the item's amounts.
 	 */
 	fun findFarmedItems(templateName: String): Int {
-		checkTesseractInitialization("eng")
+//		checkTesseractInitialization("eng")
+//
+//		MessageLog.printToLog("[INFO] Now detecting item rewards.", tag = tag)
+//
+//		// Reset the total item amount.
+//		var totalItemAmount = 0
+//
+//		// Get the locations of all of the specified item.
+//		val itemLocations: ArrayList<Point> = findAll(templateName, isItem = true)
+//
+//		// Grab a reference to the source bitmap.
+//		val sourceBitmap = getSourceScreenshot()
+//
+//		for (itemLocation in itemLocations) {
+//			// Crop the source bitmap to hold only the item amount.
+//			val croppedItemAmountBitmap = Bitmap.createBitmap(sourceBitmap, (itemLocation.x + 50).toInt(), (itemLocation.y).toInt() - 10, 35, 50)
+//			val cvImage = Mat()
+//			Utils.bitmapToMat(croppedItemAmountBitmap, cvImage)
+//
+//			// Grayscale the cropped image.
+//			val grayImage = Mat()
+//			Imgproc.cvtColor(cvImage, grayImage, Imgproc.COLOR_RGB2GRAY)
+//
+//			// Thresh the grayscale cropped image to make black and white.
+//			val resultBitmap: Bitmap = croppedItemAmountBitmap
+//			val bwImage = Mat()
+//			Imgproc.threshold(grayImage, bwImage, 130.0, 255.0, Imgproc.THRESH_BINARY)
+//			Utils.matToBitmap(bwImage, resultBitmap)
+//
+//			// Use the Tesseract client geared towards digits to set the image to scan.
+//			tessDigitsBaseAPI.setImage(resultBitmap)
+//
+//			totalItemAmount += try {
+//				// Finally, detect text on the cropped region.
+//				val text = tessDigitsBaseAPI.utF8Text
+//
+//				try {
+//					if (debugMode) {
+//						MessageLog.printToLog("[DEBUG] Detected item amount: ${text.toInt()}", tag = tag)
+//					}
+//					text.toInt()
+//				} catch (_: Exception) {
+//					MessageLog.printToLog("[WARNING] Failed to convert \"$text\" to integer. Defaulting to 1.", tag, isWarning = true)
+//					1
+//				}
+//			} catch (e: Exception) {
+//				MessageLog.printToLog("[ERROR] Cannot perform OCR: ${e.stackTraceToString()}. Defaulting to 1.", tag, isError = true)
+//				1
+//			}
+//
+//			// Stop Tesseract operations.
+//			tessDigitsBaseAPI.stop()
+//		}
+//
+//		return totalItemAmount
 
 		MessageLog.printToLog("[INFO] Now detecting item rewards.", tag = tag)
 
@@ -451,43 +508,36 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 		for (itemLocation in itemLocations) {
 			// Crop the source bitmap to hold only the item amount.
 			val croppedItemAmountBitmap = Bitmap.createBitmap(sourceBitmap, (itemLocation.x + 50).toInt(), (itemLocation.y).toInt() - 10, 35, 50)
-			val cvImage = Mat()
-			Utils.bitmapToMat(croppedItemAmountBitmap, cvImage)
 
-			// Grayscale the cropped image.
-			val grayImage = Mat()
-			Imgproc.cvtColor(cvImage, grayImage, Imgproc.COLOR_RGB2GRAY)
+			// Create a InputImage object for Google's ML OCR.
+			val inputImage = InputImage.fromBitmap(croppedItemAmountBitmap, 0)
 
-			// Thresh the grayscale cropped image to make black and white.
-			val resultBitmap: Bitmap = croppedItemAmountBitmap
-			val bwImage = Mat()
-			Imgproc.threshold(grayImage, bwImage, 130.0, 255.0, Imgproc.THRESH_BINARY)
-			Utils.matToBitmap(bwImage, resultBitmap)
+			// Start the asynchronous operation of text detection. Increment the total item amount whenever it detects a numerical amount.
+			textRecognizer.process(inputImage).addOnSuccessListener {
+				if (it.textBlocks.size == 0) {
+					// If no amount was detected in the cropped region, that means that the amount is 1 as only amounts greater than 1 appear in the cropped region.
+					totalItemAmount = 1
+				} else {
+					for (block in it.textBlocks) {
+						totalItemAmount += try {
+							val detectedAmount: Int = block.text.toInt()
+							if (debugMode) {
+								MessageLog.printToLog("[DEBUG] Detected item amount: $detectedAmount", tag = tag)
+							}
 
-			// Use the Tesseract client geared towards digits to set the image to scan.
-			tessDigitsBaseAPI.setImage(resultBitmap)
-
-			totalItemAmount += try {
-				// Finally, detect text on the cropped region.
-				val text = tessDigitsBaseAPI.utF8Text
-
-				try {
-					if (debugMode) {
-						MessageLog.printToLog("[DEBUG] Detected item amount: ${text.toInt()}", tag = tag)
+							detectedAmount
+						} catch (e: NumberFormatException) {
+							1
+						}
 					}
-					text.toInt()
-				} catch (_: Exception) {
-					MessageLog.printToLog("[WARNING] Failed to convert \"$text\" to integer. Defaulting to 1.", tag, isWarning = true)
-					1
 				}
-			} catch (e: Exception) {
-				MessageLog.printToLog("[ERROR] Cannot perform OCR: ${e.stackTraceToString()}. Defaulting to 1.", tag, isError = true)
-				1
+			}.addOnFailureListener {
+				MessageLog.printToLog("[ERROR] Failed to do text detection on bitmap.", tag = tag, isError = true)
 			}
-
-			// Stop Tesseract operations.
-			tessDigitsBaseAPI.stop()
 		}
+
+		// Wait a few seconds for the asynchronous operations of Google's OCR to finish.
+		game.wait(3.0)
 
 		return totalItemAmount
 	}

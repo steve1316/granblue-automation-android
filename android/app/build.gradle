@@ -309,6 +309,8 @@ dependencies {
 
     //////// Project specific ////////
 
+    // Google's Firebase Machine Learning OCR for Text Detection.
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
 }
 
 if (isNewArchitectureEnabled()) {
