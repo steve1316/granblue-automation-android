@@ -1,13 +1,13 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.2</latestVersion>
+        <latestVersion>4.0.3</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.2 - Changelog
+v4.0.3 - Changelog
 
-New
+Fixed
 ---
-- Add new options in the Settings page for certain Farming Modes like Proving Grounds to have the navigation use the second position in the Home Menu's list if there is already another event on top of it.
+- Fix wrong keys being used when reading settings.json for the new options.
 
         </releaseNotes>
     </update>
