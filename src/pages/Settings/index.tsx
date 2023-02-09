@@ -352,6 +352,15 @@ const Settings = () => {
                     />
                 ) : null}
 
+                {bsc.settings.game.farmingMode === "Event" || bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
+                    <Checkbox
+                        text="Enable if Event is in second position"
+                        subtitle="Enable this to properly select the Event if it is positioned second on the list of events in the Home Menu."
+                        isChecked={bsc.settings.event.enableSecondPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableSecondPosition: !bsc.settings.event.enableSecondPosition } })}
+                    />
+                ) : null}
+
                 {bsc.settings.game.farmingMode === "Arcarum Sandbox" ? (
                     <Checkbox
                         text="Enable Defender settings"
@@ -385,6 +394,26 @@ const Settings = () => {
                         subtitle="Enabling this will select the bottom Xeno Clash option. By default, it selects the top option."
                         isChecked={bsc.settings.xenoClash.selectTopOption}
                         onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, selectTopOption: !bsc.settings.xenoClash.selectTopOption } })}
+                    />
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Xeno Clash" ? (
+                    <Checkbox
+                        text="Enable if Xeno Clash is in second position"
+                        subtitle="Enable this to properly select Xeno Clash if it is positioned second on the list of events in the Home Menu."
+                        isChecked={bsc.settings.xenoClash.enableSecondPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, enableSecondPosition: !bsc.settings.xenoClash.enableSecondPosition } })}
+                    />
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Proving Grounds" ? (
+                    <Checkbox
+                        text={"Enable if Proving Grounds is in\nsecond position"}
+                        subtitle="Enable this to properly select Proving Grounds if it is positioned second on the list of events in the Home Menu."
+                        isChecked={bsc.settings.provingGrounds.enableSecondPosition}
+                        onPress={() =>
+                            bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, enableSecondPosition: !bsc.settings.provingGrounds.enableSecondPosition } })
+                        }
                     />
                 ) : null}
 
