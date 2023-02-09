@@ -28,7 +28,9 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 		if (bannerLocations.size == 0) {
 			bannerLocations = game.imageUtils.findAll("event_banner_blue")
 		}
-		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
+
+		if (game.configData.provingGroundsEnableSecondPosition) game.gestureUtils.tap(bannerLocations[1].x, bannerLocations[1].y, "event_banner")
+		else game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 
 		game.wait(3.0)
 
