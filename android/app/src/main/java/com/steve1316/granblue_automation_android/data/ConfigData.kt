@@ -57,6 +57,7 @@ class ConfigData(myContext: Context) {
 	val nightmarePartyNumber: Int
 
 	// Event
+	val eventEnableSecondPosition: Boolean
 	val enableLocationIncrementByOne: Boolean
 	val enableSelectBottomCategory: Boolean
 
@@ -84,7 +85,11 @@ class ConfigData(myContext: Context) {
 	val enableForceReload: Boolean
 
 	// Xeno Clash
+	val xenoClashEnableSecondPosition: Boolean
 	val selectTopOption: Boolean
+
+	// Proving Grounds
+	val provingGroundsEnableSecondPosition: Boolean
 
 	// Adjustment
 	val enableCalibrationAdjustment: Boolean
@@ -198,6 +203,7 @@ class ConfigData(myContext: Context) {
 		}
 
 		// Event
+		eventEnableSecondPosition = sharedPreferences.getBoolean("eventEnableSecondPosition", false)
 		enableLocationIncrementByOne = sharedPreferences.getBoolean("enableLocationIncrementByOne", false)
 		enableSelectBottomCategory = sharedPreferences.getBoolean("selectBottomCategory", false)
 
@@ -225,7 +231,11 @@ class ConfigData(myContext: Context) {
 		enableForceReload = sharedPreferences.getBoolean("enableForceReload", false)
 
 		// Xeno Clash
+		xenoClashEnableSecondPosition = sharedPreferences.getBoolean("xenoClashEnableSecondPosition", false)
 		selectTopOption = sharedPreferences.getBoolean("selectTopOption", false)
+
+		// Proving Grounds
+		provingGroundsEnableSecondPosition = sharedPreferences.getBoolean("provingGroundsEnableSecondPosition", false)
 
 		// Adjustment
 		enableCalibrationAdjustment = sharedPreferences.getBoolean("enableCalibrationAdjustment", false)

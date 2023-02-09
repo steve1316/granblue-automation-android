@@ -127,6 +127,7 @@ class CustomJSONParser : JSONParser() {
 		try {
 			val eventObj = jObj.getJSONObject("event")
 			sharedPreferences.edit {
+				putBoolean("eventEnableSecondPosition", eventObj.getBoolean("eventEnableSecondPosition"))
 				putBoolean("enableLocationIncrementByOne", eventObj.getBoolean("enableLocationIncrementByOne"))
 				putBoolean("selectBottomCategory", eventObj.getBoolean("selectBottomCategory"))
 				commit()
@@ -180,9 +181,19 @@ class CustomJSONParser : JSONParser() {
 		}
 
 		try {
-			val genericObj = jObj.getJSONObject("xenoClash")
+			val xenoClashObj = jObj.getJSONObject("xenoClash")
 			sharedPreferences.edit {
-				putBoolean("selectTopOption", genericObj.getBoolean("selectTopOption"))
+				putBoolean("xenoClashEnableSecondPosition", xenoClashObj.getBoolean("xenoClashEnableSecondPosition"))
+				putBoolean("selectTopOption", xenoClashObj.getBoolean("selectTopOption"))
+				commit()
+			}
+		} catch (_: Exception) {
+		}
+
+		try {
+			val provingGroundsObj = jObj.getJSONObject("provingGrounds")
+			sharedPreferences.edit {
+				putBoolean("provingGroundsEnableSecondPosition", provingGroundsObj.getBoolean("provingGroundsEnableSecondPosition"))
 				commit()
 			}
 		} catch (_: Exception) {
