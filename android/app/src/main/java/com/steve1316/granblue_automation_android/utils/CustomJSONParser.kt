@@ -127,7 +127,7 @@ class CustomJSONParser : JSONParser() {
 		try {
 			val eventObj = jObj.getJSONObject("event")
 			sharedPreferences.edit {
-				putBoolean("eventEnableSecondPosition", eventObj.getBoolean("eventEnableSecondPosition"))
+				putBoolean("eventEnableSecondPosition", eventObj.getBoolean("enableSecondPosition"))
 				putBoolean("enableLocationIncrementByOne", eventObj.getBoolean("enableLocationIncrementByOne"))
 				putBoolean("selectBottomCategory", eventObj.getBoolean("selectBottomCategory"))
 				commit()
@@ -183,7 +183,7 @@ class CustomJSONParser : JSONParser() {
 		try {
 			val xenoClashObj = jObj.getJSONObject("xenoClash")
 			sharedPreferences.edit {
-				putBoolean("xenoClashEnableSecondPosition", xenoClashObj.getBoolean("xenoClashEnableSecondPosition"))
+				putBoolean("xenoClashEnableSecondPosition", xenoClashObj.getBoolean("enableSecondPosition"))
 				putBoolean("selectTopOption", xenoClashObj.getBoolean("selectTopOption"))
 				commit()
 			}
@@ -193,7 +193,7 @@ class CustomJSONParser : JSONParser() {
 		try {
 			val provingGroundsObj = jObj.getJSONObject("provingGrounds")
 			sharedPreferences.edit {
-				putBoolean("provingGroundsEnableSecondPosition", provingGroundsObj.getBoolean("provingGroundsEnableSecondPosition"))
+				putBoolean("provingGroundsEnableSecondPosition", provingGroundsObj.getBoolean("enableSecondPosition"))
 				commit()
 			}
 		} catch (_: Exception) {
