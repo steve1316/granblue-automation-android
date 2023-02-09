@@ -1,19 +1,13 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.1</latestVersion>
+        <latestVersion>4.0.2</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.1 - Changelog
+v4.0.2 - Changelog
 
-Changed
+New
 ---
-- Adjusted swiping behavior for generating new images to be smaller.
-- Use old method of OCR using ML Kit instead of Tesseract.
-
-Fixed
----
-- Fix Tesseract initialization.
-- Fix EventBus registering itself again twice.
+- Add new options in the Settings page for certain Farming Modes like Proving Grounds to have the navigation use the second position in the Home Menu's list if there is already another event on top of it.
 
         </releaseNotes>
     </update>
