@@ -1,13 +1,13 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.3</latestVersion>
+        <latestVersion>4.0.4</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.3 - Changelog
+v4.0.4 - Changelog
 
-Fixed
+New
 ---
-- Fix wrong keys being used when reading settings.json for the new options.
+- Add support for the items farmable in Coop's EX-5 and Final Tier like the Esteems and Astaroth Anima.
 
         </releaseNotes>
     </update>
