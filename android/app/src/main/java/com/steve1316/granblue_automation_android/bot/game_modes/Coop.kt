@@ -5,7 +5,6 @@ import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
 
 
-
 class Coop(private val game: Game, private val missionName: String) {
 	private val tag: String = "${loggerTag}Coop"
 
@@ -14,6 +13,8 @@ class Coop(private val game: Game, private val missionName: String) {
 	private val listForCoopEX2 = arrayListOf("EX2-2 Time of Judgement", "EX2-3 Time of Revelation", "EX2-4 Time of Eminence")
 	private val listForCoopEX3 = arrayListOf("EX3-2 Rule of the Tundra", "EX3-3 Rule of the Plains", "EX3-4 Rule of the Twilight")
 	private val listForCoopEX4 = arrayListOf("EX4-2 Amidst the Waves", "EX4-3 Amidst the Petals", "EX4-4 Amidst Severe Cliffs", "EX4-5 Amidst the Flames")
+	private val listForCoopEX5 = arrayListOf("EX5-1 Throes of Sorcery", "EX5-2 Throes of Spears", "EX5-3 Throes of Wings", "EX5-4 Throes of Calamity")
+	private val listForCoopFinal = arrayListOf("EX6-1 Throes of Dark Steel", "EX6-2 Throes of Death")
 
 	private class CoopException(message: String) : Exception(message)
 
@@ -35,12 +36,8 @@ class Coop(private val game: Game, private val missionName: String) {
 
 		if (game.imageUtils.confirmLocation("coop")) {
 			// Scroll the screen down a little bit.
-			game.gestureUtils.swipe(500f, 1000f, 500f, 400f)
-
-			game.wait(2.0)
-
-			// Find all occurrences of the "Host Quest" button.
-			val hostButtonLocations = game.imageUtils.findAll("coop_host_quest")
+			game.gestureUtils.swipe(100f, 1000f, 100f, 400f)
+			game.wait(0.5)
 
 			// Select the difficulty of the mission that it is under.
 			if (missionName == "H3-1 In a Dusk Dream") {
@@ -49,9 +46,12 @@ class Coop(private val game: Game, private val missionName: String) {
 					game.findAndClickButton("coop_hard")
 				}
 
-				game.wait(3.0)
+				game.wait(2.0)
 
 				MessageLog.printToLog("[COOP] Hard difficulty for Coop is now selected.", tag)
+
+				// Find all occurrences of the "Host Quest" button.
+				val hostButtonLocations = game.imageUtils.findAll("coop_host_quest")
 
 				// Select the category, "Save the Oceans", which should be the 3rd category.
 				MessageLog.printToLog("[COOP] Now navigating to \"In a Dusk Dream\" for Hard difficulty...", tag)
@@ -67,9 +67,18 @@ class Coop(private val game: Game, private val missionName: String) {
 					game.findAndClickButton("coop_extra")
 				}
 
-				game.wait(3.0)
+				game.wait(2.0)
 
 				MessageLog.printToLog("[COOP] Extra difficulty for Coop is now selected.", tag)
+
+				if (listForCoopEX5.contains(missionName) || listForCoopFinal.contains(missionName)) {
+					// Scroll the screen down a little bit to see the bottom section of the EX list.
+					game.gestureUtils.swipe(100f, 1000f, 100f, 700f)
+					game.wait(0.5)
+				}
+
+				// Find all occurrences of the "Host Quest" button.
+				val hostButtonLocations = game.imageUtils.findAll("coop_host_quest")
 
 				// Select the category for the specified EX mission. For EX2 to EX4, skip past the first missions of each.
 				if (listForCoopEX1.contains(missionName)) {
@@ -125,6 +134,34 @@ class Coop(private val game: Game, private val missionName: String) {
 						game.gestureUtils.tap(
 							hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].x,
 							hostRoundButtonLocations[listForCoopEX4.indexOf(missionName) + 1].y,
+							"coop_host_quest_circle"
+						)
+					}
+				} else if (listForCoopEX5.contains(missionName)) {
+					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX5...", tag)
+
+					game.gestureUtils.tap(hostButtonLocations[4].x, hostButtonLocations[4].y, "coop_host_quest")
+					if (game.imageUtils.confirmLocation("coop_ex5")) {
+						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
+
+						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
+						game.gestureUtils.tap(
+							hostRoundButtonLocations[listForCoopEX5.indexOf(missionName)].x,
+							hostRoundButtonLocations[listForCoopEX5.indexOf(missionName)].y,
+							"coop_host_quest_circle"
+						)
+					}
+				} else if (listForCoopFinal.contains(missionName)) {
+					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX Final Tier...", tag)
+
+					game.gestureUtils.tap(hostButtonLocations[5].x, hostButtonLocations[5].y, "coop_host_quest")
+					if (game.imageUtils.confirmLocation("coop_ex_final")) {
+						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
+
+						val hostRoundButtonLocations = game.imageUtils.findAll("coop_host_quest_circle")
+						game.gestureUtils.tap(
+							hostRoundButtonLocations[listForCoopFinal.indexOf(missionName)].x,
+							hostRoundButtonLocations[listForCoopFinal.indexOf(missionName)].y,
 							"coop_host_quest_circle"
 						)
 					}
