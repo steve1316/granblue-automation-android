@@ -1,13 +1,13 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.4</latestVersion>
+        <latestVersion>4.0.5</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.4 - Changelog
+v4.0.5 - Changelog
 
-New
+Fixed
 ---
-- Add support for the items farmable in Coop's EX-5 and Final Tier like the Esteems and Astaroth Anima.
+- Fix issue where screens of height 1920 could not see the second event banner in the Home Menu.
 
         </releaseNotes>
     </update>
