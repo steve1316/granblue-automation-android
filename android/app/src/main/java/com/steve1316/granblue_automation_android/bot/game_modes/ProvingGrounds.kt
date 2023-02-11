@@ -1,5 +1,6 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.data.SharedData
 import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
@@ -24,6 +25,13 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		game.wait(1.0)
+
+		if (SharedData.displayHeight == 1920) {
+			MessageLog.printToLog("[PROVING.GROUNDS] Screen too small. Moving the screen down in order to see all of the event banners.", tag)
+			game.gestureUtils.swipe(100f, 1000f, 100f, 700f)
+			game.wait(0.5)
+		}
+
 		var bannerLocations = game.imageUtils.findAll("event_banner")
 		if (bannerLocations.size == 0) {
 			bannerLocations = game.imageUtils.findAll("event_banner_blue")
