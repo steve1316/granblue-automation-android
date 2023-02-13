@@ -96,7 +96,8 @@ class Event(private val game: Game, private val missionName: String) {
 			bannerLocations = game.imageUtils.findAll("event_banner_blue")
 		}
 
-		if (game.configData.eventEnableSecondPosition) game.gestureUtils.tap(bannerLocations[1].x, bannerLocations[1].y, "event_banner")
+		if (game.configData.eventEnableThirdPosition) game.gestureUtils.tap(bannerLocations[2].x, bannerLocations[2].y, "event_banner")
+		else if (game.configData.eventEnableSecondPosition) game.gestureUtils.tap(bannerLocations[1].x, bannerLocations[1].y, "event_banner")
 		else game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 
 		game.wait(3.0)
