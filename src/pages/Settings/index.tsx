@@ -361,6 +361,15 @@ const Settings = () => {
                     />
                 ) : null}
 
+                {bsc.settings.game.farmingMode === "Event" || bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
+                    <Checkbox
+                        text="Enable if Event is in third position"
+                        subtitle="Enable this to properly select the Event if it is positioned third on the list of events in the Home Menu."
+                        isChecked={bsc.settings.event.enableThirdPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableThirdPosition: !bsc.settings.event.enableThirdPosition } })}
+                    />
+                ) : null}
+
                 {bsc.settings.game.farmingMode === "Arcarum Sandbox" ? (
                     <Checkbox
                         text="Enable Defender settings"
@@ -406,6 +415,15 @@ const Settings = () => {
                     />
                 ) : null}
 
+                {bsc.settings.game.farmingMode === "Xeno Clash" ? (
+                    <Checkbox
+                        text="Enable if Xeno Clash is in third position"
+                        subtitle="Enable this to properly select Xeno Clash if it is positioned third on the list of events in the Home Menu."
+                        isChecked={bsc.settings.xenoClash.enableThirdPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, enableThirdPosition: !bsc.settings.xenoClash.enableThirdPosition } })}
+                    />
+                ) : null}
+
                 {bsc.settings.game.farmingMode === "Proving Grounds" ? (
                     <Checkbox
                         text={"Enable if Proving Grounds is in\nsecond position"}
@@ -414,6 +432,15 @@ const Settings = () => {
                         onPress={() =>
                             bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, enableSecondPosition: !bsc.settings.provingGrounds.enableSecondPosition } })
                         }
+                    />
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Proving Grounds" ? (
+                    <Checkbox
+                        text={"Enable if Proving Grounds is in\nthird position"}
+                        subtitle="Enable this to properly select Proving Grounds if it is positioned third on the list of events in the Home Menu."
+                        isChecked={bsc.settings.provingGrounds.enableThirdPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, enableThirdPosition: !bsc.settings.provingGrounds.enableThirdPosition } })}
                     />
                 ) : null}
 
