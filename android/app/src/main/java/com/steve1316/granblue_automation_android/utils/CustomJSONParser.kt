@@ -128,6 +128,7 @@ class CustomJSONParser : JSONParser() {
 			val eventObj = jObj.getJSONObject("event")
 			sharedPreferences.edit {
 				putBoolean("eventEnableSecondPosition", eventObj.getBoolean("enableSecondPosition"))
+				putBoolean("eventEnableThirdPosition", eventObj.getBoolean("enableThirdPosition"))
 				putBoolean("enableLocationIncrementByOne", eventObj.getBoolean("enableLocationIncrementByOne"))
 				putBoolean("selectBottomCategory", eventObj.getBoolean("selectBottomCategory"))
 				commit()
@@ -184,6 +185,7 @@ class CustomJSONParser : JSONParser() {
 			val xenoClashObj = jObj.getJSONObject("xenoClash")
 			sharedPreferences.edit {
 				putBoolean("xenoClashEnableSecondPosition", xenoClashObj.getBoolean("enableSecondPosition"))
+				putBoolean("xenoClashEnableThirdPosition", xenoClashObj.getBoolean("enableThirdPosition"))
 				putBoolean("selectTopOption", xenoClashObj.getBoolean("selectTopOption"))
 				commit()
 			}
@@ -194,6 +196,7 @@ class CustomJSONParser : JSONParser() {
 			val provingGroundsObj = jObj.getJSONObject("provingGrounds")
 			sharedPreferences.edit {
 				putBoolean("provingGroundsEnableSecondPosition", provingGroundsObj.getBoolean("enableSecondPosition"))
+				putBoolean("provingGroundsEnableThirdPosition", provingGroundsObj.getBoolean("enableThirdPosition"))
 				commit()
 			}
 		} catch (_: Exception) {

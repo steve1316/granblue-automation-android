@@ -58,6 +58,7 @@ class ConfigData(myContext: Context) {
 
 	// Event
 	val eventEnableSecondPosition: Boolean
+	val eventEnableThirdPosition: Boolean
 	val enableLocationIncrementByOne: Boolean
 	val enableSelectBottomCategory: Boolean
 
@@ -86,10 +87,12 @@ class ConfigData(myContext: Context) {
 
 	// Xeno Clash
 	val xenoClashEnableSecondPosition: Boolean
+	val xenoClashEnableThirdPosition: Boolean
 	val selectTopOption: Boolean
 
 	// Proving Grounds
 	val provingGroundsEnableSecondPosition: Boolean
+	val provingGroundsEnableThirdPosition: Boolean
 
 	// Adjustment
 	val enableCalibrationAdjustment: Boolean
@@ -204,6 +207,7 @@ class ConfigData(myContext: Context) {
 
 		// Event
 		eventEnableSecondPosition = sharedPreferences.getBoolean("eventEnableSecondPosition", false)
+		eventEnableThirdPosition = sharedPreferences.getBoolean("eventEnableThirdPosition", false)
 		enableLocationIncrementByOne = sharedPreferences.getBoolean("enableLocationIncrementByOne", false)
 		enableSelectBottomCategory = sharedPreferences.getBoolean("selectBottomCategory", false)
 
@@ -232,10 +236,12 @@ class ConfigData(myContext: Context) {
 
 		// Xeno Clash
 		xenoClashEnableSecondPosition = sharedPreferences.getBoolean("xenoClashEnableSecondPosition", false)
+		xenoClashEnableThirdPosition = sharedPreferences.getBoolean("xenoClashEnableThirdPosition", false)
 		selectTopOption = sharedPreferences.getBoolean("selectTopOption", false)
 
 		// Proving Grounds
 		provingGroundsEnableSecondPosition = sharedPreferences.getBoolean("provingGroundsEnableSecondPosition", false)
+		provingGroundsEnableThirdPosition = sharedPreferences.getBoolean("provingGroundsEnableThirdPosition", false)
 
 		// Adjustment
 		enableCalibrationAdjustment = sharedPreferences.getBoolean("enableCalibrationAdjustment", false)
