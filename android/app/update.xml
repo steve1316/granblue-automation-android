@@ -1,13 +1,13 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.5</latestVersion>
+        <latestVersion>4.0.6</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.5 - Changelog
+v4.0.6 - Changelog
 
-Fixed
+New
 ---
-- Fix issue where screens of height 1920 could not see the second event banner in the Home Menu.
+- Add new options in the Settings page for certain Farming Modes like Proving Grounds to have the navigation use the third position in the Home Menu's list if there are two other events on top of it.
 
         </releaseNotes>
     </update>

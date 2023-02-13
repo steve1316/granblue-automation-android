@@ -153,8 +153,8 @@ android {
         applicationId "com.steve1316.granblue_automation_android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 87
-        versionName "4.0.5"
+        versionCode 88
+        versionName "4.0.6"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
