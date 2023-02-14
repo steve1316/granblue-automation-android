@@ -83,7 +83,7 @@ class Event(private val game: Game, private val missionName: String) {
 
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
-		game.wait(1.0)
+		game.wait(2.0)
 
 		if (SharedData.displayHeight == 1920) {
 			MessageLog.printToLog("[EVENT.TOKEN.DRAWBOXES] Screen too small. Moving the screen down in order to see all of the event banners.", tag)
