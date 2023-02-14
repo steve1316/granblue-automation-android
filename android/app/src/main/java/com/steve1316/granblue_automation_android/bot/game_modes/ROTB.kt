@@ -64,7 +64,7 @@ class ROTB(private val game: Game, private val missionName: String) {
 		// Go to the Home screen.
 		game.goBackHome(confirmLocationCheck = true)
 
-		MessageLog.printToLog("\n[INFO] Now navigating to Rise of the Beasts...", tag)
+		MessageLog.printToLog("\n[ROTB] Now navigating to Rise of the Beasts...", tag)
 
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
@@ -97,7 +97,7 @@ class ROTB(private val game: Game, private val missionName: String) {
 
 			// Only Raids are marked with Extreme difficulty.
 			if (difficulty == "Extreme") {
-				MessageLog.printToLog("[INFO] Now hosting $formattedMissionName Raid...", tag)
+				MessageLog.printToLog("[ROTB] Now hosting $formattedMissionName Raid...", tag)
 
 				// Tap on the Raid banner.
 				game.findAndClickButton("rotb_extreme")
@@ -105,34 +105,34 @@ class ROTB(private val game: Game, private val missionName: String) {
 				if (game.imageUtils.confirmLocation("rotb_battle_the_beasts")) {
 					when (formattedMissionName) {
 						"Zhuque" -> {
-							MessageLog.printToLog("[INFO] Now starting EX Zhuque Raid...", tag)
+							MessageLog.printToLog("[ROTB] Now starting EX Zhuque Raid...", tag)
 							game.findAndClickButton("rotb_raid_zhuque")
 						}
 						"Xuanwu" -> {
-							MessageLog.printToLog("[INFO] Now starting EX Xuanwu Raid...", tag)
+							MessageLog.printToLog("[ROTB] Now starting EX Xuanwu Raid...", tag)
 							game.findAndClickButton("rotb_raid_xuanwu")
 						}
 						"Baihu" -> {
-							MessageLog.printToLog("[INFO] Now starting EX Baihu Raid...", tag)
+							MessageLog.printToLog("[ROTB] Now starting EX Baihu Raid...", tag)
 							game.findAndClickButton("rotb_raid_baihu")
 						}
 						"Qinglong" -> {
-							MessageLog.printToLog("[INFO] Now starting EX Qinglong Raid...", tag)
+							MessageLog.printToLog("[ROTB] Now starting EX Qinglong Raid...", tag)
 							game.findAndClickButton("rotb_raid_qinglong")
 						}
 					}
 				}
 			} else if (missionName == "Lvl 100 Shenxian") {
 				// Tap on Shenxian to host.
-				MessageLog.printToLog("[INFO] Now hosting Shenxian Raid...", tag)
+				MessageLog.printToLog("[ROTB] Now hosting Shenxian Raid...", tag)
 				game.findAndClickButton("rotb_shenxian_host")
 
 				if (!game.imageUtils.waitVanish("rotb_shenxian_host", timeout = 10)) {
-					MessageLog.printToLog("[INFO] There are no more Shenxian hosts left. Alerting user...", tag)
+					MessageLog.printToLog("[ROTB] There are no more Shenxian hosts left. Alerting user...", tag)
 					throw (IllegalStateException("There are no more Shenxian hosts left."))
 				}
 			} else {
-				MessageLog.printToLog("[INFO] Now hosting $formattedMissionName Quest...", tag)
+				MessageLog.printToLog("[ROTB] Now hosting $formattedMissionName Quest...", tag)
 
 				// Scroll the screen to make way for smaller screens.
 				game.gestureUtils.scroll()
