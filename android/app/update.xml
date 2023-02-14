@@ -1,14 +1,18 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.6</latestVersion>
+        <latestVersion>4.0.7</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.6 - Changelog
+v4.0.7 - Changelog
 
 New
 ---
-- Add new options in the Settings page for certain Farming Modes like Proving Grounds to have the navigation use the third position in the Home Menu's list if there are two other events on top of it.
+- Remove the previously added options for second and third positions of certain Farming Modes and replaced them with more generic ones.
+- Expanded that functionality for Guild Wars and Rise of the Beasts as well.
 
+Changed
+---
+- Increase starting delay of various Farming Modes by 1 second.
         </releaseNotes>
     </update>
 </AppUpdater>
