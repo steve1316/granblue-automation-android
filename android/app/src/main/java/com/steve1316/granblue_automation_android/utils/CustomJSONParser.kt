@@ -127,8 +127,8 @@ class CustomJSONParser : JSONParser() {
 		try {
 			val eventObj = jObj.getJSONObject("event")
 			sharedPreferences.edit {
-				putBoolean("eventEnableSecondPosition", eventObj.getBoolean("enableSecondPosition"))
-				putBoolean("eventEnableThirdPosition", eventObj.getBoolean("enableThirdPosition"))
+				putBoolean("eventEnableNewPosition", eventObj.getBoolean("enableNewPosition"))
+				putInt("eventNewPosition", eventObj.getInt("newPosition"))
 				putBoolean("enableLocationIncrementByOne", eventObj.getBoolean("enableLocationIncrementByOne"))
 				putBoolean("selectBottomCategory", eventObj.getBoolean("selectBottomCategory"))
 				commit()
@@ -184,8 +184,8 @@ class CustomJSONParser : JSONParser() {
 		try {
 			val xenoClashObj = jObj.getJSONObject("xenoClash")
 			sharedPreferences.edit {
-				putBoolean("xenoClashEnableSecondPosition", xenoClashObj.getBoolean("enableSecondPosition"))
-				putBoolean("xenoClashEnableThirdPosition", xenoClashObj.getBoolean("enableThirdPosition"))
+				putBoolean("xenoClashEnableNewPosition", xenoClashObj.getBoolean("enableNewPosition"))
+				putInt("xenoClashNewPosition", xenoClashObj.getInt("newPosition"))
 				putBoolean("selectTopOption", xenoClashObj.getBoolean("selectTopOption"))
 				commit()
 			}
@@ -195,8 +195,28 @@ class CustomJSONParser : JSONParser() {
 		try {
 			val provingGroundsObj = jObj.getJSONObject("provingGrounds")
 			sharedPreferences.edit {
-				putBoolean("provingGroundsEnableSecondPosition", provingGroundsObj.getBoolean("enableSecondPosition"))
-				putBoolean("provingGroundsEnableThirdPosition", provingGroundsObj.getBoolean("enableThirdPosition"))
+				putBoolean("provingGroundsEnableNewPosition", provingGroundsObj.getBoolean("enableNewPosition"))
+				putInt("provingGroundsNewPosition", provingGroundsObj.getInt("newPosition"))
+				commit()
+			}
+		} catch (_: Exception) {
+		}
+
+		try {
+			val guildWarsObj = jObj.getJSONObject("guildWars")
+			sharedPreferences.edit {
+				putBoolean("guildWarsEnableNewPosition", guildWarsObj.getBoolean("enableNewPosition"))
+				putInt("guildWarsNewPosition", guildWarsObj.getInt("newPosition"))
+				commit()
+			}
+		} catch (_: Exception) {
+		}
+
+		try {
+			val rotbObj = jObj.getJSONObject("rotb")
+			sharedPreferences.edit {
+				putBoolean("rotbEnableNewPosition", rotbObj.getBoolean("enableNewPosition"))
+				putInt("rotbNewPosition", rotbObj.getInt("newPosition"))
 				commit()
 			}
 		} catch (_: Exception) {

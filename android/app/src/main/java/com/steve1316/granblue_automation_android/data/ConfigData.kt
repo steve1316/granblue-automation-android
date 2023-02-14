@@ -57,8 +57,8 @@ class ConfigData(myContext: Context) {
 	val nightmarePartyNumber: Int
 
 	// Event
-	val eventEnableSecondPosition: Boolean
-	val eventEnableThirdPosition: Boolean
+	val eventEnableNewPosition: Boolean
+	val eventNewPosition: Int
 	val enableLocationIncrementByOne: Boolean
 	val enableSelectBottomCategory: Boolean
 
@@ -86,13 +86,21 @@ class ConfigData(myContext: Context) {
 	val enableForceReload: Boolean
 
 	// Xeno Clash
-	val xenoClashEnableSecondPosition: Boolean
-	val xenoClashEnableThirdPosition: Boolean
+	val xenoClashEnableNewPosition: Boolean
+	val xenoClashNewPosition: Int
 	val selectTopOption: Boolean
 
 	// Proving Grounds
-	val provingGroundsEnableSecondPosition: Boolean
-	val provingGroundsEnableThirdPosition: Boolean
+	val provingGroundsEnableNewPosition: Boolean
+	val provingGroundsNewPosition: Int
+
+	// Guild Wars
+	val guildWarsEnableNewPosition: Boolean
+	val guildWarsNewPosition: Int
+
+	// ROTB
+	val rotbEnableNewPosition: Boolean
+	val rotbNewPosition: Int
 
 	// Adjustment
 	val enableCalibrationAdjustment: Boolean
@@ -206,8 +214,8 @@ class ConfigData(myContext: Context) {
 		}
 
 		// Event
-		eventEnableSecondPosition = sharedPreferences.getBoolean("eventEnableSecondPosition", false)
-		eventEnableThirdPosition = sharedPreferences.getBoolean("eventEnableThirdPosition", false)
+		eventEnableNewPosition = sharedPreferences.getBoolean("eventEnableNewPosition", false)
+		eventNewPosition = sharedPreferences.getInt("eventNewPosition", 0)
 		enableLocationIncrementByOne = sharedPreferences.getBoolean("enableLocationIncrementByOne", false)
 		enableSelectBottomCategory = sharedPreferences.getBoolean("selectBottomCategory", false)
 
@@ -235,13 +243,21 @@ class ConfigData(myContext: Context) {
 		enableForceReload = sharedPreferences.getBoolean("enableForceReload", false)
 
 		// Xeno Clash
-		xenoClashEnableSecondPosition = sharedPreferences.getBoolean("xenoClashEnableSecondPosition", false)
-		xenoClashEnableThirdPosition = sharedPreferences.getBoolean("xenoClashEnableThirdPosition", false)
+		xenoClashEnableNewPosition = sharedPreferences.getBoolean("xenoClashEnableNewPosition", false)
+		xenoClashNewPosition = sharedPreferences.getInt("xenoClashNewPosition", 0)
 		selectTopOption = sharedPreferences.getBoolean("selectTopOption", false)
 
 		// Proving Grounds
-		provingGroundsEnableSecondPosition = sharedPreferences.getBoolean("provingGroundsEnableSecondPosition", false)
-		provingGroundsEnableThirdPosition = sharedPreferences.getBoolean("provingGroundsEnableThirdPosition", false)
+		provingGroundsEnableNewPosition = sharedPreferences.getBoolean("provingGroundsEnableNewPosition", false)
+		provingGroundsNewPosition = sharedPreferences.getInt("provingGroundsNewPosition", 0)
+
+		// Guild Wars
+		guildWarsEnableNewPosition = sharedPreferences.getBoolean("guildWarsEnableNewPosition", false)
+		guildWarsNewPosition = sharedPreferences.getInt("guildWarsNewPosition", 0)
+
+		// ROTB
+		rotbEnableNewPosition = sharedPreferences.getBoolean("rotbEnableNewPosition", false)
+		rotbNewPosition = sharedPreferences.getInt("rotbNewPosition", 0)
 
 		// Adjustment
 		enableCalibrationAdjustment = sharedPreferences.getBoolean("enableCalibrationAdjustment", false)
