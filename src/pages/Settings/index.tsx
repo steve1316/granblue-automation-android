@@ -11,6 +11,7 @@ import { Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View
 import { Divider } from "react-native-elements"
 import { Picker } from "@react-native-picker/picker"
 import { Snackbar } from "react-native-paper"
+import NumericInput from "react-native-numeric-input"
 
 interface Item {
     label: string
@@ -354,20 +355,32 @@ const Settings = () => {
 
                 {bsc.settings.game.farmingMode === "Event" || bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
                     <Checkbox
-                        text="Enable if Event is in second position"
-                        subtitle="Enable this to properly select the Event if it is positioned second on the list of events in the Home Menu."
-                        isChecked={bsc.settings.event.enableSecondPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableSecondPosition: !bsc.settings.event.enableSecondPosition } })}
+                        text="Enable if Event is in different position"
+                        subtitle="Enable this to properly select the Event if it is not positioned first on the list of events in the Home Menu."
+                        isChecked={bsc.settings.event.enableNewPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableNewPosition: !bsc.settings.event.enableNewPosition } })}
                     />
                 ) : null}
 
-                {bsc.settings.game.farmingMode === "Event" || bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
-                    <Checkbox
-                        text="Enable if Event is in third position"
-                        subtitle="Enable this to properly select the Event if it is positioned third on the list of events in the Home Menu."
-                        isChecked={bsc.settings.event.enableThirdPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableThirdPosition: !bsc.settings.event.enableThirdPosition } })}
-                    />
+                {(bsc.settings.game.farmingMode === "Event" || bsc.settings.game.farmingMode === "Event (Token Drawboxes)") && bsc.settings.event.enableNewPosition ? (
+                    <View>
+                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={0}
+                            maxValue={5}
+                            step={1}
+                            value={bsc.settings.event.newPosition}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, newPosition: value } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                    </View>
                 ) : null}
 
                 {bsc.settings.game.farmingMode === "Arcarum Sandbox" ? (
@@ -408,40 +421,122 @@ const Settings = () => {
 
                 {bsc.settings.game.farmingMode === "Xeno Clash" ? (
                     <Checkbox
-                        text="Enable if Xeno Clash is in second position"
-                        subtitle="Enable this to properly select Xeno Clash if it is positioned second on the list of events in the Home Menu."
-                        isChecked={bsc.settings.xenoClash.enableSecondPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, enableSecondPosition: !bsc.settings.xenoClash.enableSecondPosition } })}
+                        text="Enable if Xeno Clash is in different position"
+                        subtitle="Enable this to properly select Xeno Clash if it is not positioned first on the list of events in the Home Menu."
+                        isChecked={bsc.settings.xenoClash.enableNewPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, enableNewPosition: !bsc.settings.xenoClash.enableNewPosition } })}
                     />
                 ) : null}
 
-                {bsc.settings.game.farmingMode === "Xeno Clash" ? (
-                    <Checkbox
-                        text="Enable if Xeno Clash is in third position"
-                        subtitle="Enable this to properly select Xeno Clash if it is positioned third on the list of events in the Home Menu."
-                        isChecked={bsc.settings.xenoClash.enableThirdPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, enableThirdPosition: !bsc.settings.xenoClash.enableThirdPosition } })}
-                    />
+                {bsc.settings.game.farmingMode === "Xeno Clash" && bsc.settings.xenoClash.enableNewPosition ? (
+                    <View>
+                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={0}
+                            maxValue={5}
+                            step={1}
+                            value={bsc.settings.xenoClash.newPosition}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, newPosition: value } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                    </View>
                 ) : null}
 
                 {bsc.settings.game.farmingMode === "Proving Grounds" ? (
                     <Checkbox
-                        text={"Enable if Proving Grounds is in\nsecond position"}
-                        subtitle="Enable this to properly select Proving Grounds if it is positioned second on the list of events in the Home Menu."
-                        isChecked={bsc.settings.provingGrounds.enableSecondPosition}
-                        onPress={() =>
-                            bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, enableSecondPosition: !bsc.settings.provingGrounds.enableSecondPosition } })
-                        }
+                        text="Enable if Proving Grounds is in different position"
+                        subtitle="Enable this to properly select Proving Grounds if it is not positioned first on the list of events in the Home Menu."
+                        isChecked={bsc.settings.provingGrounds.enableNewPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, enableNewPosition: !bsc.settings.provingGrounds.enableNewPosition } })}
                     />
                 ) : null}
 
-                {bsc.settings.game.farmingMode === "Proving Grounds" ? (
+                {bsc.settings.game.farmingMode === "Proving Grounds" && bsc.settings.provingGrounds.enableNewPosition ? (
+                    <View>
+                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={0}
+                            maxValue={5}
+                            step={1}
+                            value={bsc.settings.provingGrounds.newPosition}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, newPosition: value } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                    </View>
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Guild Wars" ? (
                     <Checkbox
-                        text={"Enable if Proving Grounds is in\nthird position"}
-                        subtitle="Enable this to properly select Proving Grounds if it is positioned third on the list of events in the Home Menu."
-                        isChecked={bsc.settings.provingGrounds.enableThirdPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, enableThirdPosition: !bsc.settings.provingGrounds.enableThirdPosition } })}
+                        text="Enable if Guild Wars is in different position"
+                        subtitle="Enable this to properly select Guild Wars if it is not positioned first on the list of events in the Home Menu."
+                        isChecked={bsc.settings.provingGrounds.enableNewPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, guildWars: { ...bsc.settings.guildWars, enableNewPosition: !bsc.settings.guildWars.enableNewPosition } })}
                     />
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Guild Wars" && bsc.settings.guildWars.enableNewPosition ? (
+                    <View>
+                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={0}
+                            maxValue={5}
+                            step={1}
+                            value={bsc.settings.guildWars.newPosition}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, guildWars: { ...bsc.settings.guildWars, newPosition: value } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                    </View>
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Rise of the Beasts" ? (
+                    <Checkbox
+                        text="Enable if Guild Wars is in different position"
+                        subtitle="Enable this to properly select Guild Wars if it is not positioned first on the list of events in the Home Menu."
+                        isChecked={bsc.settings.provingGrounds.enableNewPosition}
+                        onPress={() => bsc.setSettings({ ...bsc.settings, rotb: { ...bsc.settings.rotb, enableNewPosition: !bsc.settings.rotb.enableNewPosition } })}
+                    />
+                ) : null}
+
+                {bsc.settings.game.farmingMode === "Rise of the Beasts" && bsc.settings.rotb.enableNewPosition ? (
+                    <View>
+                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
+                        <NumericInput
+                            type="plus-minus"
+                            leftButtonBackgroundColor="#eb5056"
+                            rightButtonBackgroundColor="#EA3788"
+                            rounded
+                            valueType="integer"
+                            minValue={0}
+                            maxValue={5}
+                            step={1}
+                            value={bsc.settings.rotb.newPosition}
+                            onChange={(value) => bsc.setSettings({ ...bsc.settings, rotb: { ...bsc.settings.rotb, newPosition: value } })}
+                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
+                            totalWidth={Dimensions.get("screen").width * 0.9}
+                            totalHeight={50}
+                        />
+                    </View>
                 ) : null}
 
                 {bsc.settings.game.farmingMode === "Generic" ? (
