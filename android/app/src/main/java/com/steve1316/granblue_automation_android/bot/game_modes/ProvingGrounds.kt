@@ -37,9 +37,12 @@ class ProvingGrounds(private val game: Game, private val missionName: String) {
 			bannerLocations = game.imageUtils.findAll("event_banner_blue")
 		}
 
-		if (game.configData.provingGroundsEnableThirdPosition) game.gestureUtils.tap(bannerLocations[2].x, bannerLocations[2].y, "event_banner")
-		else if (game.configData.provingGroundsEnableSecondPosition) game.gestureUtils.tap(bannerLocations[1].x, bannerLocations[1].y, "event_banner")
-		else game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
+		if (game.configData.provingGroundsEnableNewPosition) {
+			if (game.configData.provingGroundsNewPosition > bannerLocations.size - 1) {
+				throw ProvingGroundsException("Value set for New Position was found to be invalid compared to the actual number of events found in the Home Menu.")
+			}
+			game.gestureUtils.tap(bannerLocations[game.configData.provingGroundsNewPosition].x, bannerLocations[game.configData.provingGroundsNewPosition].y, "event_banner")
+		} else game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 
 		game.wait(3.0)
 

@@ -1,5 +1,6 @@
 package com.steve1316.granblue_automation_android.bot.game_modes
 
+import com.steve1316.automation_library.data.SharedData
 import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.granblue_automation_android.MainActivity.loggerTag
 import com.steve1316.granblue_automation_android.bot.Game
@@ -20,11 +21,24 @@ class GuildWars(private val game: Game, private val missionName: String) {
 		// Go to the first banner that is usually the current Event by tapping on the "Menu" button.
 		game.findAndClickButton("home_menu")
 		game.wait(2.0)
+
+		if (SharedData.displayHeight == 1920) {
+			MessageLog.printToLog("[GUILD.WARS] Screen too small. Moving the screen down in order to see all of the event banners.", tag)
+			game.gestureUtils.swipe(100f, 1000f, 100f, 700f)
+			game.wait(0.5)
+		}
+
 		var bannerLocations = game.imageUtils.findAll("event_banner")
 		if (bannerLocations.size == 0) {
 			bannerLocations = game.imageUtils.findAll("event_banner_blue")
 		}
-		game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
+
+		if (game.configData.guildWarsEnableNewPosition) {
+			if (game.configData.guildWarsNewPosition > bannerLocations.size - 1) {
+				throw GuildWarsException("Value set for New Position was found to be invalid compared to the actual number of events found in the Home Menu.")
+			}
+			game.gestureUtils.tap(bannerLocations[game.configData.guildWarsNewPosition].x, bannerLocations[game.configData.guildWarsNewPosition].y, "event_banner")
+		} else game.gestureUtils.tap(bannerLocations[0].x, bannerLocations[0].y, "event_banner")
 
 		game.wait(3.0)
 
