@@ -483,7 +483,7 @@ const Settings = () => {
                     <Checkbox
                         text="Enable if Guild Wars is in different position"
                         subtitle="Enable this to properly select Guild Wars if it is not positioned first on the list of events in the Home Menu."
-                        isChecked={bsc.settings.provingGrounds.enableNewPosition}
+                        isChecked={bsc.settings.guildWars.enableNewPosition}
                         onPress={() => bsc.setSettings({ ...bsc.settings, guildWars: { ...bsc.settings.guildWars, enableNewPosition: !bsc.settings.guildWars.enableNewPosition } })}
                     />
                 ) : null}
@@ -513,7 +513,7 @@ const Settings = () => {
                     <Checkbox
                         text="Enable if Guild Wars is in different position"
                         subtitle="Enable this to properly select Guild Wars if it is not positioned first on the list of events in the Home Menu."
-                        isChecked={bsc.settings.provingGrounds.enableNewPosition}
+                        isChecked={bsc.settings.rotb.enableNewPosition}
                         onPress={() => bsc.setSettings({ ...bsc.settings, rotb: { ...bsc.settings.rotb, enableNewPosition: !bsc.settings.rotb.enableNewPosition } })}
                     />
                 ) : null}
