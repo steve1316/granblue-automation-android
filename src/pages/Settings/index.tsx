@@ -353,7 +353,7 @@ const Settings = () => {
                     />
                 ) : null}
 
-                {bsc.settings.game.farmingMode === "Event" || bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
+                {bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
                     <Checkbox
                         text="Enable if Event is in different position"
                         subtitle="Enable this to properly select the Event if it is not positioned first on the list of events in the Home Menu."
@@ -362,7 +362,7 @@ const Settings = () => {
                     />
                 ) : null}
 
-                {(bsc.settings.game.farmingMode === "Event" || bsc.settings.game.farmingMode === "Event (Token Drawboxes)") && bsc.settings.event.enableNewPosition ? (
+                {bsc.settings.game.farmingMode === "Event (Token Drawboxes)" && bsc.settings.event.enableNewPosition ? (
                     <View>
                         <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
                         <NumericInput
