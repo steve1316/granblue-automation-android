@@ -1,18 +1,18 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.7</latestVersion>
+        <latestVersion>4.0.8</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.7 - Changelog
-
-New
----
-- Remove the previously added options for second and third positions of certain Farming Modes and replaced them with more generic ones.
-- Expanded that functionality for Guild Wars and Rise of the Beasts as well.
+v4.0.8 - Changelog
 
 Changed
 ---
-- Increase starting delay of various Farming Modes by 1 second.
+- Restrict new position option for Event (Token Drawboxes) only as Event uses a different navigational method.
+
+Fixed
+---
+- Fix wrong state being used for Proving Grounds's new position option.
+- Fix typos.
         </releaseNotes>
     </update>
 </AppUpdater>
