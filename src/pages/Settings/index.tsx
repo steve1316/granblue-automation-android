@@ -511,8 +511,8 @@ const Settings = () => {
 
                 {bsc.settings.game.farmingMode === "Rise of the Beasts" ? (
                     <Checkbox
-                        text="Enable if Guild Wars is in different position"
-                        subtitle="Enable this to properly select Guild Wars if it is not positioned first on the list of events in the Home Menu."
+                        text={"Enable if Rise of the Beasts is in\ndifferent position"}
+                        subtitle="Enable this to properly select Rise of the Beasts if it is not positioned first on the list of events in the Home Menu."
                         isChecked={bsc.settings.rotb.enableNewPosition}
                         onPress={() => bsc.setSettings({ ...bsc.settings, rotb: { ...bsc.settings.rotb, enableNewPosition: !bsc.settings.rotb.enableNewPosition } })}
                     />
