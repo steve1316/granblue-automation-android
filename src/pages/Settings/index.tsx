@@ -11,7 +11,14 @@ import { Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View
 import { Divider } from "react-native-elements"
 import { Picker } from "@react-native-picker/picker"
 import { Snackbar } from "react-native-paper"
-import NumericInput from "react-native-numeric-input"
+import ArcarumHelper from "./FarmingModesHelpers/ArcarumHelper"
+import ArcarumSandboxHelper from "./FarmingModesHelpers/ArcarumSandboxHelper"
+import EventHelper from "./FarmingModesHelpers/EventHelper"
+import GenericHelper from "./FarmingModesHelpers/GenericHelper"
+import GuildWarsHelper from "./FarmingModesHelpers/GuildWarsHelper"
+import ProvingGroundsHelper from "./FarmingModesHelpers/ProvingGroundsHelper"
+import ROTBHelper from "./FarmingModesHelpers/ROTBHelper"
+import XenoClashHelper from "./FarmingModesHelpers/XenoClashHelper"
 
 interface Item {
     label: string
@@ -332,227 +339,11 @@ const Settings = () => {
             <View>
                 <CustomDropDownPicker containerStyle={styles.farmingModePicker} placeholder="Select Farming Mode" data={farmingModes} value={farmingMode} setValue={setFarmingMode} />
 
-                {bsc.settings.game.farmingMode === "Generic" ? (
-                    <View>
-                        <Divider style={{ marginBottom: 10 }} />
-
-                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>
-                            {`Selecting this will repeat the current mission on the screen until it finishes the required number of runs. Note that Generic does not provide any navigation.\n\nIt is required that the bot starts on either the Combat screen with the "Attack" button visible, the Loot Collection screen with the "Play Again" button visible, or the Coop Room screen with the "Start" button visible and party already selected.`}
-                        </Text>
-
-                        <Divider />
-                    </View>
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Event" ? (
-                    <Checkbox
-                        text={`Enable Incrementation of Location\nby 1`}
-                        subtitle="Enable this if the event has its N/H missions at the very top so the bot can correctly select the correct quest. Or in otherwords, enable this if the Event tab in the Special page has 3 'Select' buttons instead of 2."
-                        isChecked={bsc.settings.event.enableLocationIncrementByOne}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableLocationIncrementByOne: !bsc.settings.event.enableLocationIncrementByOne } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
-                    <Checkbox
-                        text="Enable if Event is in different position"
-                        subtitle="Enable this to properly select the Event if it is not positioned first on the list of events in the Home Menu."
-                        isChecked={bsc.settings.event.enableNewPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, enableNewPosition: !bsc.settings.event.enableNewPosition } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Event (Token Drawboxes)" && bsc.settings.event.enableNewPosition ? (
-                    <View>
-                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
-                        <NumericInput
-                            type="plus-minus"
-                            leftButtonBackgroundColor="#eb5056"
-                            rightButtonBackgroundColor="#EA3788"
-                            rounded
-                            valueType="integer"
-                            minValue={0}
-                            maxValue={5}
-                            step={1}
-                            value={bsc.settings.event.newPosition}
-                            onChange={(value) => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, newPosition: value } })}
-                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
-                            totalWidth={Dimensions.get("screen").width * 0.9}
-                            totalHeight={50}
-                        />
-                    </View>
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Arcarum Sandbox" ? (
-                    <Checkbox
-                        text="Enable Defender settings"
-                        subtitle="Enable additional settings to show up in the Extra Settings page."
-                        isChecked={bsc.settings.sandbox.enableDefender}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, enableDefender: !bsc.settings.sandbox.enableDefender } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Arcarum Sandbox" ? (
-                    <Checkbox
-                        text="Enable gold chest opening"
-                        subtitle="Experimental, it uses default party and the chosen script for combat."
-                        isChecked={bsc.settings.sandbox.enableGoldChest}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, sandbox: { ...bsc.settings.sandbox, enableGoldChest: !bsc.settings.sandbox.enableGoldChest } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Arcarum" ? (
-                    <Checkbox
-                        text="Enable Stop on Arcarum Boss"
-                        subtitle="Enable this option to have the bot stop upon encountering a Arcarum Boss (3-3, 6-3, 9-9)."
-                        isChecked={bsc.settings.arcarum.enableStopOnArcarumBoss}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, arcarum: { ...bsc.settings.arcarum, enableStopOnArcarumBoss: !bsc.settings.arcarum.enableStopOnArcarumBoss } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Xeno Clash" ? (
-                    <Checkbox
-                        text="Enable Selection of Bottom Option"
-                        subtitle="Enabling this will select the bottom Xeno Clash option. By default, it selects the top option."
-                        isChecked={bsc.settings.xenoClash.selectTopOption}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, selectTopOption: !bsc.settings.xenoClash.selectTopOption } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Xeno Clash" ? (
-                    <Checkbox
-                        text="Enable if Xeno Clash is in different position"
-                        subtitle="Enable this to properly select Xeno Clash if it is not positioned first on the list of events in the Home Menu."
-                        isChecked={bsc.settings.xenoClash.enableNewPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, enableNewPosition: !bsc.settings.xenoClash.enableNewPosition } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Xeno Clash" && bsc.settings.xenoClash.enableNewPosition ? (
-                    <View>
-                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
-                        <NumericInput
-                            type="plus-minus"
-                            leftButtonBackgroundColor="#eb5056"
-                            rightButtonBackgroundColor="#EA3788"
-                            rounded
-                            valueType="integer"
-                            minValue={0}
-                            maxValue={5}
-                            step={1}
-                            value={bsc.settings.xenoClash.newPosition}
-                            onChange={(value) => bsc.setSettings({ ...bsc.settings, xenoClash: { ...bsc.settings.xenoClash, newPosition: value } })}
-                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
-                            totalWidth={Dimensions.get("screen").width * 0.9}
-                            totalHeight={50}
-                        />
-                    </View>
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Proving Grounds" ? (
-                    <Checkbox
-                        text="Enable if Proving Grounds is in different position"
-                        subtitle="Enable this to properly select Proving Grounds if it is not positioned first on the list of events in the Home Menu."
-                        isChecked={bsc.settings.provingGrounds.enableNewPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, enableNewPosition: !bsc.settings.provingGrounds.enableNewPosition } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Proving Grounds" && bsc.settings.provingGrounds.enableNewPosition ? (
-                    <View>
-                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
-                        <NumericInput
-                            type="plus-minus"
-                            leftButtonBackgroundColor="#eb5056"
-                            rightButtonBackgroundColor="#EA3788"
-                            rounded
-                            valueType="integer"
-                            minValue={0}
-                            maxValue={5}
-                            step={1}
-                            value={bsc.settings.provingGrounds.newPosition}
-                            onChange={(value) => bsc.setSettings({ ...bsc.settings, provingGrounds: { ...bsc.settings.provingGrounds, newPosition: value } })}
-                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
-                            totalWidth={Dimensions.get("screen").width * 0.9}
-                            totalHeight={50}
-                        />
-                    </View>
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Guild Wars" ? (
-                    <Checkbox
-                        text="Enable if Guild Wars is in different position"
-                        subtitle="Enable this to properly select Guild Wars if it is not positioned first on the list of events in the Home Menu."
-                        isChecked={bsc.settings.guildWars.enableNewPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, guildWars: { ...bsc.settings.guildWars, enableNewPosition: !bsc.settings.guildWars.enableNewPosition } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Guild Wars" && bsc.settings.guildWars.enableNewPosition ? (
-                    <View>
-                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
-                        <NumericInput
-                            type="plus-minus"
-                            leftButtonBackgroundColor="#eb5056"
-                            rightButtonBackgroundColor="#EA3788"
-                            rounded
-                            valueType="integer"
-                            minValue={0}
-                            maxValue={5}
-                            step={1}
-                            value={bsc.settings.guildWars.newPosition}
-                            onChange={(value) => bsc.setSettings({ ...bsc.settings, guildWars: { ...bsc.settings.guildWars, newPosition: value } })}
-                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
-                            totalWidth={Dimensions.get("screen").width * 0.9}
-                            totalHeight={50}
-                        />
-                    </View>
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Rise of the Beasts" ? (
-                    <Checkbox
-                        text={"Enable if Rise of the Beasts is in\ndifferent position"}
-                        subtitle="Enable this to properly select Rise of the Beasts if it is not positioned first on the list of events in the Home Menu."
-                        isChecked={bsc.settings.rotb.enableNewPosition}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, rotb: { ...bsc.settings.rotb, enableNewPosition: !bsc.settings.rotb.enableNewPosition } })}
-                    />
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Rise of the Beasts" && bsc.settings.rotb.enableNewPosition ? (
-                    <View>
-                        <Text style={{ marginBottom: 10, fontSize: 12, opacity: 0.7, color: "black" }}>Default is the first position or the value of 0</Text>
-                        <NumericInput
-                            type="plus-minus"
-                            leftButtonBackgroundColor="#eb5056"
-                            rightButtonBackgroundColor="#EA3788"
-                            rounded
-                            valueType="integer"
-                            minValue={0}
-                            maxValue={5}
-                            step={1}
-                            value={bsc.settings.rotb.newPosition}
-                            onChange={(value) => bsc.setSettings({ ...bsc.settings, rotb: { ...bsc.settings.rotb, newPosition: value } })}
-                            containerStyle={{ marginBottom: 10, alignSelf: "center" }}
-                            totalWidth={Dimensions.get("screen").width * 0.9}
-                            totalHeight={50}
-                        />
-                    </View>
-                ) : null}
-
-                {bsc.settings.game.farmingMode === "Generic" ? (
-                    <Checkbox
-                        text="Enable Forcing Reload after Attack"
-                        subtitle="Enable this option to force Generic Farming Mode to reload after an attack. This does not take into account whether or not the current battle supports reloading after an attack."
-                        isChecked={bsc.settings.generic.enableForceReload}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, generic: { ...bsc.settings.generic, enableForceReload: !bsc.settings.generic.enableForceReload } })}
-                    />
-                ) : null}
-
                 {bsc.settings.game.farmingMode === "Special" ||
                 bsc.settings.game.farmingMode === "Event" ||
                 bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ||
-                bsc.settings.game.farmingMode === "Xeno Clash" ||
-                bsc.settings.game.farmingMode === "Rise of the Beasts" ? (
+                bsc.settings.game.farmingMode === "Rise of the Beasts" ||
+                bsc.settings.game.farmingMode === "Xeno Clash" ? (
                     <Checkbox
                         text="Enable Nightmare Settings"
                         subtitle="Enable additional settings to show up in the Extra Settings page."
@@ -561,14 +352,14 @@ const Settings = () => {
                     />
                 ) : null}
 
-                {bsc.settings.game.farmingMode === "Event (Token Drawboxes)" ? (
-                    <Checkbox
-                        text="Enable Selecting the Bottom Category"
-                        subtitle="In the event of the raids being split between 2 categories, the bot selects the top category by default. Enable this to select the bottom category instead."
-                        isChecked={bsc.settings.event.selectBottomCategory}
-                        onPress={() => bsc.setSettings({ ...bsc.settings, event: { ...bsc.settings.event, selectBottomCategory: !bsc.settings.event.selectBottomCategory } })}
-                    />
-                ) : null}
+                {ArcarumHelper()}
+                {ArcarumSandboxHelper()}
+                {EventHelper()}
+                {GenericHelper()}
+                {GuildWarsHelper()}
+                {ProvingGroundsHelper()}
+                {ROTBHelper()}
+                {XenoClashHelper()}
             </View>
         )
     }
