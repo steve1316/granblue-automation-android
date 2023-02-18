@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios"
 import BouncyCheckbox from "react-native-bouncy-checkbox"
-import Checkbox from "../../components/Checkbox"
+import Checkbox from "../../components/CustomCheckbox"
 import CustomButton from "../../components/CustomButton"
 import DocumentPicker from "react-native-document-picker"
 import LoadingButton from "../../components/LoadingButton"

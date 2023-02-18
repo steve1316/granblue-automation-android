@@ -1,4 +1,4 @@
-import Checkbox from "../../components/Checkbox"
+import Checkbox from "../../components/CustomCheckbox"
 import CustomButton from "../../components/CustomButton"
 import CustomDropDownPicker from "../../components/CustomDropdownPicker"
 import data from "../../data/data.json"

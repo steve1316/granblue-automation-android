@@ -1,4 +1,4 @@
-import Checkbox from "../../components/Checkbox"
+import Checkbox from "../../components/CustomCheckbox"
 import NumericInput from "react-native-numeric-input"
 import React, { useContext } from "react"
 import TitleDivider from "../../components/TitleDivider"

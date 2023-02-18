@@ -14,7 +14,7 @@ interface Props {
     onPress?: (checked: boolean) => void
 }
 
-const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBorderColor = "red", iconCheckedColor = "red", iconUncheckedColor = "white", isChecked, onPress }) => {
+const CustomCheckbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBorderColor = "red", iconCheckedColor = "red", iconUncheckedColor = "white", isChecked, onPress }) => {
     const styles = StyleSheet.create({
         checkboxContainer: {
             marginVertical: 5,
@@ -50,4 +50,4 @@ const Checkbox: FC<Props> = ({ text = "", subtitle = "", iconSize = 30, iconBord
     )
 }
 
-export default Checkbox
+export default CustomCheckbox
