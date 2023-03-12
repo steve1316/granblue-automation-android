@@ -1,18 +1,14 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.8</latestVersion>
+        <latestVersion>4.0.9</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.8 - Changelog
+v4.0.9 - Changelog
 
 Changed
 ---
-- Restrict new position option for Event (Token Drawboxes) only as Event uses a different navigational method.
-
-Fixed
----
-- Fix wrong state being used for Proving Grounds's new position option.
-- Fix typos.
+- Close popup that may have appeared while scrolling the Coop mission list.
+- Add a delay after scrolling the page to create a Coop room.
         </releaseNotes>
     </update>
 </AppUpdater>
