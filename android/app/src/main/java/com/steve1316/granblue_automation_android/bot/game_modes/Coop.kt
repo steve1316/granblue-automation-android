@@ -179,6 +179,9 @@ class Coop(private val game: Game, private val missionName: String) {
 
 			// Scroll the screen down to see the "OK" button in case of small screens.
 			game.gestureUtils.scroll()
+
+			game.wait(2.0)
+
 			game.findAndClickButton("coop_ok")
 
 			game.wait(3.0)
