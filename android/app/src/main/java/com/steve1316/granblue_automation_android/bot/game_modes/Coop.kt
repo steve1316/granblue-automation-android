@@ -220,6 +220,10 @@ class Coop(private val game: Game, private val missionName: String) {
 				game.findAndClickButton("coop_room")
 
 				game.wait(1.0)
+				//Check for "Daily Missions" popup for Coop.
+				if (game.imageUtils.confirmLocation("coop_daily_missions")) {
+					game.findAndClickButton("close")
+				}
 
 				if (game.imageUtils.confirmLocation("coop_daily_missions")) {
 					MessageLog.printToLog("\n[COOP] Coop room has closed due to time running out.", tag)
