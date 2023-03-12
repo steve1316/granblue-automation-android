@@ -1,13 +1,18 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.10</latestVersion>
+        <latestVersion>4.0.11</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.10 - Changelog
+v4.0.11 - Changelog
 
 Changed
 ---
-- More adjustments to Coop navigation for EX final tiers.
+- Makes sure to close out Daily Missions popup after Coop mission completion.
+- Adjustments to delays in Coop navigation.
+
+Fixed
+---
+- Fix Coop Farming Mode not starting the mission again after first run.
         </releaseNotes>
     </update>
 </AppUpdater>
