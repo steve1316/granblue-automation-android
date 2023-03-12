@@ -1,14 +1,13 @@
 <AppUpdater>
     <update>
-        <latestVersion>4.0.9</latestVersion>
+        <latestVersion>4.0.10</latestVersion>
         <url>https://github.com/steve1316/granblue-automation-android/releases</url>
         <releaseNotes>
-v4.0.9 - Changelog
+v4.0.10 - Changelog
 
 Changed
 ---
-- Close popup that may have appeared while scrolling the Coop mission list.
-- Add a delay after scrolling the page to create a Coop room.
+- More adjustments to Coop navigation for EX final tiers.
         </releaseNotes>
     </update>
 </AppUpdater>
