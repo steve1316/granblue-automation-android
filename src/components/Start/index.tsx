@@ -177,9 +177,9 @@ const Start = () => {
     // Determine whether the program is ready to start.
     const handleReady = () => {
         const farmingMode = bsc.settings.game.farmingMode
-        if (farmingMode !== "Coop" && bsc.settings.game.farmingMode !== "Arcarum" && bsc.settings.game.farmingMode !== "Generic" && bsc.settings.game.farmingMode !== "") {
+        if (farmingMode !== "Coop" && farmingMode !== "Arcarum" && farmingMode !== "Generic" && farmingMode !== "") {
             bsc.setReadyStatus(bsc.settings.game.item !== "" && bsc.settings.game.mission !== "" && bsc.settings.game.summons.length !== 0)
-        } else if (bsc.settings.game.farmingMode === "Coop" || bsc.settings.game.farmingMode === "Arcarum") {
+        } else if (farmingMode === "Coop" || farmingMode === "Arcarum") {
             bsc.setReadyStatus(bsc.settings.game.item !== "" && bsc.settings.game.mission !== "")
         } else {
             bsc.setReadyStatus(farmingMode === "Generic" && bsc.settings.game.item !== "" && bsc.settings.game.summons.length !== 0)
