@@ -113,7 +113,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
 	 * @param disableAdjustment Disable the usage of adjustment to tries. Defaults to False.
 	 * @param bypassGeneralAdjustment Bypass using the general adjustment for the number of tries. Defaults to False.
-	 * @param testMode Flag to test and get a valid scale for device compatibility.
+	 * @param testMode Flag to test and get a valid scale for device compatibility. Defaults to False.
 	 * @return Point object containing the location of the match or null if not found.
 	 */
 	fun findButton(
