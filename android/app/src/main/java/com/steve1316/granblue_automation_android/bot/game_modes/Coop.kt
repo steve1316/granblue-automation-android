@@ -75,6 +75,9 @@ class Coop(private val game: Game, private val missionName: String) {
 					// Scroll the screen down a little bit to see the bottom section of the EX list.
 					game.gestureUtils.swipe(100f, 1000f, 100f, 700f)
 					game.wait(0.5)
+
+					// If the bot accidentally triggered the popup for one of the Tiers, close it.
+					game.findAndClickButton("close", tries = 3)
 				}
 
 				// Find all occurrences of the "Host Quest" button.
