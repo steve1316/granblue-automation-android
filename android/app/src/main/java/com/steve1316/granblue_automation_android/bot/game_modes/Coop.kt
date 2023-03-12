@@ -39,6 +39,9 @@ class Coop(private val game: Game, private val missionName: String) {
 			game.gestureUtils.swipe(100f, 1000f, 100f, 400f)
 			game.wait(0.5)
 
+			// If the bot accidentally triggered the popup for one of the Tiers, close it.
+			game.findAndClickButton("close", tries = 3)
+
 			// Select the difficulty of the mission that it is under.
 			if (missionName == "H3-1 In a Dusk Dream") {
 				// Check if Hard difficulty is already selected. If not, select it.
@@ -73,7 +76,7 @@ class Coop(private val game: Game, private val missionName: String) {
 
 				if (listForCoopEX5.contains(missionName) || listForCoopFinal.contains(missionName)) {
 					// Scroll the screen down a little bit to see the bottom section of the EX list.
-					game.gestureUtils.swipe(100f, 1000f, 100f, 700f)
+					game.gestureUtils.swipe(100f, 1000f, 100f, 400f)
 					game.wait(0.5)
 
 					// If the bot accidentally triggered the popup for one of the Tiers, close it.
@@ -143,7 +146,7 @@ class Coop(private val game: Game, private val missionName: String) {
 				} else if (listForCoopEX5.contains(missionName)) {
 					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX5...", tag)
 
-					game.gestureUtils.tap(hostButtonLocations[4].x, hostButtonLocations[4].y, "coop_host_quest")
+					game.gestureUtils.tap(hostButtonLocations[hostButtonLocations.size - 2].x, hostButtonLocations[hostButtonLocations.size - 2].y, "coop_host_quest")
 					if (game.imageUtils.confirmLocation("coop_ex5")) {
 						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
 
@@ -157,7 +160,7 @@ class Coop(private val game: Game, private val missionName: String) {
 				} else if (listForCoopFinal.contains(missionName)) {
 					MessageLog.printToLog("[COOP] Now navigating to \"$missionName\" for EX Final Tier...", tag)
 
-					game.gestureUtils.tap(hostButtonLocations[5].x, hostButtonLocations[5].y, "coop_host_quest")
+					game.gestureUtils.tap(hostButtonLocations[hostButtonLocations.size - 1].x, hostButtonLocations[hostButtonLocations.size - 1].y, "coop_host_quest")
 					if (game.imageUtils.confirmLocation("coop_ex_final")) {
 						MessageLog.printToLog("[COOP] Now selecting \"$missionName\"...", tag)
 
@@ -182,7 +185,9 @@ class Coop(private val game: Game, private val missionName: String) {
 
 			game.wait(2.0)
 
-			game.findAndClickButton("coop_ok")
+			if (!game.findAndClickButton("coop_ok") && !game.findAndClickButton("ok")) {
+				throw CoopException("Unable to locate the OK button and thus failed to create the Coop room.")
+			}
 
 			game.wait(3.0)
 
