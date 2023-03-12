@@ -229,6 +229,9 @@ class Coop(private val game: Game, private val missionName: String) {
 					MessageLog.printToLog("\n[COOP] Coop room has closed due to time running out.", tag)
 					return
 				}
+
+				// Start the Coop Mission again.
+				game.findAndClickButton("coop_start")
 			}
 		}
 
