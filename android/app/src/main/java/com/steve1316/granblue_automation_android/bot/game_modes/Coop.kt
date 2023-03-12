@@ -216,14 +216,18 @@ class Coop(private val game: Game, private val missionName: String) {
 				navigate()
 			}
 			else -> {
+				MessageLog.printToLog("\n[COOP] Starting Coop mission again.", tag)
+
 				// Head back to the Coop Room.
 				game.findAndClickButton("coop_room")
-
 				game.wait(1.0)
+
 				//Check for "Daily Missions" popup for Coop.
 				if (game.imageUtils.confirmLocation("coop_daily_missions")) {
 					game.findAndClickButton("close")
 				}
+
+				game.wait(2.0)
 
 				if (game.imageUtils.confirmLocation("coop_daily_missions")) {
 					MessageLog.printToLog("\n[COOP] Coop room has closed due to time running out.", tag)
@@ -232,13 +236,12 @@ class Coop(private val game: Game, private val missionName: String) {
 
 				// Start the Coop Mission again.
 				game.findAndClickButton("coop_start")
+				game.wait(3.0)
 			}
 		}
 
 		// Check for AP.
 		game.checkAP()
-
-		game.wait(3.0)
 
 		if (firstRun && game.imageUtils.confirmLocation("coop_without_support_summon", tries = 30)) {
 			// Select the Party.
@@ -246,14 +249,13 @@ class Coop(private val game: Game, private val missionName: String) {
 
 			// Now tap the "Start" button to start the Coop mission.
 			game.findAndClickButton("coop_start")
+			game.wait(3.0)
 
 			// Now start Combat Mode and detect any item drops.
 			if (game.combatMode.startCombatMode()) {
 				game.collectLoot(isCompleted = true)
 			}
 		} else if (!firstRun) {
-			MessageLog.printToLog("\n[COOP] Starting Coop mission again.", tag)
-
 			// Now start Combat Mode and detect any item drops.
 			if (game.combatMode.startCombatMode()) {
 				game.collectLoot(isCompleted = true)
